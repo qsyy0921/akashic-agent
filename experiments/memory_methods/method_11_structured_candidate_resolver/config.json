@@ -1,0 +1,21 @@
+{
+  "method_id": "method_11_structured_candidate_resolver",
+  "strategy": "structured_candidate_resolver",
+  "description": "Consume production memory2 raw-event schema for slot-specific candidate extraction, source-grounded ordering, and compact selected evidence before final generation.",
+  "options": {
+    "schema_tables": [
+      "memory_raw_events",
+      "memory_entities",
+      "memory_event_facts",
+      "memory_assertions",
+      "memory_relation_facts"
+    ],
+    "base_retrieval": "adaptive_intent_versioned",
+    "all_raw_event_backfill": true,
+    "all_raw_event_backfill_limit": 100000,
+    "all_raw_event_backfill_chunk_size": 200,
+    "selected_evidence_limit": 16,
+    "summary_pollution": false,
+    "wrap_search_fetch_tools": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q5_e5f6a7b8",
+  "question_type": "single-session-user",
+  "question": "What is Jordan's attitude toward team sports and group physical activities? And who in the conversation revealed this?",
+  "gold_answer": "Jordan strongly dislikes team sports and group fitness activities. This was revealed by Maya in Session 2. When Jordan bluntly declined an invitation to Priya's office football event, Maya immediately said 'yeah figured, team sports aren't really your thing' — demonstrating that she already knew about this preference without needing to ask. Jordan confirmed with 'Still no.' but Maya's comment was the revealing moment: she had prior knowledge of Jordan's aversion and stated it as a known fact.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 4.54,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

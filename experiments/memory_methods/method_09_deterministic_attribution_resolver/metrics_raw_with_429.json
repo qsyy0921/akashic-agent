@@ -1,0 +1,88 @@
+{
+  "method_id": "method_09_deterministic_attribution_resolver",
+  "generated_at": "2026-06-18T01:24:01.065980",
+  "result_path": "eval\\results\\memory_methods\\method_09_deterministic_attribution_resolver.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_09_deterministic_attribution_resolver",
+  "memory_method": {
+    "method_id": "method_09_deterministic_attribution_resolver",
+    "strategy": "deterministic_attribution_resolver",
+    "description": "Benchmark-only raw-message-first method that deterministically resolves speaker/order/exception/update answer candidates before final LLM generation.",
+    "options": {
+      "basis": [
+        "method_08 raw evidence table",
+        "source_ref grounded speaker attribution",
+        "message_index ordering",
+        "deterministic candidate selection before generation"
+      ]
+    },
+    "config_path": "experiments\\memory_methods\\method_09_deterministic_attribution_resolver\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.2749,
+      "em": 0.0,
+      "n": 50,
+      "errors": 0,
+      "judge_acc": 0.6531
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3322,
+        "em": 0.0,
+        "n": 11,
+        "errors": 0,
+        "judge_acc": 0.3636
+      },
+      "single-session-preference": {
+        "f1": 0.2445,
+        "em": 0.0,
+        "n": 17,
+        "errors": 0,
+        "judge_acc": 0.8235
+      },
+      "single-session-user": {
+        "f1": 0.2697,
+        "em": 0.0,
+        "n": 22,
+        "errors": 0,
+        "judge_acc": 0.6667
+      }
+    }
+  },
+  "judge_acc": 0.6530612244897959,
+  "latency": {
+    "avg_elapsed_s": 27.7386,
+    "p50_elapsed_s": 18.86,
+    "p95_elapsed_s": 65.33
+  },
+  "token_usage": {
+    "avg_token_usage": 67350.5918,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 67350.5918,
+    "avg_final_call_input_tokens_estimate": 15954.1429,
+    "avg_cache_prompt_tokens": 115423.6735,
+    "avg_cache_hit_tokens": 89755.4286,
+    "avg_answer_chars": 358.96,
+    "avg_tool_result_chars": 28955.98,
+    "avg_tool_calls": 5.46
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 17,
+    "judge_null": 1,
+    "error_type_counts": {
+      "memory_update_not_versioned": 7,
+      "memory_write_failure": 5,
+      "personal_preference_attribution_error": 3,
+      "retrieval_failure": 6,
+      "retrieved_but_answer_wrong": 5,
+      "retrieved_but_evidence_unused": 2
+    }
+  }
+}

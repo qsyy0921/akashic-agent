@@ -1,0 +1,7 @@
+{
+  "method_id": "method_02_structured_memory_schema",
+  "strategy": "structured_memory_schema",
+  "description": "Expose stable structured fields on each retrieved memory record: person_id, memory_type, session_id, timestamp, source_ref, confidence, valid_from, valid_to.",
+  "options": {}
+}
+

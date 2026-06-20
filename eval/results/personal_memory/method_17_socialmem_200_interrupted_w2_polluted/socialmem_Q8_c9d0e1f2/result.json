@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_c9d0e1f2",
+  "question_type": "knowledge-update",
+  "question": "How did Maya's relationship with alcohol come across in the conversations — was there any sign of a change?",
+  "gold_answer": "Maya's drinking preferences shifted noticeably across the sessions. In earlier sessions, no drinking preference was stated. By Session 4, when Priya pointed her toward a wine bar, Maya said she'd 'probably just get the sparkling water.' Priya's follow-up — 'are you still off drinks?' — confirmed this was a known and ongoing change. Maya didn't explain it, just said 'yeah, honestly don't worry about it.' The phrasing ('still off drinks') indicates the shift predates Session 4 and was already established enough that Priya knew about it.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 4.78,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

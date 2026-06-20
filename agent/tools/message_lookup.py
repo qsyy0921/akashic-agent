@@ -61,18 +61,18 @@ class FetchMessagesTool(Tool):
 
     async def execute(
         self,
-        ids: list[str] | None = None,
+        ids: list[str] | str | None = None,
         source_ref: str | None = None,
-        source_refs: list[str] | None = None,
-        evidence: list[dict[str, object]] | None = None,
+        source_refs: list[str] | str | None = None,
+        evidence: list[object] | object | None = None,
         context: int = 0,
         **_: Any,
     ) -> str:
         clean_ids = _resolve_fetch_ids(
-            ids=ids or [],
+            ids=_coerce_list(ids),
             source_ref=source_ref,
-            source_refs=source_refs or [],
-            evidence=evidence or [],
+            source_refs=_coerce_list(source_refs),
+            evidence=_coerce_list(evidence),
         )
         if not clean_ids:
             return json.dumps({"count": 0, "matched_count": 0, "messages": []}, ensure_ascii=False)
@@ -98,10 +98,10 @@ class FetchMessagesTool(Tool):
 
 def _resolve_fetch_ids(
     *,
-    ids: list[str],
+    ids: list[object],
     source_ref: str | None,
-    source_refs: list[str],
-    evidence: list[dict[str, object]],
+    source_refs: list[object],
+    evidence: list[object],
 ) -> list[str]:
     resolved: list[str] = []
     seen: set[str] = set()
@@ -118,9 +118,41 @@ def _resolve_fetch_ids(
     return resolved
 
 
-def _source_refs_from_evidence(evidence: list[dict[str, object]]) -> list[str]:
+def _coerce_list(value: object) -> list[object]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return cast(list[object], value)
+    if isinstance(value, tuple):
+        return list(value)
+    return [value]
+
+
+def _source_refs_from_evidence(evidence: list[object]) -> list[str]:
     values: list[str] = []
     for item in evidence:
+        if isinstance(item, str):
+            text = item.strip()
+            if not text:
+                continue
+            try:
+                parsed = json.loads(text)
+            except (json.JSONDecodeError, ValueError):
+                values.append(text)
+                continue
+            if isinstance(parsed, dict):
+                values.extend(_source_refs_from_evidence([parsed]))
+                continue
+            if isinstance(parsed, list):
+                values.extend(str(ref).strip() for ref in parsed if str(ref).strip())
+                continue
+            values.append(text)
+            continue
+        if not isinstance(item, dict):
+            text = str(item).strip()
+            if text:
+                values.append(text)
+            continue
         source_ref = str(item.get("source_ref") or "").strip()
         if source_ref:
             values.append(source_ref)
@@ -157,7 +189,23 @@ def _expand_source_ref(value: str | None) -> list[str]:
 
 
 def _to_public_message(message: dict[str, Any]) -> dict[str, Any]:
-    keep = {"id", "session_key", "seq", "role", "content", "timestamp", "in_source_ref"}
+    keep = {
+        "id",
+        "session_key",
+        "seq",
+        "role",
+        "content",
+        "timestamp",
+        "in_source_ref",
+        "chat_type",
+        "group_id",
+        "sender_id",
+        "speaker_id",
+        "date",
+        "message_index",
+        "source_ref",
+        "onebot_message_id",
+    }
     return {k: v for k, v in message.items() if k in keep}
 
 
@@ -177,6 +225,26 @@ class SearchMessagesTool(Tool):
             "session_key": {
                 "type": "string",
                 "description": "限定 session，如 'telegram:<chat_id>'（可选）",
+            },
+            "group_id": {
+                "type": "string",
+                "description": "限定 QQ 群号；适合群聊静默观察记忆检索（可选）",
+            },
+            "speaker_id": {
+                "type": "string",
+                "description": "限定群聊发言人 QQ 号 / speaker_id（可选）",
+            },
+            "date": {
+                "type": "string",
+                "description": "限定日期 YYYY-MM-DD（可选）",
+            },
+            "date_from": {
+                "type": "string",
+                "description": "起始日期 YYYY-MM-DD（可选）",
+            },
+            "date_to": {
+                "type": "string",
+                "description": "结束日期 YYYY-MM-DD（可选）",
             },
             "role": {
                 "type": "string",
@@ -221,14 +289,33 @@ class SearchMessagesTool(Tool):
 
         limit = max(1, min(int(kwargs.get("limit", 10)), 50))
         offset = max(0, int(kwargs.get("offset", 0)))
+        filters = {
+            "group_id": str(kwargs.get("group_id") or "").strip(),
+            "speaker_id": str(kwargs.get("speaker_id") or "").strip(),
+            "date": str(kwargs.get("date") or "").strip(),
+            "date_from": str(kwargs.get("date_from") or "").strip(),
+            "date_to": str(kwargs.get("date_to") or "").strip(),
+        }
+        has_structured_filter = any(filters.values())
+        session_key = (kwargs.get("session_key") or "").strip() or None
 
-        matched, total = self._store.search_messages(
-            term,
-            session_key=(kwargs.get("session_key") or "").strip() or None,
-            role=(kwargs.get("role") or "").strip() or None,
-            limit=limit,
-            offset=offset,
-        )
+        if has_structured_filter:
+            matched, total = self._filtered_search_messages(
+                term=term,
+                session_key=session_key,
+                role=(kwargs.get("role") or "").strip() or None,
+                limit=limit,
+                offset=offset,
+                filters=filters,
+            )
+        else:
+            matched, total = self._store.search_messages(
+                term,
+                session_key=session_key,
+                role=(kwargs.get("role") or "").strip() or None,
+                limit=limit,
+                offset=offset,
+            )
         terms = [t for t in term.split() if t]
         messages = [_build_search_preview(message, terms) for message in matched]
         next_offset = offset + len(messages)
@@ -247,6 +334,41 @@ class SearchMessagesTool(Tool):
             },
             ensure_ascii=False,
         )
+
+    def _filtered_search_messages(
+        self,
+        *,
+        term: str,
+        session_key: str | None,
+        role: str | None,
+        limit: int,
+        offset: int,
+        filters: dict[str, str],
+    ) -> tuple[list[dict[str, Any]], int]:
+        page_size = 50
+        scan_offset = 0
+        scanned_total = 0
+        filtered: list[dict[str, Any]] = []
+        while scanned_total < 500:
+            page, total = self._store.search_messages(
+                term,
+                session_key=session_key,
+                role=role,
+                limit=page_size,
+                offset=scan_offset,
+            )
+            if not page:
+                break
+            filtered.extend(
+                message for message in page if _message_matches_filters(message, filters)
+            )
+            scanned_total += len(page)
+            scan_offset += len(page)
+            if scan_offset >= total:
+                break
+            if len(filtered) >= offset + limit and scanned_total >= page_size:
+                break
+        return filtered[offset : offset + limit], len(filtered)
 
 
 def _build_search_preview(message: dict[str, Any], query_terms: list[str] | None = None) -> dict[str, Any]:
@@ -269,7 +391,51 @@ def _build_search_preview(message: dict[str, Any], query_terms: list[str] | None
         "total_line_count": line_count,
         "truncated": truncated,
     }
+    for key in (
+        "chat_type",
+        "group_id",
+        "sender_id",
+        "speaker_id",
+        "date",
+        "message_index",
+        "onebot_message_id",
+    ):
+        value = message.get(key)
+        if value not in (None, ""):
+            result[key] = value
     return result
+
+
+def _message_matches_filters(message: dict[str, Any], filters: dict[str, str]) -> bool:
+    group_id = filters.get("group_id", "")
+    if group_id and str(message.get("group_id", "") or "") != group_id:
+        return False
+    speaker_id = filters.get("speaker_id", "")
+    if speaker_id:
+        actual_speaker = str(
+            message.get("speaker_id") or message.get("sender_id") or ""
+        )
+        if actual_speaker != speaker_id:
+            return False
+    date = _message_date(message)
+    exact_date = filters.get("date", "")
+    if exact_date and date != exact_date:
+        return False
+    date_from = filters.get("date_from", "")
+    if date_from and date and date < date_from:
+        return False
+    date_to = filters.get("date_to", "")
+    if date_to and date and date > date_to:
+        return False
+    return True
+
+
+def _message_date(message: dict[str, Any]) -> str:
+    explicit = str(message.get("date", "") or "").strip()
+    if len(explicit) >= 10:
+        return explicit[:10]
+    timestamp = str(message.get("timestamp", "") or "").strip()
+    return timestamp[:10] if len(timestamp) >= 10 else ""
 
 
 def _preview_lines(content: str, *, max_lines: int) -> tuple[str, int, bool]:

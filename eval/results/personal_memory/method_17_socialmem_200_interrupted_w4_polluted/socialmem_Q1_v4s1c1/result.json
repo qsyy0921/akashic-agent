@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_v4s1c1",
+  "question_type": "single-session-preference",
+  "question": "What does Nneka's behavior across the sessions suggest about how she prefers to attend record fairs?",
+  "gold_answer": "Nneka consistently attends fairs alone rather than with the group. In Session 1, when Rashida invited everyone to Fitzroy Fair, Nneka replied 'Going alone. Will share if I find something relevant.' When Rashida pushed back, she explained only: 'I move faster alone.' The same pattern appears in Session 4 ('Going alone regardless.') and is confirmed in Sessions 2, 3, and 5, where she posts finds to the group chat after the fact — a single artist name, year, and label — with no prior coordination. She is not disengaged from the group; she simply does not attend fairs alongside others.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.04,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

@@ -1,0 +1,229 @@
+{
+  "generated_at": 1781005987,
+  "sample_len": 5,
+  "benchmarks": {
+    "ama_bench": {
+      "dataset": "AMA-bench/AMA-bench",
+      "config": "default",
+      "total_rows": 208,
+      "sampled_rows": 5,
+      "num_turns": {
+        "min": 35,
+        "max": 100,
+        "avg": 78.2
+      },
+      "trajectory_items": {
+        "min": 35,
+        "max": 100,
+        "avg": 78.2
+      },
+      "total_tokens": {
+        "min": 6829,
+        "max": 31954,
+        "avg": 18186.4
+      },
+      "qa_pairs": {
+        "min": 12,
+        "max": 12,
+        "avg": 12.0
+      },
+      "qa_type_counts_sample": {
+        "A": 20,
+        "B": 15,
+        "C": 15,
+        "D": 10
+      },
+      "domain_counts_sample": {
+        "Game": 5
+      },
+      "task_type_counts_sample": {
+        "babaisai": 5
+      },
+      "missing_required": [],
+      "adapter_fit": {
+        "trajectory_to_session": "action/observation can be replayed as assistant/tool-style turns",
+        "qa_to_eval": "qa_pairs can be scored with LLM-as-judge or exact semantic judge"
+      },
+      "preview": {
+        "episode_id": 0,
+        "domain": "Game",
+        "task_type": "babaisai",
+        "num_turns": 100,
+        "total_tokens": 13728,
+        "first_trajectory_keys": [
+          "action",
+          "observation",
+          "turn_idx"
+        ],
+        "first_qa_keys": [
+          "answer",
+          "question",
+          "question_uuid",
+          "type"
+        ]
+      }
+    },
+    "memoryarena": {
+      "dataset": "ZexueHe/memoryarena",
+      "total_rows": 701,
+      "configs": {
+        "bundled_shopping": {
+          "total_rows": 150,
+          "sampled_rows": 5,
+          "questions": {
+            "min": 6,
+            "max": 6,
+            "avg": 6.0
+          },
+          "answers": {
+            "min": 6,
+            "max": 6,
+            "avg": 6.0
+          },
+          "background_types_sample": {
+            "none": 5
+          },
+          "category_counts_sample": {
+            "baking_item_0": 1,
+            "baking_item_1": 1,
+            "baking_item_2": 1,
+            "baking_item_3": 1,
+            "baking_item_4": 1
+          },
+          "preview": {
+            "id": 0,
+            "keys": [
+              "answers",
+              "category",
+              "id",
+              "questions"
+            ],
+            "question_count": 6,
+            "answer_count": 6
+          }
+        },
+        "progressive_search": {
+          "total_rows": 221,
+          "sampled_rows": 5,
+          "questions": {
+            "min": 5,
+            "max": 12,
+            "avg": 8.6
+          },
+          "answers": {
+            "min": 5,
+            "max": 12,
+            "avg": 8.6
+          },
+          "background_types_sample": {
+            "none": 5
+          },
+          "category_counts_sample": {},
+          "preview": {
+            "id": 0,
+            "keys": [
+              "answers",
+              "id",
+              "questions"
+            ],
+            "question_count": 9,
+            "answer_count": 9
+          }
+        },
+        "group_travel_planner": {
+          "total_rows": 270,
+          "sampled_rows": 5,
+          "questions": {
+            "min": 6,
+            "max": 8,
+            "avg": 7.4
+          },
+          "answers": {
+            "min": 6,
+            "max": 8,
+            "avg": 7.4
+          },
+          "background_types_sample": {
+            "base_person": 5
+          },
+          "category_counts_sample": {},
+          "preview": {
+            "id": 1,
+            "keys": [
+              "answers",
+              "base_person",
+              "id",
+              "questions"
+            ],
+            "question_count": 8,
+            "answer_count": 8
+          }
+        },
+        "formal_reasoning_math": {
+          "total_rows": 40,
+          "sampled_rows": 5,
+          "questions": {
+            "min": 5,
+            "max": 11,
+            "avg": 7.8
+          },
+          "answers": {
+            "min": 5,
+            "max": 11,
+            "avg": 7.8
+          },
+          "background_types_sample": {
+            "list": 5
+          },
+          "category_counts_sample": {},
+          "preview": {
+            "id": 0,
+            "keys": [
+              "answers",
+              "backgrounds",
+              "id",
+              "paper_name",
+              "questions"
+            ],
+            "question_count": 5,
+            "answer_count": 5
+          }
+        },
+        "formal_reasoning_phys": {
+          "total_rows": 20,
+          "sampled_rows": 5,
+          "questions": {
+            "min": 3,
+            "max": 12,
+            "avg": 6.0
+          },
+          "answers": {
+            "min": 3,
+            "max": 12,
+            "avg": 6.0
+          },
+          "background_types_sample": {
+            "list": 5
+          },
+          "category_counts_sample": {},
+          "preview": {
+            "id": 0,
+            "keys": [
+              "answers",
+              "backgrounds",
+              "id",
+              "paper_name",
+              "questions"
+            ],
+            "question_count": 3,
+            "answer_count": 3
+          }
+        }
+      },
+      "adapter_fit": {
+        "multi_session": "questions can be replayed sequentially as subtasks in one benchmark workspace",
+        "memory_dependency": "later subtasks should depend on facts, constraints, or results from earlier subtasks"
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q7_f6a7b8c9",
+  "question_type": "single-session-user",
+  "question": "What does the conversation reveal about the history between Jordan and Sam?",
+  "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 18.65,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

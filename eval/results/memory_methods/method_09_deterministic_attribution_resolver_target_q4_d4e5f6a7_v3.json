@@ -1,0 +1,139 @@
+{
+  "timestamp": "2026-06-18T00:43:33.918725",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_09_deterministic_attribution_resolver_target_q4_v3",
+  "method_config": "experiments\\memory_methods\\method_09_deterministic_attribution_resolver\\config.json",
+  "memory_method": {
+    "method_id": "method_09_deterministic_attribution_resolver",
+    "strategy": "deterministic_attribution_resolver",
+    "description": "Benchmark-only raw-message-first method that deterministically resolves speaker/order/exception/update answer candidates before final LLM generation.",
+    "options": {
+      "basis": [
+        "method_08 raw evidence table",
+        "source_ref grounded speaker attribution",
+        "message_index ordering",
+        "deterministic candidate selection before generation"
+      ]
+    },
+    "config_path": "experiments\\memory_methods\\method_09_deterministic_attribution_resolver\\config.json"
+  },
+  "offset": 10,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": false,
+  "scores": {
+    "overall": {
+      "f1": 0.0625,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0,
+      "judge_acc": 1.0
+    },
+    "by_type": {
+      "single-session-user": {
+        "f1": 0.0625,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0,
+        "judge_acc": 1.0
+      }
+    }
+  },
+  "judge_acc": 1.0,
+  "results": [
+    {
+      "question_id": "socialmem_Q4_d4e5f6a7",
+      "question_type": "single-session-user",
+      "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+      "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+      "predicted_answer": "A. Jordan.\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:13,lme:socialmem_Q4_d4e5f6a7:15]§",
+      "tool_chain": [
+        {
+          "text": "",
+          "calls": [
+            {
+              "call_id": "call_8e79d8f13b924256afbe3821",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "query": "preference for quieter venues where people can have a real conversation",
+                "description": "Search memory for venue preference",
+                "limit": 10
+              },
+              "final_arguments": {
+                "query": "preference for quieter venues where people can have a real conversation",
+                "description": "Search memory for venue preference",
+                "limit": 10
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"deterministic_resolution\": {\"resolution_type\": \"source_evidence_candidate\", \"selected_candidate\": {\"answer\": \"Jordan\", \"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"message_index\": 14, \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"Quieter. Better.\", \"answer_type\": \"speaker\", \"score\": 4, \"distinctive_terms\": [\"quieter\"], \"matched_terms\": [\"quieter\"], \"selection_basis\": \"distinctive_exact_query_terms\"}, \"ranked_candidates\": [{\"answer\": \"Jordan\", \"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"message_index\": 14, \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"Quieter. Better.\", \"answer_type\": \"speaker\", \"score\": 4, \"distinctive_terms\": [\"quieter\"], \"matched_terms\": [\"quieter\"], \"selection_basis\": \"distinctive_exact_query_terms\"}, {\"answer\": \"Priya\", \"speaker\": \"Priya\", \"speaker_id\": \"p_p3c4d5e6\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:15\", \"message_index\": 16, \"seq\": 15, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"yes please! honestly I just want somewhere you can actually have a conversation 😭\", \"answer_type\": \"speaker\", \"score\": 2, \"distinctive_terms\": [\"conversation\"], \"matched_terms\": [\"conversation\"], \"selection_basis\": \"distinctive_exact_query_terms\"}], \"decision_rule\": \"best_source_overlap_candidate\", \"confidence\": \"high\", \"must_follow\": true}, \"selected_candidate\": {\"answer\": \"Jordan\", \"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"message_index\": 14, \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"Quieter. Better.\", \"answer_type\": \"speaker\", \"score\": 4, \"distinctive_terms\": [\"quieter\"], \"matched_terms\": [\"quieter\"], \"selection_basis\": \"distinctive_exact_query_terms\"}, \"answer_candidate\": \"Jordan\", \"resolved_answer_candidates\": [{\"answer\": \"Jordan\", \"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"message_index\": 14, \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"Quieter. Better.\", \"answer_type\": \"speaker\", \"score\": 4, \"distinctive_terms\": [\"quieter\"], \"matched_terms\": [\"quieter\"], \"selection_basis\": \"distinctive_exact_query_terms\"}], \"answer_contract\": \"For speaker_attribution, message_order, exception_negation, and update_change questions, use selected_candidate from deterministic_resolution as the answer candidate unless a later fetch_messages result explicitly contradicts its source_ref.\", \"count\": 0, \"items\": [], \"raw_message_first\": true, \"evidence_table\": [{\"row_id\": \"raw:lme:socialmem_Q4_d4e5f6a7:13\", \"rank\": 3, \"raw_rank\": 3, \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"speaker_id\": \"p_j2b3c4d5\", \"speaker\": \"Jordan\", \"message_index\": 14, \"matched_query\": \"preference for quieter venues where people can have a real conversation\", \"matched_terms\": [\"quieter\"], \"matched_slots\": [\"implicit_preference\", \"query_overlap\"], \"quote\": \"Quieter. Better.\", \"preview\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t013 speaker_id=p_j2b3c4d5 message_index=14] Jordan: Quieter. Better.\", \"in_source_ref\": true}], \"search_plan\": {\"slot_labels\": [\"implicit_preference\"], \"question_names\": [], \"queries_used\": [\"preference for quieter venues where people can have a real conversation\"], \"matched_raw_count\": 12, \"speaker_evidence_summary\": [{\"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"first_source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"first_message_index\": 14, \"matched_terms\": [\"quieter\"], \"evidence_count\": 1, \"quote\": \"Quieter. Better.\"}], \"candidate_answer_hints\": [{\"answer\": \"Jordan\", \"speaker\": \"Jordan\", \"speaker_id\": \"p_j2b3c4d5\", \"source_ref\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"message_index\": 14, \"seq\": 13, \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"date\": \"2025-01-06\", \"quote\": \"Quieter. Better.\", \"answer_type\": \"speaker\", \"score\": 4, \"distinctive_terms\": [\"quieter\"], \"matched_terms\": [\"quieter\"], \"selection_basis\": \"distinctive_exact_query_terms\"}], \"recommended_next_tool\": \"fetch_messages\", \"candidate_source_refs\": [\"lme:socialmem_Q4_d4e5f6a7:13\"], \"answer_rules\": [\"Use deterministic_resolution.selected_candidate.answer as the answer candidate.\", \"Use deterministic_resolution.selected_candidate.source_ref as the citation source.\", \"Competing rows were suppressed after deterministic source-grounded resolution to avoid re-ranking by quote length.\"], \"note\": \"Contract-only deterministic resolution is active: the selected candidate was chosen from raw source evidence before generation, and competing rows are intentionally withheld unless additional fetch_messages contradicts it.\"}, \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 0, \"hyde_hypotheses\": [], \"method_id\": \"method_09_deterministic_attribution_resolver\", \"strategy\": \"deterministic_attribution_resolver\", \"raw_message_first_engine\": true, \"raw_message_first\": true, \"raw_queries\": [\"preference for quieter venues where people can have a real conversation\"], \"raw_hit_count\": 12, \"deterministic_resolution\": true, \"resolution_type\": \"source_evidence_candidate\"}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [\"lme:socialmem_Q4_d4e5f6a7:13\"], \"citation_rule\": \"若最终回复使用了 memory item，用 item id；若使用 raw evidence，可使用 source_ref 作为引用 id。\", \"resolution_contract_only\": true, \"suppressed_competing_evidence_count\": 11}"
+            }
+          ]
+        },
+        {
+          "text": "Let me fetch the source messages to verify.",
+          "calls": [
+            {
+              "call_id": "call_067c808778624872a32337af",
+              "name": "fetch_messages",
+              "status": "success",
+              "arguments": {
+                "source_refs": [
+                  "lme:socialmem_Q4_d4e5f6a7:13",
+                  "lme:socialmem_Q4_d4e5f6a7:15"
+                ],
+                "context": 3,
+                "description": "Fetch original messages for venue preference"
+              },
+              "final_arguments": {
+                "source_refs": [
+                  "lme:socialmem_Q4_d4e5f6a7:13",
+                  "lme:socialmem_Q4_d4e5f6a7:15"
+                ],
+                "context": 3,
+                "description": "Fetch original messages for venue preference"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 9, \"matched_count\": 2, \"messages\": [{\"id\": \"lme:socialmem_Q4_d4e5f6a7:10\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 10, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t010 speaker_id=p_m1a2b3c4 message_index=11] Maya: ok so not Mariposa. that herb ruins everything ngl\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:11\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 11, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t011 speaker_id=p_p3c4d5e6 message_index=12] Priya: lol ok ok fair\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:12\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 12, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t012 speaker_id=p_p3c4d5e6 message_index=13] Priya: what about the noodle place on Judah? honestly I've heard it's really good, and it looks calm enough that we could actually sit and talk\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 13, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t013 speaker_id=p_j2b3c4d5 message_index=14] Jordan: Quieter. Better.\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:14\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 14, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t014 speaker_id=p_l5e6f7a8 message_index=15] Lena: Works for me! Should I book for 11:30? 😊\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:15\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 15, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t015 speaker_id=p_p3c4d5e6 message_index=16] Priya: yes please! honestly I just want somewhere you can actually have a conversation 😭\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:16\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 16, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t016 speaker_id=p_j2b3c4d5 message_index=17] Jordan: noted.\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:17\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 17, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t017 speaker_id=p_l5e6f7a8 message_index=18] Lena: Booked! Table for 5 at 11:30 on Sunday 😊\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:18\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 18, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t018 speaker_id=p_m1a2b3c4 message_index=19] Maya: ok so perfect, see everyone Sunday 🙌\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}]}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 3,
+        "turn_input_sum_tokens": 20422,
+        "turn_input_peak_tokens": 8524,
+        "final_call_input_tokens": 8524,
+        "cache_prompt_tokens": 44713,
+        "cache_hit_tokens": 28224
+      },
+      "elapsed_s": 23.66,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_09_deterministic_attribution_resolver",
+        "strategy": "deterministic_attribution_resolver",
+        "description": "Benchmark-only raw-message-first method that deterministically resolves speaker/order/exception/update answer candidates before final LLM generation.",
+        "options": {
+          "basis": [
+            "method_08 raw evidence table",
+            "source_ref grounded speaker attribution",
+            "message_index ordering",
+            "deterministic candidate selection before generation"
+          ]
+        },
+        "config_path": "experiments\\memory_methods\\method_09_deterministic_attribution_resolver\\config.json"
+      },
+      "judge_correct": true
+    }
+  ]
+}

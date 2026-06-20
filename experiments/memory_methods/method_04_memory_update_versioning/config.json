@@ -1,0 +1,9 @@
+{
+  "method_id": "method_04_memory_update_versioning",
+  "strategy": "memory_update_versioning",
+  "description": "For update-like questions, prefer newer candidate memories and shadow older conflicting candidates by signature.",
+  "options": {
+    "keep_shadowed": false
+  }
+}
+

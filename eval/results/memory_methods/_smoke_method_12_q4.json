@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-06-18T03:50:57.317738",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\_smoke_method_12_q4",
+  "method_config": "experiments\\memory_methods\\method_12_question_aware_structured_router\\config.json",
+  "memory_method": {
+    "method_id": "method_12_question_aware_structured_router",
+    "strategy": "question_aware_structured_router",
+    "description": "Use the original benchmark question/options to session-scope memory2 raw-event retrieval, remove generic terms and option-name-only scoring, and return a compact source-grounded evidence table before final generation.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "base_retrieval": "adaptive_intent_versioned",
+      "all_raw_event_backfill": true,
+      "all_raw_event_backfill_limit": 100000,
+      "all_raw_event_backfill_chunk_size": 200,
+      "selected_evidence_limit": 8,
+      "summary_pollution": false,
+      "wrap_search_fetch_tools": false,
+      "question_context": true,
+      "session_scoped_raw_events": true
+    },
+    "config_path": "experiments\\memory_methods\\method_12_question_aware_structured_router\\config.json"
+  },
+  "offset": 10,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": true,
+  "scores": {
+    "overall": {
+      "f1": 0.2632,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0
+    },
+    "by_type": {
+      "single-session-user": {
+        "f1": 0.2632,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": null,
+  "results": [
+    {
+      "question_id": "socialmem_Q4_d4e5f6a7",
+      "question_type": "single-session-user",
+      "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+      "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+      "predicted_answer": "A. Jordan — he said \"Quieter. Better.\" when responding to the noodle place suggestion.\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:13,lme:socialmem_Q4_d4e5f6a7:15]§",
+      "tool_chain": [
+        {
+          "text": "Let me fetch the source message with context to verify.",
+          "calls": [
+            {
+              "call_id": "call_ddff41885da84d4a88b2ec35",
+              "name": "fetch_messages",
+              "status": "success",
+              "arguments": {
+                "source_ref": "lme:socialmem_Q4_d4e5f6a7:13",
+                "context": 3,
+                "description": "Fetch Jordan's quieter quote context"
+              },
+              "final_arguments": {
+                "source_ref": "lme:socialmem_Q4_d4e5f6a7:13",
+                "context": 3,
+                "description": "Fetch Jordan's quieter quote context"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 7, \"matched_count\": 1, \"messages\": [{\"id\": \"lme:socialmem_Q4_d4e5f6a7:10\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 10, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t010 speaker_id=p_m1a2b3c4 message_index=11] Maya: ok so not Mariposa. that herb ruins everything ngl\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:11\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 11, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t011 speaker_id=p_p3c4d5e6 message_index=12] Priya: lol ok ok fair\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:12\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 12, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t012 speaker_id=p_p3c4d5e6 message_index=13] Priya: what about the noodle place on Judah? honestly I've heard it's really good, and it looks calm enough that we could actually sit and talk\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:13\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 13, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t013 speaker_id=p_j2b3c4d5 message_index=14] Jordan: Quieter. Better.\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:14\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 14, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t014 speaker_id=p_l5e6f7a8 message_index=15] Lena: Works for me! Should I book for 11:30? 😊\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:15\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 15, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t015 speaker_id=p_p3c4d5e6 message_index=16] Priya: yes please! honestly I just want somewhere you can actually have a conversation 😭\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q4_d4e5f6a7:16\", \"session_key\": \"lme:socialmem_Q4_d4e5f6a7\", \"seq\": 16, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_1a2b3c4d session=grp_1a2b3c4d_s01 session_index=1 date=2025-01-06 turn_id=grp_1a2b3c4d_s01_t016 speaker_id=p_j2b3c4d5 message_index=17] Jordan: noted.\", \"timestamp\": \"2025-01-06T00:00:00+00:00\", \"in_source_ref\": false}]}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 2,
+        "turn_input_sum_tokens": 26265,
+        "turn_input_peak_tokens": 13722,
+        "final_call_input_tokens": 13722,
+        "cache_prompt_tokens": 41885,
+        "cache_hit_tokens": 32960
+      },
+      "elapsed_s": 10.14,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_12_question_aware_structured_router",
+        "strategy": "question_aware_structured_router",
+        "description": "Use the original benchmark question/options to session-scope memory2 raw-event retrieval, remove generic terms and option-name-only scoring, and return a compact source-grounded evidence table before final generation.",
+        "options": {
+          "schema_tables": [
+            "memory_raw_events",
+            "memory_entities",
+            "memory_event_facts",
+            "memory_assertions",
+            "memory_relation_facts"
+          ],
+          "base_retrieval": "adaptive_intent_versioned",
+          "all_raw_event_backfill": true,
+          "all_raw_event_backfill_limit": 100000,
+          "all_raw_event_backfill_chunk_size": 200,
+          "selected_evidence_limit": 8,
+          "summary_pollution": false,
+          "wrap_search_fetch_tools": false,
+          "question_context": true,
+          "session_scoped_raw_events": true
+        },
+        "config_path": "experiments\\memory_methods\\method_12_question_aware_structured_router\\config.json"
+      },
+      "judge_correct": null
+    }
+  ]
+}

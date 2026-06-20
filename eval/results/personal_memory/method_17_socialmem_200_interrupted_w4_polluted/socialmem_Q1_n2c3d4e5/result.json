@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_n2c3d4e5",
+  "question_type": "single-session-preference",
+  "question": "What do the conversations reveal about how Tobenna feels about discussing his job search with the family?",
+  "gold_answer": "Tobenna consistently avoids the topic. In Session 3, when Ngozi asked about the job search, Tobenna responded with monkey-covering-eyes emoji followed by 'Did anyone watch the Arsenal game?' — a complete subject change. In Session 5 he gave a vague 'Not yet Mum, soon though' before Adaora's situation took over. He never provides any substance on the job front, always deflecting with humor, emoji, or a redirect. The pattern suggests the search isn't going well and he doesn't want to discuss it.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 9.56,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

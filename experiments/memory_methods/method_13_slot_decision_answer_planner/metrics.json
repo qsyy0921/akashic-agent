@@ -1,0 +1,99 @@
+{
+  "method_id": "method_13_slot_decision_answer_planner",
+  "generated_at": "2026-06-18T05:21:12.062765",
+  "result_path": "eval\\results\\memory_methods\\method_13_slot_decision_answer_planner.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_13_slot_decision_answer_planner",
+  "memory_method": {
+    "method_id": "method_13_slot_decision_answer_planner",
+    "strategy": "slot_decision_answer_planner",
+    "description": "Inherit question-aware structured retrieval, then convert slot_decision into an explicit answer_plan with per-option support/contradiction, ordered evidence, update trajectory, and final answer constraints.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "base_retrieval": "adaptive_intent_versioned",
+      "all_raw_event_backfill": true,
+      "all_raw_event_backfill_limit": 100000,
+      "all_raw_event_backfill_chunk_size": 200,
+      "selected_evidence_limit": 8,
+      "answer_plan_row_limit": 32,
+      "summary_pollution": false,
+      "wrap_search_fetch_tools": false,
+      "question_context": true,
+      "session_scoped_raw_events": true,
+      "answer_plan": true
+    },
+    "config_path": "experiments\\memory_methods\\method_13_slot_decision_answer_planner\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3164,
+      "em": 0.0,
+      "judge_acc": 0.74,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3661,
+        "em": 0.0,
+        "judge_acc": 0.6364,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2737,
+        "em": 0.0,
+        "judge_acc": 0.7647,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.3244,
+        "em": 0.0,
+        "judge_acc": 0.7727,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.74,
+  "latency": {
+    "avg_elapsed_s": 19.6274,
+    "p50_elapsed_s": 18.315,
+    "p95_elapsed_s": 33.37
+  },
+  "token_usage": {
+    "avg_token_usage": 53384.12,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 53384.12,
+    "avg_final_call_input_tokens_estimate": 34812.78,
+    "avg_cache_prompt_tokens": 81002.7,
+    "avg_cache_hit_tokens": 33434.88,
+    "avg_answer_chars": 442.36,
+    "avg_tool_result_chars": 82610.56,
+    "avg_tool_calls": 2.48
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 13,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 4,
+      "memory_write_failure": 8,
+      "personal_preference_attribution_error": 4,
+      "retrieval_failure": 1,
+      "retrieved_but_evidence_unused": 4
+    }
+  }
+}

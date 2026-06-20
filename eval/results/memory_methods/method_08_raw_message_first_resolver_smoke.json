@@ -1,0 +1,172 @@
+{
+  "timestamp": "2026-06-18T00:18:08.666971",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_08_raw_message_first_resolver_smoke",
+  "method_config": "experiments\\memory_methods\\method_08_raw_message_first_resolver\\config.json",
+  "memory_method": {
+    "method_id": "method_08_raw_message_first_resolver",
+    "strategy": "raw_message_first_resolver",
+    "description": "Replace benchmark recall_memory with a raw-message-first resolver that returns compact source evidence rows from SessionStore without modifying memory summaries.",
+    "options": {
+      "raw_limit": 12,
+      "context": 1
+    },
+    "config_path": "experiments\\memory_methods\\method_08_raw_message_first_resolver\\config.json"
+  },
+  "offset": 0,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": true,
+  "scores": {
+    "overall": {
+      "f1": 0.2174,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0
+    },
+    "by_type": {
+      "single-session-preference": {
+        "f1": 0.2174,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": null,
+  "results": [
+    {
+      "question_id": "socialmem_Q1_c0s3c1",
+      "question_type": "single-session-preference",
+      "question": "What does Josh's behavior in the group chat suggest about how he handles questions about his own career?",
+      "gold_answer": "Josh consistently deflects questions about his career with self-deprecating humour and then redirects to someone else. In Session 3, when Leon asked what everyone was up to professionally, Josh responded: 'still in the same chair 😂😂 living the dream' — and immediately pivoted to Priya. In Session 5, he used the same 'same chair' line again. He does not engage with follow-up, does not offer detail about what he actually does or wants, and accepts Mei's gentle reframe ('you know everything') with 'haha, very kind' — another deflection. The pattern is consistent across sessions and the self-deprecation is the tell.",
+      "predicted_answer": "Josh tends to deflect with self-deprecating humor and quickly redirect — when Mei pointed out he'd been at the same job six years, he just said \"haha 😂 very kind\" and changed the subject rather than engaging.\n\n§cited:[lme:socialmem_Q1_c0s3c1:43,lme:socialmem_Q1_c0s3c1:32]§",
+      "tool_chain": [
+        {
+          "text": "",
+          "calls": [
+            {
+              "call_id": "call_9ae500ffecc34747baf5bc99",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "query": "Josh behavior group chat questions about his career",
+                "description": "Recall Josh's career-related behavior"
+              },
+              "final_arguments": {
+                "query": "Josh behavior group chat questions about his career",
+                "description": "Recall Josh's career-related behavior"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 1, \"items\": [{\"id\": \"4bbf623676af\", \"memory_type\": \"event\", \"summary\": \"[2025-10-06 00:00] 用户向助手展示了一段 group chat 的记录，聊天内容涉及计划月底周四在 Soho 进行季度聚会，参与者讨论了时间安排、地点选择和出席确认。\", \"score\": 0.25, \"evidence\": [{\"kind\": \"message\", \"refs\": [\"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\"], \"resolver\": \"session\", \"source_ref\": \"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\", \"metadata\": {}}], \"signals\": {}, \"source_ref\": \"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\"}], \"raw_message_first\": true, \"evidence_table\": [{\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:32\", \"rank\": 14, \"raw_rank\": 1, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:32\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 32, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 3, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\", \"negation_or_exception_signal\"], \"quote\": \"Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:2\", \"rank\": 2, \"raw_rank\": 2, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:2\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 2, \"timestamp\": \"2025-10-06T00:00:00+00:00\", \"date\": \"2025-10-06\", \"speaker_id\": \"p_c0c3d4e5\", \"speaker\": \"Priya\", \"message_index\": 3, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"I'm in 🙂 need this\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:36\", \"rank\": 18, \"raw_rank\": 3, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:36\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 36, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0c3d4e5\", \"speaker\": \"Priya\", \"message_index\": 7, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"thank you both. coffee with one person I can do, group unpacking no\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:45\", \"rank\": 26, \"raw_rank\": 4, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:45\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 45, \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"date\": \"2025-11-03\", \"speaker_id\": \"p_c0d4e5f6\", \"speaker\": \"Leon\", \"message_index\": 6, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\", \"negation_or_exception_signal\"], \"quote\": \"ironically yes. I miss the tiny booth more than another investor dinner at this point\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:31\", \"rank\": 13, \"raw_rank\": 5, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:31\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 31, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0c3d4e5\", \"speaker\": \"Priya\", \"message_index\": 2, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"good question 🙂 it's fine, just a steep learning curve. rather talk about it in person\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:33\", \"rank\": 15, \"raw_rank\": 6, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:33\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 33, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0a1b2c3\", \"speaker\": \"Mei\", \"message_index\": 4, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\", \"query_overlap\"], \"quote\": \"fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:30\", \"rank\": 12, \"raw_rank\": 7, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:30\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 30, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0a1b2c3\", \"speaker\": \"Mei\", \"message_index\": 1, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\", \"query_overlap\"], \"quote\": \"Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:43\", \"rank\": 24, \"raw_rank\": 8, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:43\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 43, \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"date\": \"2025-11-03\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 4, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"haha 😂 very kind\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:19\", \"rank\": 8, \"raw_rank\": 9, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:19\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 19, \"timestamp\": \"2025-10-13T00:00:00+00:00\", \"date\": \"2025-10-13\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 10, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"documented and legally binding\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:39\", \"rank\": 21, \"raw_rank\": 10, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:39\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 39, \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"date\": \"2025-10-27\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 10, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"Look at that, governance achieved\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:29\", \"rank\": 11, \"raw_rank\": 11, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:29\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 29, \"timestamp\": \"2025-10-20T00:00:00+00:00\", \"date\": \"2025-10-20\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 10, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\"], \"quote\": \"correct. logistics, the true love language\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language\", \"in_source_ref\": true}, {\"row_id\": \"raw:lme:socialmem_Q1_c0s3c1:8\", \"rank\": 5, \"raw_rank\": 12, \"source_ref\": \"lme:socialmem_Q1_c0s3c1:8\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 8, \"timestamp\": \"2025-10-06T00:00:00+00:00\", \"date\": \"2025-10-06\", \"speaker_id\": \"p_c0b2c3d4\", \"speaker\": \"Josh\", \"message_index\": 9, \"matched_query\": \"Josh behavior group chat questions about his career\", \"matched_slots\": [\"implicit_preference\", \"negation_or_exception_signal\"], \"quote\": \"You say that like it's a threat and not the brand\", \"preview\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand\", \"in_source_ref\": true}], \"search_plan\": {\"slot_labels\": [\"implicit_preference\"], \"question_names\": [\"Josh\"], \"queries_used\": [\"Josh behavior group chat questions about his career\"], \"matched_raw_count\": 12, \"recommended_next_tool\": \"fetch_messages\", \"candidate_source_refs\": [\"lme:socialmem_Q1_c0s3c1:32\", \"lme:socialmem_Q1_c0s3c1:2\", \"lme:socialmem_Q1_c0s3c1:36\", \"lme:socialmem_Q1_c0s3c1:45\", \"lme:socialmem_Q1_c0s3c1:31\", \"lme:socialmem_Q1_c0s3c1:33\", \"lme:socialmem_Q1_c0s3c1:30\", \"lme:socialmem_Q1_c0s3c1:43\", \"lme:socialmem_Q1_c0s3c1:19\", \"lme:socialmem_Q1_c0s3c1:39\", \"lme:socialmem_Q1_c0s3c1:29\", \"lme:socialmem_Q1_c0s3c1:8\"], \"answer_rules\": [\"Answer only from retrieved evidence; if source evidence is missing, search_messages first.\", \"For preference questions, distinguish explicit statements from indirect avoidance or repeated behavior.\"], \"note\": \"Use evidence_table rows as raw source evidence. Do not answer speaker/order/exception/update questions from memory summaries alone.\"}, \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 1, \"hyde_hypotheses\": [], \"method_id\": \"method_08_raw_message_first_resolver\", \"strategy\": \"raw_message_first_resolver\", \"raw_message_first_engine\": true, \"raw_message_first\": true, \"raw_queries\": [\"Josh behavior group chat questions about his career\"], \"raw_hit_count\": 12}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [\"4bbf623676af\", \"lme:socialmem_Q1_c0s3c1:32\", \"lme:socialmem_Q1_c0s3c1:2\", \"lme:socialmem_Q1_c0s3c1:36\", \"lme:socialmem_Q1_c0s3c1:45\", \"lme:socialmem_Q1_c0s3c1:31\", \"lme:socialmem_Q1_c0s3c1:33\", \"lme:socialmem_Q1_c0s3c1:30\", \"lme:socialmem_Q1_c0s3c1:43\", \"lme:socialmem_Q1_c0s3c1:19\", \"lme:socialmem_Q1_c0s3c1:39\", \"lme:socialmem_Q1_c0s3c1:29\", \"lme:socialmem_Q1_c0s3c1:8\"], \"citation_rule\": \"若最终回复使用了 memory item，用 item id；若使用 raw evidence，可使用 source_ref 作为引用 id。\"}"
+            }
+          ]
+        },
+        {
+          "text": "调用工具 search_messages",
+          "calls": [
+            {
+              "call_id": "call_7758e2f93b0c4651a0fb40d8",
+              "name": "search_messages",
+              "status": "success",
+              "arguments": {
+                "query": "Josh career job work",
+                "session_key": "lme:socialmem_Q1_c0s3c1",
+                "speaker_id": "p_c0b2c3d4",
+                "description": "Search Josh career-related messages"
+              },
+              "final_arguments": {
+                "query": "Josh career job work",
+                "session_key": "lme:socialmem_Q1_c0s3c1",
+                "speaker_id": "p_c0b2c3d4",
+                "description": "Search Josh career-related messages"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 0, \"matched_count\": 0, \"limit\": 10, \"offset\": 0, \"has_more\": false, \"next_offset\": null, \"messages\": []}"
+            }
+          ]
+        },
+        {
+          "text": null,
+          "calls": [
+            {
+              "call_id": "call_8e56aeec56214085a2e0f1e8",
+              "name": "fetch_messages",
+              "status": "success",
+              "arguments": {
+                "source_ref": "lme:socialmem_Q1_c0s3c1:43",
+                "context": 6,
+                "description": "Fetch Josh's Nov 3 chat context"
+              },
+              "final_arguments": {
+                "source_ref": "lme:socialmem_Q1_c0s3c1:43",
+                "context": 6,
+                "description": "Fetch Josh's Nov 3 chat context"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 13, \"matched_count\": 1, \"messages\": [{\"id\": \"lme:socialmem_Q1_c0s3c1:37\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 37, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:38\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 38, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:39\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 39, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:40\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 40, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:41\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 41, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:42\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 42, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:43\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 43, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q1_c0s3c1:44\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 44, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:45\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 45, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:46\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 46, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:47\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 47, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:48\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 48, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:49\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 49, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith\", \"timestamp\": \"2025-11-03T00:00:00+00:00\", \"in_source_ref\": false}]}"
+            },
+            {
+              "call_id": "call_c49ded2bcf8f4cc08f7fb45f",
+              "name": "fetch_messages",
+              "status": "success",
+              "arguments": {
+                "source_ref": "lme:socialmem_Q1_c0s3c1:32",
+                "context": 6,
+                "description": "Fetch Josh's Oct 27 chat context"
+              },
+              "final_arguments": {
+                "source_ref": "lme:socialmem_Q1_c0s3c1:32",
+                "context": 6,
+                "description": "Fetch Josh's Oct 27 chat context"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 13, \"matched_count\": 1, \"messages\": [{\"id\": \"lme:socialmem_Q1_c0s3c1:26\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 26, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics\", \"timestamp\": \"2025-10-20T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:27\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 27, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly\", \"timestamp\": \"2025-10-20T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:28\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 28, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction\", \"timestamp\": \"2025-10-20T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:29\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 29, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language\", \"timestamp\": \"2025-10-20T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:30\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 30, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:31\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 31, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:32\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 32, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q1_c0s3c1:33\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 33, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:34\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 34, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:35\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 35, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:36\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 36, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:37\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 37, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q1_c0s3c1:38\", \"session_key\": \"lme:socialmem_Q1_c0s3c1\", \"seq\": 38, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like\", \"timestamp\": \"2025-10-27T00:00:00+00:00\", \"in_source_ref\": false}]}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 4,
+        "turn_input_sum_tokens": 37567,
+        "turn_input_peak_tokens": 13785,
+        "final_call_input_tokens": 13785,
+        "cache_prompt_tokens": 73116,
+        "cache_hit_tokens": 49728
+      },
+      "elapsed_s": 29.63,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_08_raw_message_first_resolver",
+        "strategy": "raw_message_first_resolver",
+        "description": "Replace benchmark recall_memory with a raw-message-first resolver that returns compact source evidence rows from SessionStore without modifying memory summaries.",
+        "options": {
+          "raw_limit": 12,
+          "context": 1
+        },
+        "config_path": "experiments\\memory_methods\\method_08_raw_message_first_resolver\\config.json"
+      },
+      "judge_correct": null
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -24,6 +25,12 @@ from agent.tool_runtime import (
     tool_call_batch_snapshot,
 )
 from agent.tools.base import normalize_tool_result
+from agent.tools.artifacts import (
+    ToolArtifact,
+    artifacts_to_dicts,
+    extract_tool_artifacts,
+    image_paths_from_artifacts,
+)
 from agent.tools.tool_search import ToolSearchTool
 from agent.turns.outbound import OutboundDispatch, OutboundPort
 from bus.event_bus import EventBus
@@ -35,6 +42,7 @@ from bus.events_lifecycle import (
 from agent.lifecycle.phase import Phase
 from agent.lifecycle.phases.after_reasoning import (
     AfterReasoningFrame,
+    _CHATGPT_IMAGEGEN_TOOL,
     default_after_reasoning_modules,
 )
 from agent.lifecycle.phases.after_step import AfterStepFrame, default_after_step_modules
@@ -104,6 +112,7 @@ logger = logging.getLogger(__name__)
 # ── 被动 turn 内联常量 ──────────────────────────────────────────
 _SAFETY_RETRY_RATIOS = (1.0, 0.5, 0.0)
 _SUMMARY_MAX_TOKENS = 512
+_ARXIV_SEARCH_TOOL = "mcp_arxiv__arxiv_search"
 _INCOMPLETE_SUMMARY_PROMPT = """当前任务需要先暂停继续调用工具，请直接输出给用户看的中文阶段性回复。
 必须基于已有上下文，不要编造结果。
 必须包含四点：
@@ -134,6 +143,73 @@ def _disabled_tools_from_msg(msg: object) -> set[str]:
     if isinstance(raw, (list, tuple, set)):
         return {str(item) for item in raw if str(item)}
     return set()
+
+
+def _artifacts_for_paths(
+    artifacts: list[ToolArtifact],
+    paths: list[str],
+) -> list[ToolArtifact]:
+    wanted = set(paths)
+    return [artifact for artifact in artifacts if artifact.path in wanted]
+
+
+def _format_arxiv_push_message(result: object) -> str:
+    data = _json_dict_from_tool_result(result)
+    if not data or data.get("success") is not True:
+        return ""
+    papers = data.get("papers")
+    if not isinstance(papers, list) or not papers:
+        query = str(data.get("query") or "").strip()
+        return f"arXiv 没搜到相关论文。{f'查询：{query}' if query else ''}".strip()
+    query = str(data.get("query") or "").strip()
+    lines = ["arXiv 搜索结果"]
+    if query:
+        lines.append(f"查询：{query}")
+    for index, paper in enumerate(papers[:5], start=1):
+        if not isinstance(paper, dict):
+            continue
+        title = _compact_line(paper.get("title"), 140)
+        authors = paper.get("authors")
+        if isinstance(authors, list):
+            author_text = ", ".join(str(item) for item in authors[:3] if str(item).strip())
+            if len(authors) > 3:
+                author_text += " 等"
+        else:
+            author_text = ""
+        published = str(paper.get("published") or "")[:10]
+        category = str(paper.get("primary_category") or "").strip()
+        summary = _compact_line(paper.get("summary"), 180)
+        abstract_url = str(paper.get("abstract_url") or "").strip()
+        pdf_url = str(paper.get("pdf_url") or "").strip()
+        lines.append("")
+        lines.append(f"{index}. {title}")
+        details = " | ".join(item for item in (author_text, category, published) if item)
+        if details:
+            lines.append(details)
+        if summary:
+            lines.append(summary)
+        if abstract_url:
+            lines.append(f"Abstract: {abstract_url}")
+        if pdf_url:
+            lines.append(f"PDF: {pdf_url}")
+    return "\n".join(lines).strip()
+
+
+def _json_dict_from_tool_result(result: object) -> dict[str, Any]:
+    if not isinstance(result, str) or not result.strip():
+        return {}
+    try:
+        parsed = json.loads(result)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _compact_line(value: object, limit: int) -> str:
+    text = " ".join(str(value or "").split())
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip() + "…"
 
 
 class _NoopOutboundPort:
@@ -619,6 +695,7 @@ class DefaultReasoner(Reasoner):
         context: "ContextBuilder | None" = None,
         session_manager: "SessionManager | None" = None,
         event_bus: "EventBus | None" = None,
+        outbound_port: "OutboundPort | None" = None,
     ) -> None:
         self._llm = llm
         self._llm_config = llm_config
@@ -628,6 +705,7 @@ class DefaultReasoner(Reasoner):
         self._memory_window = memory_window
         self._context = context
         self._session_manager = session_manager
+        self._outbound_port = outbound_port or _NoopOutboundPort()
         self._event_bus = event_bus
         self._prompt_render_plugin_modules: list[object] = []
         self._before_step_plugin_modules: list[object] = []
@@ -934,6 +1012,10 @@ class DefaultReasoner(Reasoner):
         tools_used: list[str] = []
         tools_unlocked: list[str] = []
         tool_chain: list[dict[str, Any]] = []
+        artifacts_by_call_id: dict[str, list[dict[str, Any]]] = {}
+        auto_dispatched_artifacts_by_call_id: dict[str, list[dict[str, Any]]] = {}
+        auto_dispatched_by_call_id: dict[str, list[str]] = {}
+        auto_dispatched_text_by_call_id: dict[str, str] = {}
         # 2. 初始化本轮可见工具集合。
         visible_names: set[str] | None = None
         visible_order: list[str] | None = None
@@ -1275,6 +1357,112 @@ class DefaultReasoner(Reasoner):
                         status=exec_result.status,
                     ))
                     normalized = normalize_tool_result(result)
+                    artifacts = (
+                        extract_tool_artifacts(tool_call.name, normalized.text)
+                        if exec_result.status == "success"
+                        else []
+                    )
+                    if artifacts:
+                        artifacts_by_call_id[tool_call.id] = artifacts_to_dicts(artifacts)
+                    if (
+                        exec_result.status == "success"
+                        and tool_call.name == _CHATGPT_IMAGEGEN_TOOL
+                    ):
+                        imagegen_payload = _json_dict_from_tool_result(normalized.text)
+                        if imagegen_payload.get("success") is False:
+                            disabled.add(_CHATGPT_IMAGEGEN_TOOL)
+                            result = (
+                                f"{normalized.text}\n\n"
+                                "[系统提示] 图片生成工具本轮已经失败。"
+                                "不要再次调用同一个 imagegen 工具重试；"
+                                "请直接向用户说明 ChatGPT 网页端没有产出图片，并建议稍后重试。"
+                            )
+                            normalized = normalize_tool_result(result)
+                            logger.warning(
+                                "[imagegen失败禁用重试] tool_call=%s error=%s",
+                                tool_call.id,
+                                imagegen_payload.get("error"),
+                            )
+                        image_paths = image_paths_from_artifacts(artifacts)
+                        if image_paths and tool_event_channel and tool_event_chat_id:
+                            first_image = image_paths[0]
+                            first_artifacts = _artifacts_for_paths(artifacts, [first_image])
+                            sent = await self._outbound_port.dispatch(
+                                OutboundDispatch(
+                                    channel=tool_event_channel,
+                                    chat_id=tool_event_chat_id,
+                                    content="",
+                                    media=[first_image],
+                                    metadata={
+                                        "auto_dispatched": True,
+                                        "source_tool": tool_call.name,
+                                        "tool_call_id": tool_call.id,
+                                    },
+                                )
+                            )
+                            if sent:
+                                auto_dispatched_by_call_id[tool_call.id] = [first_image]
+                                auto_dispatched_artifacts_by_call_id[tool_call.id] = (
+                                    artifacts_to_dicts(first_artifacts)
+                                )
+                                result = (
+                                    f"{normalized.text}\n\n"
+                                    "[系统提示] 第一张生成图片已自动推送给用户。"
+                                    "不要再调用 read_image_vision 或 message_push 发送同一张图片；"
+                                    "直接用简短文字确认即可。"
+                                )
+                                normalized = normalize_tool_result(result)
+                                logger.info(
+                                    "[imagegen即时推送] tool_call=%s image=%s",
+                                    tool_call.id,
+                                    first_image,
+                                )
+                            else:
+                                logger.warning(
+                                    "[imagegen即时推送失败] tool_call=%s image=%s",
+                                    tool_call.id,
+                                    first_image,
+                                )
+                    if (
+                        exec_result.status == "success"
+                        and tool_call.name == _ARXIV_SEARCH_TOOL
+                        and tool_event_channel == "telegram"
+                        and tool_event_chat_id
+                    ):
+                        push_text = _format_arxiv_push_message(normalized.text)
+                        if push_text:
+                            sent = await self._outbound_port.dispatch(
+                                OutboundDispatch(
+                                    channel=tool_event_channel,
+                                    chat_id=tool_event_chat_id,
+                                    content=push_text,
+                                    metadata={
+                                        "auto_dispatched": True,
+                                        "source_tool": tool_call.name,
+                                        "tool_call_id": tool_call.id,
+                                        "strategy": "arxiv_result_push",
+                                    },
+                                )
+                            )
+                            if sent:
+                                auto_dispatched_text_by_call_id[tool_call.id] = push_text
+                                result = (
+                                    f"{normalized.text}\n\n"
+                                    "[系统提示] arXiv 搜索结果已主动推送给 Telegram 用户。"
+                                    "不要再调用 message_push 重复发送同一批论文；"
+                                    "直接用简短文字确认即可。"
+                                )
+                                normalized = normalize_tool_result(result)
+                                logger.info(
+                                    "[arxiv主动推送] tool_call=%s chars=%d",
+                                    tool_call.id,
+                                    len(push_text),
+                                )
+                            else:
+                                logger.warning(
+                                    "[arxiv主动推送失败] tool_call=%s",
+                                    tool_call.id,
+                                )
                     _result_preview = support.log_preview(normalized.preview())
                     _result_len = len(normalized.preview() or "")
                     await self._observe_tool_call_completed(
@@ -1356,6 +1544,19 @@ class DefaultReasoner(Reasoner):
                                 }
                                 for item in exec_result.post_hook_trace
                             ],
+                            "artifacts": artifacts_by_call_id.get(tool_call.id, []),
+                            "auto_dispatched_artifacts": auto_dispatched_artifacts_by_call_id.get(
+                                tool_call.id,
+                                [],
+                            ),
+                            "auto_dispatched_media": auto_dispatched_by_call_id.get(
+                                tool_call.id,
+                                [],
+                            ),
+                            "auto_dispatched_text": auto_dispatched_text_by_call_id.get(
+                                tool_call.id,
+                                "",
+                            ),
                             "result": normalized.preview(),
                         }
                     )

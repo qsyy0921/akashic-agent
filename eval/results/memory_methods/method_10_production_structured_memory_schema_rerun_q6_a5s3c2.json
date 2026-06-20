@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-06-18T02:35:30.528450",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_10_production_structured_memory_schema",
+  "method_config": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json",
+  "memory_method": {
+    "method_id": "method_10_production_structured_memory_schema",
+    "strategy": "production_structured_memory_schema",
+    "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "attach_signal": "structured_evidence",
+      "backfill_on_query": true,
+      "raw_event_backfill_limit": 50000,
+      "raw_event_backfill_chunk_size": 500,
+      "summary_pollution": false
+    },
+    "config_path": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json"
+  },
+  "offset": 49,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": false,
+  "scores": {
+    "overall": {
+      "f1": 0.2687,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0,
+      "judge_acc": 1.0
+    },
+    "by_type": {
+      "single-session-preference": {
+        "f1": 0.2687,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0,
+        "judge_acc": 1.0
+      }
+    }
+  },
+  "judge_acc": 1.0,
+  "results": [
+    {
+      "question_id": "socialmem_Q6_a5s3c2",
+      "question_type": "single-session-preference",
+      "question": "The group has a norm of raising issues in the chat before contacting the council. Does that norm apply to everyone?\n\nOptions:\nA. Claudette\nB. Femi\nC. Jordan\nD. Vera",
+      "gold_answer": "D. Vera\nNo — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her own objection to the council before the group had even agreed to a joint letter. In Session 3, after Marcus's school gate near-miss, she posted: 'Didn't post here first. Needed immediate action.' She is aware of the norm — she flags her departure from it rather than ignoring it — but she does not consider the norm binding on herself. Femi has gently challenged this twice; Vera has acknowledged and continued. The norm is real for the rest of the group but Vera operates outside it consistently.",
+      "predicted_answer": "**D. Vera**\n\nThe norm of raising issues in the chat before contacting the council doesn't apply to everyone—Vera had already sent her concerns directly to the council before the group discussion.",
+      "tool_chain": [
+        {
+          "text": "",
+          "calls": [
+            {
+              "call_id": "call_d8f1c41845b5403eb4a9b31b",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "query": "group norm raising issues in chat before contacting council",
+                "description": "Search for group norm about raising issues before contacting council"
+              },
+              "final_arguments": {
+                "query": "group norm raising issues in chat before contacting council",
+                "description": "Search for group norm about raising issues before contacting council"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 0, \"items\": [], \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 0, \"hyde_hypotheses\": []}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [], \"citation_rule\": \"若最终回复使用了本工具返回的任何记忆条目，必须在正文末尾输出 §cited:[实际使用的id列表]§\"}"
+            }
+          ]
+        },
+        {
+          "text": null,
+          "calls": [
+            {
+              "call_id": "call_dd9c64fcac8149b99986f7fc",
+              "name": "search_messages",
+              "status": "success",
+              "arguments": {
+                "query": "group norm issues chat before contacting council",
+                "description": "Search for discussions about group norm regarding council contact"
+              },
+              "final_arguments": {
+                "query": "group norm issues chat before contacting council",
+                "description": "Search for discussions about group norm regarding council contact"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 5, \"matched_count\": 5, \"limit\": 10, \"offset\": 0, \"has_more\": false, \"next_offset\": null, \"messages\": [{\"id\": \"lme:socialmem_Q6_a5s3c2:6\", \"source_ref\": \"lme:socialmem_Q6_a5s3c2:6\", \"session_key\": \"lme:socialmem_Q6_a5s3c2\", \"seq\": 6, \"role\": \"user\", \"timestamp\": \"2025-05-05T00:00:00+00:00\", \"matched_terms\": [\"before\", \"council\"], \"preview\": \"[SocialMemBench network=grp_5e6f7a8b session=grp_5e6f7a8b_s01 session_index=1 date=2025-05-05 turn_id=grp_5e6f7a8b_s01_t006 speaker_id=p_a5a1b2c3 message_index=7] Femi: Every name helps, Jordan. Thanks all, I'll draft something and share it here before we send. Let's keep it on the street first before anyone goes straight to the council.\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q6_a5s3c2:10\", \"source_ref\": \"lme:socialmem_Q6_a5s3c2:10\", \"session_key\": \"lme:socialmem_Q6_a5s3c2\", \"seq\": 10, \"role\": \"user\", \"timestamp\": \"2025-05-12T00:00:00+00:00\", \"matched_terms\": [\"before\", \"council\"], \"preview\": \"[SocialMemBench network=grp_5e6f7a8b session=grp_5e6f7a8b_s02 session_index=2 date=2025-05-12 turn_id=grp_5e6f7a8b_s02_t000 speaker_id=p_a5a1b2c3 message_index=1] Femi: Quick question for the street, the council is consulting on a Residents' Parking Zone for our road. Proposal is controlled hours Mon–Fri 8am–6pm, permits at £80/year. Thoughts? I want to know where everyone stands before the meeting.\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q6_a5s3c2:30\", \"source_ref\": \"lme:socialmem_Q6_a5s3c2:30\", \"session_key\": \"lme:socialmem_Q6_a5s3c2\", \"seq\": 30, \"role\": \"user\", \"timestamp\": \"2025-05-26T00:00:00+00:00\", \"matched_terms\": [\"before\", \"council\"], \"preview\": \"[SocialMemBench network=grp_5e6f7a8b session=grp_5e6f7a8b_s04 session_index=4 date=2025-05-26 turn_id=grp_5e6f7a8b_s04_t000 speaker_id=p_a5a1b2c3 message_index=1] Femi: Quick question for the street, summer street party! I know Len used to organise this but since he moved I've gone ahead and booked the road closure for the last Saturday of July. Same format as before: tables out front, bring something to share. Is everyone in? Need to know numbers for the council permit.\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q6_a5s3c2:7\", \"source_ref\": \"lme:socialmem_Q6_a5s3c2:7\", \"session_key\": \"lme:socialmem_Q6_a5s3c2\", \"seq\": 7, \"role\": \"user\", \"timestamp\": \"2025-05-05T00:00:00+00:00\", \"matched_terms\": [\"council\"], \"preview\": \"[SocialMemBench network=grp_5e6f7a8b session=grp_5e6f7a8b_s01 session_index=1 date=2025-05-05 turn_id=grp_5e6f7a8b_s01_t007 speaker_id=p_a5d4e5f6 message_index=8] Vera: Already sent mine to the council. Main concerns: scaffolding access, parking disruption during works.\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q6_a5s3c2:3\", \"source_ref\": \"lme:socialmem_Q6_a5s3c2:3\", \"session_key\": \"lme:socialmem_Q6_a5s3c2\", \"seq\": 3, \"role\": \"user\", \"timestamp\": \"2025-05-05T00:00:00+00:00\", \"matched_terms\": [\"before\"], \"preview\": \"[SocialMemBench network=grp_5e6f7a8b session=grp_5e6f7a8b_s01 session_index=1 date=2025-05-05 turn_id=grp_5e6f7a8b_s01_t003 speaker_id=p_a5a1b2c3 message_index=4] Femi: Good points both. Just checking, does anyone want to do a joint letter? A collective objection carries more weight than individual ones. Worth considering before Friday.\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}]}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 3,
+        "turn_input_sum_tokens": 16263,
+        "turn_input_peak_tokens": 6412,
+        "final_call_input_tokens": 6412,
+        "cache_prompt_tokens": 40184,
+        "cache_hit_tokens": 37888
+      },
+      "elapsed_s": 14.66,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_10_production_structured_memory_schema",
+        "strategy": "production_structured_memory_schema",
+        "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+        "options": {
+          "schema_tables": [
+            "memory_raw_events",
+            "memory_entities",
+            "memory_event_facts",
+            "memory_assertions",
+            "memory_relation_facts"
+          ],
+          "attach_signal": "structured_evidence",
+          "backfill_on_query": true,
+          "raw_event_backfill_limit": 50000,
+          "raw_event_backfill_chunk_size": 500,
+          "summary_pollution": false
+        },
+        "config_path": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json"
+      },
+      "judge_correct": true
+    }
+  ]
+}

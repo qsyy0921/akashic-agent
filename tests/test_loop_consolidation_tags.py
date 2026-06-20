@@ -6,6 +6,7 @@ def test_format_pending_items_keeps_allowed_tags_only():
         [
             {"tag": "identity", "content": "长期维护一个个人项目，主要使用 Python。"},
             {"tag": "preference", "content": "回复保持简洁。"},
+            {"tag": "agent_context", "content": "Akashic dashboard 当前运行在 127.0.0.1:2236。"},
             {"tag": "unknown", "content": "should be dropped"},
             {"tag": "", "content": "empty tag should be dropped"},
             {"tag": "requested_memory", "content": ""},
@@ -14,6 +15,7 @@ def test_format_pending_items_keeps_allowed_tags_only():
 
     assert "- [identity] 长期维护一个个人项目，主要使用 Python。" in text
     assert "- [preference] 回复保持简洁。" in text
+    assert "- [agent_context] Akashic dashboard 当前运行在 127.0.0.1:2236。" in text
     assert "should be dropped" not in text
 
 

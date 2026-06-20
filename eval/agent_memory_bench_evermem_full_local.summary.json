@@ -1,0 +1,19 @@
+{
+  "cases": 2400,
+  "by_source": {
+    "evermembench_dynamic:qars_reference": 2400
+  },
+  "by_question_type": {
+    "single-session-user": 2400
+  },
+  "haystack_sessions": {
+    "min": 1,
+    "max": 18,
+    "avg": 6.65
+  },
+  "haystack_turns": {
+    "min": 4,
+    "max": 96,
+    "avg": 30.12
+  }
+}

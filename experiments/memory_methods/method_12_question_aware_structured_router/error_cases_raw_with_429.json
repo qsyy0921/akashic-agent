@@ -1,0 +1,374 @@
+[
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2727,
+    "em": false,
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "predicted_answer": "Leon shares career wins openly and initiates professional check-ins; Mei pushes for group career conversations as solidarity and values collective processing; Priya actively resists group career talk, preferring one-on-one; Josh deflects his own career status with self-deprecating humor but champions others' privacy and has real conversations off-stage.\n\n§cited:[lme:socialmem_Q3_c0s3c2:30,lme:socialmem_Q3_c0s3c2:33,lme:socialmem_Q3_c0s3c2:20,lme:socialmem_Q3_c0s3c2:22,lme:socialmem_Q3_c0s3c2:23,lme:socialmem_Q3_c0s3c2:26,lme:socialmem_Q3_c0s3c2:27,lme:socialmem_Q3_c0s3c2:31,lme:socialmem_Q3_c0s3c2:32,lme:socialmem_Q3_c0s3c2:36,lme:socialmem_Q3_c0s3c2:40,lme:socialmem_Q3_c0s3c2:41,lme:socialmem_Q3_c0s3c2:42]§",
+    "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 3,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 21.86,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_c0s5c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "The group has a norm of not recruiting each other or soliciting referrals in the chat. Does everyone follow it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "B. Leon\nNo — Leon breaks it repeatedly. In Session 5, after announcing Bloomberg coverage, he asked: 'if you know anyone who'd want to invest let me know.' This is a direct solicitation in the group chat — exactly what the norm prohibits. He had also used the chat as a broadcast channel for his startup's press mentions from Session 1 onward, framing it as news but with an implicit ask. Leon's relationship with the group norms is transactional — he follows them when convenient and bypasses them when they serve him.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 25.15,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_e1f2a3b4",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": null,
+    "f1": 0.0,
+    "em": false,
+    "question": "What did the group decide about where to go for drinks after dinner? Did everyone seem equally on board?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "D. Sam\nThe group decided on Rooftop Fox, a loud rooftop bar. Most members confirmed quickly — Lena was enthusiastic, Jordan said 'Fine,' and Priya joined late and called it 'perfect.' Sam was the exception: when asked directly, Sam initially responded with only '...' and then, when prompted again, gave a minimal 'sure.' Sam later asked about outdoor seating but didn't raise any objection — their reluctance was visible only through the silence and delayed response.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 17.73,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_e5f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What is Jordan's attitude toward team sports and group physical activities? And who in the conversation revealed this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Jordan strongly dislikes team sports and group fitness activities. This was revealed by Maya in Session 2. When Jordan bluntly declined an invitation to Priya's office football event, Maya immediately said 'yeah figured, team sports aren't really your thing' — demonstrating that she already knew about this preference without needing to ask. Jordan confirmed with 'Still no.' but Maya's comment was the revealing moment: she had prior knowledge of Jordan's aversion and stated it as a known fact.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.47,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3165,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "The conversation reveals they share a past incident at Mt. Tam (Mount Tamalpais) where something happened to Jordan that they haven't fully recovered from—Jordan deflects questions about it by saying \"Ask Sam,\" suggesting Sam was either involved or present when it happened.\n\n§cited:[lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:37,lme:socialmem_Q7_f6a7b8c9:40]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 17.48,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_d0e1f2a3",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3951,
+    "em": false,
+    "question": "Did Sam's willingness to participate in outdoor activities like hiking change across the conversations?",
+    "predicted_answer": "Based on the evidence across five sessions, Sam's willingness to participate in outdoor activities didn't fundamentally change — Sam remained generally agreeable to group outings throughout (said \"sure\" to rooftop bar in s03, was \"already there\" early in s05). The only instance where Sam declined a specific outdoor activity was hiking in s04 (Jan 27), citing an ankle injury (\"ankle still isn't great\"), which was a physical limitation rather than a shift in willingness.\n\n§cited:[lme:socialmem_Q8_d0e1f2a3:68,lme:socialmem_Q8_d0e1f2a3:70,lme:socialmem_Q8_d0e1f2a3:55,lme:socialmem_Q8_d0e1f2a3:49,lme:socialmem_Q8_d0e1f2a3:90,lme:socialmem_Q8_d0e1f2a3:92§",
+    "gold_answer": "Yes. In Sessions 1–3, Sam showed no objection to group outdoor activities — there was no mention of hiking limitations. In Session 4, when Priya mentioned hiking trails on the Sonoma trip, Sam immediately said 'I'll sit the hiking out.' When Maya asked if they were OK, Sam explained 'ankle still isn't great' — suggesting a recent injury that had changed their ability or willingness to hike. The shift was clear and sudden, anchored to the ankle injury, which Sam mentioned only briefly and didn't elaborate on.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 33.71,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_n2f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2245,
+    "em": false,
+    "question": "Has Ngozi's cooking changed in any way recently, and who in the family figured this out without being told?",
+    "predicted_answer": "Emeka noticed that Mum's cooking had become slightly lighter than usual, and Adaora also picked up on it separately. The change was in the seasoning/spicing being lighter.\n\n§cited:[lme:socialmem_Q5_n2f6a7b8:16,lme:socialmem_Q5_n2f6a7b8:18]§",
+    "gold_answer": "Ngozi's cooking has become less salty, apparently on doctor's advice. This was figured out by Emeka. In Session 2, after multiple family members noted the pepper soup tasted different, Emeka said 'Less seasoning I think. Mum might have been told to ease off the salt' — reasoning through the change without being told directly. Ngozi denied it, but Emeka's inference was drawn from pattern recognition, not from Ngozi disclosing anything.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 10.75,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_n2a7b8c9",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "The family seems to assume that when Ngozi cooks for Christmas, everyone eats what she makes. Is that assumption accurate for all members?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "A. Adaora\nNot for Adaora. While Emeka and Tobenna enthusiastically requested specific dishes from Ngozi's traditional spread, Adaora quietly tried to steer toward plant-based options and said she'd been 'eating a bit differently lately.' In Session 5, she tried to bring her own dish — a lentil preparation — and told her mother she'd explain properly when she was home. The family norm assumes everyone eats the full traditional Christmas menu, but Adaora has a significant dietary restriction she has not yet disclosed.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 12.66,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2d0e1f2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2185,
+    "em": false,
+    "question": "How did Emeka's stance on coming home for Christmas change from the beginning to the end of the conversations?",
+    "predicted_answer": "Emeka started noncommittal (\"We'll see what Adaeze's schedule looks like\"), then shifted to wanting to host the family in London instead, but eventually agreed to come home after both parents pressed him.\n\n§cited:[lme:socialmem_Q8_n2d0e1f2:2,lme:socialmem_Q8_n2d0e1f2:9,lme:socialmem_Q8_n2d0e1f2:29,lme:socialmem_Q8_n2d0e1f2:50,lme:socialmem_Q8_n2d0e1f2:51]§",
+    "gold_answer": "Emeka moved from open-ended stalling to a firm commitment under parental pressure. In Session 1, he said he'd 'see what Adaeze's schedule looks like' and would know 'in a few weeks.' In Session 4, he tried again — citing Adaeze's work event on the 24th as a reason they might arrive Christmas morning instead of Christmas Eve. Chidi's single-line response ('Emeka. You are coming on Christmas Eve.') ended it immediately; Emeka replied 'Yes Dad, we'll make it work.' The shift was from strategic delay to compliance.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 17.3,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 9.05,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_r3a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.53,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0741,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "C. Marcus — Cass has explicitly said she'd prefer a woodland section rather than the challenging push-through approach Dani favors.\n\n§cited:[lme:socialmem_Q6_r3c1d2e3:4,lme:socialmem_Q6_r3c1d2e3:3,lme:socialmem_Q6_r3c1d2e3:7]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.55,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3226,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka posts only when she buys — always in the same terse format (artist, year, label) — and consistently goes for vintage originals in soul and Brazilian music (Luiz Bonfá, Bobby Womack, Millie Jackson), suggesting a focused collector targeting specific 1950s–70s original pressings rather than browsing broadly.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 11.68,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes. Gil went from being a steady, engaged participant who offered expertise and copies freely (Fitzroy sessions) to explicitly questioning whether a fair is \"specialist or commercial\" and initially declining Camden (\"Probably not. Too many Taylor Swift reissues in those rooms now\"), but he still showed up — targeting only the specialist stalls, where he found the Ebo Taylor original at the Archway Specialist stall. His approach shifted from broadly present to selectively hunting.\n\n§cited:[1670b4f44997,8fde3d1cc7ff,cda858dd6459]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 26.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3418,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's engagement escalated then receded: in sessions 1–2 he was a measured policy advocate flagging school gate parking hazards; in session 3, after a near-miss involving his son, it spiked to urgent personal crisis (\"I'm shaking,\" \"raising this formally today\"); by sessions 4–5 he had shifted entirely to positive community participation (street party, face painting), with no further traffic or safety discussion.\n\n§cited:[lme:socialmem_Q8_a5s3c1:2,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:20,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:32,lme:socialmem_Q8_a5s3c1:43]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 29.35,
+    "error": null
+  }
+]

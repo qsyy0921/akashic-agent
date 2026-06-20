@@ -1,0 +1,12 @@
+{
+  "method_id": "method_16_conservative_precision_gate",
+  "strategy": "conservative_precision_gate",
+  "description": "Gate Method 15 precision reranking so only narrow option-style attribution slots override Method 14 compact facts.",
+  "options": {
+    "selected_evidence_limit": 8,
+    "consolidated_facts_per_session": 160,
+    "consolidated_fact_limit": 6,
+    "precision_raw_scan_limit": 24,
+    "precision_candidate_limit": 5
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_a1b2c3d4",
+  "question_type": "single-session-preference",
+  "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+  "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.1,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q7_n2b8c9d0",
+  "question_type": "single-session-user",
+  "question": "What does the family chat reveal about Chidi's role in family discussions?",
+  "gold_answer": "Chidi participates infrequently and briefly, but his messages carry decisive weight. He typically arrives late to a conversation that has already been debated at length, then issues a short statement that ends the discussion. In Session 2, when the family had been going back and forth about Ngozi's cooking, Chidi arrived late with simply 'The soup was fine.' — which closed the subject. Emeka acknowledged this dynamic directly: 'Dad always has the final word.' In Session 4, a single line from Chidi ('Emeka. You are coming on Christmas Eve.') ended Emeka's weeks of stalling.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.06,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

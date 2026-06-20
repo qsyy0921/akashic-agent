@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q7_r3a7b8c9",
+  "question_type": "single-session-user",
+  "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+  "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 13.66,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

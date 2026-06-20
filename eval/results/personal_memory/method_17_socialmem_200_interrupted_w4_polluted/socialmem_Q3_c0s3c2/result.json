@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q3_c0s3c2",
+  "question_type": "single-session-user",
+  "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+  "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 18.33,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

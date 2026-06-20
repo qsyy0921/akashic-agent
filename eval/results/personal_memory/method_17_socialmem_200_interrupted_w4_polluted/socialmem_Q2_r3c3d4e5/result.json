@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q2_r3c3d4e5",
+  "question_type": "single-session-user",
+  "question": "The group has a September and October big-hike tradition. Does everyone participate in autumn hikes?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+  "gold_answer": "D. Yusuf\nNo — Yusuf is unavailable for weekend hikes from October through December every year due to teaching and marking commitments. He stated this directly in Session 4: 'Regrettably I'm unavailable weekends from the 1st of October through to December. Marking season. I have mentioned this before.' He confirmed in the same session that Saturdays in October are also marking days. Bev noted the group should 'write this down' — suggesting it has been forgotten multiple times.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 22.57,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

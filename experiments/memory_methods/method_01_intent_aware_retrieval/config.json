@@ -1,0 +1,9 @@
+{
+  "method_id": "method_01_intent_aware_retrieval",
+  "strategy": "intent_aware_retrieval",
+  "description": "Classify the question intent and run an intent-specific retrieval lane before the baseline fallback lane.",
+  "options": {
+    "lane_limit": 12
+  }
+}
+

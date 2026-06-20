@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q4_c0s2c2",
+  "question_type": "single-session-user",
+  "question": "Both Mei and Leon present themselves confidently in the group chat when discussing career. Who is projecting success they have not fully achieved, and who is reporting genuine accomplished progress?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+  "gold_answer": "C. Mei\nMei is reporting genuine, accomplished progress — she was promoted to team lead, manages eight people, and discusses real management challenges with specificity. Leon is projecting success in terms that are impressive-sounding but incomplete: TechCrunch coverage, Bloomberg coverage, Series A funding — but also 'close to profitability' and 'it's been a journey,' which signals the destination hasn't arrived. He uses aspirational language ('trajectory is there') rather than achieved milestones. Both sound confident, but Mei's confidence is retrospective; Leon's is prospective.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 19.92,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

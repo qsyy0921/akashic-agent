@@ -1,0 +1,8 @@
+{
+  "method_id": "method_07_source_grounded_slot_resolver",
+  "strategy": "source_grounded_slot_resolver",
+  "description": "Resolve personal-assistant memory questions through slot-aware retrieval, source_ref/message-order evidence rows, and explicit fetch/search guidance for attribution, exception, preference, and update questions.",
+  "options": {
+    "candidate_limit": 16
+  }
+}

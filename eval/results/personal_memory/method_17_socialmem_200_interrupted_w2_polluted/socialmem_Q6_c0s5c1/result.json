@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q6_c0s5c1",
+  "question_type": "single-session-preference",
+  "question": "The group has a norm of not recruiting each other or soliciting referrals in the chat. Does everyone follow it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+  "gold_answer": "B. Leon\nNo — Leon breaks it repeatedly. In Session 5, after announcing Bloomberg coverage, he asked: 'if you know anyone who'd want to invest let me know.' This is a direct solicitation in the group chat — exactly what the norm prohibits. He had also used the chat as a broadcast channel for his startup's press mentions from Session 1 onward, framing it as news but with an implicit ask. Leon's relationship with the group norms is transactional — he follows them when convenient and bypasses them when they serve him.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 16.78,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

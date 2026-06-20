@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-06-18T02:34:46.194923",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_10_production_structured_memory_schema",
+  "method_config": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json",
+  "memory_method": {
+    "method_id": "method_10_production_structured_memory_schema",
+    "strategy": "production_structured_memory_schema",
+    "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "attach_signal": "structured_evidence",
+      "backfill_on_query": true,
+      "raw_event_backfill_limit": 50000,
+      "raw_event_backfill_chunk_size": 500,
+      "summary_pollution": false
+    },
+    "config_path": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json"
+  },
+  "offset": 32,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": false,
+  "scores": {
+    "overall": {
+      "f1": 0.4528,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0,
+      "judge_acc": 0.0
+    },
+    "by_type": {
+      "single-session-user": {
+        "f1": 0.4528,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0,
+        "judge_acc": 0.0
+      }
+    }
+  },
+  "judge_acc": 0.0,
+  "results": [
+    {
+      "question_id": "socialmem_Q5_r3e5f6a7",
+      "question_type": "single-session-user",
+      "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+      "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+      "predicted_answer": "Cass prefers plant-based food. Bev clearly knows — she asked about plant-based options at Blackmoor Cafe specifically on Cass's behalf, and Cass confirmed she's usually fine if they have soup. Dani also appeared aware, saying she'd check the cafe's offerings.\n\n§cited:[]§",
+      "tool_chain": [
+        {
+          "text": "",
+          "calls": [
+            {
+              "call_id": "call_8186634afc1241aebd190522",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "query": "Cass dietary preferences cafe stop planning",
+                "description": "Search Cass dietary preferences",
+                "limit": 10
+              },
+              "final_arguments": {
+                "query": "Cass dietary preferences cafe stop planning",
+                "description": "Search Cass dietary preferences",
+                "limit": 10
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 0, \"items\": [], \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 0, \"hyde_hypotheses\": []}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [], \"citation_rule\": \"若最终回复使用了本工具返回的任何记忆条目，必须在正文末尾输出 §cited:[实际使用的id列表]§\"}"
+            }
+          ]
+        },
+        {
+          "text": null,
+          "calls": [
+            {
+              "call_id": "call_e24a6c683dd4489ebe5d8af2",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "query": "Cass food diet allergy",
+                "description": "Search Cass food diet",
+                "limit": 10
+              },
+              "final_arguments": {
+                "query": "Cass food diet allergy",
+                "description": "Search Cass food diet",
+                "limit": 10
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 0, \"items\": [], \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 0, \"hyde_hypotheses\": []}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [], \"citation_rule\": \"若最终回复使用了本工具返回的任何记忆条目，必须在正文末尾输出 §cited:[实际使用的id列表]§\"}"
+            },
+            {
+              "call_id": "call_bf3d31929f174dbf8330cc01",
+              "name": "search_messages",
+              "status": "success",
+              "arguments": {
+                "query": "Cass dietary cafe",
+                "description": "Search Cass dietary cafe",
+                "limit": 10
+              },
+              "final_arguments": {
+                "query": "Cass dietary cafe",
+                "description": "Search Cass dietary cafe",
+                "limit": 10
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 10, \"matched_count\": 20, \"limit\": 10, \"offset\": 0, \"has_more\": true, \"next_offset\": 10, \"messages\": [{\"id\": \"lme:socialmem_Q5_r3e5f6a7:22\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:22\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 22, \"role\": \"user\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"matched_terms\": [\"Cass\", \"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t009 speaker_id=p_r3c3d4e5 message_index=10] Bev: Does the Blackmoor Cafe at the trailhead have plant-based options? asking for Cass 😊\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:32\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:32\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 32, \"role\": \"user\", \"timestamp\": \"2025-03-17T00:00:00+00:00\", \"matched_terms\": [\"Cass\", \"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s03 session_index=3 date=2025-03-17 turn_id=grp_3c4d5e6f_s03_t007 speaker_id=p_r3c3d4e5 message_index=8] Bev: Cass is right tbh! And honestly if we're routing anyway let's find somewhere with a better cafe on the return 😂\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:54\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:54\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 54, \"role\": \"user\", \"timestamp\": \"2025-03-31T00:00:00+00:00\", \"matched_terms\": [\"Cass\", \"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s05 session_index=5 date=2025-03-31 turn_id=grp_3c4d5e6f_s05_t004 speaker_id=p_r3a1b2c3 message_index=5] Dani: Marcus the south face is a gentle grassy slope! 😂 Cass I'm going to need sources on the lapwing thing. Bev there's a cafe in the village at the end\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:24\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:24\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 24, \"role\": \"user\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"matched_terms\": [\"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t011 speaker_id=p_r3a1b2c3 message_index=12] Dani: Ok ok I'll check the cafe 😂 September it is, I'll send dates!\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:2\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:2\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 2, \"role\": \"user\", \"timestamp\": \"2025-03-03T00:00:00+00:00\", \"matched_terms\": [\"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s01 session_index=1 date=2025-03-03 turn_id=grp_3c4d5e6f_s01_t002 speaker_id=p_r3c3d4e5 message_index=3] Bev: Is there a cafe on the ridgeline route? 🙏 I need to know the tea situation before I commit 😂\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:3\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:3\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 3, \"role\": \"user\", \"timestamp\": \"2025-03-03T00:00:00+00:00\", \"matched_terms\": [\"cafe\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s01 session_index=1 date=2025-03-03 turn_id=grp_3c4d5e6f_s01_t003 speaker_id=p_r3a1b2c3 message_index=4] Dani: BEV 😂 we can do the Heron Cafe at the end! No stopping mid-route though, we need to maintain pace\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:10\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:10\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 10, \"role\": \"user\", \"timestamp\": \"2025-03-03T00:00:00+00:00\", \"matched_terms\": [\"Cass\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s01 session_index=1 date=2025-03-03 turn_id=grp_3c4d5e6f_s01_t010 speaker_id=p_r3e5f6a7 message_index=11] Cass: Millbrook\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:23\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:23\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 23, \"role\": \"user\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"matched_terms\": [\"Cass\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t010 speaker_id=p_r3e5f6a7 message_index=11] Cass: haha thanks Bev. yeah I'll check, usually fine if they have soup\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:57\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:57\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 57, \"role\": \"user\", \"timestamp\": \"2025-03-31T00:00:00+00:00\", \"matched_terms\": [\"Cass\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s05 session_index=5 date=2025-03-31 turn_id=grp_3c4d5e6f_s05_t007 speaker_id=p_r3c3d4e5 message_index=8] Bev: Cass and I vote woodland. Marcus probably does too. Dani the group speaks 😂\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:56\", \"source_ref\": \"lme:socialmem_Q5_r3e5f6a7:56\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 56, \"role\": \"user\", \"timestamp\": \"2025-03-31T00:00:00+00:00\", \"matched_terms\": [\"Cass\"], \"preview\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s05 session_index=5 date=2025-03-31 turn_id=grp_3c4d5e6f_s05_t006 speaker_id=p_r3e5f6a7 message_index=7] Cass: sending the BTO survey link. three years of site data. I'm not inventing it Dani\", \"preview_line_count\": 1, \"total_line_count\": 1, \"truncated\": false}]}"
+            }
+          ]
+        },
+        {
+          "text": null,
+          "calls": [
+            {
+              "call_id": "call_46442a7d137a4205b7b6bfc8",
+              "name": "fetch_messages",
+              "status": "success",
+              "arguments": {
+                "source_ref": "lme:socialmem_Q5_r3e5f6a7:22",
+                "context": 5,
+                "description": "Fetch Cass plant-based context"
+              },
+              "final_arguments": {
+                "source_ref": "lme:socialmem_Q5_r3e5f6a7:22",
+                "context": 5,
+                "description": "Fetch Cass plant-based context"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 11, \"matched_count\": 1, \"messages\": [{\"id\": \"lme:socialmem_Q5_r3e5f6a7:17\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 17, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t004 speaker_id=p_r3b2c3d4 message_index=5] Marcus: Should be fine. What are the descent sections like?\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:18\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 18, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t005 speaker_id=p_r3a1b2c3 message_index=6] Dani: Technical on the north face, straightforward on the south. Total scrambling maybe 200m? It's class A, totally manageable 🙌\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:19\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 19, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t006 speaker_id=p_r3b2c3d4 message_index=7] Marcus: I can take the south route on descent 👍\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:20\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 20, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t007 speaker_id=p_r3d4e5f6 message_index=8] Yusuf: Doable. Though regrettably September may be difficult for me.\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:21\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 21, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t008 speaker_id=p_r3a1b2c3 message_index=9] Dani: Yusuf you always say that about September! 😂 We'll do a Saturday so you can come\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:22\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 22, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t009 speaker_id=p_r3c3d4e5 message_index=10] Bev: Does the Blackmoor Cafe at the trailhead have plant-based options? asking for Cass 😊\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": true}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:23\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 23, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t010 speaker_id=p_r3e5f6a7 message_index=11] Cass: haha thanks Bev. yeah I'll check, usually fine if they have soup\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:24\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 24, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s02 session_index=2 date=2025-03-10 turn_id=grp_3c4d5e6f_s02_t011 speaker_id=p_r3a1b2c3 message_index=12] Dani: Ok ok I'll check the cafe 😂 September it is, I'll send dates!\", \"timestamp\": \"2025-03-10T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:25\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 25, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s03 session_index=3 date=2025-03-17 turn_id=grp_3c4d5e6f_s03_t000 speaker_id=p_r3a1b2c3 message_index=1] Dani: Brilliant day!! 🏔️🏔️🏔️ Marcus how's the knee?\", \"timestamp\": \"2025-03-17T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:26\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 26, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s03 session_index=3 date=2025-03-17 turn_id=grp_3c4d5e6f_s03_t001 speaker_id=p_r3b2c3d4 message_index=2] Marcus: Fine. South route was sensible.\", \"timestamp\": \"2025-03-17T00:00:00+00:00\", \"in_source_ref\": false}, {\"id\": \"lme:socialmem_Q5_r3e5f6a7:27\", \"session_key\": \"lme:socialmem_Q5_r3e5f6a7\", \"seq\": 27, \"role\": \"user\", \"content\": \"[SocialMemBench network=grp_3c4d5e6f session=grp_3c4d5e6f_s03 session_index=3 date=2025-03-17 turn_id=grp_3c4d5e6f_s03_t002 speaker_id=p_r3c3d4e5 message_index=3] Bev: Marcus I saw you limping at the end 😟 the knee has been bothering you for a while hasn't it\", \"timestamp\": \"2025-03-17T00:00:00+00:00\", \"in_source_ref\": false}]}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 4,
+        "turn_input_sum_tokens": 26361,
+        "turn_input_peak_tokens": 9176,
+        "final_call_input_tokens": 9176,
+        "cache_prompt_tokens": 59569,
+        "cache_hit_tokens": 53504
+      },
+      "elapsed_s": 18.28,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_10_production_structured_memory_schema",
+        "strategy": "production_structured_memory_schema",
+        "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+        "options": {
+          "schema_tables": [
+            "memory_raw_events",
+            "memory_entities",
+            "memory_event_facts",
+            "memory_assertions",
+            "memory_relation_facts"
+          ],
+          "attach_signal": "structured_evidence",
+          "backfill_on_query": true,
+          "raw_event_backfill_limit": 50000,
+          "raw_event_backfill_chunk_size": 500,
+          "summary_pollution": false
+        },
+        "config_path": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json"
+      },
+      "judge_correct": false
+    }
+  ]
+}

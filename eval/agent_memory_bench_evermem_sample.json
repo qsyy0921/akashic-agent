@@ -1,0 +1,488 @@
+[
+  {
+    "question_id": "evermem_dynamic_F_SH_Top01_001",
+    "question_type": "single-session-user",
+    "question": "After SQL optimization of the data submission API, what was the peak CPU usage observed during the final 300 concurrent user stress test?",
+    "answer": "65%",
+    "question_date": "",
+    "haystack_session_ids": [
+      "evermem_dynamic_F_SH_Top01_001:s0",
+      "evermem_dynamic_F_SH_Top01_001:s1",
+      "evermem_dynamic_F_SH_Top01_001:s2"
+    ],
+    "haystack_dates": [
+      "",
+      "",
+      ""
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-20 group=Group 3 message_index=4 time=2025-10-20 09:18:20] Xinmeng Tian: Good morning, everyone. Today, I'm also starting a new task for our team: load testing the data submission API interface. My main work today is to write JMeter scripts and prepare test data.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-20",
+            "group": "Group 3",
+            "message_index": 4,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-20 09:18:20",
+            "reference_index": 0
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-21 group=Group 3 message_index=2 time=2025-10-21 09:19:20] Xinmeng Tian: Good morning everyone. The load testing for the data submission API will officially begin today. Yesterday, I finished preparing the JMeter scripts and basic test data. The plan is to run the first round of benchmark tests this morning with 100 concurrent users to see the system's initial performance. This task has a higher priority, so I will focus on completing it first before switching to the energy consumption monitoring project tasks.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-21",
+            "group": "Group 3",
+            "message_index": 2,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-21 09:19:20",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-21 group=Group 3 message_index=3 time=2025-10-21 09:35:15] Huilan Chen: Received. Both plans are very clear. @Hongxin Ding, excellent! It's commendable that you're proactively addressing issues exposed during stress testing with targeted optimizations. This closed-loop working method should be promoted. @Xinmeng Tian, load testing is very important. I look forward to your first round of results, as this will provide crucial data for our subsequent performance tuning. Keep up the good work, everyone!",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-21",
+            "group": "Group 3",
+            "message_index": 3,
+            "speaker": "Huilan Chen",
+            "time": "2025-10-21 09:35:15",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-21 group=Group 3 message_index=6 time=2025-10-21 16:15:45] Xinmeng Tian: @all The first round of load testing (100 concurrent users) for the data submission API has been completed. Preliminary results are as follows: the average response time is around 480ms, 95% of requests are completed within 850ms, and there was a 0.5% error rate during the test. The server CPU usage peaked at 70%. Overall, it's within an acceptable range, but there's room for optimization. The report will be compiled and sent out shortly. I'm now preparing to set up the 300 concurrent user test scenario.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-21",
+            "group": "Group 3",
+            "message_index": 6,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-21 16:15:45",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-21 group=Group 3 message_index=7 time=2025-10-21 16:25:00] Mingzhi Li: @Xinmeng Tian Received, thank you for your hard work. An average of 480ms is acceptable for a data submission interface, but the error rate and CPU usage need attention. @Hongxin Ding Your SQL optimization work can address the root cause, and I look forward to reviewing the stress test data again after optimization.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-21",
+            "group": "Group 3",
+            "message_index": 7,
+            "speaker": "Mingzhi Li",
+            "time": "2025-10-21 16:25:00",
+            "reference_index": 1
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=1 time=2025-10-22 09:21:10] Xinmeng Tian: Good morning everyone. Today is the last day of load testing for the data submission API. Yesterday's 100-concurrent test results showed CPU pressure. My plan for today is to directly go for 300 concurrent users to see the system's limits, providing more precise data support for Hongxin Ding's optimization.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 1,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-22 09:21:10",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=4 time=2025-10-22 09:50:00] Huilan Chen: The plans are very clear. @Xinmeng Tian, please make sure to get the final results for the load test today, as I mentioned yesterday, this provides crucial data for performance tuning. @Hongxin Ding, your cooperation with the stress test is excellent, this closed-loop optimization approach is very good. Looking forward to your good news.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 4,
+            "speaker": "Huilan Chen",
+            "time": "2025-10-22 09:50:00",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=5 time=2025-10-22 11:30:00] Xinmeng Tian: @all The load test with 300 concurrent users is underway, and the situation is not looking good. The error rate has climbed to 3%, the average response time exceeds 2 seconds, and the server CPU utilization is already at 98%. @Mingzhi Li @Hongxin Ding The bottleneck is very obvious.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 5,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-22 11:30:00",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=6 time=2025-10-22 11:32:15] Mingzhi Li: Received, this is about what I expected. @Hongxin Ding, it seems all the pressure is on you. Your SQL optimization is key. How's it going? Any leads?",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 6,
+            "speaker": "Mingzhi Li",
+            "time": "2025-10-22 11:32:15",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=8 time=2025-10-22 12:10:00] Xinmeng Tian: Awesome! @Hongxin Ding, once you've deployed it, I can start a new round of testing anytime.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 8,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-22 12:10:00",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=10 time=2025-10-22 16:45:20] Xinmeng Tian: @all [Good news] The load test for the data submission API interface has been completed! After Hongxin Ding's SQL optimization, a stress test with 300 concurrent users was re-conducted, and the results are very satisfactory: the average response time has dropped to 350ms, the error rate is below 0.1%, and the peak CPU usage has also fallen back to a healthy level of 65%. The performance bottleneck has been resolved! The test report has been updated and uploaded. This task has been successfully completed! 🎉",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 10,
+            "speaker": "Xinmeng Tian",
+            "time": "2025-10-22 16:45:20",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-10-22 group=Group 3 message_index=11 time=2025-10-22 16:50:00] Mingzhi Li: Great work! @Xinmeng Tian @Hongxin Ding Perfect teamwork! One discovers problems, one solves problems, an efficient closed loop. You two worked hard.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-10-22",
+            "group": "Group 3",
+            "message_index": 11,
+            "speaker": "Mingzhi Li",
+            "time": "2025-10-22 16:50:00",
+            "reference_index": 2
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "evermembench_dynamic",
+    "source_subset": "qars_reference",
+    "source_metadata": {
+      "topic_id": "01",
+      "qar_id": "F_SH_Top01_001",
+      "source_question_type": "evermembench_dynamic:qars",
+      "references": [
+        {
+          "date": "2025-10-20",
+          "group": "Group 3",
+          "message_index": "4",
+          "resolved_messages": 1
+        },
+        {
+          "date": "2025-10-21",
+          "group": "Group 3",
+          "message_index": "2-3, 6-7",
+          "resolved_messages": 4
+        },
+        {
+          "date": "2025-10-22",
+          "group": "Group 3",
+          "message_index": "1, 4-6, 8, 10-11",
+          "resolved_messages": 7
+        }
+      ],
+      "total_resolved_messages": 12
+    }
+  },
+  {
+    "question_id": "evermem_dynamic_F_SH_Top01_002",
+    "question_type": "single-session-user",
+    "question": "In the competitive analysis task for the supply chain carbon footprint project, after Huilan Chen completed the analysis of key competitors (especially EcoTrace), which document management system did she upload the final report to?",
+    "answer": "Confluence",
+    "question_date": "",
+    "haystack_session_ids": [
+      "evermem_dynamic_F_SH_Top01_002:s0",
+      "evermem_dynamic_F_SH_Top01_002:s1",
+      "evermem_dynamic_F_SH_Top01_002:s2"
+    ],
+    "haystack_dates": [
+      "",
+      "",
+      ""
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-27 group=Group 3 message_index=1 time=2025-01-27 09:30:00] Weihua Zhang: Good morning everyone, a new week has begun. We have a few key tasks to push forward. @Huilan Chen @Fang Mo, please synchronize the preparation progress for the interviews with the procurement and supply chain departments. Additionally, I will be starting the competitor analysis work today, and I'll need everyone's support.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-27",
+            "group": "Group 3",
+            "message_index": 1,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-27 09:30:00",
+            "reference_index": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-27 group=Group 3 message_index=4 time=2025-01-27 10:00:50] Weihua Zhang: Great, please continue with the interview preparation. Regarding the competitor analysis, I've initially listed several major carbon management platforms, both domestic and international. @Huilan Chen, you're experienced, please focus on the differences in their product features and user experience. @Guohua Han, you're responsible for collecting and organizing their pricing models and public market data. @Zhiyu Peng, please examine their market strategies and value propositions from a sales and customer perspective. We need to form a preliminary analysis report within this week.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-27",
+            "group": "Group 3",
+            "message_index": 4,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-27 10:00:50",
+            "reference_index": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-27 group=Group 3 message_index=5 time=2025-01-27 10:05:10] Huilan Chen: No problem, Boss Zhang, I'll start researching the feature matrices of these competitors right away.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-27",
+            "group": "Group 3",
+            "message_index": 5,
+            "speaker": "Huilan Chen",
+            "time": "2025-01-27 10:05:10",
+            "reference_index": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-27 group=Group 3 message_index=6 time=2025-01-27 10:08:25] Guohua Han: Received, Boss Zhang. I'll start looking up pricing information and relevant research reports.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-27",
+            "group": "Group 3",
+            "message_index": 6,
+            "speaker": "Guohua Han",
+            "time": "2025-01-27 10:08:25",
+            "reference_index": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-27 group=Group 3 message_index=7 time=2025-01-27 10:10:33] Zhiyu Peng: Okay Boss Zhang, I'll also look for feedback from our potential customers about their opinions on these competitors.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-27",
+            "group": "Group 3",
+            "message_index": 7,
+            "speaker": "Zhiyu Peng",
+            "time": "2025-01-27 10:10:33",
+            "reference_index": 0
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-28 group=Group 3 message_index=1 time=2025-01-28 09:15:10] Weihua Zhang: Good morning, everyone. Today is January 28th, and we have two key interview tasks due today. Please, relevant colleagues, follow up on these as a priority. @Huilan Chen @Fang Mo, please synchronize the latest progress of the interview work and today's plan. In addition, the competitive product analysis work should also continue to advance.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-28",
+            "group": "Group 3",
+            "message_index": 1,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-28 09:15:10",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-28 group=Group 3 message_index=6 time=2025-01-28 09:40:10] Weihua Zhang: This plan is great, @Yaying Han. Tasks should be linked up like this. Also, regarding competitor analysis, @Huilan Chen, @Guohua Han, @Zhiyu Peng, is there any initial progress on the division of labor from yesterday?",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-28",
+            "group": "Group 3",
+            "message_index": 6,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-28 09:40:10",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-28 group=Group 3 message_index=7 time=2025-01-28 09:48:22] Guohua Han: Boss Zhang, I'm currently organizing the pricing models of several major competitors. I've found that most of them use tiered pricing based on the number of suppliers or total carbon emissions. The publicly available market data is quite fragmented, so I'm still gathering more industry reports for cross-validation.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-28",
+            "group": "Group 3",
+            "message_index": 7,
+            "speaker": "Guohua Han",
+            "time": "2025-01-28 09:48:22",
+            "reference_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-28 group=Group 3 message_index=8 time=2025-01-28 09:52:00] Huilan Chen: I'm currently looking at the features and user experience. I've initially found two competitors that do well in data visualization, but they seem to be lacking in the automation of data collection in the upstream supply chain. This could be an opportunity for us. I will continue to analyze this in depth after the interviews this afternoon.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-28",
+            "group": "Group 3",
+            "message_index": 8,
+            "speaker": "Huilan Chen",
+            "time": "2025-01-28 09:52:00",
+            "reference_index": 1
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=3 time=2025-01-29 10:30:00] Weihua Zhang: Well done, @Yaying Han, this is the task linkage I mentioned yesterday. Also, how is the competitive analysis progressing? @Guohua Han @Huilan Chen @Zhiyu Peng, any new findings? We need to speed up; we need a preliminary report by the end of this week.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 3,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-29 10:30:00",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=4 time=2025-01-29 10:38:25] Guohua Han: Boss Zhang, I've made some progress here. In addition to the tiered pricing we discussed earlier, I found a competitor called 'EcoTrace' that recently launched a 'freemium' model. It allows core enterprises to invite up to 10 suppliers to use basic features for free. This might be a strategy for them to quickly capture market share. I'm currently analyzing the potential impact of this model on our pricing.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 4,
+            "speaker": "Guohua Han",
+            "time": "2025-01-29 10:38:25",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=5 time=2025-01-29 10:45:10] Weihua Zhang: This information is very important, @Guohua Han. The Freemium model is worth our in-depth study. @Huilan Chen, can you check what specific basic functions 'EcoTrace' includes and what the user experience is like? We need to evaluate how attractive this free model really is.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 5,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-29 10:45:10",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=6 time=2025-01-29 10:50:33] Huilan Chen: Received, Boss Zhang. I'm about to research this company, and will immediately focus on analyzing their freemium version. I'll work with UX designer @Yang Zhao to look at their user onboarding process and evaluate its usability.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 6,
+            "speaker": "Huilan Chen",
+            "time": "2025-01-29 10:50:33",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=27 time=2025-01-29 15:15:45] Zhiyu Peng: Speaking of competitors, I just got off the phone with a potential client, and they also mentioned 'EcoTrace'. The client reported that while the free version's features are basic, they did successfully open up communication channels between them and several core suppliers, solving the pain point of back-and-forth email exchanges of spreadsheets. However, they also complained that the data analysis features are too weak, and they would have to upgrade to the expensive enterprise version for in-depth analysis.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 27,
+            "speaker": "Zhiyu Peng",
+            "time": "2025-01-29 15:15:45",
+            "reference_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[EverMemBench topic=01 date=2025-01-29 group=Group 3 message_index=28 time=2025-01-29 15:20:00] Weihua Zhang: Thanks to @Zhiyu Peng for the first-hand intelligence, which is very valuable. This confirms @Guohua Han's findings and our conjectures. 'EcoTrace' uses basic collaboration features as a hook and advanced data analytics as a profit point. This has strong reference significance for us in designing product value and pricing strategies.",
+          "metadata": {
+            "kind": "group_message",
+            "topic_id": "01",
+            "date": "2025-01-29",
+            "group": "Group 3",
+            "message_index": 28,
+            "speaker": "Weihua Zhang",
+            "time": "2025-01-29 15:20:00",
+            "reference_index": 2
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "evermembench_dynamic",
+    "source_subset": "qars_reference",
+    "source_metadata": {
+      "topic_id": "01",
+      "qar_id": "F_SH_Top01_002",
+      "source_question_type": "evermembench_dynamic:qars",
+      "references": [
+        {
+          "date": "2025-01-27",
+          "group": "Group 3",
+          "message_index": "1, 4-7",
+          "resolved_messages": 5
+        },
+        {
+          "date": "2025-01-28",
+          "group": "Group 3",
+          "message_index": "1, 6-8",
+          "resolved_messages": 4
+        },
+        {
+          "date": "2025-01-29",
+          "group": "Group 3",
+          "message_index": "3-6, 27-28",
+          "resolved_messages": 6
+        }
+      ],
+      "total_resolved_messages": 15
+    }
+  }
+]

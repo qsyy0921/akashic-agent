@@ -1,0 +1,11 @@
+{
+  "cases": 5,
+  "by_source": {
+    "groupmembench:metadata_probe": 5
+  },
+  "haystack_turns": {
+    "min": 80,
+    "max": 80,
+    "avg": 80.0
+  }
+}

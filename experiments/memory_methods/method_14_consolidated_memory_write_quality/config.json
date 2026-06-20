@@ -1,0 +1,27 @@
+{
+  "method_id": "method_14_consolidated_memory_write_quality",
+  "strategy": "consolidated_memory_write_quality",
+  "description": "Move structure earlier into memory write/consolidation by backfilling compact source-grounded preference, exception, relationship, decision, and update trajectory facts from raw events before QA.",
+  "options": {
+    "schema_tables": [
+      "memory_raw_events",
+      "memory_entities",
+      "memory_event_facts",
+      "memory_assertions",
+      "memory_relation_facts"
+    ],
+    "base_retrieval": "adaptive_intent_versioned",
+    "all_raw_event_backfill": true,
+    "all_raw_event_backfill_limit": 100000,
+    "all_raw_event_backfill_chunk_size": 200,
+    "consolidation_raw_event_limit": 100000,
+    "consolidated_facts_per_session": 160,
+    "consolidated_fact_limit": 6,
+    "selected_evidence_limit": 8,
+    "summary_pollution": false,
+    "wrap_search_fetch_tools": false,
+    "question_context": true,
+    "session_scoped_raw_events": true,
+    "consolidated_facts": true
+  }
+}

@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
+from core.memory.markdown import ConsolidateRequest
+
 from .dataset import LMEInstance
 from .runtime import BenchmarkRuntime
 
@@ -104,7 +106,9 @@ async def _finalize_tail_chunks(rt: BenchmarkRuntime, session) -> None:
         for attr in ("_channel", "_chat_id"):
             if hasattr(session, attr):
                 setattr(temp_session, attr, getattr(session, attr))
-        await rt.consolidation.consolidate(temp_session, archive_all=True)
+        await rt.consolidation.consolidate(
+            ConsolidateRequest(session=temp_session, archive_all=True)
+        )
 
 
 async def ingest_instance(
@@ -161,7 +165,9 @@ async def ingest_instance(
         sm._cache.pop(session_key, None)
         session = sm.get_or_create(session_key)
 
-        await rt.consolidation.consolidate(session, archive_all=False)
+        await rt.consolidation.consolidate(
+            ConsolidateRequest(session=session, archive_all=False)
+        )
         sm.save(session)
 
         worker = getattr(rt.core.memory_runtime, "post_response_worker", None)

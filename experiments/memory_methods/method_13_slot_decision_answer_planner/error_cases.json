@@ -1,0 +1,352 @@
+[
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2586,
+    "em": false,
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "predicted_answer": "Now I have enough evidence to answer comprehensively.\n\n**Priya** prefers discussing career one-on-one rather than in the group setting — she explicitly declined \"group unpacking\" of her physio practice struggles but welcomed a private coffee chat (\"coffee with one person I can do, group unpacking no\").\n\n**Mei** actively initiates career conversations in the group, viewing it as solidarity and finding value in shared career-transition discussions (\"I just find it useful to talk these things through with people who get the career transition thing\"), though she accepted the boundary.\n\n**Josh** deflects career talk with self-deprecating humor (\"still in the same chair, living the dream\") but privately supports Priya off-group and acts as a gatekeeper to protect her from unwanted group scrutiny (\"Priya doesn't owe the whole board an update\").\n\n**Leon** engages with career topics when they arise practically (asking Priya about her clinic setup) but doesn't initiate deep dives — he's brief and fact-focused rather than reflective.\n\n§cited:[lme:socialmem_Q3_c0s3c2:30,lme:socialmem_Q3_c0s3c2:33]§",
+    "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 14.33,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1573,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya hates cilantro (\"that herb ruins everything\"), prefers mushroom broth ramen, likes noodle places, and is off alcohol (drinks sparkling water instead).\n\n§cited:[7bad8619b713,lme:socialmem_Q1_a1b2c3d4:76]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.72,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2299,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam chose chicken ramen over the signature mushroom broth and explicitly stated a preference for it, suggesting they prefer chicken/meat-based broths over mushroom or vegetable-based ones.\n\n§cited:[lme:socialmem_Q1_b2c3d4e5:25,lme:socialmem_Q1_b2c3d4e5:27]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 16.3,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_a7b8c9d0",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2615,
+    "em": false,
+    "question": "What does the conversation suggest about the relationship between Priya and Lena within the group?",
+    "predicted_answer": "Priya and Lena appear to be close friends within a larger group (also including Maya, Jordan, and Sam), with a complementary dynamic: Priya is the primary planner who proposes outings and venues, while Lena is consistently enthusiastic and takes on practical roles like booking and confirming plans.\n\n§cited:[lme:socialmem_Q7_a7b8c9d0:0,lme:socialmem_Q7_a7b8c9d0:5,lme:socialmem_Q7_a7b8c9d0:21,lme:socialmem_Q7_a7b8c9d0:23,lme:socialmem_Q7_a7b8c9d0:50,lme:socialmem_Q7_a7b8c9d0:53,lme:socialmem_Q7_a7b8c9d0:61,lme:socialmem_Q7_a7b8c9d0:62,lme:socialmem_Q7_a7b8c9d0:81,lme:socialmem_Q7_a7b8c9d0:82]§",
+    "gold_answer": "Priya and Lena appear to be the closest pairing within the group, with an established dynamic where Priya helps Lena navigate group social situations. In Session 5, when Lena was running late to brunch, Priya immediately offered to go ahead with her: 'Lena and I will grab the table, she needs someone to help decode the menu anyway.' Lena confirmed this arrangement affectionately: 'Honestly Priya is the reason I survive these brunches.' The exchange suggests a well-worn pattern, not a one-time gesture.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 22.47,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_b8c9d0e1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4828,
+    "em": false,
+    "question": "How did Jordan's role in organizing group plans change over the course of the conversations?",
+    "predicted_answer": "Jordan went from being the group's go-to organizer — Maya noted \"Jordan used to handle all the bookings\" and \"you always knew where to go\" — to someone who deflected to others (\"Lena can do it\"), showed up passively, and by the last session was bailing on plans entirely, with Priya calling it out as \"the third time.\"\n\n§cited:[lme:socialmem_Q8_b8c9d0e1:51,lme:socialmem_Q8_b8c9d0e1:52,lme:socialmem_Q8_b8c9d0e1:53,lme:socialmem_Q8_b8c9d0e1:84,lme:socialmem_Q8_b8c9d0e1:86§",
+    "gold_answer": "Jordan's role as group organizer clearly eroded across the sessions. In Session 1, Maya referenced Jordan's old role implicitly ('Jordan used to handle all the bookings') and appealed to him for help booking a venue in Session 3. By Session 3, Jordan declined entirely: when Maya said 'you always knew where to go,' Jordan responded with 'Lena can do it.' — passing all logistics to Lena without explanation. The shift was from default organizer to complete disengagement; the group adjusted around it without directly challenging him.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 6,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 28.51,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_n2d4e5f6",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3088,
+    "em": false,
+    "question": "What was decided about the Christmas dinner menu, and did all family members seem equally happy with that plan?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Ngozi decided on egusi, jollof, and goat as the main dishes, with Adaora later offering to bring a lentil dish; Emeka was enthusiastic (\"goat and jollof obviously\"), but Adaora seemed less committed — she questioned the amount of food, worried about thesis deadlines, and was uncertain about attending.\n\n§cited:[lme:socialmem_Q2_n2d4e5f6:39,lme:socialmem_Q2_n2d4e5f6:5,lme:socialmem_Q2_n2d4e5f6:40,lme:socialmem_Q2_n2d4e5f6:3,lme:socialmem_Q2_n2d4e5f6:29,lme:socialmem_Q2_n2d4e5f6:6]§",
+    "gold_answer": "A. Adaora\nNgozi planned to cook the full traditional spread — goat, jollof, suya, fried plantain. Emeka and Tobenna were enthusiastic. Adaora, however, asked specifically if Ngozi could include beans dishes (moi moi, akara) and deflected from the meat options with 'I'll have whatever there is' — suggesting she has a preference for the plant-based side dishes. When Tobenna noted 'Ada you love goat,' she said only 'let me have the beans' without explaining. The rest of the family proceeded as if the standard menu was settled.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 17.27,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2d0e1f2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3158,
+    "em": false,
+    "question": "How did Emeka's stance on coming home for Christmas change from the beginning to the end of the conversations?",
+    "predicted_answer": "Emeka went from noncommittal (\"Give me a couple of weeks to check with Adaeze\") at the start, to enthusiastically offering to host in London midway, and finally agreeing to come home on Christmas Eve as Chidi insisted (\"Yes Dad, we'll make it work\") by the end.\n\n§cited:[lme:socialmem_Q8_n2d0e1f2:9,lme:socialmem_Q8_n2d0e1f2:29,lme:socialmem_Q8_n2d0e1f2:48,lme:socialmem_Q8_n2d0e1f2:50,lme:socialmem_Q8_n2d0e1f2:51]§",
+    "gold_answer": "Emeka moved from open-ended stalling to a firm commitment under parental pressure. In Session 1, he said he'd 'see what Adaeze's schedule looks like' and would know 'in a few weeks.' In Session 4, he tried again — citing Adaeze's work event on the 24th as a reason they might arrive Christmas morning instead of Christmas Eve. Chidi's single-line response ('Emeka. You are coming on Christmas Eve.') ended it immediately; Emeka replied 'Yes Dad, we'll make it work.' The shift was from strategic delay to compliance.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 23.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.18,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass consistently prefers routes through woodland and nature reserves, prioritizing wildlife conservation—avoiding areas with nesting birds (skylarks, lapwings, ravens near SSSIs) and favoring ecologically rich habitats like fen sections.\n\n§cited:[lme:socialmem_Q1_r3a1b2c3:4,lme:socialmem_Q1_r3a1b2c3:29,lme:socialmem_Q1_r3a1b2c3:31,lme:socialmem_Q1_r3a1b2c3:39,lme:socialmem_Q1_r3a1b2c3:46,lme:socialmem_Q1_r3a1b2c3:51]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 19.67,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.4769,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "Cass follows a plant-based diet — Bev explicitly asked about plant-based options at the Blackmoor Cafe \"asking for Cass,\" and Cass confirmed she's usually fine if they have soup. Bev is the one who clearly knows and advocates for this; Dani also picked up on it and agreed to check the cafe. No evidence the rest of the group (Marcus, Yusuf) has flagged it.\n\n§cited:[bc2d6e726665,lme:socialmem_Q5_r3e5f6a7:22,lme:socialmem_Q5_r3e5f6a7:23,lme:socialmem_Q5_r3e5f6a7:24]§",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 38.37,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_r3a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3185,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+    "predicted_answer": "Bev shows a caring, familiar relationship with Marcus — noticing his knee injury before others flag it (\"I saw you limping at the end 😟\") and confidently speaking on his behalf (\"Marcus probably does too\") — while Marcus responds warmly but briefly to her specifically, suggesting she's someone he trusts enough to be candid with about his discomfort.\n\n§cited:[lme:socialmem_Q7_r3a7b8c9:27,lme:socialmem_Q7_r3a7b8c9:28,lme:socialmem_Q7_r3a7b8c9:57]§",
+    "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 15.04,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.319,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka consistently posts only after buying, sharing nothing else — her terse style (artist, year, label) paired with original pressings across Brazilian bossa nova (Luiz Bonfá 1958), soul (Bobby Womack 1971, Millie Jackson 1974) suggests she is a focused, hunt-driven collector of original 1960s–70s pressings who treats the group chat purely as a haul log.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 13.44,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3386,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes. In session 1 (Fitzroy), Gil was content to stay home and share knowledge remotely (\"Nigeria, 1977. EMI pressing...I have two copies\"), with Nneka and Theo agreeing group fairs are slower. But by session 4–5, he initially dismissed Camden as too commercial (\"Probably not. Too many Taylor Swift reissues\"), yet actually attended and came back reporting a serious find — Ebo Taylor 1974 original from the Archway Specialist stall. So he shifted from remote expertise to showing up in person, targeting specialist stalls.\n\n§cited:[1670b4f44997,8fde3d1cc7ff,cda858dd6459,lme:socialmem_Q8_v4s4c1:6,lme:socialmem_Q8_v4s4c1:10,lme:socialmem_Q8_v4s4c1:34,lme:socialmem_Q8_v4s4c1:36,lme:socialmem_Q8_v4s4c1:47,lme:socialmem_Q8_v4s4c1:49]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 22.3,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3575,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus started with practical but detached concern (session 1: scaffolding blocking the school gate) and policy support (session 2: backing parking permits to fix pavement parking), then escalated sharply in session 3 after his son had a near-miss with a reversing car — he was visibly shaken and vowed to raise it formally, prompting Femi to suggest a joint traffic assessment. By sessions 4–5 the focus shifted to the street party and social bonding, with no recorded follow-up on the traffic safety push.\n\n§cited:[lme:socialmem_Q8_a5s3c1:2,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:20,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:21,lme:socialmem_Q8_a5s3c1:32,lme:socialmem_Q8_a5s3c1:43]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 18.24,
+    "error": null
+  }
+]

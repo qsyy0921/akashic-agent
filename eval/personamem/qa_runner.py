@@ -120,9 +120,9 @@ async def run_qa_instance(
 
     try:
         msg = InboundMessage(
-            channel="benchmark",
+            channel="pm",
             sender="user",
-            chat_id=instance.persona_id or instance.question_id,
+            chat_id=instance.question_id,
             content=(
                 f"{instance.question}\n\n"
                 f"Options:\n{_render_options(instance.all_options)}\n\n"

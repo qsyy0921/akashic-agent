@@ -1,0 +1,8 @@
+{
+  "method_id": "method_05_hybrid_intent_temporal_rerank",
+  "strategy": "hybrid_intent_temporal_rerank",
+  "description": "Combine baseline retrieval, intent-specific lanes, evidence/query-overlap reranking, and conservative temporal hints without dropping old evidence for timeline questions.",
+  "options": {
+    "lane_limit": 14
+  }
+}

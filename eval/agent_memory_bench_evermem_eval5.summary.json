@@ -1,0 +1,11 @@
+{
+  "cases": 5,
+  "by_source": {
+    "evermembench_dynamic:qars_reference": 5
+  },
+  "haystack_turns": {
+    "min": 10,
+    "max": 44,
+    "avg": 22.0
+  }
+}

@@ -1,0 +1,335 @@
+[
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3063,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Based on the group conversations, Maya strongly dislikes cilantro (called it an herb that \"ruins everything\" and vetoed Mariposa for having it in every dish), enjoys ramen (eagerly tried Tanuki's mushroom broth ramen), and regularly initiates dining plans like suggesting Rooftop Fox for drinks.\n\n§cited:[lme:socialmem_Q1_a1b2c3d4:9,lme:socialmem_Q1_a1b2c3d4:10,lme:socialmem_Q1_a1b2c3d4:42,lme:socialmem_Q1_a1b2c3d4:43]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 9.42,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3377,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya — she said \"I just want somewhere you can actually have a conversation.\"\n\n§cited:[12,15]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 3.06,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_f2a3b4c5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "The group seems to treat Sunday brunches as a standing commitment — something everyone shows up to. Does that hold for all members of the group?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "D. Sam",
+    "gold_answer": "A. Jordan\nNo — Jordan is an exception. In Session 5, Jordan cancelled on the morning of Sunday brunch saying 'Not coming. Weather is perfect. Riding.' Priya's reaction — 'this is like the third time' — confirms this is a recurring pattern, not a one-off. Jordan appears to prioritize cycling when conditions are good, treating the brunch as optional despite the group norm. The other four members treat it as the commitment Priya's comment implies it should be.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 7.06,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3472,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "They were both at the Mt. Tam incident where Jordan got hurt — Sam was present and aware of it, and when the topic came up, Jordan deflected by saying \"Ask Sam\" while Sam also shut the conversation down, indicating a shared uncomfortable history from that event.\n\n§cited:[]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 8.39,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2292,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "A. Adaora — she was the first to push back, saying her thesis \"doesn't really pause for Christmas\" so she couldn't commit to specific dates yet.",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 28.55,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_n2f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2336,
+    "em": false,
+    "question": "Has Ngozi's cooking changed in any way recently, and who in the family figured this out without being told?",
+    "predicted_answer": "Based on the conversation history, there's no indication that Ngozi's cooking has changed. What *did* change is **Adaora's** eating habits — she mentioned she's \"been eating a bit differently lately\" and wanted to bring a lentil dish for Christmas. **Tobenna** seemed to pick up on something without being told directly, nudging Adaora to \"just say it,\" but the messages don't reveal what Adaora's change actually is.\n\n§cited:[]§",
+    "gold_answer": "Ngozi's cooking has become less salty, apparently on doctor's advice. This was figured out by Emeka. In Session 2, after multiple family members noted the pepper soup tasted different, Emeka said 'Less seasoning I think. Mum might have been told to ease off the salt' — reasoning through the change without being told directly. Ngozi denied it, but Emeka's inference was drawn from pattern recognition, not from Ngozi disclosing anything.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 20.54,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_n2b8c9d0",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3034,
+    "em": false,
+    "question": "What does the family chat reveal about Chidi's role in family discussions?",
+    "predicted_answer": "Chidi is the father who speaks in short, authoritative directives—he settles family debates (telling Emeka \"the soup was fine\"), gives firm instructions (\"Confirm your dates,\" \"You are coming on Christmas Eve\"), and shows care through blunt concern (\"Is Adaora ill\"), consistently acting as the patriarch whose word ends the discussion.\n\n§cited:[]§",
+    "gold_answer": "Chidi participates infrequently and briefly, but his messages carry decisive weight. He typically arrives late to a conversation that has already been debated at length, then issues a short statement that ends the discussion. In Session 2, when the family had been going back and forth about Ngozi's cooking, Chidi arrived late with simply 'The soup was fine.' — which closed the subject. Emeka acknowledged this dynamic directly: 'Dad always has the final word.' In Session 4, a single line from Chidi ('Emeka. You are coming on Christmas Eve.') ended Emeka's weeks of stalling.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 22.19,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.4878,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "Yes — Cass follows a plant-based diet. Bev is the one who actively advocates for it in the group (asked \"Does the Blackmoor Cafe at the trailhead have plant-based options? asking for Cass\"), and Cass confirmed they're usually fine if a place has soup. Dani also seems aware since she offered to check the cafe menu after.\n\n§cited:[lme:socialmem_Q5_r3e5f6a7:22,lme:socialmem_Q5_r3e5f6a7:23,lme:socialmem_Q5_r3e5f6a7:32,lme:socialmem_Q5_r3e5f6a7:24]§",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.2,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2585,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka consistently posts only when she has a specific find to share — concise artist-year-label announcements — suggesting her collecting focus is vintage 1960s–70s soul, funk, and R&B originals (Bobby Womack, Millie Jackson), plus occasional Brazilian pressings (Luiz Bonfá).\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 22.64,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3529,
+    "em": false,
+    "question": "How did Preet's relationship to physical record collecting change over the conversations?",
+    "predicted_answer": "Preet started as a casual buyer excited about cover art who didn't know the difference between originals and reissues, went through an impulsive \"I think I'm doing this now\" phase buying three records from the same seller, and by Camden was actively trying to learn what to look for and even celebrated walking away from purchases — shifting from instinct-driven grabber to someone building intentional collecting knowledge.\n\n§cited:[138781eb9da5,65c7c65a10c5,981c0f490dbc,def915779b5c]§",
+    "gold_answer": "Preet began as primarily a streamer with minimal physical ownership. In Session 1, their enthusiasm was about discovering records at fairs but framed aesthetically — praising a Fela reissue's cover without caring that it wasn't an original. In Session 2, after finding a Brazilian compilation they'd been writing about, they said 'First time I've wanted to own something more than stream it honestly' — noting the shift in themselves even as they named it. In Session 3, they went back to the same seller and bought three more records, announcing: 'I think I'm doing this now.' By Sessions 4 and 5, attending fairs to build the collection is the stated goal, and Preet is asking what to look for.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 4,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 59.0,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3797,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes — Gil initially dismissed the Camden fair as too commercial (\"Probably not. Too many Taylor Swift reissues in those rooms now\"), but actually ended up going and found a serious original Ebo Taylor pressing at the Archway Specialist stall, suggesting he went specifically for the specialist dealers despite his earlier reluctance.\n\n§cited:[cda858dd6459,1670b4f44997,8fde3d1cc7ff]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 45.11,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3171,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's trajectory goes from practical concern (scaffolding blocking the school gate, session 1) to active advocacy for parking permits (calling the situation \"untenable,\" session 2), then escalated sharply in session 3 after his son nearly got hit by a car—he was visibly shaken and announced formal action. By sessions 4 and 5 the traffic topic had dropped out and he'd shifted to community engagement (face-painting, celebrating the street party).",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 21.5,
+    "error": null
+  }
+]

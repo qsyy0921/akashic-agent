@@ -1,0 +1,633 @@
+──────────────────── LongMemEval  50 instances  workers=1 ─────────────────────
+┌─────────────── [001/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does Josh's behavior in the group chat suggest about how he    │
+│ handles questions about his own career?                                     │
+│   pred  Josh deflects career questions with self-deprecating humor and      │
+│ redirects the spotlight to others.                                          │
+│                                                                             │
+│ §cited:[4bbf623676af]                                                       │
+│   gold  Josh consistently deflects questions about his career with          │
+│ self-deprecating humour and then redirects to someone else. I               │
+└──────────────────── judge=yes  low 0.18  26s  ETA 33.7m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_c0s3c
+1\trace.log
+┌────────────────── [002/50]  socialme  single-session-user ──────────────────┐
+│   Q     What does the group chat reveal about each member's attitude toward │
+│ discussing their career in the group?                                       │
+│   pred  Based on the conversations: **Mei** is the most open, actively      │
+│ initiating career discussions in the group and finding va                   │
+│   gold  Mei is comfortable and open — she talks about her team size,        │
+│ management challenges, and promotions without registering h                 │
+└──────────────────── judge=yes  low 0.29  36s  ETA 38.0m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q3_c0s3c
+2\trace.log
+16:42:27  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [003/50]  socialme  single-session-user ──────────────────┐
+│   Q     Both Mei and Leon present themselves confidently in the group chat  │
+│ when discussing career. Who is projecting success the                       │
+│   pred  Based on the group chat evidence: Leon is projecting success he     │
+│ hasn't fully achieved (announcing "Series A confirmed" a                    │
+│   gold  C. Mei                                                              │
+│ Mei is reporting genuine, accomplished progress — she was promoted to team  │
+│ lead, manages eight people, and discus                                      │
+└──────────────────── judge=yes  mid 0.38  61s  ETA 59.9m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_c0s2c
+2\trace.log
+┌────────────────── [004/50]  socialme  single-session-user ──────────────────┐
+│   Q     What was Priya's attitude toward discussing her job, and how does   │
+│ the conversation show that Josh already knew it?                            │
+│   pred  Priya deflected job questions in group settings—giving vague        │
+│ answers and changing the subject—preferring to discuss it o                 │
+│   gold  Josh revealed that he and Priya had already spoken privately:       │
+│ 'Priya and I already talked about it properly last week, s                  │
+└──────────────────── judge=yes  mid 0.38  35s  ETA 54.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q5_c0s4c
+1\trace.log
+┌─────────────── [005/50]  socialme  single-session-preference ───────────────┐
+│   Q     The group has a norm of not recruiting each other or soliciting     │
+│ referrals in the chat. Does everyone follow it?                             │
+│                                                                             │
+│ Options                                                                     │
+│   pred  B. Leon.                                                            │
+│                                                                             │
+│ §cited:[]§                                                                  │
+│   gold  B. Leon                                                             │
+│ No — Leon breaks it repeatedly. In Session 5, after announcing Bloomberg    │
+│ coverage, he asked: 'if you know anyone                                     │
+└──────────────────── judge=yes  low 0.04  32s  ETA 49.7m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q6_c0s5c
+1\trace.log
+16:45:11  WARNING   agent.provider  [llm.error] model=mimo-v2.5-pro stream=False base_url=https://token-plan-cn.xiaomimimo.com/v1 tools=0 extra_body_keys=['enable_thinking'] err=Error code: 429 - {'error': {'code': '429', 'message': 'Too many requests', 'type': 'limitation'}}
+16:45:11  WARNING   agent.provider  [llm] 请求失败，将重试 attempt=1/2 wait=1.0s err=RateLimitError
+16:45:11  WARNING   agent.provider  [llm.error] model=mimo-v2.5-pro stream=False base_url=https://token-plan-cn.xiaomimimo.com/v1 tools=0 extra_body_keys=['enable_thinking'] err=Error code: 429 - {'error': {'code': '429', 'message': 'Too many requests', 'type': 'limitation'}}
+16:45:11  WARNING   agent.provider  [llm] 请求失败，将重试 attempt=1/2 wait=1.0s err=RateLimitError
+┌────────────────── [006/50]  socialme  single-session-user ──────────────────┐
+│   Q     By Session 2, what pattern of attendance has the group come to      │
+│ anticipate from one specific member, and what in Josh's f                   │
+│   pred  Leon — Josh's "didn't come *again*" in Session 2 signals the group  │
+│ already treats Leon's absence as a recurring, expecte                       │
+│   gold  B. Leon                                                             │
+│ No — Leon did not come. Josh noted it as a pattern: 'Leon didn't come       │
+│ again.' Leon's explanation was an investor                                  │
+└──────────────────── judge=yes  mid 0.31  34s  ETA 45.5m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q2_c0s2c
+1\trace.log
+16:45:53  WARNING   agent.provider  [llm.error] model=mimo-v2.5-pro stream=False base_url=https://token-plan-cn.xiaomimimo.com/v1 tools=0 extra_body_keys=['enable_thinking'] err=Error code: 429 - {'error': {'code': '429', 'message': 'Too many requests', 'type': 'limitation'}}
+16:45:53  WARNING   agent.provider  [llm] 请求失败，将重试 attempt=1/2 wait=1.0s err=RateLimitError
+16:45:53  WARNING   agent.provider  [llm.error] model=mimo-v2.5-pro stream=False base_url=https://token-plan-cn.xiaomimimo.com/v1 tools=0 extra_body_keys=['enable_thinking'] err=Error code: 429 - {'error': {'code': '429', 'message': 'Too many requests', 'type': 'limitation'}}
+16:45:53  WARNING   agent.provider  [llm] 请求失败，将重试 attempt=1/2 wait=1.0s err=RateLimitError
+16:47:00  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────── [007/50]  socialme  single-session-preference ───────────────┐
+│   Q     Based on the group's conversations, what can you tell about Maya's  │
+│ food preferences?                                                           │
+│   pred  Maya has a strong aversion to cilantro (she rejected Mariposa       │
+│ restaurant because cilantro was in everything, saying "tha                  │
+│   gold  Maya has a strong aversion to cilantro. In Session 1, when the      │
+│ group was considering Mariposa for brunch, Maya immediate                   │
+└──────────────────── judge=no  mid 0.38  56s  ETA 51.2m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_a1b2c
+3d4\trace.log
+┌─────────────── [008/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does Sam's behavior at the ramen dinner suggest about their    │
+│ food preferences?                                                           │
+│   pred  Sam preferred the chicken ramen over the mushroom broth, suggesting │
+│ they favor chicken-based soups over mushroom-based o                        │
+│   gold  Sam has an aversion to mushrooms. When Priya described Tanuki's     │
+│ signature mushroom broth ramen, Sam immediately said 'I'                    │
+└──────────────────── judge=no  low 0.18  27s  ETA 48.3m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_b2c3d
+4e5\trace.log
+┌─────────────── [009/50]  socialme  single-session-preference ───────────────┐
+│   Q     Does Lena appear to have any dietary restrictions based on the      │
+│ conversations?                                                              │
+│   pred  Lena appears to have dietary restrictions — she checks menus in     │
+│ advance and mentioned "my usual dietary things" — but th                    │
+│   gold  Yes. Lena appears to manage a dietary restriction she doesn't name  │
+│ directly. When the group was discussing the Sonoma wi                       │
+└──────────────────── judge=yes  low 0.29  22s  ETA 45.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_c3d4e
+5f6\trace.log
+┌────────────────── [010/50]  socialme  single-session-user ──────────────────┐
+│   Q     What did the group decide about where to go for drinks after        │
+│ dinner? Did everyone seem equally on board?                                 │
+│                                                                             │
+│ Options:                                                                    │
+│ A. Jo                                                                       │
+│   pred  The group agreed on Rooftop Fox for drinks after ramen. Not         │
+│ everyone was equally on board — **Sam** was the most hesitan                │
+│   gold  D. Sam                                                              │
+│ The group decided on Rooftop Fox, a loud rooftop bar. Most members          │
+│ confirmed quickly — Lena was enthusiastic, Jor                              │
+└──────────────────── judge=yes  mid 0.31  46s  ETA 43.6m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q2_e1f2a
+3b4\trace.log
+┌────────────────── [011/50]  socialme  single-session-user ──────────────────┐
+│   Q     Someone in the group expressed a clear preference for quieter       │
+│ venues where people can actually have a real conversation.                  │
+│   pred  C. Priya.                                                           │
+│                                                                             │
+│ §cited:[lme:socialmem_Q4_d4e5f6a7:15,lme:socialmem_Q4_d4e5f6a7:12]§         │
+│   gold  A. Jordan                                                           │
+│ Jordan said it. When Priya suggested a noodle bar on Judah as an            │
+│ alternative to Mariposa, Jordan responded wit                               │
+└──────────────────── judge=no  low 0.03  25s  ETA 41.1m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_d4e5f
+6a7\trace.log
+16:52:00  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [012/50]  socialme  single-session-user ──────────────────┐
+│   Q     What is Jordan's attitude toward team sports and group physical     │
+│ activities? And who in the conversation revealed this?                      │
+│   pred  Jordan isn't into team sports — he declined a work football event,  │
+│ and even when told it was "low-key" he still said no.                       │
+│   gold  Jordan strongly dislikes team sports and group fitness activities.  │
+│ This was revealed by Maya in Session 2. When Jordan b                       │
+└──────────────────── judge=yes  mid 0.43  29s  ETA 41.0m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q5_e5f6a
+7b8\trace.log
+┌─────────────── [013/50]  socialme  single-session-preference ───────────────┐
+│   Q     The group seems to treat Sunday brunches as a standing commitment — │
+│ something everyone shows up to. Does that hold for a                        │
+│   pred  No, it doesn't hold for all members — Jordan is the one who was     │
+│ absent from the brunch while everyone else showed up, wi                    │
+│   gold  A. Jordan                                                           │
+│ No — Jordan is an exception. In Session 5, Jordan cancelled on the morning  │
+│ of Sunday brunch saying 'Not coming                                         │
+└──────────────────── judge=yes  low 0.16  40s  ETA 39.6m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q6_f2a3b
+4c5\trace.log
+16:54:17  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [014/50]  socialme  single-session-user ──────────────────┐
+│   Q     What does the conversation reveal about the history between Jordan  │
+│ and Sam?                                                                    │
+│   pred  The conversations reveal that Jordan and Sam share a history        │
+│ involving an incident at Mt. Tam (Mt. Tamalpais) that Jorda                 │
+│   gold  The conversation reveals that Jordan and Sam share a history        │
+│ involving a hiking trip to Mt. Tam that went badly. In Sess                 │
+└──────────────────── judge=yes  mid 0.35  31s  ETA 40.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q7_f6a7b
+8c9\trace.log
+16:55:52  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [015/50]  socialme  single-session-user ──────────────────┐
+│   Q     What does the conversation suggest about the relationship between   │
+│ Priya and Lena within the group?                                            │
+│   pred  Priya and Lena appear to be close friends and mutual support        │
+│ partners within the group — Priya jokingly helps Lena decod                 │
+│   gold  Priya and Lena appear to be the closest pairing within the group,   │
+│ with an established dynamic where Priya helps Lena nav                      │
+└──────────────────── judge=yes  mid 0.36  21s  ETA 39.3m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q7_a7b8c
+9d0\trace.log
+16:57:51  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [016/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Jordan's role in organizing group plans change over the     │
+│ course of the conversations?                                                │
+│   pred  Jordan went from being the group's go-to organizer and booking      │
+│ person — Maya says "Jordan used to handle all the booking                   │
+│   gold  Jordan's role as group organizer clearly eroded across the          │
+│ sessions. In Session 1, Maya referenced Jordan's old role imp               │
+└──────────────────── judge=yes  mid 0.40  68s  ETA 40.6m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_b8c9d
+0e1\trace.log
+16:59:41  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [017/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Maya's relationship with alcohol come across in the         │
+│ conversations — was there any sign of a change?                             │
+│   pred  Yes, there was a clear shift. On Jan 20, Maya was the one           │
+│ initiating drinks — suggesting they go to Rooftop Fox after ra              │
+│   gold  Maya's drinking preferences shifted noticeably across the sessions. │
+│ In earlier sessions, no drinking preference was stat                        │
+└──────────────────── judge=yes  mid 0.54  41s  ETA 39.9m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_c9d0e
+1f2\trace.log
+┌─────────────────── [018/50]  socialme  knowledge-update ────────────────────┐
+│   Q     Did Sam's willingness to participate in outdoor activities like     │
+│ hiking change across the conversations?                                     │
+│   pred  Yes. Sam initially turned down hiking in session 4 (Jan 27), saying │
+│ "I'll sit the hiking out" and explaining "ankle stil                        │
+│   gold  Yes. In Sessions 1–3, Sam showed no objection to group outdoor      │
+│ activities — there was no mention of hiking limitations.                    │
+└──────────────────── judge=no  mid 0.34  54s  ETA 39.0m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_d0e1f
+2a3\trace.log
+17:02:41  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────── [019/50]  socialme  single-session-preference ───────────────┐
+│   Q     Based on the family conversations, does Adaora have any particular  │
+│ food preferences or restrictions that come through?                         │
+│   pred  Adaora is shifting toward more legume-based food — she requested    │
+│ moi moi or akara, and later wanted to bring a lentil di                     │
+│   gold  Adaora appears to be avoiding meat and animal products, though she  │
+│ never states this directly. She deflected from Ngozi'                       │
+└──────────────────── judge=yes  mid 0.36  52s  ETA 40.4m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_n2a1b
+2c3\trace.log
+┌─────────────── [020/50]  socialme  single-session-preference ───────────────┐
+│   Q     Has anything about Ngozi's cooking changed recently, based on what  │
+│ the family says?                                                            │
+│   pred  Yes — Emeka and Adaora both noticed Ngozi's pepper soup tasted      │
+│ different lately: lighter, with less seasoning. Emeka gue                   │
+│   gold  Yes — Ngozi appears to have reduced the salt in her cooking, though │
+│ she won't admit it. In Session 2, when Emeka noted t                        │
+└──────────────────── judge=yes  mid 0.43  36s  ETA 38.6m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_n2b2c
+3d4\trace.log
+┌─────────────── [021/50]  socialme  single-session-preference ───────────────┐
+│   Q     What do the conversations reveal about how Tobenna feels about      │
+│ discussing his job search with the family?                                  │
+│   pred  Tobenna is clearly uncomfortable discussing his job search with the │
+│ family — he deflects by changing the subject (asking                        │
+│   gold  Tobenna consistently avoids the topic. In Session 3, when Ngozi     │
+│ asked about the job search, Tobenna responded with monke                    │
+└──────────────────── judge=yes  mid 0.33  33s  ETA 36.7m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_n2c3d
+4e5\trace.log
+┌────────────────── [022/50]  socialme  single-session-user ──────────────────┐
+│   Q     What was decided about the Christmas dinner menu, and did all       │
+│ family members seem equally happy with that plan?                           │
+│                                                                             │
+│ Options                                                                     │
+│   pred  Ngozi decided on a full traditional spread — egusi, jollof, goat,   │
+│ moi moi, suya, and fried plantain — but not all family                      │
+│   gold  A. Adaora                                                           │
+│ Ngozi planned to cook the full traditional spread — goat, jollof, suya,     │
+│ fried plantain. Emeka and Tobenna were                                      │
+└──────────────────── judge=yes  mid 0.41  66s  ETA 35.8m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q2_n2d4e
+5f6\trace.log
+┌────────────────── [023/50]  socialme  single-session-user ──────────────────┐
+│   Q     Who first pushed back on committing to specific Christmas dates —   │
+│ citing outside obligations as the reason?                                   │
+│                                                                             │
+│ Options:                                                                    │
+│ A.                                                                          │
+│   pred  C. Emeka.                                                           │
+│                                                                             │
+│ He was the first to hedge on committing — saying "We'll see what Adaeze's   │
+│ schedule looks like" before anyone                                          │
+│   gold  C. Emeka                                                            │
+│ Emeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll  │
+│ see what Adaeze's schedule looks lik                                        │
+└──────────────────── judge=yes  mid 0.34  32s  ETA 33.8m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_n2e5f
+6a7\trace.log
+17:09:17  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [024/50]  socialme  single-session-user ──────────────────┐
+│   Q     Has Ngozi's cooking changed in any way recently, and who in the     │
+│ family figured this out without being told?                                 │
+│   pred  Yes — Ngozi's pepper soup was noticed as tasting different,         │
+│ specifically "slightly lighter" with less seasoning (Emeka g                │
+│   gold  Ngozi's cooking has become less salty, apparently on doctor's       │
+│ advice. This was figured out by Emeka. In Session 2, after                  │
+└──────────────────── judge=yes  mid 0.40  35s  ETA 32.9m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q5_n2f6a
+7b8\trace.log
+┌─────────────── [025/50]  socialme  single-session-preference ───────────────┐
+│   Q     The family seems to assume that when Ngozi cooks for Christmas,     │
+│ everyone eats what she makes. Is that assumption accurat                    │
+│   pred  **A. Adaora.**                                                      │
+│                                                                             │
+│ Adaora explicitly told Ngozi she wanted to bring a lentil dish because      │
+│ she's "been eating a bit differen                                           │
+│   gold  A. Adaora                                                           │
+│ Not for Adaora. While Emeka and Tobenna enthusiastically requested specific │
+│ dishes from Ngozi's traditional sp                                          │
+└──────────────────── judge=yes  mid 0.35  30s  ETA 31.1m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q6_n2a7b
+8c9\trace.log
+17:11:29  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [026/50]  socialme  single-session-user ──────────────────┐
+│   Q     What does the family chat reveal about Chidi's role in family       │
+│ discussions?                                                                │
+│   pred  Chidi is the family patriarch and final authority — he speaks in    │
+│ short, declarative directives ("Confirm your dates," "Y                     │
+│   gold  Chidi participates infrequently and briefly, but his messages carry │
+│ decisive weight. He typically arrives late to a conv                        │
+└──────────────────── judge=yes  mid 0.41  28s  ETA 30.0m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q7_n2b8c
+9d0\trace.log
+17:13:10  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [027/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Chidi's attitude toward visiting his children in the UK     │
+│ change over the course of the conversations?                                │
+│   pred  He went from never visiting (only summoning his UK-based children   │
+│ to come home to him, e.g. "Emeka. Confirm your dates")                      │
+│   gold  Chidi shifted from his established position of resisting travel to  │
+│ proactively suggesting a visit. In Sessions 1 and 2,                        │
+└──────────────────── judge=yes  mid 0.47  47s  ETA 29.4m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_n2c9d
+0e1\trace.log
+┌─────────────────── [028/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Emeka's stance on coming home for Christmas change from the │
+│ beginning to the end of the conversations?                                  │
+│   pred  Emeka started noncommittal ("We'll see what Adaeze's schedule looks │
+│ like"), then tried to negotiate a Christmas Day arri                        │
+│   gold  Emeka moved from open-ended stalling to a firm commitment under     │
+│ parental pressure. In Session 1, he said he'd 'see what                     │
+└──────────────────── judge=yes  mid 0.38  40s  ETA 27.9m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_n2d0e
+1f2\trace.log
+┌─────────────── [029/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does Cass's behavior suggest about their preferences when      │
+│ choosing hiking routes?                                                     │
+│   pred  Cass consistently prefers woodland over exposed ridgelines and      │
+│ prioritizes routes that avoid wildlife disturbance during                   │
+│   gold  Cass consistently advocates for woodland or ecologically rich       │
+│ routes over open ridgelines. In Session 1, they suggested                   │
+└──────────────────── judge=yes  low 0.22  36s  ETA 26.4m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_r3a1b
+2c3\trace.log
+┌─────────────── [030/50]  socialme  single-session-preference ───────────────┐
+│   Q     Has Marcus mentioned anything about physical limitations on hikes?  │
+│   pred  Yes — Marcus has mentioned a recurring knee issue that gets stiff   │
+│ on descents. When the group discussed a half marathon,                      │
+│   gold  Marcus has a knee problem that affects him on descents, but he      │
+│ never states it directly. He consistently volunteers to t                   │
+└──────────────────── judge=yes  mid 0.36  32s  ETA 24.9m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_r3b2c
+3d4\trace.log
+┌────────────────── [031/50]  socialme  single-session-user ──────────────────┐
+│   Q     The group has a September and October big-hike tradition. Does      │
+│ everyone participate in autumn hikes?                                       │
+│                                                                             │
+│ Options:                                                                    │
+│ A. Bev                                                                      │
+│ B.                                                                          │
+│   pred  D. Yusuf — he has said he cannot attend autumn hikes due to marking │
+│ season on weekends.                                                         │
+│                                                                             │
+│ §cited:[62a120e5a512]§                                                      │
+│   gold  D. Yusuf                                                            │
+│ No — Yusuf is unavailable for weekend hikes from October through December   │
+│ every year due to teaching and markin                                       │
+└──────────────────── judge=yes  low 0.25  24s  ETA 23.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q2_r3c3d
+4e5\trace.log
+┌────────────────── [032/50]  socialme  single-session-user ──────────────────┐
+│   Q     Two members pushed back on Dani's ridgeline proposal and both       │
+│ seemed to prefer easier terrain. Who brought up the social                  │
+│   pred  A. Bev — she said on the flat "we could actually talk" while the    │
+│ ridgeline leaves everyone too breathless for conversati                     │
+│   gold  A. Bev                                                              │
+│ Bev. In Session 1, Bev said 'we could actually talk on the flat — the       │
+│ ridgeline everyone is too breathless for a                                  │
+└──────────────────── judge=yes  mid 0.40  37s  ETA 21.8m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_r3d4e
+5f6\trace.log
+17:19:03  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌────────────────── [033/50]  socialme  single-session-user ──────────────────┐
+│   Q     Does Cass have any dietary preferences that affect cafe stop        │
+│ planning? And who in the group knows about this?                            │
+│   pred  Cass needs plant-based options at cafes; Bev definitely knows — she │
+│ asked about them on Cass's behalf, and Dani also off                        │
+│   gold  Cass is vegan and needs plant-based options at cafe stops. This was │
+│ revealed by Bev, not Cass. In Session 2, when the Bl                        │
+└──────────────────── judge=no  low 0.29  29s  ETA 20.8m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q5_r3e5f
+6a7\trace.log
+┌────────────────── [034/50]  socialme  single-session-user ──────────────────┐
+│   Q     What does the conversation reveal about the relationship between    │
+│ Bev and Marcus within the group?                                            │
+│   pred  Bev shows attentive concern toward Marcus (noticing his knee        │
+│ limping) and feels comfortable enough to speak on his behal                 │
+│   gold  Bev and Marcus function as quiet allies — both prefer more moderate │
+│ routes compared to Dani's increasingly ambitious pro                        │
+└──────────────────── judge=yes  low 0.28  30s  ETA 19.5m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q7_r3a7b
+8c9\trace.log
+17:21:57  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [035/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Cass's approach to influencing route choices change across  │
+│ the conversations?                                                          │
+│   pred  Cass went from a single-word vote ("Millbrook") in session 1, to    │
+│ raising ecological concerns informally in session 2 (ra                     │
+│   gold  Cass moved from passive preference-stating to active advocacy       │
+│ backed by data. In Session 1, Cass simply expressed a pref                  │
+└──────────────────── judge=yes  mid 0.39  43s  ETA 18.6m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_r3b8c
+9d0\trace.log
+┌─────────────── [036/50]  socialme  single-session-preference ───────────────┐
+│   Q     Dani keeps the group moving on hikes and expects everyone to push   │
+│ through to the end without stopping. Is that actually                       │
+│   pred  No — Bev is the one who clearly doesn't share Dani's push-through   │
+│ mentality, questioning "whatever happened to the socia                      │
+│   gold  A. Bev                                                              │
+│ No — Bev consistently dissents from the no-stopping norm. Across multiple   │
+│ sessions, her first question when a rou                                     │
+└──────────────────── judge=yes  low 0.19  35s  ETA 17.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q6_r3c1d
+2e3\trace.log
+┌─────────────── [037/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does Nneka's behavior across the sessions suggest about how    │
+│ she prefers to attend record fairs?                                         │
+│   pred  She consistently prefers going alone so she can move faster and     │
+│ browse more efficiently.                                                    │
+│                                                                             │
+│ §cited:[94c22999cc40]§                                                      │
+│   gold  Nneka consistently attends fairs alone rather than with the group.  │
+│ In Session 1, when Rashida invited everyone to Fitzro                       │
+└──────────────────── judge=yes  low 0.14  36s  ETA 15.8m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_v4s1c
+1\trace.log
+┌─────────────── [038/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does the pattern of Nneka's posts to the group chat suggest    │
+│ about her collecting focus?                                                 │
+│   pred  Nneka's posts follow a strict pattern: she only shares after a      │
+│ fair, always solo, with just artist-name/pressing details                   │
+│   gold  Nneka only shares finds from soul and gospel music from the         │
+│ 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. Unite                │
+└──────────────────── judge=no  low 0.29  50s  ETA 14.6m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_v4s3c
+3\trace.log
+┌────────────────── [039/50]  socialme  single-session-user ──────────────────┐
+│   Q     Both Theo and Nneka said they would not attend the fair as part of  │
+│ the group. Who gave speed or efficiency as their reas                       │
+│   pred  B. Nneka — she said "I move faster alone."                          │
+│                                                                             │
+│ §cited:[5a99e860ff05]§                                                      │
+│   gold  B. Nneka                                                            │
+│ Nneka. Her stated reason was 'I move faster alone' — a direct efficiency    │
+│ argument about pace. Theo endorsed her                                      │
+└──────────────────── judge=yes  low 0.15  39s  ETA 13.3m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_v4s1c
+2\trace.log
+17:26:42  WARNING   agent.provider  [llm.error] model=mimo-v2.5-pro stream=False base_url=https://token-plan-cn.xiaomimimo.com/v1 tools=0 extra_body_keys=['enable_thinking'] err=Error code: 429 - {'error': {'code': '429', 'message': 'Too many requests', 'type': 'limitation'}}
+17:26:42  WARNING   agent.provider  [llm] 请求失败，将重试 attempt=1/2 wait=1.0s err=RateLimitError
+17:28:01  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [040/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How has Rashida's approach to buying records at fairs changed over  │
+│ the sessions?                                                               │
+│   pred  She started enthusiastic and impulsive — at Fitzroy she bought 4    │
+│ records, two reissues, and sheepishly admitted she need                     │
+│   gold  Rashida started with no budget constraints — she bought freely and  │
+│ described purchases as 'beautiful' regardless of cost                       │
+└──────────────────── judge=no  mid 0.35  61s  ETA 12.3m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_v4s2c
+1\trace.log
+17:29:59  WARNING   eval.longmemeval.metrics  judge_answer returned no yes/no content on attempt 1 with max_tokens=1024
+┌─────────────────── [041/50]  socialme  knowledge-update ────────────────────┐
+│   Q     Did Theo always refuse to buy reissues, or did his position on this │
+│ change over time?                                                           │
+│   pred  His position actually evolved. He started skeptical but not         │
+│ absolute — on April 14 he called reissues "a gamble" rather                 │
+│   gold  Theo's position started as strong skepticism and hardened into      │
+│ categorical refusal. In Session 1 he expressed doubt but                    │
+└──────────────────── judge=yes  mid 0.39  52s  ETA 11.2m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_v4s3c
+1\trace.log
+┌─────────────────── [042/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How did Preet's relationship to physical record collecting change   │
+│ over the conversations?                                                     │
+│   pred  Preet went from casual enthusiasm (excited about cover art, didn't  │
+│ know his Fela was a reissue) to a pivotal shift on Ap                       │
+│   gold  Preet began as primarily a streamer with minimal physical           │
+│ ownership. In Session 1, their enthusiasm was about discoverin              │
+└──────────────────── judge=yes  mid 0.43  57s  ETA 10.0m ────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_v4s3c
+2\trace.log
+┌─────────────────── [043/50]  socialme  knowledge-update ────────────────────┐
+│   Q     Has Gil's approach to attending group record fairs changed over the │
+│ sessions?                                                                   │
+│   pred  Yes — Gil started as an engaged observer who didn't commit to       │
+│ attending, became openly dismissive of larger commercial f                  │
+│   gold  Gil has become significantly more selective about which fairs he    │
+│ attends. Earlier sessions show him participating in fai                     │
+└──────────────────── judge=yes  mid 0.36  48s  ETA 8.7m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_v4s4c
+1\trace.log
+┌────────────────── [044/50]  socialme  single-session-user ──────────────────┐
+│   Q     What spending pattern of Rashida's does Preet know about, and how   │
+│ does the conversation show that Preet knows it?                             │
+│   pred  Preet knows Rashida repeatedly promises to stick to a budget at     │
+│ record fairs but always overspends, and the conversation                    │
+│   gold  Preet knows. In Session 4, when Rashida announced she was on a      │
+│ 'strict budget' for the Camden fair, Preet immediately re                   │
+└──────────────────── judge=yes  mid 0.35  39s  ETA 7.4m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q5_v4s4c
+2\trace.log
+┌────────────────── [045/50]  socialme  single-session-user ──────────────────┐
+│   Q     What do the conversations reveal about the relationship between     │
+│ Rashida and Preet within the group?                                         │
+│   pred  They're close fair-going companions who enjoy the social side of    │
+│ collecting together — Rashida explicitly pairs herself                      │
+│   gold  Rashida and Preet have the closest, most social relationship in the │
+│ group. In Session 1, after Nneka and Theo declared t                        │
+└──────────────────── judge=yes  low 0.28  33s  ETA 6.2m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q7_v4s5c
+1\trace.log
+┌─────────────── [046/50]  socialme  single-session-preference ───────────────┐
+│   Q     What does Claudette's behavior suggest about her stance on          │
+│ development and change on Maple Street?                                     │
+│   pred  Claudette consistently opposes development and change on Maple      │
+│ Street, linking increased building and new residents to t                   │
+│   gold  Claudette consistently opposes any planning application that would  │
+│ alter the street's residential character. In Session                        │
+└───────────────────── judge=no  low 0.21  42s  ETA 4.9m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q1_a5s1c
+1\trace.log
+┌────────────────── [047/50]  socialme  single-session-user ──────────────────┐
+│   Q     All five members of the Maple Street group shared their views on    │
+│ the proposed residents' parking scheme. What was each p                     │
+│   pred  **Femi** (broadly in favour) — concerned about commuter overflow    │
+│ onto the next street. **Claudette** (against) — £80/yea                     │
+│   gold  All five weighed in with distinct positions and reasons: Claudette  │
+│ was against — she objected on cost grounds ('£80 a ye                       │
+└──────────────────── judge=yes  mid 0.47  31s  ETA 3.7m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q3_a5s2c
+1\trace.log
+┌────────────────── [048/50]  socialme  single-session-user ──────────────────┐
+│   Q     Both Claudette and Vera expressed concern about parking in relation │
+│ to the no. 22 planning application. Who was specific                        │
+│   pred  **Vera (D)** was specifically concerned about parking disruption    │
+│ during construction works, while **Claudette (A)** oppo                     │
+│   gold  D. Vera                                                             │
+│ Vera raised the parking concern specifically about construction disruption  │
+│ — her objection to the council includ                                       │
+└──────────────────── judge=yes  mid 0.43  19s  ETA 2.4m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q4_a5s1c
+2\trace.log
+┌─────────────────── [049/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How has Marcus's engagement with traffic and safety issues on Maple │
+│ Street changed over the sessions?                                           │
+│   pred  Marcus started with practical concerns (scaffolding blocking the    │
+│ school gate in session 1), became an active advocate fo                     │
+│   gold  Marcus mentioned traffic concerns incidentally in Session 1         │
+│ (worried about scaffolding blocking the school gate during w                │
+└───────────────────── judge=no  mid 0.38  30s  ETA 1.2m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q8_a5s3c
+1\trace.log
+┌─────────────── [050/50]  socialme  single-session-preference ───────────────┐
+│   Q     The group has a norm of raising issues in the chat before           │
+│ contacting the council. Does that norm apply to everyone?                   │
+│                                                                             │
+│ Opt                                                                         │
+│   pred  D. Vera — Femi set the norm ("keep it on the street first before    │
+│ anyone goes straight to the council"), but Vera had alr                     │
+│   gold  D. Vera                                                             │
+│ No — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her │
+│ own objection to the council before                                         │
+└──────────────────── judge=yes  low 0.29  43s  ETA 0.0m ─────────────────────┘
+  trace  
+runtime\eval\memory_methods\method_01_intent_aware_retrieval\socialmem_Q6_a5s3c
+2\trace.log
+  Overall  judge=82%  F1=0.32 ---------------------- 50/50 100% 0:59:45 0:00:00
+⠼ idle                                               0/1     0% 0:59:45 -:--:--
+                          Results  —  elapsed 1.0h                          
+┌──────────────────────────────────┬───────┬────────┬────────┬────┬────────┐
+│ Question Type                    │ judge │     F1 │     EM │  n │ errors │
+├──────────────────────────────────┼───────┼────────┼────────┼────┼────────┤
+│ Overall                          │ 82.0% │ 0.3221 │ 0.0000 │ 50 │      0 │
+├──────────────────────────────────┼───────┼────────┼────────┼────┼────────┤
+│ knowledge-update                 │ 72.7% │ 0.4021 │ 0.0000 │ 11 │      0 │
+│ single-session-preference        │ 76.5% │ 0.2588 │ 0.0000 │ 17 │      0 │
+│ single-session-user              │ 90.9% │ 0.3309 │ 0.0000 │ 22 │      0 │
+└──────────────────────────────────┴───────┴────────┴────────┴────┴────────┘
+
+  Saved → eval\results\memory_methods\method_01_intent_aware_retrieval.json

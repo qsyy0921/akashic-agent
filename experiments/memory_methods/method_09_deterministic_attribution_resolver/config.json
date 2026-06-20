@@ -1,0 +1,13 @@
+{
+  "method_id": "method_09_deterministic_attribution_resolver",
+  "strategy": "deterministic_attribution_resolver",
+  "description": "Benchmark-only raw-message-first method that deterministically resolves speaker/order/exception/update answer candidates before final LLM generation.",
+  "options": {
+    "basis": [
+      "method_08 raw evidence table",
+      "source_ref grounded speaker attribution",
+      "message_index ordering",
+      "deterministic candidate selection before generation"
+    ]
+  }
+}

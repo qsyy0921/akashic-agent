@@ -1,0 +1,21 @@
+{
+  "cases": 1031,
+  "by_source": {
+    "socialmembench:network": 1031
+  },
+  "by_question_type": {
+    "single-session-preference": 313,
+    "single-session-user": 456,
+    "knowledge-update": 262
+  },
+  "haystack_sessions": {
+    "min": 5,
+    "max": 12,
+    "avg": 9.05
+  },
+  "haystack_turns": {
+    "min": 50,
+    "max": 302,
+    "avg": 212.55
+  }
+}

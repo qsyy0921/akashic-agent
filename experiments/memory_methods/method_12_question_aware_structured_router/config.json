@@ -1,0 +1,23 @@
+{
+  "method_id": "method_12_question_aware_structured_router",
+  "strategy": "question_aware_structured_router",
+  "description": "Use the original benchmark question/options to session-scope memory2 raw-event retrieval, remove generic terms and option-name-only scoring, and return a compact source-grounded evidence table before final generation.",
+  "options": {
+    "schema_tables": [
+      "memory_raw_events",
+      "memory_entities",
+      "memory_event_facts",
+      "memory_assertions",
+      "memory_relation_facts"
+    ],
+    "base_retrieval": "adaptive_intent_versioned",
+    "all_raw_event_backfill": true,
+    "all_raw_event_backfill_limit": 100000,
+    "all_raw_event_backfill_chunk_size": 200,
+    "selected_evidence_limit": 8,
+    "summary_pollution": false,
+    "wrap_search_fetch_tools": false,
+    "question_context": true,
+    "session_scoped_raw_events": true
+  }
+}

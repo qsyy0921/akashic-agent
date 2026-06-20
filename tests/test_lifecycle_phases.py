@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import json
 import sqlite3
 from collections.abc import Callable
 from datetime import datetime
@@ -1294,6 +1295,120 @@ async def test_after_reasoning_collects_persist_and_outbound_slots():
     assert result.outbound.metadata["before_turn_flag"] == "bt"
     assert result.outbound.metadata["plugin_flag"] == "m"
     assert result.outbound.media == ["/tmp/a.png"]
+
+
+@pytest.mark.asyncio
+async def test_after_reasoning_attaches_chatgpt_imagegen_media(tmp_path: Path):
+    image = tmp_path / "west-lake.png"
+    image.write_bytes(b"\x89PNG\r\n\x1a\n")
+    session = _DummySession("telegram:123")
+    msg = _inbound()
+    state = TurnState(msg=msg, session_key=session.key, dispatch_outbound=True)
+    state.session = session
+    services = SimpleNamespace(
+        presence=Mock(),
+        session_manager=SimpleNamespace(append_messages=AsyncMock()),
+    )
+    turn_result = TurnRunResult(
+        reply="已生成图片。",
+        tool_chain=[
+            {
+                "text": "",
+                "calls": [
+                    {
+                        "name": "mcp_chatgpt_imagegen__chatgpt_image_generate",
+                        "status": "success",
+                        "artifacts": [
+                            {
+                                "type": "image",
+                                "path": str(image),
+                                "mime": "image/png",
+                            }
+                        ],
+                        "result": json.dumps(
+                            {"success": True, "images": [str(image)]},
+                            ensure_ascii=False,
+                        ),
+                    }
+                ],
+            }
+        ],
+        tools_used=["mcp_chatgpt_imagegen__chatgpt_image_generate"],
+        thinking=None,
+        streamed=False,
+        context_retry={},
+    )
+    phase = Phase(
+        default_after_reasoning_modules(EventBus(), cast(Any, services)),
+        frame_factory=AfterReasoningFrame,
+    )
+
+    result = await phase.run(AfterReasoningInput(state=state, turn_result=turn_result))
+
+    assert result.outbound.content == "已生成图片。"
+    assert result.outbound.media == [str(image)]
+    assert session.messages[1]["media"] == [str(image)]
+
+
+@pytest.mark.asyncio
+async def test_after_reasoning_skips_auto_dispatched_chatgpt_imagegen_media(tmp_path: Path):
+    image = tmp_path / "hanfu.png"
+    image.write_bytes(b"\x89PNG\r\n\x1a\n")
+    session = _DummySession("telegram:123")
+    msg = _inbound()
+    state = TurnState(msg=msg, session_key=session.key, dispatch_outbound=True)
+    state.session = session
+    services = SimpleNamespace(
+        presence=Mock(),
+        session_manager=SimpleNamespace(append_messages=AsyncMock()),
+    )
+    turn_result = TurnRunResult(
+        reply="已发送。",
+        tool_chain=[
+            {
+                "text": "",
+                "calls": [
+                    {
+                        "name": "mcp_chatgpt_imagegen__chatgpt_image_generate",
+                        "status": "success",
+                        "artifacts": [
+                            {
+                                "type": "image",
+                                "path": str(image),
+                                "mime": "image/png",
+                            }
+                        ],
+                        "auto_dispatched_artifacts": [
+                            {
+                                "type": "image",
+                                "path": str(image),
+                                "mime": "image/png",
+                            }
+                        ],
+                        "auto_dispatched_media": [str(image)],
+                        "result": json.dumps(
+                            {"success": True, "images": [str(image)]},
+                            ensure_ascii=False,
+                        ),
+                    }
+                ],
+            }
+        ],
+        tools_used=["mcp_chatgpt_imagegen__chatgpt_image_generate"],
+        thinking=None,
+        streamed=False,
+        context_retry={},
+    )
+    phase = Phase(
+        default_after_reasoning_modules(EventBus(), cast(Any, services)),
+        frame_factory=AfterReasoningFrame,
+    )
+
+    result = await phase.run(AfterReasoningInput(state=state, turn_result=turn_result))
+
+    assert result.outbound.content == "已发送。"
+    assert result.outbound.media == []
+    assert "media" not in session.messages[1]
 
 
 @pytest.mark.asyncio

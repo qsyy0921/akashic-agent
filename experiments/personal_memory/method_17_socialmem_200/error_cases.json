@@ -1,0 +1,1540 @@
+[
+  {
+    "question_id": "socialmem_Q1_c0s3c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1695,
+    "em": false,
+    "question": "What does Josh's behavior in the group chat suggest about how he handles questions about his own career?",
+    "predicted_answer": "Josh sidesteps career questions with self-deprecating jokes about not moving and pivots to inviting people to drinks.\n\n§cited:[886f2793254c,733a97df6e3f]§",
+    "gold_answer": "Josh consistently deflects questions about his career with self-deprecating humour and then redirects to someone else. In Session 3, when Leon asked what everyone was up to professionally, Josh responded: 'still in the same chair 😂😂 living the dream' — and immediately pivoted to Priya. In Session 5, he used the same 'same chair' line again. He does not engage with follow-up, does not offer detail about what he actually does or wants, and accepts Mei's gentle reframe ('you know everything') with 'haha, very kind' — another deflection. The pattern is consistent across sessions and the self-deprecation is the tell.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 3.42,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2682,
+    "em": false,
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "predicted_answer": "**Mei** actively initiates career conversations in the group and values peer support for career transitions; **Priya** shares briefly but explicitly prefers one-on-one over group discussion (\"coffee with one person I can do, group unpacking no\"); **Josh** deflects career talk with self-deprecating humor (\"still in the same chair\") but privately supports others behind the scenes; **Leon** broadcasts milestones (Bloomberg coverage, investor calls) but uses humor and deflection rather than seeking deeper career processing.\n\n§cited:[2bf2da20eccf,ab27793dce53,8a91d6efc6dd,6adfde3da53c]§",
+    "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 5.93,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_c0s2c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2459,
+    "em": false,
+    "question": "Both Mei and Leon present themselves confidently in the group chat when discussing career. Who is projecting success they have not fully achieved, and who is reporting genuine accomplished progress?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "C. Mei — Leon reports specific tangible milestones (Series A closed, Bloomberg coverage) with concrete details, while Mei confidently steers career conversations and positions herself as a guide on \"career transition\" yet is herself still mid-process building her team.\n\n§cited:[lme:socialmem_Q4_c0s2c2:20,lme:socialmem_Q4_c0s2c2:30,lme:socialmem_Q4_c0s2c2:33,lme:socialmem_Q4_c0s2c2:40,lme:socialmem_Q4_c0s2c2:45]§",
+    "gold_answer": "C. Mei\nMei is reporting genuine, accomplished progress — she was promoted to team lead, manages eight people, and discusses real management challenges with specificity. Leon is projecting success in terms that are impressive-sounding but incomplete: TechCrunch coverage, Bloomberg coverage, Series A funding — but also 'close to profitability' and 'it's been a journey,' which signals the destination hasn't arrived. He uses aspirational language ('trajectory is there') rather than achieved milestones. Both sound confident, but Mei's confidence is retrospective; Leon's is prospective.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 17.36,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2326,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya strongly dislikes cilantro (vetoed Mariposa because \"that herb ruins everything\"), and was off alcohol, preferring sparkling water instead.\n\n§cited:[c15c5414766a,59082d6caa3f]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 20.94,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2899,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "Sam knows about a shared incident at Mt. Tam that Jordan would rather not think about — Sam was likely there and still checks on Jordan's recovery, while Jordan deflects by saying \"Ask Sam,\" showing a quiet mutual shorthand between them.\n\n§cited:[23958167b3ef,abba463bd36f]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 31.9,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_n2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2069,
+    "em": false,
+    "question": "What do the conversations reveal about how Tobenna feels about discussing his job search with the family?",
+    "predicted_answer": "He is uncomfortable and avoidant — he deflects with 🙈🙈 and a subject change to football, then asks the family to let him share updates on his own terms rather than being asked.\n\n§cited:[lme:socialmem_Q1_n2c3d4e5:35,lme:socialmem_Q1_n2c3d4e5:37]§",
+    "gold_answer": "Tobenna consistently avoids the topic. In Session 3, when Ngozi asked about the job search, Tobenna responded with monkey-covering-eyes emoji followed by 'Did anyone watch the Arsenal game?' — a complete subject change. In Session 5 he gave a vague 'Not yet Mum, soon though' before Adaora's situation took over. He never provides any substance on the job front, always deflecting with humor, emoji, or a redirect. The pattern suggests the search isn't going well and he doesn't want to discuss it.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 6.09,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_n2d4e5f6",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2314,
+    "em": false,
+    "question": "What was decided about the Christmas dinner menu, and did all family members seem equally happy with that plan?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Ngozi decided on egusi, jollof, goat, moi moi, suya, and fried plantain, and not everyone was equally happy—Adaora was notably less enthusiastic, wanting to bring her own lentil dish instead.\n\nAnswer: **D. Ngozi**\n\n§cited:[84df0254b3dd,da9cf97b7d9c,bd0d567d0834,lme:socialmem_Q2_n2d4e5f6:4,lme:socialmem_Q2_n2d4e5f6:41,lme:socialmem_Q2_n2d4e5f6:42,lme:socialmem_Q2_n2d4e5f6:43,lme:socialmem_Q2_n2d4e5f6:44,lme:socialmem_Q2_n2d4e5f6:55,lme:socialmem_Q2_n2d4e5f6:56,lme:socialmem_Q2_n2d4e5f6:57]§",
+    "gold_answer": "A. Adaora\nNgozi planned to cook the full traditional spread — goat, jollof, suya, fried plantain. Emeka and Tobenna were enthusiastic. Adaora, however, asked specifically if Ngozi could include beans dishes (moi moi, akara) and deflected from the meat options with 'I'll have whatever there is' — suggesting she has a preference for the plant-based side dishes. When Tobenna noted 'Ada you love goat,' she said only 'let me have the beans' without explaining. The rest of the family proceeded as if the standard menu was settled.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 4.71,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_n2f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.2264,
+    "em": false,
+    "question": "Has Ngozi's cooking changed in any way recently, and who in the family figured this out without being told?",
+    "predicted_answer": "Ngozi's cooking has been \"slightly lighter than usual,\" and **Emeka** noticed it on his own — Adaora then realized he'd spotted the same quiet change she had, though their mother never said anything about it.\n\n§cited:[f3a85b45e58c,lme:socialmem_Q5_n2f6a7b8:16,lme:socialmem_Q5_n2f6a7b8:18]§",
+    "gold_answer": "Ngozi's cooking has become less salty, apparently on doctor's advice. This was figured out by Emeka. In Session 2, after multiple family members noted the pepper soup tasted different, Emeka said 'Less seasoning I think. Mum might have been told to ease off the salt' — reasoning through the change without being told directly. Ngozi denied it, but Emeka's inference was drawn from pattern recognition, not from Ngozi disclosing anything.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 6.79,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2d0e1f2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2276,
+    "em": false,
+    "question": "How did Emeka's stance on coming home for Christmas change from the beginning to the end of the conversations?",
+    "predicted_answer": "Emeka started unsure and noncommittal, needing to check Adaeze's schedule, but by the end he accepted and committed (\"Yes Dad we'll make it work\") after both Chidi and Ngozi told him directly he must be home.\n\n§cited:[0f1fd42ea1a1,31c66009172e,a22501552427,lme:socialmem_Q8_n2d0e1f2:2,lme:socialmem_Q8_n2d0e1f2:9,lme:socialmem_Q8_n2d0e1f2:29,lme:socialmem_Q8_n2d0e1f2:51]§",
+    "gold_answer": "Emeka moved from open-ended stalling to a firm commitment under parental pressure. In Session 1, he said he'd 'see what Adaeze's schedule looks like' and would know 'in a few weeks.' In Session 4, he tried again — citing Adaeze's work event on the 24th as a reason they might arrive Christmas morning instead of Christmas Eve. Chidi's single-line response ('Emeka. You are coming on Christmas Eve.') ended it immediately; Emeka replied 'Yes Dad, we'll make it work.' The shift was from strategic delay to compliance.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 23.81,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2476,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass explicitly preferred woodland sections over exposed ridgelines, choosing the Millbrook loop through Hartley Wood rather than the upper plateau, suggesting they favor shaded, forested routes with conversational terrain over steep or exposed paths.\n\n§cited:[ab50235b5c0b,b15ce297c925]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 26.84,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.352,
+    "em": false,
+    "question": "Has Marcus mentioned anything about physical limitations on hikes?",
+    "predicted_answer": "Yes — Marcus has a recurring knee issue. Bev noticed him limping after a hike and said it had been bothering him for a while; Marcus acknowledged \"It's fine Bev. Gets a bit stiff on descents.\" He also tends to prefer gentler routes and always asks about descent conditions.\n\n§cited:[7389bb2ad18e,764228bbf056]§",
+    "gold_answer": "Marcus has a knee problem that affects him on descents, but he never states it directly. He consistently volunteers to take the easier descent route ('I can take the south route on descent') and when Bev observed him limping after the Blackmoor Scramble, he acknowledged only that his knee 'gets a bit stiff on descents.' He also frames his descent queries as logistics rather than personal concern ('What's the descent like on the south side?').",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 17.23,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.163,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "B. Bev — she explicitly pushed back on Dani's intensity, asking \"whatever happened to the social side of this group.\"\n\n§cited:[83a185882d6b,4032a2327c02]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 13.61,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.124,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's terse, artist-name-and-label posts (e.g. \"Millie Jackson. 1974. Spring Records.\") and solo-fair style suggest a focused collector of 1970s R&B/soul originals.\n\n§cited:[3bd820b0c89a]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 14.91,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3523,
+    "em": false,
+    "question": "Did Theo always refuse to buy reissues, or did his position on this change over time?",
+    "predicted_answer": "His position shifted over time. On 2025-04-07 he was skeptical but conditional (\"if it's the same reissue-heavy floor as last time, not worth the trip\"), on 2025-04-14 he called reissues \"a gamble,\" but after buying a Coltrane reissue with terrible mastering on 2025-04-21 he declared \"originals only from now\" — yet by 2025-05-05 he was praising a fair's haul, suggesting he'd softened somewhat.\n\n§cited:[df6590783c8b,e194dd53a839,b1b5ec94a451,f0e921dab8ef]§",
+    "gold_answer": "Theo's position started as strong skepticism and hardened into categorical refusal. In Session 1 he expressed doubt but not a ban ('reissues are a gamble'). In Session 2, he critiqued Rashida's reissue purchases for their mastering but had not yet announced a personal rule. In Session 3, he bought an expensive new Coltrane reissue himself, found the mastering to be terrible, and declared: 'Nothing with a digital chain in the mastering is worth buying. I'm done. Originals only from now.' The 'Never again' after describing it as a waste makes clear this is a permanent policy change. By Session 5, his position is unqualified: 'Originals only, Rashida. That is the whole point.'",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 8,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 27.74,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4339,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Gil's approach hasn't visibly changed — across sessions he consistently evaluates fairs by whether they're specialist or commercial (session 4: \"Is it specialist or commercial?\" then \"Probably not. Too many Taylor Swift reissues\"), attends when the quality suits him (he showed up to Camden in session 5 with an Ebo Taylor find), and contributes as a quiet collector rather than a group participant, always offering expertise (\"Send the matrix. I'll tell you\") and duplicates (\"Two copies\") without ever fully joining the social dynamic.\n\n§cited:[8e5d88f60719,lme:socialmem_Q8_v4s4c1:34,lme:socialmem_Q8_v4s4c1:36,lme:socialmem_Q8_v4s4c1:47,lme:socialmem_Q8_v4s4c1:49,lme:socialmem_Q8_v4s4c1:31,lme:socialmem_Q8_v4s4c1:6,lme:socialmem_Q8_v4s4c1:15,lme:socialmem_Q8_v4s4c1:21,lme:socialmem_Q8_v4s4c1:25]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 48.22,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a5s1c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2121,
+    "em": false,
+    "question": "What does Claudette's behavior suggest about her stance on development and change on Maple Street?",
+    "predicted_answer": "Claudette is against development on Maple Street — she views new construction, increased traffic, and more occupants as threats to the street's quiet character and children's safety, preferring the way things were.\n\n§cited:[lme:socialmem_Q1_a5s1c1:22,dd8cd23e9876,c2875902e845]§",
+    "gold_answer": "Claudette consistently opposes any planning application that would alter the street's residential character. In Session 1, her immediate response to the no. 22 loft conversion notice was 'This street does not need any more bulk added to it. I shall be objecting.' She frames this in terms of visual impact and preserving the street's character — not noise, not traffic. In Session 3, she linked the traffic danger Marcus experienced to development ('All this traffic is exactly what happens when you allow more development'). Her thirty-year tenure gives her a before-and-after frame that shapes all of her planning opinions.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 14.33,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3704,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's engagement shifted from policy-level concern to acute personal urgency and then resolved into community focus: in Session 1 (May 5) he raised practical worries about scaffolding blocking the school gate; by Session 2 (May 12) he was strongly backing parking permits as a parent safety fix; in Session 3 (May 19) it peaked when his son had a near-miss with a reversing car, leaving him \"properly shaken\" and pushing for a formal traffic assessment; but by Sessions 4–5 (May 26, June 2) he'd moved on entirely, cheerfully organising face painting at the street party with no further mention of traffic or safety — suggesting the collective response (Vera contacting highways, Femi coordinating) gave him enough reassurance to let go.\n\n§cited:[1c68eb1d8c20,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:20,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:32,lme:socialmem_Q8_a5s3c1:43,lme:socialmem_Q8_a5s3c1:47]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 32.72,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_cf6s2c2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3017,
+    "em": false,
+    "question": "What does Dev's pattern of participation across the sessions reveal about what was pulling him away from the group, and where does the conversation first signal the shift?",
+    "predicted_answer": "Dev is being pulled away by his PhD archive work — he's consistently \"head down\" across sessions, apologizing and promising to show up \"when the PhD is done\" but never actually making it, and the shift first becomes visible in session 2 (2025-06-09) when Kwame says \"Dev, you have to actually come,\" signaling the group has noticed he's not following through. §cited:[lme:socialmem_Q8_cf6s2c2:3,lme:socialmem_Q8_cf6s2c2:13,lme:socialmem_Q8_cf6s2c2:14,lme:socialmem_Q8_cf6s2c2:24,lme:socialmem_Q8_cf6s2c2:34,lme:socialmem_Q8_cf6s2c2:35,lme:socialmem_Q8_cf6s2c2:42,lme:socialmem_Q8_cf6s2c2:43]§",
+    "gold_answer": "Dev began as the most invested planner in the group at university but has become the least responsive member. In Session 1, he replied the same day but hours late ('sorry, head down in the archive') and gave a vague but engaged reply. By Session 2, his response came at 11:22pm after a full day of silence. By Session 4, Kwame flagged that Dev had been MIA for six weeks — a direct breach of the monthly check-in norm. Dev acknowledges the pattern himself ('I know, I know') and repeatedly defers to a future when 'the PhD is done' as when things will improve. He is emotionally present in his replies but operationally absent from the group.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 43.04,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_cf6s5c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2775,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Kwame and Dev within the group?",
+    "predicted_answer": "Kwame acts as the group's anchor who directly holds Dev accountable — calling out his absence (\"MIA for six weeks\"), pressuring him to show up (\"you have to actually come\"), and promising to fill him in personally — while Dev responds with genuine warmth and gratitude (thanking Kwame for Edinburgh), suggesting a close bond that extends beyond the group chat despite Dev's PhD-related unavailability.\n\n§cited:[ff5db457a939,a5fd05a83c91,1c0571c81473,3d011d63f8e7]§",
+    "gold_answer": "Kwame and Dev have a deeper bond than the other group pairings, observable in how they treat each other in the chat. Kwame consistently covers for Dev's absences ('he's heads-down at the moment') rather than calling him out in the group. In Session 3 he planned a separate solo trip to Edinburgh just to see Dev — not waiting for a group meetup — signalling the relationship operates on a bilateral channel the group doesn't see. In Session 4 he holds Dev accountable for the norm breach but with directional care ('I know you're in the archive. Send a voice note, a meme, anything') rather than frustration. In Session 5 he tells Dev he'll 'tell you about it when we speak' — confirming ongoing private contact. Dev thanks Kwame specifically for Edinburgh. Their relationship is the most protective and private pair in the group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 23.3,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_fm7s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.4267,
+    "em": false,
+    "question": "What was each family member's position on whether to hold a big party for the 40th anniversary?",
+    "predicted_answer": "**Mum** — Wanted a party: first floated \"maybe a party? Invite the family?\", then pushed for twenty people at the village hall (\"I only wanted cousins and noise for one evening\"), though she eventually conceded.\n\n**Dad** — Firmly against: \"A dinner is fine. No need for a party.\" and later \"No hall. Dad.\"\n\n**Imogen** — Preferred a quiet dinner, had already booked a table for four at Calabrese (\"thought a quiet dinner would be nicer than a big do\") and gently talked Mum out of a party.\n\n**Kofi** — Against a party on practical grounds: two transatlantic trips in eight months was too much, suggested sorting dates first, and offered a video toast if he couldn't make it.\n\n§cited:[8086857e0847,4ed2723830bf,d030900b7777,36a9ac27aaa0,8ae4caa3d71f,lme:socialmem_Q3_fm7s2c1:10,lme:socialmem_Q3_fm7s2c1:11,lme:socialmem_Q3_fm7s2c1:14,lme:socialmem_Q3_fm7s2c1:2,lme:socialmem_Q3_fm7s2c1:18]§",
+    "gold_answer": "Mum wanted a party — she proposed 'just twenty people, close family' and would have hired the village hall. Her reason was wanting everyone together after a long gap. Dad was opposed: 'A dinner is fine. No need for a party.' His preference is always for low-key occasions without fuss. Kofi was cautious — not firmly opposed but noted that March timing was difficult from Toronto after an August visit, and pushed for everyone to align before booking. Imogen had already booked a quiet dinner for four; she also questioned whether a big party would actually give Mum a chance to enjoy herself as a guest.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 13,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 27.5,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_bk8s1c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3855,
+    "em": false,
+    "question": "What does the conversation reveal about how thoroughly each member of the book club actually reads the books?",
+    "predicted_answer": "Harriet reads closely but insists her single \"correct\" reading (class anxiety, Irish social mobility) is the only proper one, dismissing alternatives. Blessing is the deepest reader — she wrote about Rooney for the TLS and consistently offers layered, text-grounded counter-readings (intimacy as power proxy, forgiveness as deflation rather than resolution). Tomasz reads with granular precision (page 147 vs. 189, page 342, page 28) and catches contradictions others miss. Graham appears to be the least thorough — he says \"I'll read it properly this time\" implying past skimming, focuses on only the first chapter, and needs Tomasz to point out the ambiguity he praises resolves by page 28. Nadia reads too but engages emotionally rather than analytically (\"I just liked the scene by the kitchen window\") and pivots to logistics instead of close reading.\n\n§cited:[lme:socialmem_Q3_bk8s1c1:21,lme:socialmem_Q3_bk8s1c1:33,lme:socialmem_Q3_bk8s1c1:15,lme:socialmem_Q3_bk8s1c1:29,lme:socialmem_Q3_bk8s1c1:1,lme:socialmem_Q3_bk8s1c1:20,lme:socialmem_Q3_bk8s1c1:28,lme:socialmem_Q3_bk8s1c1:23,lme:socialmem_Q3_bk8s1c1:3,lme:socialmem_Q3_bk8s1c1:4,lme:socialmem_Q3_bk8s1c1:25]§",
+    "gold_answer": "The group's reading rigour varies considerably. Tomasz is the most thorough reader — he page-references his observations ('on page 218...', 'from page 147 onwards') and reads including the author's note. Blessing reads as a professional writer — close attention to craft, structure, and what's unsaid. Harriet reads fully but with a specific interpretive agenda she pursues rather than opens. Graham reads carefully but may focus on the opening chapters: Tomasz asked him whether he'd read the second chapter after he made a claim that the second chapter resolves. Nadia demonstrably does not read the full book: she pivots to 'what did everyone make of the ending?' without offering her own view, borrows Blessing's reading and claims she 'was going to say the same thing', and asks about 'the middle section' in terms vague enough to invite others to specify which section.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 13,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 45.75,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_bk8s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2184,
+    "em": false,
+    "question": "What in the conversation signals that Blessing's approach to challenging interpretations shifted, and what appeared to drive the change?",
+    "predicted_answer": "Blessing shifted from directly dismissing Harriet's class reading as \"surface\" to framing challenges as additive (\"we just added to it, multiple readings can live together\"), apparently driven by Graham feeling his reading had been dismissed and by Nadia and Tomasz's supportive reception of her interpretive confidence.\n\n§cited:[2c6a0929404f,33150b5cbe3a,lme:socialmem_Q8_bk8s3c1:21,lme:socialmem_Q8_bk8s3c1:22,lme:socialmem_Q8_bk8s3c1:23,lme:socialmem_Q8_bk8s3c1:30,lme:socialmem_Q8_bk8s3c1:31,lme:socialmem_Q8_bk8s3c1:40,lme:socialmem_Q8_bk8s3c1:41]§",
+    "gold_answer": "Blessing started offering alternative readings tentatively. By Session 3, she presents them with authority and directly rebuts dismissals. In Session 1, her reading ('the forgiveness is deflation — the narrator is too tired') was offered as an additional perspective without direct challenge. In Session 3, when Harriet dismissed her Rooney reading as lacking the necessary Irish context, Blessing replied: 'I do have the context, I wrote about it for the TLS. The class reading is valid but it's not the only one. Multiple readings can be right simultaneously.' This is a different register: she is now citing professional credentials to defend her interpretations and refusing to let Harriet's dismissals stand. The shift is tied to her novel's publication, which gave her standing she uses in the group.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 39.91,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_bk8s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2179,
+    "em": false,
+    "question": "What reading habit of Nadia's is exposed, and how does the conversation show that Tomasz already knew it?",
+    "predicted_answer": "Nadia prefers lighter, popular books over literary fiction — shown when she picks Dolly Alderton and Harriet dismisses it as \"holiday reading\" — and Tomasz already knew this pattern, questioning \"Did Nadia actually want to read the Alderton, or was that about something else?\" after she caved to the group's pressure.\n\n§cited:6b2cd539dad1,2be600585fe9,lme:socialmem_Q5_bk8s3c2:10,lme:socialmem_Q5_bk8s3c2:13,lme:socialmem_Q5_bk8s3c2:14§",
+    "gold_answer": "Tomasz asked: 'Do you mean the section from page 147 onwards? Or the chapter break at 189?' after Nadia said she found 'the middle section so interesting' — a deliberately vague reference that could apply to almost anything. By offering two specific page ranges, Tomasz is implicitly testing whether Nadia can locate what she's referring to. It is either a genuine clarifying question or a pointed one — but either way, it reveals that Tomasz is attuned to Nadia's habit of making claims that are too general to commit to. He knows she doesn't read the whole book and his precision is the tell.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 34.04,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_ph9s5c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.197,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Anika and Diane in the collective?",
+    "predicted_answer": "Anika acts as a mentor/editor figure to Diane—giving direct, blunt creative feedback (\"the fourth is mood; the sixth has consequence\") and pushing her toward stronger work—while Diane trusts and accepts that guidance even when she initially disagrees (\"annoying that you're right\").\n\n§cited:[0b6e49d8f9c2,53b764fbc7ca,027319e0c4c3,5d623bc6410f,lme:socialmem_Q7_ph9s5c1:20,lme:socialmem_Q7_ph9s5c1:36,lme:socialmem_Q7_ph9s5c1:4,lme:socialmem_Q7_ph9s5c1:21]§",
+    "gold_answer": "Anika and Diane began with a classic mentor-mentee dynamic: Anika brought Diane into the collective, selected her work for the group show, and told her which photo to submit in Session 2. Diane deferred, even when she disagreed. By Session 4, Diane had submitted independently and been shortlisted — Anika approved with 'Strong. You knew. Good.' The relationship shifted. In Session 5, Anika explicitly released the dynamic: 'You don't need me to review your selections anymore.' The arc from mentee to peer is complete and Anika acknowledged it without sentimentality.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 22.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_a0b1c2d301",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3519,
+    "em": false,
+    "question": "When Carol announced she would cook for Bev's visit, and Luis endorsed the value of home-cooked food at gatherings in the same session, the group settled around a norm about food at family events. Which family member's preferences are actually at odds with this norm, even though they said nothing to challenge it in the conversation?\n\nOptions:\nA. Priya\nB. Tyler\nC. Bev\nD. Marcus",
+    "predicted_answer": "D. Bev.\n\nIn the same session (2026-01-06), Luis praised Carol's home-cooked casserole as the secret to good family gatherings, but Bev immediately said \"I'm taking you out to that new Italian place on fifth for your birthday\" — openly favoring dining out over the home-cooked norm the group had just endorsed.\n\n§cited:[lme:socialmem_Q2_a0b1c2d301:16,lme:socialmem_Q2_a0b1c2d301:17]§",
+    "gold_answer": "C. Bev\nBev and Luis are the family members whose actual preferences diverge from the home-cooked food norm, even though neither challenged it in Session 1. Bev had already told Carol she was taking her out for dinner — 'I'm taking you out to that new Italian place on fifth for your birthday. Non-negotiable. You've fed this family for forty years.' This reflects her stated preference for restaurant meals when visiting: 'let's go out, Carol, you've done enough.' Luis endorsed Carol's home-cooked food enthusiastically ('the secret to a good family gathering is the food being actually made with your hands, not ordered in a box'), but his own preference — 'always brings wine to family gatherings and is offended if it isn't opened', combined with his preference for inclusive extended gatherings — does not fit the home-cooked nuclear-family model. The network data confirms both are formal dissenters from the group norm 'Family gatherings mean home-cooked food — nobody orders in or brings something store-bought.'",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 16,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 40.41,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_a0b1c2d303",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.1183,
+    "em": false,
+    "question": "Someone told Dennis he should 'stay in school' — the message that genuinely moved Tyler. Who said it, and what distinguishes their message from the more detailed career advice given in the same session?\n\nOptions:\nA. Marcus\nB. Rob\nC. Bev\nD. Dennis",
+    "predicted_answer": "A. Marcus - \"Tyler I promise you will leave understanding it. I've run this teach three times now. I actually enjoy the setup more than most people enjoy playing, to be h...\"\n§cited:[lme:socialmem_Q4_a0b1c2d303:72]§",
+    "gold_answer": "D. Dennis\nDennis said 'Tyler. Stay in school if you can.' Tyler's response was immediate and emotional: 'uncle D said stay in school i am literally crying. that means a lot actually no joke.' What makes Dennis's message distinct from the other career advice in that session is everything it lacks: it has no ROI calculation (Rob), no credential program details (Marcus), no real estate metaphor (Bev). It is five words from the family patriarch who taught Tyler to change his oil and has been his practical mentor. Its weight comes entirely from who Dennis is to Tyler, not from the content of the advice itself. Tyler's emotional reaction — 'i am literally crying' — signals that the message landed differently from the surrounding practical advice precisely because it was not framed as practical advice at all.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 29.77,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a0b1c2d301",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2897,
+    "em": false,
+    "question": "The Harrington family operates with a norm that Sunday evening is family chat time — everyone checks in at least once over the weekend. Based on the conversations, does this hold equally for all family members — or does someone consistently relate to it differently, and what tells you that?\n\nOptions:\nA. Marcus\nB. Luis\nC. Rob\nD. Jess",
+    "predicted_answer": "Rob — he consistently keeps his chat contributions minimal and task-oriented (\"All good. Healthy, on track. Not sharing the gender yet. R\"), has historically resisted family togetherness (\"I've always been against extended family stays\"), and even his own family notes how uncharacteristic it is when he does open up (\"that might be the most human thing you've said in twelve years\"), suggesting the Sunday check-in norm is something he participates in on his own guarded terms rather than fully.\n\n§cited:[90c336f53a17,lme:socialmem_Q6_a0b1c2d301:124,lme:socialmem_Q6_a0b1c2d301:101,lme:socialmem_Q6_a0b1c2d301:128,lme:socialmem_Q6_a0b1c2d301:127]§",
+    "gold_answer": "B. Luis\nThe norm does not hold equally. Luis and Tyler are the family members who most visibly operate outside it. Luis's participation is anchored around specific topics — food, family logistics, Jess's updates — rather than consistent weekend check-ins; his engagement spikes around events and goes quiet otherwise. Tyler participates when something directly concerns him (Dennis's knee, the game night, career advice), and his response timing within sessions is immediate but his session-to-session consistency is lower than the core family members. The clearest evidence: both Luis and Tyler are identified in the network's group norms as formal dissenters from the Sunday check-in norm. In the conversation, neither appears to initiate check-in messages — their entries are always responsive. Carol, Jess, Marcus, and Rob all initiate at various points; Luis and Tyler do not.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 4,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 45.46,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a0b1c2d302",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1674,
+    "em": false,
+    "question": "The Harrington family has an expectation that big news — jobs, health, relationships — gets announced in the family chat before spreading to extended family. Based on what the conversations show, does everyone follow this norm — or does one member appear to have a different relationship to it, and what tells you that?\n\nOptions:\nA. Dana\nB. Carol\nC. Tyler\nD. Priya",
+    "predicted_answer": "D. Priya — she explicitly admits she'd been downplaying how hard her pregnancy had been (\"harder than I let on earlier\"), and later acknowledges she and Rob are \"getting better at asking for what we actually need,\" showing a pattern of withholding health news from the chat rather than sharing it first.\n\n§cited:[lme:socialmem_Q6_a0b1c2d302:123,lme:socialmem_Q6_a0b1c2d302:127,lme:socialmem_Q6_a0b1c2d302:150]§",
+    "gold_answer": "A. Dana\nDana appears to have a different relationship to this norm. The norm is described as 'big news gets announced in the family chat before spreading to extended family,' but Dana is the designated dissenter in the network. In the conversations this is visible not through any announcement failure but through how Dana communicates in general: she prefers one-on-one conversation over group dynamics, finds the group chat 'performative sometimes', and consistently uses lowercase and minimal-signal messages that reduce visibility rather than increase it. She never initiates a group announcement about her own life — we learn about her breakup through Carol (who found out via Jess, not via Dana's own chat announcement), and her relocation rethink in Session 6 is visible only through her internal change of behaviour, not through any declaration to the group. The contrast with Rob — who announces even minor decisions with structured updates and a sign-off 'R' — makes Dana's departure from the norm particularly visible.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 38.17,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_a0b1c2d301",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2214,
+    "em": false,
+    "question": "What does Tyler's disclosure about Dennis reveal about the nature of their relationship — and what is it about the context of the disclosure that makes it particularly telling?",
+    "predicted_answer": "Tyler's emotional breakdown (\"i am literally crying\") over Dennis's four-word advice (\"Stay in school if you can\") reveals deep filial reverence — Dennis is characteristically the most emotionally withholding person in the family (his messages are typically two to four words: \"No need,\" \"Knee is fine,\" \"Good news,\" \"Four\"), and the context is telling because it happened in a thread where Marcus, Rob, and Bev all gave Tyler substantive career advice, yet it was the rarest and most minimal contribution — Dennis's four terse words — that actually broke through and moved Tyler to tears, showing that for Tyler, Dennis's sparse approval carries more weight than anyone else's elaborate engagement.\n\n§cited:[8fc9647e4c53,b04dc6a696e1,f9b76b545a52,lme:socialmem_Q7_a0b1c2d301:134,lme:socialmem_Q7_a0b1c2d301:135,lme:socialmem_Q7_a0b1c2d301:115,lme:socialmem_Q7_a0b1c2d301:130,lme:socialmem_Q7_a0b1c2d301:133§",
+    "gold_answer": "Tyler mentions in passing that 'uncle D taught me how to do single leg squats to work around bad knees.' He says this while trying to offer Dennis practical advice — the disclosure is incidental, not offered as evidence of closeness. What makes it revealing is that Tyler frames it as established fact ('uncle D taught me') rather than as something he wants the group to know happened. Dennis taught Tyler a specific physical technique for managing knee trouble — the same knee trouble the whole conversation is about. This implies: (1) they have had private, practical conversations about the knee that didn't happen in the group chat, (2) Dennis shared a personal workaround he uses with Tyler, and (3) Tyler absorbed it without any apparent friction. The uncle-nephew relationship is characterised throughout by practical skill transfer (car maintenance, exercises) rather than conversation, and Tyler's casual use of the disclosure confirms the closeness is taken for granted rather than performed.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 44.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_a0b1c2d302",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2261,
+    "em": false,
+    "question": "What does Dana's behaviour toward Marcus's plan to visit their father reveal about how the two of them operate as a sub-group within the family?",
+    "predicted_answer": "Dana immediately matched Marcus's concern with action and direct follow-through -- she joined his visit, privately pressured their father to call the orthopedist, and succeeded because, as Marcus put it, her \"very direct approach\" is what Dad actually responds to -- revealing that the two of them function as the local, hands-on sibling pair who translate family worry into concrete steps, with Marcus as the observant initiator and Dana as the one who closes.\n\n§cited:[9796062203de,lme:socialmem_Q7_a0b1c2d302:108,lme:socialmem_Q7_a0b1c2d302:120,lme:socialmem_Q7_a0b1c2d302:52,lme:socialmem_Q7_a0b1c2d302:111,lme:socialmem_Q7_a0b1c2d302:121,lme:socialmem_Q7_a0b1c2d302:119]§",
+    "gold_answer": "In Session 1, when Marcus says he plans to drop something off at the house on Wednesday, Dana immediately responds: 'marcus going over wednesday sounds good, he'll actually get dad to eat something real too.' Dana does not ask whether Marcus wants company, offer to go herself, or raise a question about logistics — she endorses the plan with an inside observation (that Dennis will eat better with Marcus around) that only someone with regular informal knowledge of the household's patterns would have. The endorsement is framed as a matter of course. In Session 4, Dana says 'i'll come. you always pick good ones.' in response to Marcus's game night invitation — again, no hesitation, no questions, just immediate affirmation based on prior experience. Both responses signal a relationship characterised by baseline trust and mutual familiarity: they coordinate informally because they share both physical proximity (both live in Columbus) and an operating understanding of their parents' household.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 39.64,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a0b1c2d302",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What explains Bev's shift from staying on the periphery of Harrington family decisions to actively weighing in — and what signalled the change was happening?",
+    "predicted_answer": "（无响应）",
+    "gold_answer": "Before state (implicit across Sessions 1-4): Bev participates in the family chat as an observer and emotional support — she gives Carol orders about the watercolor class, mediates between Carol and Dana, and endorses family decisions. But she consistently positions herself outside Harrington household decisions: her role was emotional, not practical-advisory. Shift signal (Session 5): Carol asks Bev to value the house 'just out of curiosity,' and Bev immediately responds as a professional: she names specific comparable sales, gives a dollar range, and offers to walk the property on Saturday. She then sets up the visit in the same exchange. Trigger: Carol asked for her professional opinion — this gave Bev explicit permission to cross the boundary she had maintained. The phrase 'Do you want me to walk through it properly? I can be there Saturday morning' is the shift: Bev is proposing a real consultation, not casual opinion. Evolved state: Bev treats the house valuation as a formal engagement, delivers a structured assessment, and continues to weigh in on practical family matters in subsequent sessions.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 60.41,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c301",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2811,
+    "em": false,
+    "question": "What does Derek's behavior around game outcomes suggest about how he relates to winning and losing within the group?",
+    "predicted_answer": "Derek repeatedly asks for rematches after losing (Marcus pointed out it was the fourth time that month), goes quiet or complains when cooperative games are chosen, and gets vocal when the group vote doesn't go his competitive way — suggesting he ties his self-image in the group to winning and struggles to let losses stand.\n\n§cited:[lme:socialmem_Q1_a1b2c301:157,lme:socialmem_Q1_a1b2c301:159,lme:socialmem_Q1_a1b2c301:148,lme:socialmem_Q1_a1b2c301:79,lme:socialmem_Q1_a1b2c301:80,lme:socialmem_Q1_a1b2c301:67,lme:socialmem_Q1_a1b2c301:45§",
+    "gold_answer": "Derek is intensely competitive and tracks his performance closely. In Session 1, when another member asks how long he has been in the group, his immediate question — framed around personal history rather than the group — sets up Marcus's dry response citing his exact win-loss rate (47%), which Derek disputes rather than dismisses. This reveals Derek monitors his standing closely enough to care that the number feels wrong. His terse insistence ('nah that cant be right') signals the statistic stings precisely because it matters to him. In Session 7, after losing at Mysterium, his immediate request for a rematch ('close game. rematch?') — the fourth such request in a month according to Marcus — confirms that his discomfort with losses is a persistent pattern, not an isolated moment.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 47.8,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c302",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3086,
+    "em": false,
+    "question": "What pattern does Soo-Yeon show in how she approaches the food situation at game nights, and what does it suggest about her preferences?",
+    "predicted_answer": "Soo-Yeon consistently opts out of food planning and ordering — she skips the discussion entirely and just grabs what's already there (like Raj's flatbread) or focuses on keeping food away from the game components instead, suggesting she views food as incidental to game night rather than part of the experience and prefers not to spend decision energy on it.\n\n§cited:[lme:socialmem_Q1_a1b2c302:76,lme:socialmem_Q1_a1b2c302:162]§",
+    "gold_answer": "Soo-Yeon consistently steers away from heavy food at game sessions without making it a direct request. In Session 2, when pizza is mentioned, she asks if the group can 'do something lighter' citing a heavy lunch — a plausible excuse that avoids confrontation but reveals an underlying preference. In Session 3, when the group settles on pizza by majority, she simply says 'I'll just have Raj's flatbread' and opts out silently rather than objecting. The pattern across both sessions shows she dislikes heavy food at game nights but manages this preference through quiet substitution rather than raising it as a group issue.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 4,
+      "fetch_messages_calls": 7,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 48.89,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a1b2c301",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.2586,
+    "em": false,
+    "question": "Based on the conversations, what do the group's interactions around food at game nights reveal about each member's individual approach to eating during sessions?",
+    "predicted_answer": "Priya makes food a social ritual (themed snacks, group votes), Derek dismisses it (\"just pizza,\" \"can we just start\"), Nadia refuses to eat during sessions and treats food near components as a hazard, Marcus and Tomasz take a logistics-first stance (clean hands, no session interruptions), Soo-Yeon is health-conscious and chooses lighter options, and Raj is the accommodating provider who brings snacks and adjusts on request.\n\n§cited:[lme:socialmem_Q3_a1b2c301:14,lme:socialmem_Q3_a1b2c301:15,lme:socialmem_Q3_a1b2c301:51,lme:socialmem_Q3_a1b2c301:52,lme:socialmem_Q3_a1b2c301:53,lme:socialmem_Q3_a1b2c301:54,lme:socialmem_Q3_a1b2c301:63,lme:socialmem_Q3_a1b2c301:71,lme:socialmem_Q3_a1b2c301:72,lme:socialmem_Q3_a1b2c301:73,lme:socialmem_Q3_a1b2c301:74,lme:socialmem_Q3_a1b2c301:76,lme:socialmem_Q3_a1b2c301:78,lme:socialmem_Q3_a1b2c301:103,lme:socialmem_Q3_a1b2c301:104,lme:socialmem_Q3_a1b2c301:162,lme:socialmem_Q3_a1b2c301:163,lme:socialmem_Q3_a1b2c301:164,lme:socialmem_Q3_a1b2c301:165,lme:socialmem_Q3_a1b2c301:170,lme:socialmem_Q3_a1b2c301:172,lme:socialmem_Q3_a1b2c301:17,lme:socialmem_Q3_a1b2c301:173]§",
+    "gold_answer": "The conversations surface distinct food preferences for several members, with others unmentioned. Soo-Yeon: avoids heavy food at game nights — in Session 2 she steers toward lighter options and in Session 3 quietly takes flatbread when pizza is decided, rather than joining the group order. Nadia: does not eat during sessions at all — she twice declines food and in Session 3 instructs the group to keep food away from card areas. In Session 7 she admits she had noticed the chip-bowl problem but said nothing. Marcus: tolerates food but prefers plates to avoid greasy fingers on cards — his Session 3 comment 'hands stay clean if we use plates' reveals a card-protection concern. Raj: regularly facilitates food logistics (brings snacks, offers to pick up food) but his personal preferences beyond disliking overly sweet things are not foregrounded. Priya: enthusiastic about themed snacks and participates in food planning across sessions. Derek: prefers delivery efficiency, consistently pushes for pizza. Lena: responds warmly to vegetarian food in Session 5 in a way that implies a dietary preference she does not state. Felix: snacks constantly, always brings shareable food. Kezia: brings specialty drinks. Tomasz: brings homemade pierogi to Collective sessions.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 20,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 50.86,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_a1b2c301",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2813,
+    "em": false,
+    "question": "Two members expressed the view that participants should read the game rules before arriving at a session. Which member made the more specific, procedural version of this argument — specifying how and when it should happen?\n\nOptions:\nA. Tomasz\nB. Derek\nC. Marcus\nD. Raj",
+    "predicted_answer": "A. Tomasz.\n\nTomasz made the procedural argument: he specified *when* (decide the game before the night) and *why/how* (so people can read the rules in advance, avoiding a wasted first hour), while Derek simply seconded with \"agree. read the rules people.\"\n\n§cited:[lme:socialmem_Q4_a1b2c301:2,lme:socialmem_Q4_a1b2c301:3]§",
+    "gold_answer": "C. Marcus\nMarcus made the specific procedural argument. In Session 1, he said: 'If we're playing something new, whoever owns it should send the rulebook link by Wednesday. Cuts setup time by at least 30 minutes.' This version names a concrete mechanism (sending the link), a deadline (Wednesday), and a quantified benefit (30 minutes). Derek's version — 'agree. read the rules people' — preceded Marcus's message and expressed the same sentiment in terse, imperative form with no procedural detail. The specific procedural framing belongs to Marcus.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 34.23,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a1b2c302",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3143,
+    "em": false,
+    "question": "What drove Kezia's shift toward heavier board games, and what in the conversation shows what the earlier state looked like compared to where she is by then?",
+    "predicted_answer": "Raj patiently walking her through a Terra Mystica session even when she was totally lost changed how she thought about heavier games (she credits that session directly); earlier she was the member admiring Raj's custom inserts rather than engaging with strategy, and by 2026-03-30 she herself says Brass Birmingham is \"definitely heavier than what i was playing six months ago,\" showing the before-and-after gap.\n\n§cited:[lme:socialmem_Q8_a1b2c302:86,lme:socialmem_Q8_a1b2c302:109,lme:socialmem_Q8_a1b2c302:20]§",
+    "gold_answer": "Early state: Kezia's earlier game preference was limited to social deduction and light games. This is visible in Session 2 where she attends but does not engage in strategy discussion, and in the group's general framing of her as a newer player needing accessibility. Shift signal: In Session 4, Kezia reveals the mechanism: 'You walking me through that Terra Mystica session even when i was totally lost kind of changed how i think about heavier games.' The key detail is that Tomasz's patience during a session where she was 'totally lost' reframed the experience from overwhelming to navigable. The shift was not about the game becoming easier but about having a scaffolded entry point. Evolved state: By Session 4, Kezia is playing Cascadia solo to practice and asking Tomasz for his read on spatial scoring — she has become a self-directed learner of medium-weight games.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 39.46,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4_01",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2773,
+    "em": false,
+    "question": "What does Nadia's response to a concern someone else raised about the table setup reveal about the standards she holds for how the gaming area should be managed, and what is the key signal that she had held this view before anyone else named it?",
+    "predicted_answer": "Nadia holds a strict standard that food must be kept completely separate from game components, and the key signal she held this view before anyone else named it is that she issued the directive preemptively — \"Everyone keep their food away from the card area please\" — as an unprompted condition of agreeing to set up, not as a reaction to someone else's concern.\n\n§cited:[lme:socialmem_Q1_a1b2c3d4_01:63,lme:socialmem_Q1_a1b2c3d4_01:164]§",
+    "gold_answer": "When Soo-Yeon flags in Session 7 that food was getting close to the card table area — 'can we keep food off the card table area. The Mysterium cards got a bit close to the chip bowl' — Nadia responds: 'Thank you. I did not say anything but I noticed that as well.' This response reveals that Nadia had already registered the same concern and was watching the same situation, but chose not to raise it herself. The phrase 'I did not say anything but I noticed' is the key signal: it discloses a pre-existing observation held in silence. The 'Thank you' at the start is relief that someone else articulated a view she was carrying but withholding. Raj's follow-up ('Nadia you should have said something earlier') confirms the group reads this as a held preference she didn't voice. The pattern is consistent with Nadia's broader communication style — she tends to endorse others' articulations rather than stake out positions first, but her endorsements reveal active, pre-existing standards that were already in place.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 40.0,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_a3b4c601",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.2362,
+    "em": false,
+    "question": "What does Nora's message reveal about how Bex first came to be part of the collective?",
+    "predicted_answer": "Nora's message reveals that she handed Bex her own Canonet camera for an afternoon session, and Bex got six keepers on one roll — which is what drew her in and led her to buy her own the following week.\n\n§cited:[lme:socialmem_Q7_a3b4c601:55,12e1e3149389]§",
+    "gold_answer": "Nora explains that Bex joined through an open workshop Nora ran at the arts centre — not through a member referral or prior photography community connection. Bex arrived as a public participant and produced a contact sheet from a disposable camera that Nora found more promising than most first rolls she sees. The entry path was a public access event evaluated on merit, which Nora mentions as context for people asking about future open sessions — implying Bex's route in is considered notable and worth explaining.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 33.65,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_a3b4c602",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.1505,
+    "em": false,
+    "question": "Who expressed the view that the value of a photography session lies in intentionality rather than the number of exposures made?\n\nOptions:\nA. Priya\nB. Callum\nC. Yuki\nD. Sol",
+    "predicted_answer": "A. Priya - \"From a compositional standpoint, the scan resolution does affect readability of fine detail. Worth agreeing a minimum standard per print type rather than a s...\"\n§cited:[lme:socialmem_Q4_a3b4c602:86]§",
+    "gold_answer": "C. Yuki\nYuki expressed this view, saying 'My read on this is that the value of a session is rarely in the roll count. One considered frame outweighs twenty automatic ones.' Priya is the plausible wrong answer but did not say this. The distinction rests on vocabulary: Yuki argues from a quality-versus-volume frame about exposure decisions; Priya's precision is about compositional geometry and structural resolve.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 25.22,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a3b4c604",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1719,
+    "em": false,
+    "question": "What does Nora's opening message suggest about how she values process precision in the darkroom?",
+    "predicted_answer": "Nora's opening messages consistently lead with logistical precision — ventilation servicing status, exact session times, booking confirmations, and show deadlines — which signals she treats a well-managed environment as the precondition for reliable darkroom work.\n\n§cited:[lme:socialmem_Q1_a3b4c604:0,lme:socialmem_Q1_a3b4c604:107]§",
+    "gold_answer": "Nora opens with 'run full fix times today' and cites a specific past failure — 'we had a short-fixed print last month and it affects archival stability.' She unpromptedly references the consequence (archival degradation) rather than just the rule. The specificity of the reminder (developer at 20 degrees, full fix times) and the fact that she tracks prior failures and brings them up as evidence suggests Nora treats process precision not as housekeeping but as a principle tied to the long-term integrity of the work. Her standard is archival quality, not convenience.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 28.35,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_a3b4c605",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.4615,
+    "em": false,
+    "question": "What is Otto's position on scanning prints for critique, and what in Callum's message shows Callum already knew this before Otto had spoken in that thread?",
+    "predicted_answer": "Otto considers scanning a compromise because the tonal range of a wet print does not survive digitisation—the print itself is the work—though he accepts the practical argument. Callum's message \"Otto will have thoughts on the scanning part I imagine\" (posted before Otto spoke in that same thread) shows he already knew this.\n\n§cited:[lme:socialmem_Q5_a3b4c605:24,lme:socialmem_Q5_a3b4c605:21]§",
+    "gold_answer": "Otto opposes scanning, viewing it as a compromise that degrades the tonal range of a wet print — he said 'the print is the work' and that tonal range 'does not survive digitisation cleanly.' Callum revealed he knew this beforehand when he said 'Otto will have thoughts on the scanning part I imagine' — presenting Otto's likely objection as a predictable, known position before Otto had weighed in. The emoji and 'I imagine' signal that Callum is anticipating a familiar reaction, not speculating. He had prior knowledge of Otto's stance from earlier sessions or conversations and was flagging it as a known dynamic.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 29.08,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a3b4c611",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3163,
+    "em": false,
+    "question": "What drove Sol to change how they present work to the group, and what in the conversation first signals that something about the earlier approach wasn't working?",
+    "predicted_answer": "Sol couldn't reliably give context in person for every viewer, so on Feb 22 they brought written statements pinned next to each print to \"help people find a way into the work before we start.\" The signal came a week earlier on Feb 15 when Fen said \"I looked at three of the prints and genuinely could not locate an entry point\"—showing that just pinning prints without explanation left viewers lost.\n\n§cited:[lme:socialmem_Q8_a3b4c611:53,lme:socialmem_Q8_a3b4c611:36,lme:socialmem_Q8_a3b4c611:33,lme:socialmem_Q8_a3b4c611:51]§",
+    "gold_answer": "Early state (Sessions 1–2): Sol presented experimental work without framing — 'can't tell if it's ruined or incredible yet' — relying on the group to find a way in unaided. There were no explanatory notes, no context about intent. Shift signal (Session 4): Sol brought written statements pinned next to each print, 'one per print,' explicitly to 'help people find a way into the work before we start.' The phrase 'this time' marks this as new behaviour. Trigger: In Session 3 Sol said 'the critique last month where everyone got stuck really did affect me' — naming a specific past failure as the cause. Evolved state: Sol now contextualises experimental work rather than presenting it bare, treating written intent as part of the submission.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 36.62,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a4b5c6d701",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1304,
+    "em": false,
+    "question": "What does Hema's description of how they listen to records reveal about how they engage with albums?",
+    "predicted_answer": "Hema treats listening as intentional and environment-controlled—she insisted on keeping sessions \"focused on listening and skip the gear debate,\" endorsed small room-treated studio setups, and praised Maeve's console because \"the cabinet acts as the room\" (message 167, 224, 243). She also separates contexts by format: vinyl at home, hi-res digital at work, showing she engages with albums by matching the listening medium to the setting rather than being dogmatic about format (message 174).\n\n§cited:[38cb6a20fc9e,lme:socialmem_Q1_a4b5c6d701:174,lme:socialmem_Q1_a4b5c6d701:224,56acd8de3590]§",
+    "gold_answer": "Hema front to back album sessions, no skipping or shuffling. The pattern is visible in Hema's own words: \"one record, front to back, every Saturday morning, no skipping\". A second moment in the corpus reinforces it, where Hema repeats the same framing without ever stating the preference as a preference. Together the two moments make the underlying attitude legible without Hema ever announcing it.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 24.21,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a4b5c6d703",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.14,
+    "em": false,
+    "question": "What does Sander's repeated complaint about pricing reveal about their attitude toward the current second-hand market?",
+    "predicted_answer": "Sander sees the current second-hand market as fundamentally irrational -- driven by FOMO rather than intrinsic value -- and he is actively rejecting it by refusing to pay above book price on principle.\n\n§cited:[lme:socialmem_Q1_a4b5c6d703:52,lme:socialmem_Q1_a4b5c6d703:14]§",
+    "gold_answer": "Sander willing to chase the right unit at high prices, frustrated but still in. The pattern is visible in Sander's own words: \"the SX-1980 listing on hifishark this morning was 4200, asking\". A second moment in the corpus reinforces it, where Sander repeats the same framing without ever stating the preference as a preference. Together the two moments make the underlying attitude legible without Sander ever announcing it.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 16,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 29.41,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a4b5c6d704",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1,
+    "em": false,
+    "question": "What does the conversation suggest about Lina's typical listening volume and the kind of music it suits, before any later changes?",
+    "predicted_answer": "Lina typically listens at low, conversational-to-room volume, which suits intimate music like Bach cello suites and string quartets.\n\n§cited:[8a1e55137443,lme:socialmem_Q1_a4b5c6d704:65,lme:socialmem_Q1_a4b5c6d704:47,lme:socialmem_Q1_a4b5c6d704:68]§",
+    "gold_answer": "Lina quiet background listening at conversational volume. The pattern is visible in Lina's own words: \"Quiet listening, just the symphony and a glass of wine\". A second moment in the corpus reinforces it, where Lina repeats the same framing without ever stating the preference as a preference. Together the two moments make the underlying attitude legible without Lina ever announcing it.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 17.55,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a4b5c6d705",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0842,
+    "em": false,
+    "question": "What does Ines's comment about industry-wide grading reveal about how she approaches selling records?",
+    "predicted_answer": "Ines prioritizes honest grading over inflated standards, and her stance against industry-wide grading inflation shows she values building trust with regular, in-person customers at fair prices rather than maximizing profit from anonymous online buyers.\n\n§cited:[90f1db187fbf,e027301a37d3,lme:socialmem_Q1_a4b5c6d705:136,lme:socialmem_Q1_a4b5c6d705:19]§",
+    "gold_answer": "Ines honest grading, refuses inflated mint grades. The pattern is visible in Ines's own words: \"mint - is mostly a fiction we sellers tell ourselves\". A second moment in the corpus reinforces it, where Ines repeats the same framing without ever stating the preference as a preference. Together the two moments make the underlying attitude legible without Ines ever announcing it.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "record_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 39.48,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a4b5c6d707",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.087,
+    "em": false,
+    "question": "What does Marcy's aside in the dinner-planning thread reveal about her dietary practice?",
+    "predicted_answer": "Marcy revealed she has been a vegetarian for ten years.\n\n§cited:[3b8fce3c736f,lme:socialmem_Q1_a4b5c6d707:230]§",
+    "gold_answer": "Marcy vegetarian, often skips group meals at meat-heavy venues. The pattern is visible in Marcy's own words: \"veg here, no surprise. salad-type things or breads are easy\". The preference is never stated as a preference; it is visible only as a reaction or a passing remark, but the framing is consistent enough across the conversation to be unambiguous.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 19.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a4b5c6d70d",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.3105,
+    "em": false,
+    "question": "Across the conversations, what does each member's commentary reveal about their preferred listening volumes?",
+    "predicted_answer": "Lina prefers quiet, conversational-level listening for solo and chamber works but goes loud for full orchestral sessions; Hema plays orchestra at \"realistic SPL\" matching the original performance intent and notes Lina can afford loud sessions because she has a house; Marcy distinguishes cello for \"intimate listening\" vs. orchestral for SPL, matching volume to mastering intent; Maeve shifted from studio nearfields to her grandmother's console stereo and says it's \"louder than my studio nearfields ever were,\" revealing comfort with higher volumes; Roo moved from eight years of headphones to open speakers now that a neighbor tolerates it, indicating she wanted louder playback all along; Olin and Yuko both frame volume as room-dependent (Olin: \"room ambience matters as much as the SPL\"; Yuko: signal-to-noise floor defines perceived dynamic range), suggesting they calibrate by context rather than fixed preference.\n\n§cited:[lme:socialmem_Q3_a4b5c6d70d:65,lme:socialmem_Q3_a4b5c6d70d:67,lme:socialmem_Q3_a4b5c6d70d:68,lme:socialmem_Q3_a4b5c6d70d:171,lme:socialmem_Q3_a4b5c6d70d:242,lme:socialmem_Q3_a4b5c6d70d:131,lme:socialmem_Q3_a4b5c6d70d:76,lme:socialmem_Q3_a4b5c6d70d:77,lme:socialmem_Q3_a4b5c6d70d:110§",
+    "gold_answer": "Lina prefers quiet listening at conversational volume early in the corpus, citing Bach cello suites and Mahler at low volume; this shifts later when a hearing test prompts her to do focused louder sessions in the evening. Hema plays full orchestra at realistic SPL because that is the original intent; she frames volume choice as personal and rejects a single right level. Yuko offers a measurement-based view: typical conversational volume sits around 60 dB SPL at the listening position, and concert level is 85+ dB; she endorses Lina's hearing-driven shift as technically sound. Bram is moderate and self-deprecating about it, telling the group his students would tell him to keep his SPL in check; he treats his own ears at 44 as already a constraint. Other members do not state a volume preference and are unclear from the conversation alone.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 15,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 36.65,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a4b5c6d70e",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.3845,
+    "em": false,
+    "question": "What does the corpus reveal about each member's stance on vinyl-versus-digital, by the end of the time window covered?",
+    "predicted_answer": "Based on the raw messages spanning Jan 19 to Mar 16, 2026, here is each member's final vinyl-versus-digital stance:\n\n**Theo** (vinyl-first, conceded digital): Acknowledged a Steely Dan SACD could \"sit alongside vinyl,\" called the format wars \"always silly,\" but still prefers vinyl at home. \"I am not converting.\"\n\n**Olin** (full revision): Called the Berlin Phil Digital Concert Hall \"technically and musically superior to the analog reissues I have been advocating for thirty years.\" Revised his position on hi-res streaming entirely.\n\n**Hema** (vinyl at home, accepted digital as serious): Working daily with hi-res symphony files changed her view: \"I no longer dismiss digital as a serious format.\"\n\n**Sander** (vinyl traditionalist, grudgingly pragmatic): No direct vinyl-vs-digital statement; acknowledged \"the rest of us are slowly catching up\" circa 2026, but stayed focused on hardware and fair pricing.\n\n**Quint** (vinyl at home, streaming at the shop): \"At home I still play vinyl exclusively but at the shop Tidal is what I'm doing.\" Admitted streaming \"scourge\" was wrong but insists he's \"right about the rest of it.\"\n\n**Marcy** (format-agnostic, mastering-first): \"Mastering and pressing variance dominate format differences once you get past 24/96.\"\n\n**Yuko** (measurement-first, neutral on format): \"Well-mastered hi-res digital at 24/96 is indistinguishable from a clean LP at the threshold of human hearing.\"\n\n**Dev** (streaming primary, felt vindicated): \"The streaming-vs-vinyl debate has stopped being a debate and I love that.\"\n\n**Bram** (diplomatic center): \"Both can be true depending on starting point.\" Updated views on gear, stayed moderate on format.\n\n**Lina** (vinyl-dominant, explored hi-res via Olin): Mainly discussed classical listening; no direct format preference statement beyond playing vinyl and engaging with digital recommendations.\n\n**Pippa** (format-fatigued): \"The loudness war stuff is so done, let's move on.\" Didn't stake a position; treated the debate as exhausted.\n\n**Maeve** (console-vinyl convert): Inherited her grandmother's 1962 Magnavox console and moved primary listening there: \"I'm not going back.\"\n\n**Roo, Ines, Felix**: No explicit vinyl-vs-digital statements in the corpus.\n\n§cited:[8038bb754266,a4622a231992,lme:socialmem_Q3_a4b5c6d70e:84,lme:socialmem_Q3_a4b5c6d70e:125,lme:socialmem_Q3_a4b5c6d70e:126,lme:socialmem_Q3_a4b5c6d70e:127,lme:socialmem_Q3_a4b5c6d70e:128,lme:socialmem_Q3_a4b5c6d70e:154,lme:socialmem_Q3_a4b5c6d70e:158,lme:socialmem_Q3_a4b5c6d70e:169,lme:socialmem_Q3_a4b5c6d70e:174,lme:socialmem_Q3_a4b5c6d70e:175,lme:socialmem_Q3_a4b5c6d70e:176,lme:socialmem_Q3_a4b5c6d70e:177,lme:socialmem_Q3_a4b5c6d70e:178,lme:socialmem_Q3_a4b5c6d70e:179,lme:socialmem_Q3_a4b5c6d70e:180,lme:socialmem_Q3_a4b5c6d70e:206,lme:socialmem_Q3_a4b5c6d70e:225]§",
+    "gold_answer": "Theo concedes a well-mastered SACD can sit alongside vinyl after Hema brings him an Aja SACD; he still prefers LP but no longer treats digital as inferior on principle. Hema admits her firm's digital archive commission shifted her view; the studio listening room now has digital playback, while she still plays vinyl at home. Olin, after a Berlin Phil Digital Concert Hall subscription from his daughter, revises three decades of writing and concedes hi-res streams from a serious orchestra archive can equal or beat reissued analog. Quint streams Tidal at his workshop because it is convenient, while still playing vinyl exclusively at home; he reframes streaming as use-case-dependent rather than a scourge. Dev was streaming as primary the whole time and uses the group's gradual conversion as vindication; he is openly digital-first. Roo gets a speaker setup mid-corpus and is using physical media for the first time in eight years; format-position is implicit in the move from headphones-only to a real speaker rig. Sander, Marcy, Bram, Pippa, Lina, Felix, Maeve, and Ines either keep vinyl-primary or do not stake out a clear digital position in the corpus and are best treated as not stated for this aggregation.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 16,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 65.0,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_a4b5c6d70f",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3968,
+    "em": false,
+    "question": "In the discussion of mono pressings versus fold-down stereo cuts, one member argues that listening will show you the difference even where measurements look clean. Who actually made that argument?\n\nOptions:\nA. Bram\nB. Marcy\nC. Theo\nD. Felix",
+    "predicted_answer": "C. Theo.\n\nTheo argued: \"even where measurements are clean, the sound character of a mono cut still differs in ways the measurements undersell. in my view this is one place where listening leads.\" (Bram's point was slightly different — \"listening tests will show you, even without measurements.\")\n\n§cited:[dd7c285e6601,lme:socialmem_Q4_a4b5c6d70f:36,lme:socialmem_Q4_a4b5c6d70f:35]§",
+    "gold_answer": "A. Bram\nBram made the argument, framing it as: \"listening tests will show you, even without measurements.\" His position is rooted in pedagogy; he treats the listening test as a tool for students to develop discrimination, with measurements as a complementary floor. Theo agreed with the conclusion in the same exchange and added that the sound character of mono cuts \"differs in ways the measurements undersell,\" but the original framing of listening as a method came from Bram.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 29.05,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_a4b5c6d713",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.3636,
+    "em": false,
+    "question": "What is Dev's living situation in terms of his listening room conditions, and how does Sander show in the conversation that he had this knowledge?",
+    "predicted_answer": "Dev lives in a small apartment with an untreated room and only bookshelf knockoff speakers. Sander demonstrated this knowledge by specifically warning Dev that a Yamaha CR-2020 would overheat given \"your radiator and small living room,\" and Dev later confirmed \"Sander's warning kept replaying\" and \"the radiator thing got to me.\"\n\n§cited:[lme:socialmem_Q5_a4b5c6d713:61,lme:socialmem_Q5_a4b5c6d713:87,lme:socialmem_Q5_a4b5c6d713:104]§",
+    "gold_answer": "Dev's apartment is small and runs hot due to a radiator. Sander reveals this when he warns Dev off the CR-2020 specifically by referencing the radiator and small living room (\"with your radiator and small living room you'll cook it in a summer\"). When Dev asks how he knows, Sander answers in chat: Dev mentioned it at a bookstore meetup in November while half-complaining the windows fog up. The observable behavior is the warning being issued without Dev having raised the apartment as the topic; Sander brings the radiator into the conversation, which only makes sense if he already had the information.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 29.44,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a4b5c6d716",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0833,
+    "em": false,
+    "question": "The group expresses a unified preference for in-person listening sessions over virtual ones. Does that norm actually apply to everyone, and if not, who has a different preference and what specifically is it?\n\nOptions:\nA. Marcy\nB. Yuko\nC. Bram\nD. Felix",
+    "predicted_answer": "D. Felix — he's the exception, having reduced in-person bookstore listening meetups from every other month to once a quarter due to staffing constraints (lost his weekend assistant manager).\n\n§cited:[a1ffd3180432,lme:socialmem_Q6_a4b5c6d716:140,lme:socialmem_Q6_a4b5c6d716:144,lme:socialmem_Q6_a4b5c6d716:145]§",
+    "gold_answer": "B. Yuko\nNo. Yuko prefers async messaging because she splits time between Tokyo and the local city. She joins the chat from both and posts in clusters; her social pattern is async-by-default, not in-person-by-default. The norm of in-person preference is not hers.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 109.36,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a4b5c6d717",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0842,
+    "em": false,
+    "question": "The group treats vinyl as the primary format with digital relegated to a secondary, acceptable role. Does that norm actually apply to everyone, and if not, who has a different preference and what specifically is it?\n\nOptions:\nA. Theo\nB. Ines\nC. Olin\nD. Dev",
+    "predicted_answer": "Olin. He explicitly revised his long-held analog-vinyl position after trying the Berlin Phil Digital Concert Hall, stating that hi-res digital streams from a serious archive can equal or beat reissued analog.\n\n§cited:[lme:socialmem_Q6_a4b5c6d717:169,lme:socialmem_Q6_a4b5c6d717:206,lme:socialmem_Q6_a4b5c6d717:44]§",
+    "gold_answer": "D. Dev\nNo, the norm does not apply universally. Dev has been streaming as primary the whole time and openly says so in the wrap-up (\"the streaming-vs-vinyl debate has stopped being a debate\" and \"i have been streaming as primary the whole time\"). His preference is digital-first, with vinyl as the format he is learning rather than the one he uses by default.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 23.16,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a4b5c6d718",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1558,
+    "em": false,
+    "question": "The group places original pressings above reissues for a serious collection. Does that norm actually apply to everyone, and if not, who has a different preference and what specifically is it?\n\nOptions:\nA. Bram\nB. Marcy\nC. Roo\nD. Yuko",
+    "predicted_answer": "Marcy; she argues mastering and pressing variance matter more than whether a release is an original or a reissue, and she actively cuts reissue masters herself.\n\n§cited:[lme:socialmem_Q6_a4b5c6d718:179,lme:socialmem_Q6_a4b5c6d718:8,lme:socialmem_Q6_a4b5c6d718:45,lme:socialmem_Q6_a4b5c6d718:33]§",
+    "gold_answer": "C. Roo\nNo. Roo held a different preference for years and only recently bought a speaker setup; their long-running pattern was headphones-only listening, and their domain preference is shoegaze and ambient over the jazz-and-soul focus the group fetishizes around original pressings. Their stance toward original-pressing collecting in particular is dismissive.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 40.5,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a4b5c6d71c",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3333,
+    "em": false,
+    "question": "What in the conversation signals that Sander's relationship to second-hand market pricing shifted, and what specifically appeared to drive that shift?",
+    "predicted_answer": "Sander lost an SX-1980 auction that went for $6800 (three times book value), which drove him to declare \"the market is broken\" and refuse to pay over book value going forward, citing FOMO-driven inflation.\n\n§cited:[lme:socialmem_Q8_a4b5c6d71c:52,lme:socialmem_Q8_a4b5c6d71c:53]§",
+    "gold_answer": "Earlier, Sander treats high asking prices as the price of admission; he flags the SX-1980 listing on hifishark at 4200 as broken-market evidence but is still in the bidding game. Sander himself names the trigger: he was outbid on a Pioneer SX-1980 that went for 6800 (about three times book value), having stopped at his ceiling of 2200; he calls the market broken and vows to refuse anything over book value going forward. After the SX-1980 loss, Sander refuses anything over book value and tells Ines he will sit a week before considering the SX-980 at 1800.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 18.08,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a4b5c6d720",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4651,
+    "em": false,
+    "question": "What in the conversation signals that Theo's position on his primary listening format shifted, and what specifically drove the shift?",
+    "predicted_answer": "Hema brought an Esoteric SACD of Steely Dan's *Aja* to Theo's garage on Feb 16, and he couldn't dismiss it — he conceded the harmonic structure and dynamic decay were \"uncannily close to a clean LP\" and that on some tracks the SACD \"pulled ahead,\" which he followed up by calling the format wars \"always silly.\" The direct listening experience in his own space, not measurements, changed his position.\n\n§cited:[f1e702055c47,lme:socialmem_Q8_a4b5c6d720:125,lme:socialmem_Q8_a4b5c6d720:175]§",
+    "gold_answer": "Earlier, Theo is the group's vinyl-purist anchor; in the early sessions he frames digital skeptically and is described as having said digital was lifeless in forum days. Theo names the trigger: Hema brought a Steely Dan SACD (Aja, Esoteric pressing) to his garage on a Saturday; he wanted to dismiss it on principle but could not, conceding the harmonic structure and dynamic decay were close to a clean LP and on a couple of tracks pulled ahead. After the SACD demo, Theo concedes a well-mastered SACD can sit alongside vinyl with a tube preamp and the right DAC; he still prefers LP.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 22,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 45.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a6b7c8d9",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1856,
+    "em": false,
+    "question": "What does Bridget's reaction to the bothy accommodation proposal signal about a preference she has never stated directly?",
+    "predicted_answer": "Looking at the evidence, Bridget responded to the bothy proposal with an immediate cost breakdown (£5pp bothy, £7pp transport, £12pp total) and a structured confirmation — no enthusiasm about terrain or experience, just logistics and financial clarity.\n\nHer reaction signals an unstated preference for **financial transparency and cost structure** in group activities.\n\n§cited:[lme:socialmem_Q1_a6b7c8d9:221,lme:socialmem_Q1_a6b7c8d9:233]§",
+    "gold_answer": "In Session 10 when Nadia proposes the Stoneford bothy, Bridget's response is: 'Bothy has no individual rooms. Shared space. I'll need to think about that.' She does not object to the route, the distance, the date, or the cost -- only to the sleeping arrangement. The qualification 'I'll need to think about that' is uncharacteristically hesitant for Bridget, who is normally decisive. Her eventual provisional confirmation in Session 10 ('provisionally confirm... need to see the full logistics before committing to shared overnight arrangements') and her continued caution in Session 11 show that shared sleeping space is a real friction point. The fact that she participated in the Cairn Ridge tent-based overnight without complaint (tents provide individual space) but stalls on the bothy reveals the specific nature of the preference: it is about having her own sleeping space, not overnight trips per se.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 22.81,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_c6d7e8f9",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3277,
+    "em": false,
+    "question": "What does Saoirse's comment about the Cairn Ridge north face reveal about why technically demanding terrain appeals to her specifically, and how does the later part of the conversation develop this?",
+    "predicted_answer": "Saoirse said the north face was \"the kind of route that switches everything off\" and she \"could've done that section twice,\" revealing that technically demanding terrain appeals to her as a mental reset — it demands full absorption and quiets everything else — and the conversation then pivots to the campfire social bonding afterward, showing how the group moved from individual challenge into shared connection.\n\n§cited:[bf3597452375,lme:socialmem_Q1_c6d7e8f9:123,lme:socialmem_Q1_c6d7e8f9:136,lme:socialmem_Q1_c6d7e8f9:137,lme:socialmem_Q1_c6d7e8f9:130,lme:socialmem_Q1_c6d7e8f9:142]§",
+    "gold_answer": "In Session 7 Saoirse describes the north face as 'Genuinely the kind of route that switches everything off.' The phrase 'switches everything off' is specific: it describes a cognitively absorbing experience, not just physical challenge. For a junior doctor managing punishing hours, terrain that demands full concentration provides the mental disengagement that rest cannot. In Session 9 she asks proactively for health constraints to be flagged early so she can 'pack accordingly' -- a medical planning request rather than a recreational one. The two behaviours together show Saoirse engages with hiking primarily as cognitive decompression: she chooses routes that require focus precisely because her working life leaves no bandwidth for passive rest.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 12,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 37.17,
+    "error": null
+  }
+]

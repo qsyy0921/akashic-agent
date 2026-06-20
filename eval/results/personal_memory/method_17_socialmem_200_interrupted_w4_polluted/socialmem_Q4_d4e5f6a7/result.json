@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q4_d4e5f6a7",
+  "question_type": "single-session-user",
+  "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+  "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.76,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

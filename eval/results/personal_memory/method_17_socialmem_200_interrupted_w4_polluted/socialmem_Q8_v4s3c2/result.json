@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_v4s3c2",
+  "question_type": "knowledge-update",
+  "question": "How did Preet's relationship to physical record collecting change over the conversations?",
+  "gold_answer": "Preet began as primarily a streamer with minimal physical ownership. In Session 1, their enthusiasm was about discovering records at fairs but framed aesthetically — praising a Fela reissue's cover without caring that it wasn't an original. In Session 2, after finding a Brazilian compilation they'd been writing about, they said 'First time I've wanted to own something more than stream it honestly' — noting the shift in themselves even as they named it. In Session 3, they went back to the same seller and bought three more records, announcing: 'I think I'm doing this now.' By Sessions 4 and 5, attending fairs to build the collection is the stated goal, and Preet is asking what to look for.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.46,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

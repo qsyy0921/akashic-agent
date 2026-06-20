@@ -10,6 +10,7 @@ is strong vs weak (single-session vs multi-session vs temporal etc.).
 from __future__ import annotations
 
 import logging
+import os
 import re
 import string
 from collections import Counter
@@ -17,18 +18,20 @@ from collections import Counter
 logger = logging.getLogger(__name__)
 
 _JUDGE_PROMPT = """\
-You are a strict judge for a long-term memory benchmark.
-
-The gold answer describes what the user's preferences or facts are.
-The predicted answer is what the agent actually said.
-
 Question: {question}
 Gold answer: {gold}
 Predicted answer: {predicted}
 
-Judge strictly: the predicted answer is correct only if it reflects the specific preferences or facts stated in the gold answer. If the predicted answer asks the user for information that should already be in memory, or gives generic responses that ignore the user's specific preferences, answer no.
-
+Is the predicted answer semantically correct and consistent with the gold answer?
 Reply with exactly one word: yes or no."""
+
+_JUDGE_SYSTEM_PROMPT = (
+    "You are a strict binary judge for a long-term memory benchmark. "
+    "Output only one word: yes or no. Do not explain."
+)
+
+_DEFAULT_JUDGE_MAX_TOKENS = 1024
+_MIN_JUDGE_RETRY_MAX_TOKENS = 1024
 
 
 # ── text normalisation ────────────────────────────────────────────────────────
@@ -66,6 +69,40 @@ def exact_match(pred: str, gold: str) -> bool:
 
 # ── llm judge ────────────────────────────────────────────────────────────────
 
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return max(1, int(raw.strip()))
+    except ValueError:
+        logger.warning("invalid %s=%r; using %s", name, raw, default)
+        return default
+
+
+def default_judge_max_tokens() -> int:
+    return _env_int("AKASHIC_LME_JUDGE_MAX_TOKENS", _DEFAULT_JUDGE_MAX_TOKENS)
+
+
+def _judge_retry_max_tokens(max_tokens: int) -> int:
+    env_value = _env_int("AKASHIC_LME_JUDGE_RETRY_MAX_TOKENS", 0)
+    if env_value > 0:
+        return env_value
+    return max(_MIN_JUDGE_RETRY_MAX_TOKENS, max_tokens * 4)
+
+
+def _parse_yes_no(content: str | None) -> bool | None:
+    verdict = str(content or "").strip().lower()
+    if not verdict:
+        return None
+    token = re.sub(r"[^a-z]", "", verdict.split()[0]) if verdict.split() else ""
+    if token.startswith("yes"):
+        return True
+    if token.startswith("no"):
+        return False
+    return None
+
+
 async def judge_answer(
     provider,
     model: str,
@@ -73,7 +110,8 @@ async def judge_answer(
     question: str,
     gold: str,
     predicted: str,
-) -> bool:
+    max_tokens: int | None = None,
+) -> bool | None:
     """Single LLM call: returns True if predicted is semantically correct."""
     if not predicted or not predicted.strip():
         return False
@@ -82,21 +120,33 @@ async def judge_answer(
         gold=gold.strip(),
         predicted=predicted.strip(),
     )
-    try:
-        resp = await provider.chat(
-            messages=[{"role": "user", "content": prompt}],
-            tools=[],
-            model=model,
-            max_tokens=4,
-        )
-        content = getattr(resp, "content", None)
-        if content is None:
-            content = ""
-        verdict = str(content).strip().lower()
-        return verdict.startswith("yes")
-    except Exception as e:
-        logger.warning("judge_answer failed: %s", e)
-        return False
+    max_tokens = max(1, int(max_tokens or default_judge_max_tokens()))
+    retry_max_tokens = _judge_retry_max_tokens(max_tokens)
+    for attempt, token_budget in enumerate((max_tokens, retry_max_tokens), start=1):
+        try:
+            resp = await provider.chat(
+                messages=[
+                    {"role": "system", "content": _JUDGE_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                tools=[],
+                model=model,
+                max_tokens=token_budget,
+                tool_choice="none",
+                disable_thinking=True,
+            )
+            parsed = _parse_yes_no(getattr(resp, "content", None))
+            if parsed is not None:
+                return parsed
+            logger.warning(
+                "judge_answer returned no yes/no content on attempt %s with max_tokens=%s",
+                attempt,
+                token_budget,
+            )
+        except Exception as e:
+            logger.warning("judge_answer failed on attempt %s: %s", attempt, e)
+            return None
+    return None
 
 
 # ── dataset-level scoring ─────────────────────────────────────────────────────

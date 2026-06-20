@@ -1,0 +1,94 @@
+{
+  "method_id": "method_10_production_structured_memory_schema",
+  "generated_at": "2026-06-18T02:30:01.213589",
+  "result_path": "eval\\results\\memory_methods\\method_10_production_structured_memory_schema.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_10_production_structured_memory_schema",
+  "memory_method": {
+    "method_id": "method_10_production_structured_memory_schema",
+    "strategy": "production_structured_memory_schema",
+    "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "attach_signal": "structured_evidence",
+      "backfill_on_query": true,
+      "raw_event_backfill_limit": 50000,
+      "raw_event_backfill_chunk_size": 500,
+      "summary_pollution": false
+    },
+    "config_path": "experiments\\memory_methods\\method_10_production_structured_memory_schema\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3184,
+      "em": 0.0,
+      "judge_acc": 0.68,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.349,
+        "em": 0.0,
+        "judge_acc": 0.7273,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2929,
+        "em": 0.0,
+        "judge_acc": 0.7059,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.3227,
+        "em": 0.0,
+        "judge_acc": 0.6364,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.68,
+  "latency": {
+    "avg_elapsed_s": 18.42,
+    "p50_elapsed_s": 15.895,
+    "p95_elapsed_s": 32.03
+  },
+  "token_usage": {
+    "avg_token_usage": 34834.25,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 34834.25,
+    "avg_final_call_input_tokens_estimate": 16157.5417,
+    "avg_cache_prompt_tokens": 69458.25,
+    "avg_cache_hit_tokens": 41994.6667,
+    "avg_answer_chars": 304.82,
+    "avg_tool_result_chars": 29274.06,
+    "avg_tool_calls": 3.7
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 16,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 3,
+      "memory_write_failure": 10,
+      "personal_preference_attribution_error": 5,
+      "retrieval_failure": 2,
+      "retrieved_but_answer_wrong": 1,
+      "retrieved_but_evidence_unused": 3
+    }
+  }
+}

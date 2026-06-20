@@ -1,0 +1,373 @@
+[
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2995,
+    "em": false,
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "predicted_answer": "**Leon** uses the group to share wins and seek support (Series A, Bloomberg coverage), openly initiates career check-ins, but also admits missing casual hangs over investor dinners.\n\n**Mei** proactively tries to make career talk a group norm, offering solidarity around career transitions, though she gracefully steps back to one-on-one when others push back.\n\n**Josh** deflects career talk with self-deprecating humor (\"same chair,\" \"living the dream\"), prefers being a quiet supporter behind the scenes over sharing his own situation publicly.\n\n**Priya** keeps career struggles surface-level in the group (\"rather talk about it in person\"), explicitly prefers private one-on-one over group unpacking.\n\n§cited:[lme:socialmem_Q3_c0s3c2:22,lme:socialmem_Q3_c0s3c2:30,lme:socialmem_Q3_c0s3c2:33,lme:socialmem_Q3_c0s3c2:40]§",
+    "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 28.06,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_c0s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3409,
+    "em": false,
+    "question": "By Session 2, what pattern of attendance has the group come to anticipate from one specific member, and what in Josh's framing of the situation signals that the group has already adjusted to it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "D. Priya — Leon has established a pattern of missing gatherings, and Josh's \"again\" and casual quip about the investor call signal the group has already normalized his absence.\n\n§cited:[lme:socialmem_Q2_c0s2c1:10,lme:socialmem_Q2_c0s2c1:14]§",
+    "gold_answer": "B. Leon\nNo — Leon did not come. Josh noted it as a pattern: 'Leon didn't come again.' Leon's explanation was an investor call that ran over. This is the second consecutive event he has missed; by Session 2 the group has quietly adjusted its expectations and plans without counting on him. Mei, Josh, and Priya all attended.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 13.7,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2913,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Based on the group conversations, Maya strongly dislikes cilantro (\"that herb ruins everything ngl\"), enjoys ramen (she suggested it and was curious about Tanuki's mushroom broth), and actively tries new brunch spots like Mariposa and Rooftop Fox.",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 33.94,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3333,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam preemptively chose the chicken ramen when the restaurant's signature was mushroom broth, saying they \"just prefer the chicken\" — suggesting a preference for meat-based broths over plant-based ones.\n\n§cited:[]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 32.04,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2895,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "Priya — she said she just wants \"somewhere you can actually have a conversation.\"\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:15,lme:socialmem_Q4_d4e5f6a7:12]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 10.1,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.4581,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "The conversations reveal that Jordan and Sam share a history involving an incident at Mt. Tam (Mount Tamalpais) that neither wants to discuss openly — Sam asks if Jordan \"ever fully recover[ed]\" from it, Jordan deflects by saying \"I've chosen not to think about it\" and then tells Maya to \"Ask Sam\" when pressed, and Sam shuts it down with \"another time.\" They have a familiar, dry-humored rapport, and Sam later has ongoing ankle trouble that may or may not be related.\n\n§cited:[lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:40,lme:socialmem_Q7_f6a7b8c9:68,lme:socialmem_Q7_f6a7b8c9:70]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 23.09,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_n2a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.4167,
+    "em": false,
+    "question": "Based on the family conversations, does Adaora have any particular food preferences or restrictions that come through?",
+    "predicted_answer": "Adaora has a clear preference for beans and legumes — she specifically requested moi moi or akara for Christmas and later offered to bring a lentil dish she'd been making — and by early 2025 she mentioned she'd been \"eating a bit differently lately\" and \"being more mindful,\" suggesting a recent shift toward more plant-based food, though she never explicitly named a restriction. She also reportedly loves goat meat. No formal dietary restrictions were stated.\n\n§cited:[53c26e52d069]§",
+    "gold_answer": "Adaora appears to be avoiding meat and animal products, though she never states this directly. She deflected from Ngozi's Christmas feast announcement by questioning the need for so much food (Session 1), then steered the Christmas menu toward plant-based dishes like moi moi and akara without explaining why (Session 4), and finally told her mother she'd been 'eating a bit differently lately' and had been 'more mindful' — cutting herself off before saying more (Session 5). The pattern across three sessions strongly suggests a dietary restriction she's been concealing from her parents.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 7,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 50.91,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_n2b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2353,
+    "em": false,
+    "question": "Has anything about Ngozi's cooking changed recently, based on what the family says?",
+    "predicted_answer": "Based on the conversations (the most recent being March 2025), the family hasn't said anything about Ngozi's cooking changing — Ngozi herself is firm that she's handling the food. What came up is that **Adaora** has been \"eating a bit differently lately\" and wanted to bring a lentil dish to Christmas, which caught Ngozi off guard (\"Eating differently how?? 👀\"). Emeka reassured that there will be enough food regardless, and Ngozi told Adaora to explain everything when she's home. But no one has indicated that Ngozi herself has changed how she cooks.\n\n§cited:[]§",
+    "gold_answer": "Yes — Ngozi appears to have reduced the salt in her cooking, though she won't admit it. In Session 2, when Emeka noted the pepper soup tasted 'slightly lighter than usual,' Ngozi deflected: 'Same recipe as always, maybe ur taste buds are changing.' But Adaora then confirmed she'd noticed the same thing in a previous visit. Ngozi's denial and the pattern of multiple family members noticing the change suggests it was deliberate — likely on doctor's advice.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 29.65,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1649,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass gravitates toward routes through nature reserves and biodiverse habitats (e.g., fens, ridgelines) and actively prioritizes wildlife welfare by proposing reroutes to avoid disturbing nesting birds.\n\n§cited:[lme:socialmem_Q1_r3a1b2c3:29,lme:socialmem_Q1_r3a1b2c3:39]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.28,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2207,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's posts consistently show solo attendance and terse shares limited to artist, year, and label — always original pressings from the 1950s–1970s — suggesting a focused collector who prioritizes efficiency and vintage originals over socialising or reissues.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 21.68,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3371,
+    "em": false,
+    "question": "How did Preet's relationship to physical record collecting change over the conversations?",
+    "predicted_answer": "Preet started as an enthusiastic casual buyer who couldn't tell originals from reissues and valued cover art, then over the conversations she developed a genuine desire to physically own records (\"first time I've wanted to own something more than stream it\"), began actively building a collection, and grew confident enough to banter with the purists about the hobby.\n\n§cited:[138781eb9da5,65c7c65a10c5,981c0f490dbc,def915779b5c]§",
+    "gold_answer": "Preet began as primarily a streamer with minimal physical ownership. In Session 1, their enthusiasm was about discovering records at fairs but framed aesthetically — praising a Fela reissue's cover without caring that it wasn't an original. In Session 2, after finding a Brazilian compilation they'd been writing about, they said 'First time I've wanted to own something more than stream it honestly' — noting the shift in themselves even as they named it. In Session 3, they went back to the same seller and bought three more records, announcing: 'I think I'm doing this now.' By Sessions 4 and 5, attending fairs to build the collection is the stated goal, and Preet is asking what to look for.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 41.83,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3237,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes. Gil initially engaged as a knowledge source without clearly committing to attend (Fitzroy session: sharing pressing details, offering duplicate copies), but by the Camden planning session he was openly skeptical—asking \"specialist or commercial?\" and dismissing it as \"too many Taylor Swift reissues\"—yet ultimately attended anyway and found serious original pressings at the Archway Specialist stall, suggesting his approach shifted from passive expertise-sharing to selective, specialist-focused attendance.\n\n§cited:[cda858dd6459,1670b4f44997,8fde3d1cc7ff]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 75.0,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3648,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus went from raising the parking permit issue as a concerned parent (session 2), to being deeply shaken by a near-miss involving his son at the school gate and pushing for a formal traffic assessment (session 3), to then shifting fully toward community engagement—volunteering for the street party and talking about his kids' happiness (sessions 4–5)—with no further traffic follow-up after the initial incident.",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 26.44,
+    "error": null
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "method_id": "method_13_slot_decision_answer_planner",
+  "strategy": "slot_decision_answer_planner",
+  "description": "Inherit question-aware structured retrieval, then convert slot_decision into an explicit answer_plan with per-option support/contradiction, ordered evidence, update trajectory, and final answer constraints.",
+  "options": {
+    "schema_tables": [
+      "memory_raw_events",
+      "memory_entities",
+      "memory_event_facts",
+      "memory_assertions",
+      "memory_relation_facts"
+    ],
+    "base_retrieval": "adaptive_intent_versioned",
+    "all_raw_event_backfill": true,
+    "all_raw_event_backfill_limit": 100000,
+    "all_raw_event_backfill_chunk_size": 200,
+    "selected_evidence_limit": 8,
+    "answer_plan_row_limit": 32,
+    "summary_pollution": false,
+    "wrap_search_fetch_tools": false,
+    "question_context": true,
+    "session_scoped_raw_events": true,
+    "answer_plan": true
+  }
+}

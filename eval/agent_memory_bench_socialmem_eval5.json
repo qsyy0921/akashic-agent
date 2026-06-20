@@ -1,0 +1,4033 @@
+[
+  {
+    "question_id": "socialmem_Q1_c0s3c1",
+    "question_type": "single-session-preference",
+    "question": "What does Josh's behavior in the group chat suggest about how he handles questions about his own career?",
+    "answer": "Josh consistently deflects questions about his career with self-deprecating humour and then redirects to someone else. In Session 3, when Leon asked what everyone was up to professionally, Josh responded: 'still in the same chair 😂😂 living the dream' — and immediately pivoted to Priya. In Session 5, he used the same 'same chair' line again. He does not engage with follow-up, does not offer detail about what he actually does or wants, and accepts Mei's gentle reframe ('you know everything') with 'haha, very kind' — another deflection. The pattern is consistent across sessions and the self-deprecation is the tell.",
+    "question_date": "",
+    "haystack_session_ids": [
+      "socialmem_Q1_c0s3c1:s0",
+      "socialmem_Q1_c0s3c1:s1",
+      "socialmem_Q1_c0s3c1:s2",
+      "socialmem_Q1_c0s3c1:s3",
+      "socialmem_Q1_c0s3c1:s4"
+    ],
+    "haystack_dates": [
+      "2025-10-06",
+      "2025-10-13",
+      "2025-10-20",
+      "2025-10-27",
+      "2025-11-03"
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Quarterly drinks! Last Thursday of the month? I've found a new place in Soho, proper booths 😁",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: I can do 7–9. My team has a big handover that week so I'll need a hard stop.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t002",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t003 speaker_id=p_c0d4e5f6 message_index=4] Leon: just got covered by TechCrunch 🔥 might be able to make it actually. it's been a journey but we're close to profitability. Will confirm closer to the date",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t003",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: classic Leon response 😂 we'll have your booth ready in case",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t005 speaker_id=p_c0a1b2c3 message_index=6] Mei: Near Soho is good. I genuinely have a hard stop though, no heroic late one from me.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t005",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: Same, somewhere easy and not shouty please",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: if I make it I'm ordering champagne and behaving terribly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t008",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t009 speaker_id=p_c0d4e5f6 message_index=10] Leon: exactly. consistency matters",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t009",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Good to see you both last night 🍻 Priya you look really well. Mei, your team sounds intense. Leon didn't come again.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: My team is intense but it's a good problem to have honestly. Leon, what happened?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t002 speaker_id=p_c0d4e5f6 message_index=3] Leon: investor call ran over, can't be helped when you're at that stage 🚀 next one for sure",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t002",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: We missed you 🙂 it was a good night though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: Was the investor at least worth missing actual humans for",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: Potentially, yes 😅 brutal timing though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t006 speaker_id=p_c0a1b2c3 message_index=7] Mei: You could have texted before 10pm to be fair",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t006",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Fair. I thought I'd make it and then it blew up.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Next round is on you then 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: another round closed! Series A confirmed. journey continues 🚀 what's everyone else up to professionally these days?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: Congrats Leon. Still building the team, we're at eight now. Just brought in two seniors which changes the dynamic completely.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: still in the same chair 😂😂 living the dream. Priya you're the one with the interesting job now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: good question 😂 it's a lot. different kind of hard than expected. anyway, are we doing next quarter?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Josh you cannot still call six years at the same place 'same chair'",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: watch me 😂 it's either that or a LinkedIn post and nobody wants that",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t006",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t007",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t008",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t000",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t001",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t003",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t007",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t001",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t002",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t003",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t006",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "socialmembench",
+    "source_subset": "network",
+    "source_metadata": {
+      "network_id": "grp_0d1e2f3a",
+      "qa_id": "Q1_c0s3c1",
+      "query_type": "Q1",
+      "difficulty": "medium",
+      "answer_format": "long_form",
+      "source_question_type": "socialmembench:Q1",
+      "context": "network",
+      "session_dates": [
+        "2025-10-06",
+        "2025-10-13",
+        "2025-10-20",
+        "2025-10-27",
+        "2025-11-03"
+      ],
+      "evidence_turn_ids": [
+        "grp_0d1e2f3a_s03_t002",
+        "grp_0d1e2f3a_s05_t001"
+      ]
+    }
+  },
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "question_date": "",
+    "haystack_session_ids": [
+      "socialmem_Q3_c0s3c2:s0",
+      "socialmem_Q3_c0s3c2:s1",
+      "socialmem_Q3_c0s3c2:s2",
+      "socialmem_Q3_c0s3c2:s3",
+      "socialmem_Q3_c0s3c2:s4"
+    ],
+    "haystack_dates": [
+      "2025-10-06",
+      "2025-10-13",
+      "2025-10-20",
+      "2025-10-27",
+      "2025-11-03"
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Quarterly drinks! Last Thursday of the month? I've found a new place in Soho, proper booths 😁",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: I can do 7–9. My team has a big handover that week so I'll need a hard stop.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t002",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t003 speaker_id=p_c0d4e5f6 message_index=4] Leon: just got covered by TechCrunch 🔥 might be able to make it actually. it's been a journey but we're close to profitability. Will confirm closer to the date",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t003",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: classic Leon response 😂 we'll have your booth ready in case",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t005 speaker_id=p_c0a1b2c3 message_index=6] Mei: Near Soho is good. I genuinely have a hard stop though, no heroic late one from me.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t005",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: Same, somewhere easy and not shouty please",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: if I make it I'm ordering champagne and behaving terribly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t008",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t009 speaker_id=p_c0d4e5f6 message_index=10] Leon: exactly. consistency matters",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t009",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Good to see you both last night 🍻 Priya you look really well. Mei, your team sounds intense. Leon didn't come again.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: My team is intense but it's a good problem to have honestly. Leon, what happened?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t002 speaker_id=p_c0d4e5f6 message_index=3] Leon: investor call ran over, can't be helped when you're at that stage 🚀 next one for sure",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t002",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: We missed you 🙂 it was a good night though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: Was the investor at least worth missing actual humans for",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: Potentially, yes 😅 brutal timing though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t006 speaker_id=p_c0a1b2c3 message_index=7] Mei: You could have texted before 10pm to be fair",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t006",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Fair. I thought I'd make it and then it blew up.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Next round is on you then 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: another round closed! Series A confirmed. journey continues 🚀 what's everyone else up to professionally these days?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: Congrats Leon. Still building the team, we're at eight now. Just brought in two seniors which changes the dynamic completely.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: still in the same chair 😂😂 living the dream. Priya you're the one with the interesting job now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: good question 😂 it's a lot. different kind of hard than expected. anyway, are we doing next quarter?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Josh you cannot still call six years at the same place 'same chair'",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: watch me 😂 it's either that or a LinkedIn post and nobody wants that",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t006",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t007",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t008",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t000",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t001",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t003",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t007",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t001",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t002",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t003",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t006",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "socialmembench",
+    "source_subset": "network",
+    "source_metadata": {
+      "network_id": "grp_0d1e2f3a",
+      "qa_id": "Q3_c0s3c2",
+      "query_type": "Q3",
+      "difficulty": "medium",
+      "answer_format": "long_form",
+      "source_question_type": "socialmembench:Q3",
+      "context": "network",
+      "session_dates": [
+        "2025-10-06",
+        "2025-10-13",
+        "2025-10-20",
+        "2025-10-27",
+        "2025-11-03"
+      ],
+      "evidence_turn_ids": [
+        "grp_0d1e2f3a_s03_t001",
+        "grp_0d1e2f3a_s03_t002",
+        "grp_0d1e2f3a_s03_t003",
+        "grp_0d1e2f3a_s05_t000"
+      ]
+    }
+  },
+  {
+    "question_id": "socialmem_Q4_c0s2c2",
+    "question_type": "single-session-user",
+    "question": "Both Mei and Leon present themselves confidently in the group chat when discussing career. Who is projecting success they have not fully achieved, and who is reporting genuine accomplished progress?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "answer": "C",
+    "question_date": "",
+    "haystack_session_ids": [
+      "socialmem_Q4_c0s2c2:s0",
+      "socialmem_Q4_c0s2c2:s1",
+      "socialmem_Q4_c0s2c2:s2",
+      "socialmem_Q4_c0s2c2:s3",
+      "socialmem_Q4_c0s2c2:s4"
+    ],
+    "haystack_dates": [
+      "2025-10-06",
+      "2025-10-13",
+      "2025-10-20",
+      "2025-10-27",
+      "2025-11-03"
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Quarterly drinks! Last Thursday of the month? I've found a new place in Soho, proper booths 😁",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: I can do 7–9. My team has a big handover that week so I'll need a hard stop.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t002",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t003 speaker_id=p_c0d4e5f6 message_index=4] Leon: just got covered by TechCrunch 🔥 might be able to make it actually. it's been a journey but we're close to profitability. Will confirm closer to the date",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t003",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: classic Leon response 😂 we'll have your booth ready in case",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t005 speaker_id=p_c0a1b2c3 message_index=6] Mei: Near Soho is good. I genuinely have a hard stop though, no heroic late one from me.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t005",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: Same, somewhere easy and not shouty please",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: if I make it I'm ordering champagne and behaving terribly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t008",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t009 speaker_id=p_c0d4e5f6 message_index=10] Leon: exactly. consistency matters",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t009",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Good to see you both last night 🍻 Priya you look really well. Mei, your team sounds intense. Leon didn't come again.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: My team is intense but it's a good problem to have honestly. Leon, what happened?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t002 speaker_id=p_c0d4e5f6 message_index=3] Leon: investor call ran over, can't be helped when you're at that stage 🚀 next one for sure",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t002",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: We missed you 🙂 it was a good night though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: Was the investor at least worth missing actual humans for",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: Potentially, yes 😅 brutal timing though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t006 speaker_id=p_c0a1b2c3 message_index=7] Mei: You could have texted before 10pm to be fair",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t006",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Fair. I thought I'd make it and then it blew up.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Next round is on you then 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: another round closed! Series A confirmed. journey continues 🚀 what's everyone else up to professionally these days?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: Congrats Leon. Still building the team, we're at eight now. Just brought in two seniors which changes the dynamic completely.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: still in the same chair 😂😂 living the dream. Priya you're the one with the interesting job now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: good question 😂 it's a lot. different kind of hard than expected. anyway, are we doing next quarter?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Josh you cannot still call six years at the same place 'same chair'",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: watch me 😂 it's either that or a LinkedIn post and nobody wants that",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t006",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t007",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t008",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t000",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t001",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t003",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t007",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t001",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t002",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t003",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t006",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "socialmembench",
+    "source_subset": "network",
+    "source_metadata": {
+      "network_id": "grp_0d1e2f3a",
+      "qa_id": "Q4_c0s2c2",
+      "query_type": "Q4",
+      "difficulty": "hard",
+      "answer_format": "multiple_choice",
+      "source_question_type": "socialmembench:Q4",
+      "context": "network",
+      "session_dates": [
+        "2025-10-06",
+        "2025-10-13",
+        "2025-10-20",
+        "2025-10-27",
+        "2025-11-03"
+      ],
+      "evidence_turn_ids": [
+        "grp_0d1e2f3a_s01_t003",
+        "grp_0d1e2f3a_s03_t001"
+      ]
+    }
+  },
+  {
+    "question_id": "socialmem_Q5_c0s4c1",
+    "question_type": "single-session-user",
+    "question": "What was Priya's attitude toward discussing her job, and how does the conversation show that Josh already knew it?",
+    "answer": "Josh revealed that he and Priya had already spoken privately: 'Priya and I already talked about it properly last week, she's good.' This shows Josh knows Priya's career situation well enough to act as her proxy, shielding her from a group conversation she doesn't want. The gentle rebuff of Mei ('not everything needs to be a group agenda item') confirms that Josh is protecting Priya's preference, not his own. He has a direct private channel with Priya that operates outside the group chat, and he uses it here to close down Mei's well-meaning but unwelcome offer.",
+    "question_date": "",
+    "haystack_session_ids": [
+      "socialmem_Q5_c0s4c1:s0",
+      "socialmem_Q5_c0s4c1:s1",
+      "socialmem_Q5_c0s4c1:s2",
+      "socialmem_Q5_c0s4c1:s3",
+      "socialmem_Q5_c0s4c1:s4"
+    ],
+    "haystack_dates": [
+      "2025-10-06",
+      "2025-10-13",
+      "2025-10-20",
+      "2025-10-27",
+      "2025-11-03"
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Quarterly drinks! Last Thursday of the month? I've found a new place in Soho, proper booths 😁",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: I can do 7–9. My team has a big handover that week so I'll need a hard stop.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t002",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t003 speaker_id=p_c0d4e5f6 message_index=4] Leon: just got covered by TechCrunch 🔥 might be able to make it actually. it's been a journey but we're close to profitability. Will confirm closer to the date",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t003",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: classic Leon response 😂 we'll have your booth ready in case",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t005 speaker_id=p_c0a1b2c3 message_index=6] Mei: Near Soho is good. I genuinely have a hard stop though, no heroic late one from me.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t005",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: Same, somewhere easy and not shouty please",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: if I make it I'm ordering champagne and behaving terribly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t008",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t009 speaker_id=p_c0d4e5f6 message_index=10] Leon: exactly. consistency matters",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t009",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Good to see you both last night 🍻 Priya you look really well. Mei, your team sounds intense. Leon didn't come again.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: My team is intense but it's a good problem to have honestly. Leon, what happened?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t002 speaker_id=p_c0d4e5f6 message_index=3] Leon: investor call ran over, can't be helped when you're at that stage 🚀 next one for sure",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t002",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: We missed you 🙂 it was a good night though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: Was the investor at least worth missing actual humans for",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: Potentially, yes 😅 brutal timing though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t006 speaker_id=p_c0a1b2c3 message_index=7] Mei: You could have texted before 10pm to be fair",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t006",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Fair. I thought I'd make it and then it blew up.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Next round is on you then 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: another round closed! Series A confirmed. journey continues 🚀 what's everyone else up to professionally these days?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: Congrats Leon. Still building the team, we're at eight now. Just brought in two seniors which changes the dynamic completely.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: still in the same chair 😂😂 living the dream. Priya you're the one with the interesting job now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: good question 😂 it's a lot. different kind of hard than expected. anyway, are we doing next quarter?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Josh you cannot still call six years at the same place 'same chair'",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: watch me 😂 it's either that or a LinkedIn post and nobody wants that",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t006",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t007",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t008",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t000",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t001",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t003",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t007",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t001",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t002",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t003",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t006",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "socialmembench",
+    "source_subset": "network",
+    "source_metadata": {
+      "network_id": "grp_0d1e2f3a",
+      "qa_id": "Q5_c0s4c1",
+      "query_type": "Q5",
+      "difficulty": "medium",
+      "answer_format": "long_form",
+      "source_question_type": "socialmembench:Q5",
+      "context": "network",
+      "session_dates": [
+        "2025-10-06",
+        "2025-10-13",
+        "2025-10-20",
+        "2025-10-27",
+        "2025-11-03"
+      ],
+      "evidence_turn_ids": [
+        "grp_0d1e2f3a_s04_t002",
+        "grp_0d1e2f3a_s04_t006"
+      ]
+    }
+  },
+  {
+    "question_id": "socialmem_Q6_c0s5c1",
+    "question_type": "single-session-preference",
+    "question": "The group has a norm of not recruiting each other or soliciting referrals in the chat. Does everyone follow it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "answer": "B",
+    "question_date": "",
+    "haystack_session_ids": [
+      "socialmem_Q6_c0s5c1:s0",
+      "socialmem_Q6_c0s5c1:s1",
+      "socialmem_Q6_c0s5c1:s2",
+      "socialmem_Q6_c0s5c1:s3",
+      "socialmem_Q6_c0s5c1:s4"
+    ],
+    "haystack_dates": [
+      "2025-10-06",
+      "2025-10-13",
+      "2025-10-20",
+      "2025-10-27",
+      "2025-11-03"
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Quarterly drinks! Last Thursday of the month? I've found a new place in Soho, proper booths 😁",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: I can do 7–9. My team has a big handover that week so I'll need a hard stop.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t002 speaker_id=p_c0c3d4e5 message_index=3] Priya: I'm in 🙂 need this",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t002",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t003 speaker_id=p_c0d4e5f6 message_index=4] Leon: just got covered by TechCrunch 🔥 might be able to make it actually. it's been a journey but we're close to profitability. Will confirm closer to the date",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t003",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: classic Leon response 😂 we'll have your booth ready in case",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t005 speaker_id=p_c0a1b2c3 message_index=6] Mei: Near Soho is good. I genuinely have a hard stop though, no heroic late one from me.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t005",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: Same, somewhere easy and not shouty please",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: if I make it I'm ordering champagne and behaving terribly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t008 speaker_id=p_c0b2c3d4 message_index=9] Josh: You say that like it's a threat and not the brand",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t008",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s01 session_index=1 date=2025-10-06 turn_id=grp_0d1e2f3a_s01_t009 speaker_id=p_c0d4e5f6 message_index=10] Leon: exactly. consistency matters",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s01",
+            "session_index": 1,
+            "date": "2025-10-06",
+            "turn_id": "grp_0d1e2f3a_s01_t009",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t000 speaker_id=p_c0b2c3d4 message_index=1] Josh: Good to see you both last night 🍻 Priya you look really well. Mei, your team sounds intense. Leon didn't come again.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t000",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: My team is intense but it's a good problem to have honestly. Leon, what happened?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t002 speaker_id=p_c0d4e5f6 message_index=3] Leon: investor call ran over, can't be helped when you're at that stage 🚀 next one for sure",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t002",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: We missed you 🙂 it was a good night though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t004 speaker_id=p_c0b2c3d4 message_index=5] Josh: Was the investor at least worth missing actual humans for",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t004",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: Potentially, yes 😅 brutal timing though",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t006 speaker_id=p_c0a1b2c3 message_index=7] Mei: You could have texted before 10pm to be fair",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t006",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Fair. I thought I'd make it and then it blew up.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Next round is on you then 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s02 session_index=2 date=2025-10-13 turn_id=grp_0d1e2f3a_s02_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: documented and legally binding",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s02",
+            "session_index": 2,
+            "date": "2025-10-13",
+            "turn_id": "grp_0d1e2f3a_s02_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: another round closed! Series A confirmed. journey continues 🚀 what's everyone else up to professionally these days?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t001 speaker_id=p_c0a1b2c3 message_index=2] Mei: Congrats Leon. Still building the team, we're at eight now. Just brought in two seniors which changes the dynamic completely.",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t001",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: still in the same chair 😂😂 living the dream. Priya you're the one with the interesting job now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t003 speaker_id=p_c0c3d4e5 message_index=4] Priya: good question 😂 it's a lot. different kind of hard than expected. anyway, are we doing next quarter?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t003",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Josh you cannot still call six years at the same place 'same chair'",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: watch me 😂 it's either that or a LinkedIn post and nobody wants that",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t006 speaker_id=p_c0d4e5f6 message_index=7] Leon: Priya are you private practice now or still split across clinics",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t006",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t007 speaker_id=p_c0c3d4e5 message_index=8] Priya: bit of both. still figuring out what kind of week feels sustainable honestly",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t007",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t008 speaker_id=p_c0a1b2c3 message_index=9] Mei: We should book next quarter now before everyone's calendars become fiction",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t008",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s03 session_index=3 date=2025-10-20 turn_id=grp_0d1e2f3a_s03_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: correct. logistics, the true love language",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s03",
+            "session_index": 3,
+            "date": "2025-10-20",
+            "turn_id": "grp_0d1e2f3a_s03_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t000 speaker_id=p_c0a1b2c3 message_index=1] Mei: Priya, how's the physio practice going? You mentioned it being harder than expected. Might be worth a proper career convo at next drinks 🙂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t000",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t001 speaker_id=p_c0c3d4e5 message_index=2] Priya: good question 🙂 it's fine, just a steep learning curve. rather talk about it in person",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t001",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t002 speaker_id=p_c0b2c3d4 message_index=3] Josh: Priya and I already talked about it properly last week, she's good 🙂 not everything needs to be a group agenda item Mei 😂",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t002",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t003 speaker_id=p_c0a1b2c3 message_index=4] Mei: fair enough 😂 I just find it useful to talk these things through with people who get the career transition thing",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t003",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: I wasn't trying to make it a panel discussion 😅 just offering solidarity",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t005 speaker_id=p_c0b2c3d4 message_index=6] Josh: I know, I know. just saying Priya doesn't owe the whole board an update",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t005",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t006 speaker_id=p_c0c3d4e5 message_index=7] Priya: thank you both. coffee with one person I can do, group unpacking no",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t006",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t007 speaker_id=p_c0a1b2c3 message_index=8] Mei: That's fair. one-on-one coffee then, no agenda",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t007",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: that I'd actually like",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s04 session_index=4 date=2025-10-27 turn_id=grp_0d1e2f3a_s04_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Look at that, governance achieved",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s04",
+            "session_index": 4,
+            "date": "2025-10-27",
+            "turn_id": "grp_0d1e2f3a_s04_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ],
+      [
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t000 speaker_id=p_c0d4e5f6 message_index=1] Leon: guys, covered by Bloomberg now too 🚀 if you know anyone who'd want to invest let me know. it's still early but the trajectory is there",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t000",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t001 speaker_id=p_c0b2c3d4 message_index=2] Josh: legend. I'm still in the same chair so can't help with that 😂 come to drinks next time though Leon, genuinely",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t001",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t002 speaker_id=p_c0a1b2c3 message_index=3] Mei: Nice Leon. Josh, 'still in the same chair' is modesty, you've been there six years and know everything 😄",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t002",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t003 speaker_id=p_c0b2c3d4 message_index=4] Josh: haha 😂 very kind",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t003",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t004 speaker_id=p_c0a1b2c3 message_index=5] Mei: Anyway, next drinks. same booth strategy?",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t004",
+            "speaker_id": "p_c0a1b2c3",
+            "speaker": "Mei",
+            "message_index": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t005 speaker_id=p_c0d4e5f6 message_index=6] Leon: ironically yes. I miss the tiny booth more than another investor dinner at this point",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t005",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t006 speaker_id=p_c0b2c3d4 message_index=7] Josh: that's character development from our Bloomberg correspondent",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t006",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t007 speaker_id=p_c0d4e5f6 message_index=8] Leon: Don't get used to it but I'd take a booth and chips over another room full of lanyards right now",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t007",
+            "speaker_id": "p_c0d4e5f6",
+            "speaker": "Leon",
+            "message_index": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t008 speaker_id=p_c0c3d4e5 message_index=9] Priya: Now that I believe. booths and chips are undefeated",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t008",
+            "speaker_id": "p_c0c3d4e5",
+            "speaker": "Priya",
+            "message_index": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "[SocialMemBench network=grp_0d1e2f3a session=grp_0d1e2f3a_s05 session_index=5 date=2025-11-03 turn_id=grp_0d1e2f3a_s05_t009 speaker_id=p_c0b2c3d4 message_index=10] Josh: Great, Leon returns to the people just as the people lose faith",
+          "metadata": {
+            "kind": "group_message",
+            "network_id": "grp_0d1e2f3a",
+            "session_id": "grp_0d1e2f3a_s05",
+            "session_index": 5,
+            "date": "2025-11-03",
+            "turn_id": "grp_0d1e2f3a_s05_t009",
+            "speaker_id": "p_c0b2c3d4",
+            "speaker": "Josh",
+            "message_index": 10
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "socialmembench",
+    "source_subset": "network",
+    "source_metadata": {
+      "network_id": "grp_0d1e2f3a",
+      "qa_id": "Q6_c0s5c1",
+      "query_type": "Q6",
+      "difficulty": "medium",
+      "answer_format": "multiple_choice",
+      "source_question_type": "socialmembench:Q6",
+      "context": "network",
+      "session_dates": [
+        "2025-10-06",
+        "2025-10-13",
+        "2025-10-20",
+        "2025-10-27",
+        "2025-11-03"
+      ],
+      "evidence_turn_ids": [
+        "grp_0d1e2f3a_s05_t000"
+      ]
+    }
+  }
+]

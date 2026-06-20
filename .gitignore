@@ -35,6 +35,8 @@ data/
 plugins/**/.data/
 /data
 /memory/
+/runtime/
+/private_runtime/
 
 # IDE
 .idea/
@@ -50,6 +52,16 @@ plugins/**/.data/
 benchmark/result*.json
 benchmark/data/
 /eval/local_testsets/
+/eval/runs/
+/eval/agent_memory_bench_*_full_local.json
+/eval/agent_memory_bench_groupmem_probe_local.json
+/eval/datasets/groupmembench/data/
+/eval/datasets/evermembench_dynamic/[0-9][0-9]/
+/eval/datasets/evermembench_dynamic/dataset/
+/eval/datasets/evermembench_dynamic/EverMemBench_Dialogues*.json
+/eval/datasets/evermembench_dynamic/EverMemBench_QAR*.json
+/eval/datasets/evermembench_dynamic/profiles.json
+/eval/datasets/socialmembench/*.parquet
 qa_error_log_*.txt
 lme_error_log_*.txt
 /config.json.bak

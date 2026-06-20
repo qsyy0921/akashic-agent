@@ -1,0 +1,246 @@
+[
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.241,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam opted for the chicken ramen instead of the restaurant's signature mushroom broth, suggesting a preference for meat-based broths over plant-based ones.\n\n§cited:[lme:socialmem_Q1_b2c3d4e5:25,lme:socialmem_Q1_b2c3d4e5:27]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.8,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0312,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya.\n\n§cited:[]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 30.33,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.315,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "Sam and Jordan share a past experience at Mt. Tam that left Jordan needing to recover, with Jordan deflecting questions about it to Sam and Sam also declining to discuss it.",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 24.61,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2376,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "A. Adaora.\n\nShe said \"thesis doesn't really pause for Christmas so I genuinely don't know yet,\" citing her thesis as the outside obligation preventing her from committing to specific dates.\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:10]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 30.23,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3538,
+    "em": false,
+    "question": "Has Marcus mentioned anything about physical limitations on hikes?",
+    "predicted_answer": "Yes — Marcus has a knee issue that bothers him on hikes. He said it \"gets a bit stiff on descents,\" acknowledged it \"has been bothering you for a while,\" and declined one route saying \"Not sure my knee is up to it right now.\" He consistently prefers flatter routes and gentler south-side descents.\n\n§cited:[1a0be03ebe8c,96d4026ce751]§",
+    "gold_answer": "Marcus has a knee problem that affects him on descents, but he never states it directly. He consistently volunteers to take the easier descent route ('I can take the south route on descent') and when Bev observed him limping after the Blackmoor Scramble, he acknowledged only that his knee 'gets a bit stiff on descents.' He also frames his descent queries as logistics rather than personal concern ('What's the descent like on the south side?').",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 23.89,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0171,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "B. Dani\n\n§cited:[]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 25.97,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2727,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Her posts consistently share specific original pressings (Luiz Bonfá 1958 Odeon, Bobby Womack 1971 United Artists, Millie Jackson 1974 Spring Records) while repeatedly emphasizing she works alone — suggesting she's a focused, solo digger targeting vintage soul, funk, and Brazilian records by label and pressing year.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 26.24,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a5s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3704,
+    "em": false,
+    "question": "All five members of the Maple Street group shared their views on the proposed residents' parking scheme. What was each person's position and reasoning?",
+    "predicted_answer": "Femi broadly in favour but worried about commuter overflow to neighbouring streets; Claudette against, objecting to the £80/year charge on principle; Marcus in favour as a parent fed up with pavement parking at school drop-off; Jordan neutral (no car) but still found £80 steep and wanted a review clause; Vera supported it because she needs guaranteed parking for home-visit clinic days.\n\n§cited:[8e938bd7fdd5]§",
+    "gold_answer": "All five weighed in with distinct positions and reasons: Claudette was against — she objected on cost grounds ('£80 a year is an additional burden on residents who have always parked freely here') and felt paying for previously free parking was wrong. Marcus was in favour — his reason was child safety at the school gate, where pavement parking creates danger during the school run. Jordan was neutral — they have no car and the scheme does not affect them directly, though they noted empathy for those on tight budgets. Femi was broadly in favour but had one reservation: displaced commuter parking moving to neighbouring streets. Vera was in favour — her reason was professional: home visits mean she needs parking near the house on clinic days.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 31.58,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3729,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's engagement shifted from practical concern (Session 1: worried about scaffolding blocking the school gate) to active advocacy (Session 2: strongly in favour of parking permits, calling the situation \"untenable\") to emotionally driven formal action (Session 3: after his son's near-miss with a car, he was shaken and announced he'd raise it formally), but then from Session 4 onward he dropped the topic entirely and shifted focus to community social events like the street party and face painting for his kids.\n\n§cited:[]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 33.32,
+    "error": null
+  }
+]

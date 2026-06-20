@@ -172,6 +172,32 @@ async def test_fetch_messages_supports_mixed_ids_and_source_refs(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_fetch_messages_accepts_mixed_evidence_shapes(tmp_path):
+    store = SessionStore(tmp_path / "sessions.db")
+    _setup_session(store, "tg:1", 5)
+
+    tool = FetchMessagesTool(store)
+    payload = json.loads(
+        await tool.execute(
+            evidence=[
+                "tg:1:0",
+                {"source_ref": "tg:1:1", "refs": ["tg:1:2"]},
+                '["tg:1:3","tg:1:4"]',
+            ]
+        )
+    )
+
+    assert [m["id"] for m in payload["messages"]] == [
+        "tg:1:0",
+        "tg:1:1",
+        "tg:1:2",
+        "tg:1:3",
+        "tg:1:4",
+    ]
+    assert payload["matched_count"] == 5
+
+
+@pytest.mark.asyncio
 async def test_search_messages_returns_preview_with_source_ref(tmp_path):
     store = SessionStore(tmp_path / "sessions.db")
     store.upsert_session(

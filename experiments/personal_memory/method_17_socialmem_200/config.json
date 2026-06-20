@@ -1,0 +1,12 @@
+{
+  "method_id": "method_17_structured_answer_contract",
+  "strategy": "structured_answer_contract",
+  "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+  "options": {
+    "selected_evidence_limit": 8,
+    "consolidated_facts_per_session": 160,
+    "consolidated_fact_limit": 6,
+    "precision_raw_scan_limit": 24,
+    "precision_candidate_limit": 5
+  }
+}

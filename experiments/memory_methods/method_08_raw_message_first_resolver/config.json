@@ -1,0 +1,9 @@
+{
+  "method_id": "method_08_raw_message_first_resolver",
+  "strategy": "raw_message_first_resolver",
+  "description": "Replace benchmark recall_memory with a raw-message-first resolver that returns compact source evidence rows from SessionStore without modifying memory summaries.",
+  "options": {
+    "raw_limit": 12,
+    "context": 1
+  }
+}

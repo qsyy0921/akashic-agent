@@ -1,0 +1,19 @@
+{
+  "method_id": "method_10_production_structured_memory_schema",
+  "strategy": "production_structured_memory_schema",
+  "description": "Use the production memory2 event/entity/source/assertion schema and expose structured_evidence through recall_memory signals without benchmark-only wrappers.",
+  "options": {
+    "schema_tables": [
+      "memory_raw_events",
+      "memory_entities",
+      "memory_event_facts",
+      "memory_assertions",
+      "memory_relation_facts"
+    ],
+    "attach_signal": "structured_evidence",
+    "backfill_on_query": true,
+    "raw_event_backfill_limit": 50000,
+    "raw_event_backfill_chunk_size": 500,
+    "summary_pollution": false
+  }
+}

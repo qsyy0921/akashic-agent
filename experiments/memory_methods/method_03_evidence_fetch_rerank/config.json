@@ -1,0 +1,7 @@
+{
+  "method_id": "method_03_evidence_fetch_rerank",
+  "strategy": "evidence_fetch_rerank",
+  "description": "Rerank recall results toward source-backed records with better lexical overlap and type fit.",
+  "options": {}
+}
+

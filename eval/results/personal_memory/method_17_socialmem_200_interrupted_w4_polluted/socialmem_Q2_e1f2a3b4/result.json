@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q2_e1f2a3b4",
+  "question_type": "single-session-user",
+  "question": "What did the group decide about where to go for drinks after dinner? Did everyone seem equally on board?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+  "gold_answer": "D. Sam\nThe group decided on Rooftop Fox, a loud rooftop bar. Most members confirmed quickly — Lena was enthusiastic, Jordan said 'Fine,' and Priya joined late and called it 'perfect.' Sam was the exception: when asked directly, Sam initially responded with only '...' and then, when prompted again, gave a minimal 'sure.' Sam later asked about outdoor seating but didn't raise any objection — their reluctance was visible only through the silence and delayed response.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.32,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

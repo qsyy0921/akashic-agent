@@ -1,0 +1,392 @@
+[
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2581,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya strongly dislikes cilantro (\"that herb ruins everything ngl\") and prefers sparkling water over alcohol, indicating she was \"off drinks\" at the time of the conversations.\n\n§cited:[f90fdb114766,9148f46ad1de]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 14,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 17.5,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2078,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam chose chicken ramen over the restaurant's signature mushroom broth, suggesting a preference for chicken-based dishes.\n\n§cited:[26ded2078c5a,913d35e75062,lme:socialmem_Q1_b2c3d4e5:25,lme:socialmem_Q1_b2c3d4e5:27]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 13.61,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 17.45,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_e5f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What is Jordan's attitude toward team sports and group physical activities? And who in the conversation revealed this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Jordan strongly dislikes team sports and group fitness activities. This was revealed by Maya in Session 2. When Jordan bluntly declined an invitation to Priya's office football event, Maya immediately said 'yeah figured, team sports aren't really your thing' — demonstrating that she already knew about this preference without needing to ask. Jordan confirmed with 'Still no.' but Maya's comment was the revealing moment: she had prior knowledge of Jordan's aversion and stated it as a known fact.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 11.13,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3425,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "Sam and Jordan share a history involving an incident at Mt. Tam (Mt. Tamalpais) — Sam knows about it well enough to ask if Jordan \"fully recovered,\" and Jordan deflects by telling others to \"Ask Sam,\" suggesting they were both there and it's something neither wants to discuss publicly.\n\n§cited:[6d452efcae01,22eb4f0e56fd,lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:40]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 13.96,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_n2d4e5f6",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.3432,
+    "em": false,
+    "question": "What was decided about the Christmas dinner menu, and did all family members seem equally happy with that plan?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Ngozi was the driving force behind the Christmas dinner plans — she announced the menu (egusi, jollof, goat, \"the full thing\"), asked what everyone wanted, and insisted Emeka be there for Christmas morning. Adaora was unsure due to thesis stress, and both Adaora and Emeka separately noticed the recipe had quietly changed and were not openly happy about it. So no, not all family members seemed equally on board — **Ngozi (D)** was the enthusiastic organizer while the others had reservations.\n\n§cited:[065d9442c21c,c73377390a55,lme:socialmem_Q2_n2d4e5f6:55,lme:socialmem_Q2_n2d4e5f6:10,lme:socialmem_Q2_n2d4e5f6:11,lme:socialmem_Q2_n2d4e5f6:18,lme:socialmem_Q2_n2d4e5f6:16]§",
+    "gold_answer": "A. Adaora\nNgozi planned to cook the full traditional spread — goat, jollof, suya, fried plantain. Emeka and Tobenna were enthusiastic. Adaora, however, asked specifically if Ngozi could include beans dishes (moi moi, akara) and deflected from the meat options with 'I'll have whatever there is' — suggesting she has a preference for the plant-based side dishes. When Tobenna noted 'Ada you love goat,' she said only 'let me have the beans' without explaining. The rest of the family proceeded as if the standard menu was settled.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 34.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.202,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Adaora.\n\nShe said, \"I mean thesis doesn't really pause for Christmas so I genuinely don't know yet,\" citing her thesis as the outside obligation preventing her from committing.\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:10,lme:socialmem_Q4_n2e5f6a7:55]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 9.71,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_n2f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.234,
+    "em": false,
+    "question": "Has Ngozi's cooking changed in any way recently, and who in the family figured this out without being told?",
+    "predicted_answer": "Yes — Ngozi's recipe had become slightly lighter than usual, and Emeka was the one who picked up on it without being told.\n\n§cited:[d694fc5f406b,lme:socialmem_Q5_n2f6a7b8:18,lme:socialmem_Q5_n2f6a7b8:16]§",
+    "gold_answer": "Ngozi's cooking has become less salty, apparently on doctor's advice. This was figured out by Emeka. In Session 2, after multiple family members noted the pepper soup tasted different, Emeka said 'Less seasoning I think. Mum might have been told to ease off the salt' — reasoning through the change without being told directly. Ngozi denied it, but Emeka's inference was drawn from pattern recognition, not from Ngozi disclosing anything.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 9.97,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_n2b8c9d0",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.1368,
+    "em": false,
+    "question": "What does the family chat reveal about Chidi's role in family discussions?",
+    "predicted_answer": "Chidi plays a coordinating and somewhat paternal role—pressing siblings (especially Emeka) to confirm plans and logistics, and checking on family members' wellbeing.\n\n§cited:[lme:socialmem_Q7_n2b8c9d0:8,lme:socialmem_Q7_n2b8c9d0:50,lme:socialmem_Q7_n2b8c9d0:64,lme:socialmem_Q7_n2b8c9d0:32,lme:socialmem_Q7_n2b8c9d0:34]§",
+    "gold_answer": "Chidi participates infrequently and briefly, but his messages carry decisive weight. He typically arrives late to a conversation that has already been debated at length, then issues a short statement that ends the discussion. In Session 2, when the family had been going back and forth about Ngozi's cooking, Chidi arrived late with simply 'The soup was fine.' — which closed the subject. Emeka acknowledged this dynamic directly: 'Dad always has the final word.' In Session 4, a single line from Chidi ('Emeka. You are coming on Christmas Eve.') ended Emeka's weeks of stalling.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 12.42,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1333,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass prefers sheltered woodland trails over exposed ridgelines and favors flatter, more conversational routes with good amenities like cafés.\n\n§cited:[0a67482e3d64,673b3ae550c9,6f2b21bb54e2]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 8.86,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.4812,
+    "em": false,
+    "question": "Has Marcus mentioned anything about physical limitations on hikes?",
+    "predicted_answer": "Yes — Marcus has a knee issue that bothers him on descents. He said it \"gets a bit stiff on descents\" and chose the gentler south route on the Blackmoor Scramble. He also declined Bev's half marathon, saying \"Not sure my knee is up to it right now.\" He consistently asks about descent profiles when planning hikes.\n\n§cited:[19dec9d7ff6a,lme:socialmem_Q1_r3b2c3d4:28,lme:socialmem_Q1_r3b2c3d4:38,lme:socialmem_Q1_r3b2c3d4:19,lme:socialmem_Q1_r3b2c3d4:26]§",
+    "gold_answer": "Marcus has a knee problem that affects him on descents, but he never states it directly. He consistently volunteers to take the easier descent route ('I can take the south route on descent') and when Bev observed him limping after the Blackmoor Scramble, he acknowledged only that his knee 'gets a bit stiff on descents.' He also frames his descent queries as logistics rather than personal concern ('What's the descent like on the south side?').",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 8,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 15.35,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": null,
+    "f1": 0.0,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.59,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_r3a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.63,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2642,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "B. Dani — the evidence clearly shows Dani is the one who sets the push-through tone (\"No stopping mid-route,\" \"the whole point is to push ourselves\"), while Bev in particular pushes back asking about \"the social side of this group\" and wanting woodland/tea stops.\n\n§cited:[99a7df32ac51,04f0fd7f5728,937395401072,b4714ab70760,lme:socialmem_Q6_r3c1d2e3:13,lme:socialmem_Q6_r3c1d2e3:3,lme:socialmem_Q6_r3c1d2e3:7,lme:socialmem_Q6_r3c1d2e3:14]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.87,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3377,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka consistently posts only to report specific finds — always in the same terse \"artist, year, label\" format — showing she collects 1950s–70s original pressings across Brazilian, soul, and R&B (Luiz Bonfá, Bobby Womack, Millie Jackson) and cares more about the hunt than the social scene.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 8,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 10.66,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3399,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's engagement shifted from practical infrastructure concerns (scaffolding blocking the school gate in session 1, pavement parking in session 2) to personal alarm after a traffic incident involving his son in session 3 (\"I'm still properly shaken\"), then by sessions 4–5 he had moved on to community participation (face-painting, street party enthusiasm) with the traffic/safety topic receding.\n\n§cited:[b113ac3d37b5,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:21,lme:socialmem_Q8_a5s3c1:32,lme:socialmem_Q8_a5s3c1:47,lme:socialmem_Q8_a5s3c1:43]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 16.96,
+    "error": null
+  }
+]

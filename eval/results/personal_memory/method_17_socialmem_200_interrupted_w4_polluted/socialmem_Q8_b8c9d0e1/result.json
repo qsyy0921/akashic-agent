@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_b8c9d0e1",
+  "question_type": "knowledge-update",
+  "question": "How did Jordan's role in organizing group plans change over the course of the conversations?",
+  "gold_answer": "Jordan's role as group organizer clearly eroded across the sessions. In Session 1, Maya referenced Jordan's old role implicitly ('Jordan used to handle all the bookings') and appealed to him for help booking a venue in Session 3. By Session 3, Jordan declined entirely: when Maya said 'you always knew where to go,' Jordan responded with 'Lena can do it.' — passing all logistics to Lena without explanation. The shift was from default organizer to complete disengagement; the group adjusted around it without directly challenging him.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 4.88,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

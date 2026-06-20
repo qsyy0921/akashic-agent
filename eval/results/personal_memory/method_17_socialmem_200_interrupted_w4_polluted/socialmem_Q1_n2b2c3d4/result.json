@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_n2b2c3d4",
+  "question_type": "single-session-preference",
+  "question": "Has anything about Ngozi's cooking changed recently, based on what the family says?",
+  "gold_answer": "Yes — Ngozi appears to have reduced the salt in her cooking, though she won't admit it. In Session 2, when Emeka noted the pepper soup tasted 'slightly lighter than usual,' Ngozi deflected: 'Same recipe as always, maybe ur taste buds are changing.' But Adaora then confirmed she'd noticed the same thing in a previous visit. Ngozi's denial and the pattern of multiple family members noticing the change suggests it was deliberate — likely on doctor's advice.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 16.16,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

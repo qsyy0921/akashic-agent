@@ -1,0 +1,82 @@
+{
+  "method_id": "method_04_memory_update_versioning",
+  "generated_at": "2026-06-17T20:00:34.980111",
+  "result_path": "eval\\results\\memory_methods\\method_04_memory_update_versioning.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_04_memory_update_versioning",
+  "memory_method": {
+    "method_id": "method_04_memory_update_versioning",
+    "strategy": "memory_update_versioning",
+    "description": "For update-like questions, prefer newer candidate memories and shadow older conflicting candidates by signature.",
+    "options": {
+      "keep_shadowed": false
+    },
+    "config_path": "experiments\\memory_methods\\method_04_memory_update_versioning\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3078,
+      "em": 0.0,
+      "n": 50,
+      "errors": 0,
+      "judge_acc": 0.82
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3694,
+        "em": 0.0,
+        "n": 11,
+        "errors": 0,
+        "judge_acc": 0.6364
+      },
+      "single-session-preference": {
+        "f1": 0.269,
+        "em": 0.0,
+        "n": 17,
+        "errors": 0,
+        "judge_acc": 0.8824
+      },
+      "single-session-user": {
+        "f1": 0.307,
+        "em": 0.0,
+        "n": 22,
+        "errors": 0,
+        "judge_acc": 0.8636
+      }
+    }
+  },
+  "judge_acc": 0.82,
+  "latency": {
+    "avg_elapsed_s": 27.5494,
+    "p50_elapsed_s": 24.26,
+    "p95_elapsed_s": 51.21
+  },
+  "token_usage": {
+    "avg_token_usage": 34880.1,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 34880.1,
+    "avg_final_call_input_tokens_estimate": 13399.16,
+    "avg_cache_prompt_tokens": 71170.92,
+    "avg_cache_hit_tokens": 47779.84,
+    "avg_answer_chars": 320.62,
+    "avg_tool_result_chars": 22368.54,
+    "avg_tool_calls": 4.56
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 9,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 4,
+      "memory_write_failure": 6,
+      "personal_preference_attribution_error": 2,
+      "retrieved_but_answer_wrong": 2,
+      "retrieved_but_evidence_unused": 1
+    }
+  }
+}

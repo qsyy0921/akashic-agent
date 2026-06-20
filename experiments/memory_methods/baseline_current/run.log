@@ -1,0 +1,44 @@
+﻿──────────────────── LongMemEval  50 instances  workers=1 ─────────────────────
+14:53:33  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+14:54:00  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+14:54:30  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+14:54:59  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+┌─────────────────── [049/50]  socialme  knowledge-update ────────────────────┐
+│   Q     How has Marcus's engagement with traffic and safety issues on Maple │
+│ Street changed over the sessions?                                           │
+│   pred  Marcus's trajectory goes from practical concern (scaffolding        │
+│ blocking the school gate, session 1) to active advocacy for                 │
+│   gold  Marcus mentioned traffic concerns incidentally in Session 1         │
+│ (worried about scaffolding blocking the school gate during w                │
+└───────────────────── judge=no  mid 0.32  22s  ETA 0.1m ─────────────────────┘
+  trace  runtime\eval\socialmem_mimo_50\socialmem_Q8_a5s3c1\trace.log
+14:56:47  WARNING   plugins.default_memory.engine  consolidation long_term extraction failed: long_term extraction returned non-object JSON
+14:57:49  WARNING   plugins.default_memory.engine  consolidation long_term extraction failed: long_term extraction returned non-object JSON
+14:58:24  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+14:58:53  WARNING   memory.markdown  Memory consolidation: LLM returned empty response, skipping
+┌─────────────── [050/50]  socialme  single-session-preference ───────────────┐
+│   Q     The group has a norm of raising issues in the chat before           │
+│ contacting the council. Does that norm apply to everyone?                   │
+│                                                                             │
+│ Opt                                                                         │
+│   pred  D. Vera — she contacted the council directly without raising it in  │
+│ the group first, breaking Femi's stated norm.                               │
+│   gold  D. Vera                                                             │
+│ No — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her │
+│ own objection to the council before                                         │
+└──────────────────── judge=yes  low 0.20  27s  ETA 0.0m ─────────────────────┘
+  trace  runtime\eval\socialmem_mimo_50\socialmem_Q6_a5s3c2\trace.log
+  Overall  judge=76%  F1=0.31 ---------------------- 50/50 100% 0:06:35 0:00:00
+⠏ idle                                               0/1     0% 0:06:35 -:--:--
+                          Results  —  elapsed 0.1h                          
+┌──────────────────────────────────┬───────┬────────┬────────┬────┬────────┐
+│ Question Type                    │ judge │     F1 │     EM │  n │ errors │
+├──────────────────────────────────┼───────┼────────┼────────┼────┼────────┤
+│ Overall                          │ 76.0% │ 0.3103 │ 0.0000 │ 50 │      0 │
+├──────────────────────────────────┼───────┼────────┼────────┼────┼────────┤
+│ knowledge-update                 │ 72.7% │ 0.3505 │ 0.0000 │ 11 │      0 │
+│ single-session-preference        │ 82.4% │ 0.2715 │ 0.0000 │ 17 │      0 │
+│ single-session-user              │ 72.7% │ 0.3202 │ 0.0000 │ 22 │      0 │
+└──────────────────────────────────┴───────┴────────┴────────┴────┴────────┘
+
+  Saved → eval\longmemeval\results\socialmem_mimo_50.json

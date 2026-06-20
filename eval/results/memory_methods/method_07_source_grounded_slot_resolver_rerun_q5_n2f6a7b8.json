@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-06-18T00:02:27.583149",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_07_source_grounded_slot_resolver",
+  "method_config": "experiments\\memory_methods\\method_07_source_grounded_slot_resolver\\config.json",
+  "memory_method": {
+    "method_id": "method_07_source_grounded_slot_resolver",
+    "strategy": "source_grounded_slot_resolver",
+    "description": "Resolve personal-assistant memory questions through slot-aware retrieval, source_ref/message-order evidence rows, and explicit fetch/search guidance for attribution, exception, preference, and update questions.",
+    "options": {
+      "candidate_limit": 16
+    },
+    "config_path": "experiments\\memory_methods\\method_07_source_grounded_slot_resolver\\config.json"
+  },
+  "offset": 23,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": false,
+  "scores": {
+    "overall": {
+      "f1": 0.0,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0,
+      "judge_acc": 0.0
+    },
+    "by_type": {
+      "single-session-user": {
+        "f1": 0.0,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0,
+        "judge_acc": 0.0
+      }
+    }
+  },
+  "judge_acc": 0.0,
+  "results": [
+    {
+      "question_id": "socialmem_Q5_n2f6a7b8",
+      "question_type": "single-session-user",
+      "question": "Has Ngozi's cooking changed in any way recently, and who in the family figured this out without being told?",
+      "gold_answer": "Ngozi's cooking has become less salty, apparently on doctor's advice. This was figured out by Emeka. In Session 2, after multiple family members noted the pepper soup tasted different, Emeka said 'Less seasoning I think. Mum might have been told to ease off the salt' — reasoning through the change without being told directly. Ngozi denied it, but Emeka's inference was drawn from pattern recognition, not from Ngozi disclosing anything.",
+      "predicted_answer": "处理消息时出错，请稍后再试。",
+      "tool_chain": [],
+      "react_stats": {},
+      "elapsed_s": 19.63,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_07_source_grounded_slot_resolver",
+        "strategy": "source_grounded_slot_resolver",
+        "description": "Resolve personal-assistant memory questions through slot-aware retrieval, source_ref/message-order evidence rows, and explicit fetch/search guidance for attribution, exception, preference, and update questions.",
+        "options": {
+          "candidate_limit": 16
+        },
+        "config_path": "experiments\\memory_methods\\method_07_source_grounded_slot_resolver\\config.json"
+      },
+      "judge_correct": false
+    }
+  ]
+}

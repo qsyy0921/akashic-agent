@@ -64,9 +64,15 @@ class BenchmarkRuntime:
     core: object          # CoreRuntime
     consolidation: object # ConsolidationService
     workspace: Path
+    method: dict[str, object] | None = None
 
 
-async def create_runtime(config_path: Path, workspace: Path) -> BenchmarkRuntime:
+async def create_runtime(
+    config_path: Path,
+    workspace: Path,
+    *,
+    method_config: Path | None = None,
+) -> BenchmarkRuntime:
     """Wire the full production stack into a temp workspace.
 
     Args:
@@ -74,11 +80,9 @@ async def create_runtime(config_path: Path, workspace: Path) -> BenchmarkRuntime
         workspace: Temp directory; will be initialised on first call.
     """
     from agent.config import load_config
-    from agent.looping.consolidation import ConsolidationService
     from bootstrap.init_workspace import init_workspace
     from bootstrap.tools import build_core_runtime
     from core.net.http import SharedHttpResources
-    from memory2.profile_extractor import ProfileFactExtractor
 
     config = load_config(config_path)
 
@@ -94,28 +98,18 @@ async def create_runtime(config_path: Path, workspace: Path) -> BenchmarkRuntime
     # 3. Build the full production runtime (providers, tools, memory, loop).
     http = SharedHttpResources()
     core = build_core_runtime(config, workspace, http)
+    method_payload: dict[str, object] | None = None
+    if method_config is not None:
+        from .methods import apply_memory_method
 
-    # 4. Build a ConsolidationService that shares the same memory port.
-    #    This is used during ingest; the AgentLoop has its own internal
-    #    instance but we need explicit control over consolidation timing.
-    light = core.light_provider or core.provider
-    light_model = config.light_model or config.model
-    profile_extractor = ProfileFactExtractor(
-        llm_client=light,
-        model=light_model,
-    )
+        method_spec = apply_memory_method(core, method_config)
+        method_payload = method_spec.as_dict() if method_spec is not None else None
+
+    # 4. Use the current markdown memory maintenance runtime for explicit
+    # benchmark ingest consolidation. Older benchmark code used a separate
+    # ConsolidationService; production now exposes this through MemoryRuntime.
     keep_count = max(1, config.memory_window // 2)
-    consolidation = ConsolidationService(
-        memory_port=core.memory_runtime.port,
-        profile_maint=getattr(core.memory_runtime, "profile_maint", None)
-        or core.memory_runtime.port,
-        provider=core.provider,
-        model=config.model,
-        keep_count=keep_count,
-        profile_extractor=profile_extractor,
-        recent_context_provider=light,
-        recent_context_model=light_model,
-    )
+    consolidation = core.memory_runtime.markdown.maintenance
 
     logger.info(
         "BenchmarkRuntime ready: workspace=%s keep_count=%d model=%s",
@@ -123,20 +117,18 @@ async def create_runtime(config_path: Path, workspace: Path) -> BenchmarkRuntime
         keep_count,
         config.model,
     )
-    return BenchmarkRuntime(core=core, consolidation=consolidation, workspace=workspace)
+    return BenchmarkRuntime(
+        core=core,
+        consolidation=consolidation,
+        workspace=workspace,
+        method=method_payload,
+    )
 
 
 async def close_runtime(rt: BenchmarkRuntime) -> None:
-    closeables = getattr(rt.core.memory_runtime, "closeables", [])
-    for obj in closeables:
-        close = getattr(obj, "close", None) or getattr(obj, "aclose", None)
-        if close:
-            try:
-                import asyncio
-                import inspect
-                if inspect.iscoroutinefunction(close):
-                    await close()
-                else:
-                    await asyncio.to_thread(close)
-            except Exception as e:
-                logger.warning("close failed: %s", e)
+    try:
+        await rt.core.stop()
+        await rt.core.memory_runtime.aclose()
+        await rt.core.http_resources.aclose()
+    except Exception as e:
+        logger.warning("runtime shutdown failed: %s", e)

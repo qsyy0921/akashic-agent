@@ -189,9 +189,75 @@ python -m eval.longmemeval.run_one_qa \
 
 ## 当前实现里的关键点
 
+### 0. Windows 控制台输出默认 UTF-8
+
+`run.py` 和 `run_one_qa.py` 启动时会把 `stdout/stderr` reconfigure 为
+`utf-8` + `errors=replace`，避免 Windows PowerShell/GBK 控制台在 Rich 打印
+emoji、CJK 或模型特殊字符时抛 `UnicodeEncodeError`。正常运行不再需要手动设置
+`PYTHONIOENCODING=utf-8` / `PYTHONUTF8=1`。
+
 ### 1. judge 固定走主模型
 
 现在 judge 使用 `llm.main`，不再走 `llm.fast`。
+
+judge 调用会默认禁用 thinking/reasoning，并使用更大的输出预算，避免 Mimo
+这类带 `reasoning_content` 的兼容模型把 `max_tokens` 全部消耗在思考字段里，
+导致正式 `content` 为空。默认 judge token 预算为 1024，失败时会自动用更大预算
+重试；如需覆盖：
+
+```powershell
+python -m eval.longmemeval.run ... --judge-max-tokens 512
+$env:AKASHIC_LME_JUDGE_MAX_TOKENS = "512"
+$env:AKASHIC_LME_JUDGE_RETRY_MAX_TOKENS = "2048"
+```
+
+带 memory method 策略运行：
+
+推荐先从 baseline ingest 结果复制一个冻结 workspace，再只跑 QA + judge：
+
+```powershell
+python -m eval.longmemeval.prepare_method_workspace `
+  --source-workspace runtime/eval/socialmem_mimo_50 `
+  --target-workspace runtime/eval/memory_methods/method_01_intent_aware_retrieval `
+  --archive-existing
+```
+
+```powershell
+python -m eval.longmemeval.run `
+  --config eval/agent_memory_bench_config.toml `
+  --data eval/agent_memory_bench_socialmem_full_local.json `
+  --workspace runtime/eval/memory_methods/method_01_intent_aware_retrieval `
+  --output eval/results/memory_methods/method_01_intent_aware_retrieval.json `
+  --limit 50 `
+  --qa-only `
+  --resume-auto `
+  --timeout 240 `
+  --method-config experiments/memory_methods/method_01_intent_aware_retrieval/config.json
+```
+
+method 策略只在 benchmark runtime 内包一层 memory engine，不改生产 QQ /
+Telegram / MCP 服务。它会同时替换显式 `recall_memory` 工具绑定和隐式 memory
+injection retrieval pipeline，避免评测混用新旧入口。
+
+汇总 method 指标：
+
+```powershell
+python -m eval.longmemeval.summarize_method_results `
+  --result eval/results/memory_methods/method_01_intent_aware_retrieval.json `
+  --method-dir experiments/memory_methods/method_01_intent_aware_retrieval `
+  --method-id method_01_intent_aware_retrieval
+```
+
+顺序跑多个 method：
+
+```powershell
+python -m eval.longmemeval.run_memory_method_batch `
+  --methods method_02_structured_memory_schema method_03_evidence_fetch_rerank method_04_memory_update_versioning `
+  --limit 50
+```
+
+如果 judge 仍无法返回明确 `yes/no`，该题的 `judge_correct` 会记录为 `null`，
+不会被当成错误样本计入 `judge_acc`。
 
 ### 2. benchmark persona 是硬约束
 

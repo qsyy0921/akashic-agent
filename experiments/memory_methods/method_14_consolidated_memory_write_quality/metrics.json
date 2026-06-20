@@ -1,0 +1,73 @@
+{
+  "method_id": "method_14_consolidated_memory_write_quality",
+  "generated_at": "2026-06-18T06:17:25.142200",
+  "result_path": "eval\\results\\memory_methods\\method_14_consolidated_memory_write_quality.json",
+  "dataset": null,
+  "workspace": null,
+  "memory_method": null,
+  "limit": null,
+  "offset": null,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3157,
+      "em": 0.0,
+      "judge_acc": 0.82,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3383,
+        "em": 0.0,
+        "judge_acc": 0.8182,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2787,
+        "em": 0.0,
+        "judge_acc": 0.7647,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.333,
+        "em": 0.0,
+        "judge_acc": 0.8636,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.82,
+  "latency": {
+    "avg_elapsed_s": 18.4036,
+    "p50_elapsed_s": 18.115,
+    "p95_elapsed_s": 33.39
+  },
+  "token_usage": {
+    "avg_token_usage": 48646.6,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 48646.6,
+    "avg_final_call_input_tokens_estimate": 28134.58,
+    "avg_cache_prompt_tokens": 74401.7,
+    "avg_cache_hit_tokens": 35993.6,
+    "avg_answer_chars": 366.76,
+    "avg_tool_result_chars": 64890.02,
+    "avg_tool_calls": 2.44
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 9,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 2,
+      "personal_preference_attribution_error": 4,
+      "retrieved_but_answer_wrong": 6,
+      "retrieved_but_evidence_unused": 3
+    }
+  }
+}

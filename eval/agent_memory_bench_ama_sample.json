@@ -1,0 +1,3274 @@
+[
+  {
+    "question_id": "ama_0_3de8b3e6-c5ec-4187-85af-eb0dfb36efef",
+    "question_type": "single-session-user",
+    "question": "The observation after the `up` action at Step 8 is identical to the observation from Step 6. What is the causal relationship between the action at Step 7 (`down`) and the action at Step 8 (`up`) that explains this state reversion, and what does this two-step sequence imply about the agent's progress?",
+    "answer": "The `up` action at Step 8 is the direct inverse of the `down` action at Step 7. This pair of actions cancels each other out, causing the agent (Baba) to return to its exact position from the end of Step 6. This implies the agent is engaged in unproductive exploration or is stuck in a loop, making zero net progress towards solving the puzzle during these two steps.",
+    "question_date": "",
+    "haystack_session_ids": [
+      "ama_0_3de8b3e6-c5ec-4187-85af-eb0dfb36efef:s0"
+    ],
+    "haystack_dates": [
+      ""
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "Benchmark task: Baba Is You–style rule-manipulation grid puzzle: the agent moves on a grid and pushes word blocks to change rules (e.g., X IS YOU / X IS WIN) in order to reach a win condition.",
+          "metadata": {
+            "kind": "task"
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 0 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 0 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 2 step up\nrule `door` 1 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 0
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 1 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 1 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 3 step up\nrule `win` 1 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 2 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 2 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 2 step up\nrule `win` 1 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 2
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 3 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 3 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 4 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 4 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 1 step to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 4
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 5 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 5 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 5
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 6 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 6 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 6
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 7 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 7 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 7
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 8 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 8 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 8
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 9 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 9 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 9
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 10 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 10
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 10 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 10
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 11 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 11
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 11 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 11
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 12 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 12
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 12 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 12
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 13 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 13
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 13 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 13
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 14 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 14
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 14 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 14
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 15 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 15
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 15 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 15
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 16 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 16
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 16 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 16
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 17 action: idle",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 17
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 17 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 17
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 18 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 18
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 18 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 18
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 19 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 19
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 19 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 19
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 20 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 20
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 20 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 20
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 21 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 21
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 21 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 21
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 22 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 22
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 22 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 22
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 23 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 23
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 23 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 23
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 24 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 24
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 24 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 24
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 25 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 25
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 25 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 25
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 26 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 26
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 26 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 4 step up\nrule `win` 2 step to the left and 4 step up\nball 1 step to the right and 3 step up\nrule `door` 1 step to the left and 1 step up\nrule `baba` 3 step to the left and 1 step down\nrule `is` 2 step to the left and 1 step down\nrule `you` 1 step to the left and 1 step down\ndoor 1 step down\nrule `ball` 2 steps to the right and 1 step down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 26
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 27 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 27
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 27 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 5 step up\nrule `win` 2 step to the left and 5 step up\nball 1 step to the right and 4 step up\nrule `door` 1 step to the left and 2 step up\nrule `baba` 3 step to the left\nrule `is` 2 step to the left\nrule `you` 1 step to the left\nrule `ball` 2 steps to the right",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 27
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 28 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 28
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 28 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 4 step up\nrule `win` 2 step to the left and 4 step up\nball 1 step to the right and 3 step up\nrule `door` 1 step to the left and 1 step up\nrule `baba` 3 step to the left and 1 step down\nrule `is` 2 step to the left and 1 step down\nrule `you` 1 step to the left and 1 step down\ndoor 1 step down\nrule `ball` 2 steps to the right and 1 step down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 28
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 29 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 29
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 29 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 29
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 30 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 30
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 30 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 30
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 31 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 31
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 31 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 31
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 32 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 32
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 32 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 32
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 33 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 33
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 33 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 33
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 34 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 34
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 34 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 2 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 34
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 35 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 35
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 35 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 35
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 36 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 36
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 36 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 2 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 36
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 37 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 37
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 37 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 37
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 38 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 38
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 38 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 3 step up\nrule `win` 1 step to the left and 3 step up\nball 2 steps to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 2 step to the left and 2 steps down\nrule `is` 1 step to the left and 2 steps down\nrule `you` 2 steps down\ndoor 1 step to the right and 2 steps down\nrule `ball` 3 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 38
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 39 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 39
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 39 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 2 step up\nrule `win` 1 step to the left and 2 step up\nball 2 steps to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 2 step to the left and 3 steps down\nrule `is` 1 step to the left and 3 steps down\nrule `you` 3 steps down\ndoor 1 step to the right and 3 steps down\nrule `ball` 3 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 39
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 40 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 40
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 40 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 40
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 41 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 41
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 41 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 41
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 42 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 42
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 42 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 42
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 43 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 43
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 43 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 43
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 44 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 44
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 44 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 3 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 45 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 45
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 45 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 45
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 46 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 46
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 46 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 3 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 46
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 47 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 47
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 47 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 2 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 47
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 48 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 48
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 48 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 48
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 49 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 49
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 49 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 49
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 50 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 50
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 50 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 50
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 51 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 51
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 51 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 51
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 52 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 52
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 52 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 52
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 53 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 53
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 53 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 53
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 54 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 54
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 54 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 54
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 55 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 55
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 55 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 55
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 56 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 56
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 56 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 56
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 57 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 57
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 57 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 57
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 58 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 58
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 58 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 58
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 59 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 59
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 59 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 59
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 60 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 60
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 60 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 60
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 61 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 61
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 61 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 61
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 62 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 62
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 62 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 62
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 63 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 63
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 63 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 5 step to the left and 1 step up\nrule `win` 4 step to the left and 1 step up\nball 1 step to the left\nrule `door` 4 step to the left and 2 steps down\nrule `baba` 5 step to the left and 4 steps down\nrule `is` 4 step to the left and 4 steps down\nrule `you` 3 step to the left and 4 steps down\ndoor 2 step to the left and 4 steps down\nrule `ball` 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 63
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 64 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 64
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 64 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 64
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 65 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 65
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 65 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 65
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 66 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 66
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 66 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 66
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 67 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 67
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 67 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 67
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 68 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 68
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 68 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 68
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 69 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 69
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 69 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 69
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 70 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 70
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 70 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 70
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 71 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 71
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 71 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 71
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 72 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 72
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 72 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 72
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 73 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 73
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 73 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 73
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 74 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 74
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 74 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 74
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 75 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 75
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 75 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 75
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 76 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 76
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 76 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 76
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 77 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 77
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 77 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 77
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 78 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 78
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 78 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 78
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 79 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 79
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 79 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 79
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 80 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 80
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 80 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 80
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 81 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 81
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 81 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 81
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 82 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 82
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 82 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 82
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 83 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 83
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 83 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 83
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 84 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 84
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 84 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 84
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 85 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 85
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 85 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 85
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 86 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 86
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 86 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 86
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 87 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 87
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 87 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 87
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 88 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 88
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 88 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 88
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 89 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 89
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 89 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 89
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 90 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 90
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 90 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 90
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 91 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 91
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 91 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 91
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 92 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 92
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 92 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 92
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 93 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 93
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 93 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 93
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 94 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 94
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 94 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 94
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 95 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 95
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 95 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 95
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 96 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 96
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 96 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 96
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 97 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 97
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 97 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 97
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 98 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 98
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 98 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 98
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 99 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 99
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 99 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 99
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "ama_bench",
+    "source_subset": "babaisai",
+    "source_metadata": {
+      "episode_id": 0,
+      "domain": "Game",
+      "task_type": "babaisai",
+      "qa_type": "A",
+      "source_question_type": "ama:A",
+      "num_turns": 100,
+      "total_tokens": 13728
+    }
+  },
+  {
+    "question_id": "ama_0_c7f578d2-653e-4f13-99b9-81b8cff46f63",
+    "question_type": "single-session-user",
+    "question": "In steps 47 and 48, the agent executes a `left` then `up` maneuver, which repositions it closer to the cluster of rule-making text blocks (like `IS` and `WIN`). If at step 47, the agent had moved `right` instead of `left`, what would the new relative position of the `DOOR` text block be, and why would this move be counterproductive to the goal of forming a new rule?",
+    "answer": "If the agent had moved `right` at step 47, the `DOOR` text block, which was at `(-3, 0)` relative to the agent in step 46, would now be at `(-4, 0)`. This is because a `right` move would increase the agent's absolute x-coordinate, making the relative x-coordinate of the static `DOOR` text more negative (further left). This move would be counterproductive because it moves the agent *away* from the key text blocks (`DOOR`, `IS`, `WIN`), increasing the number of steps required to get into a position to push them and form a winning rule like 'DOOR IS WIN'.",
+    "question_date": "",
+    "haystack_session_ids": [
+      "ama_0_c7f578d2-653e-4f13-99b9-81b8cff46f63:s0"
+    ],
+    "haystack_dates": [
+      ""
+    ],
+    "haystack_sessions": [
+      [
+        {
+          "role": "user",
+          "content": "Benchmark task: Baba Is You–style rule-manipulation grid puzzle: the agent moves on a grid and pushes word blocks to change rules (e.g., X IS YOU / X IS WIN) in order to reach a win condition.",
+          "metadata": {
+            "kind": "task"
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 0 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 0
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 0 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 2 step up\nrule `door` 1 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 0
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 1 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 1 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 3 step up\nrule `win` 1 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 2 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 2 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 2 step up\nrule `win` 1 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 2
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 3 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 3
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 3 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 4 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 4
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 4 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 1 step to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 4
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 5 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 5
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 5 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 5
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 6 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 6
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 6 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 6
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 7 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 7
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 7 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 7
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 8 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 8
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 8 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 8
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 9 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 9
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 9 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 9
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 10 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 10
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 10 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 10
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 11 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 11
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 11 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 11
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 12 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 12
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 12 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 12
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 13 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 13
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 13 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 13
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 14 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 14
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 14 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 14
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 15 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 15
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 15 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 15
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 16 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 16
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 16 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 16
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 17 action: idle",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 17
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 17 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 17
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 18 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 18
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 18 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 18
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 19 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 19
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 19 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 19
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 20 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 20
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 20 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 20
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 21 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 21
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 21 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 21
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 22 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 22
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 22 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 22
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 23 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 23
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 23 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 23
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 24 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 24
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 24 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 24
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 25 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 25
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 25 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 25
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 26 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 26
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 26 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 4 step up\nrule `win` 2 step to the left and 4 step up\nball 1 step to the right and 3 step up\nrule `door` 1 step to the left and 1 step up\nrule `baba` 3 step to the left and 1 step down\nrule `is` 2 step to the left and 1 step down\nrule `you` 1 step to the left and 1 step down\ndoor 1 step down\nrule `ball` 2 steps to the right and 1 step down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 26
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 27 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 27
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 27 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 5 step up\nrule `win` 2 step to the left and 5 step up\nball 1 step to the right and 4 step up\nrule `door` 1 step to the left and 2 step up\nrule `baba` 3 step to the left\nrule `is` 2 step to the left\nrule `you` 1 step to the left\nrule `ball` 2 steps to the right",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 27
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 28 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 28
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 28 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 4 step up\nrule `win` 2 step to the left and 4 step up\nball 1 step to the right and 3 step up\nrule `door` 1 step to the left and 1 step up\nrule `baba` 3 step to the left and 1 step down\nrule `is` 2 step to the left and 1 step down\nrule `you` 1 step to the left and 1 step down\ndoor 1 step down\nrule `ball` 2 steps to the right and 1 step down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 28
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 29 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 29
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 29 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 29
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 30 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 30
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 30 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 30
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 31 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 31
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 31 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 31
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 32 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 32
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 32 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 32
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 33 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 33
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 33 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 33
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 34 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 34
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 34 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 2 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 34
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 35 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 35
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 35 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 35
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 36 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 36
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 36 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 2 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 36
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 37 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 37
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 37 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 37
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 38 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 38
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 38 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 3 step up\nrule `win` 1 step to the left and 3 step up\nball 2 steps to the right and 2 step up\nrule `door` 1 step to the left\nrule `baba` 2 step to the left and 2 steps down\nrule `is` 1 step to the left and 2 steps down\nrule `you` 2 steps down\ndoor 1 step to the right and 2 steps down\nrule `ball` 3 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 38
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 39 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 39
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 39 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 2 step up\nrule `win` 1 step to the left and 2 step up\nball 2 steps to the right and 1 step up\nrule `door` 1 step to the left and 1 step down\nrule `baba` 2 step to the left and 3 steps down\nrule `is` 1 step to the left and 3 steps down\nrule `you` 3 steps down\ndoor 1 step to the right and 3 steps down\nrule `ball` 3 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 39
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 40 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 40
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 40 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 40
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 41 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 41
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 41 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 41
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 42 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 42
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 42 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 42
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 43 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 43
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 43 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 43
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 44 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 44
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 44 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 3 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 45 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 45
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 45 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 45
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 46 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 46
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 46 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 3 step up\nrule `win` 3 step to the left and 3 step up\nball 2 step up\nrule `door` 3 step to the left\nrule `baba` 4 step to the left and 2 steps down\nrule `is` 3 step to the left and 2 steps down\nrule `you` 2 step to the left and 2 steps down\ndoor 1 step to the left and 2 steps down\nrule `ball` 1 step to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 46
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 47 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 47
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 47 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 3 step up\nrule `win` 2 step to the left and 3 step up\nball 1 step to the right and 2 step up\nrule `door` 2 step to the left\nrule `baba` 3 step to the left and 2 steps down\nrule `is` 2 step to the left and 2 steps down\nrule `you` 1 step to the left and 2 steps down\ndoor 2 steps down\nrule `ball` 2 steps to the right and 2 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 47
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 48 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 48
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 48 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 48
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 49 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 49
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 49 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 49
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 50 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 50
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 50 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 50
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 51 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 51
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 51 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 51
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 52 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 52
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 52 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 52
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 53 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 53
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 53 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 53
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 54 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 54
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 54 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 54
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 55 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 55
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 55 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 55
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 56 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 56
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 56 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 56
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 57 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 57
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 57 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 57
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 58 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 58
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 58 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 58
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 59 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 59
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 59 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 59
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 60 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 60
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 60 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 60
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 61 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 61
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 61 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 61
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 62 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 62
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 62 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 62
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 63 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 63
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 63 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 5 step to the left and 1 step up\nrule `win` 4 step to the left and 1 step up\nball 1 step to the left\nrule `door` 4 step to the left and 2 steps down\nrule `baba` 5 step to the left and 4 steps down\nrule `is` 4 step to the left and 4 steps down\nrule `you` 3 step to the left and 4 steps down\ndoor 2 step to the left and 4 steps down\nrule `ball` 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 63
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 64 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 64
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 64 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 64
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 65 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 65
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 65 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 65
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 66 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 66
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 66 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 2 step up\nrule `win` 2 step to the left and 2 step up\nball 1 step to the right and 1 step up\nrule `door` 2 step to the left and 1 step down\nrule `baba` 3 step to the left and 3 steps down\nrule `is` 2 step to the left and 3 steps down\nrule `you` 1 step to the left and 3 steps down\ndoor 3 steps down\nrule `ball` 2 steps to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 66
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 67 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 67
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 67 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 67
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 68 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 68
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 68 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 68
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 69 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 69
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 69 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 69
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 70 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 70
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 70 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 70
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 71 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 71
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 71 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 71
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 72 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 72
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 72 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 72
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 73 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 73
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 73 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 73
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 74 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 74
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 74 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 74
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 75 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 75
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 75 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 2 step up\nrule `win` 3 step to the left and 2 step up\nball 1 step up\nrule `door` 3 step to the left and 1 step down\nrule `baba` 4 step to the left and 3 steps down\nrule `is` 3 step to the left and 3 steps down\nrule `you` 2 step to the left and 3 steps down\ndoor 1 step to the left and 3 steps down\nrule `ball` 1 step to the right and 3 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 75
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 76 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 76
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 76 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 76
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 77 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 77
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 77 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 77
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 78 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 78
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 78 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 78
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 79 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 79
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 79 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 79
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 80 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 80
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 80 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 80
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 81 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 81
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 81 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 81
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 82 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 82
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 82 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 82
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 83 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 83
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 83 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 83
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 84 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 84
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 84 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 84
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 85 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 85
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 85 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 85
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 86 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 86
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 86 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 86
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 87 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 87
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 87 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 87
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 88 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 88
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 88 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 88
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 89 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 89
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 89 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left\nrule `win` 2 step to the left\nball 1 step to the right and 1 step down\nrule `door` 2 step to the left and 3 steps down\nrule `baba` 3 step to the left and 5 steps down\nrule `is` 2 step to the left and 5 steps down\nrule `you` 1 step to the left and 5 steps down\ndoor 5 steps down\nrule `ball` 2 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 89
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 90 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 90
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 90 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left\nrule `win` 1 step to the left\nball 2 steps to the right and 1 step down\nrule `door` 1 step to the left and 3 steps down\nrule `baba` 2 step to the left and 5 steps down\nrule `is` 1 step to the left and 5 steps down\nrule `you` 5 steps down\ndoor 1 step to the right and 5 steps down\nrule `ball` 3 steps to the right and 5 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 90
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 91 action: down",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 91
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 91 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 91
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 92 action: left",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 92
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 92 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 92
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 93 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 93
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 93 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 93
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 94 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 94
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 94 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 94
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 95 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 95
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 95 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 95
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 96 action: up",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 96
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 96 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 1 step to the left and 1 step up\nrule `win` 1 step up\nball 3 steps to the right\nrule `door` 2 steps down\nrule `baba` 1 step to the left and 4 steps down\nrule `is` 4 steps down\nrule `you` 1 step to the right and 4 steps down\ndoor 2 steps to the right and 4 steps down\nrule `ball` 4 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 96
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 97 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 97
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 97 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 2 step to the left and 1 step up\nrule `win` 1 step to the left and 1 step up\nball 2 steps to the right\nrule `door` 1 step to the left and 2 steps down\nrule `baba` 2 step to the left and 4 steps down\nrule `is` 1 step to the left and 4 steps down\nrule `you` 4 steps down\ndoor 1 step to the right and 4 steps down\nrule `ball` 3 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 97
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 98 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 98
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 98 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 3 step to the left and 1 step up\nrule `win` 2 step to the left and 1 step up\nball 1 step to the right\nrule `door` 2 step to the left and 2 steps down\nrule `baba` 3 step to the left and 4 steps down\nrule `is` 2 step to the left and 4 steps down\nrule `you` 1 step to the left and 4 steps down\ndoor 4 steps down\nrule `ball` 2 steps to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 98
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Turn 99 action: right",
+          "metadata": {
+            "kind": "action",
+            "turn_idx": 99
+          }
+        },
+        {
+          "role": "user",
+          "content": "Turn 99 observation: Active rules:\nbaba is you\n\nObjects on the map:\nrule `is` 4 step to the left and 1 step up\nrule `win` 3 step to the left and 1 step up\nrule `door` 3 step to the left and 2 steps down\nrule `baba` 4 step to the left and 4 steps down\nrule `is` 3 step to the left and 4 steps down\nrule `you` 2 step to the left and 4 steps down\ndoor 1 step to the left and 4 steps down\nrule `ball` 1 step to the right and 4 steps down",
+          "metadata": {
+            "kind": "observation",
+            "turn_idx": 99
+          }
+        }
+      ]
+    ],
+    "answer_session_ids": [],
+    "source_benchmark": "ama_bench",
+    "source_subset": "babaisai",
+    "source_metadata": {
+      "episode_id": 0,
+      "domain": "Game",
+      "task_type": "babaisai",
+      "qa_type": "A",
+      "source_question_type": "ama:A",
+      "num_turns": 100,
+      "total_tokens": 13728
+    }
+  }
+]

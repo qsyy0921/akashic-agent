@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q7_v4s5c1",
+  "question_type": "single-session-user",
+  "question": "What do the conversations reveal about the relationship between Rashida and Preet within the group?",
+  "gold_answer": "Rashida and Preet have the closest, most social relationship in the group. In Session 1, after Nneka and Theo declared they were going to the fair alone, Rashida said 'Preet and I will go together and actually have fun' — positioning their pair as the social counterpart to the solo hunters. In Session 2, Preet attended Fitzroy with Rashida and tried (unsuccessfully) to stop her buying a fourth record. By Session 4, Preet publicly called out Rashida's repeated budget promises ('Rashida said that last time') — a tease that only lands from someone close enough to track the pattern. In Session 5, Preet reported watching Rashida walk away from three records, framing it as 'growth' — an accountability dynamic rooted in affection, not judgment.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 7.08,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_a5s1c1",
+  "question_type": "single-session-preference",
+  "question": "What does Claudette's behavior suggest about her stance on development and change on Maple Street?",
+  "gold_answer": "Claudette consistently opposes any planning application that would alter the street's residential character. In Session 1, her immediate response to the no. 22 loft conversion notice was 'This street does not need any more bulk added to it. I shall be objecting.' She frames this in terms of visual impact and preserving the street's character — not noise, not traffic. In Session 3, she linked the traffic danger Marcus experienced to development ('All this traffic is exactly what happens when you allow more development'). Her thirty-year tenure gives her a before-and-after frame that shapes all of her planning opinions.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.97,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

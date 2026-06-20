@@ -80,6 +80,7 @@ _ALLOWED_PENDING_TAGS = frozenset(
         "health_long_term",
         "requested_memory",
         "correction",
+        "agent_context",
     }
 )
 
@@ -197,8 +198,53 @@ def _format_conversation_for_consolidation(old_messages: list[dict]) -> str:
             continue
         role = str(message.get("role", "")).upper()
         ts = str(message.get("timestamp", "?"))[:16]
-        lines.append(f"[{ts}] {role}: {message['content']}")
+        meta = _format_conversation_message_meta(message)
+        if meta:
+            lines.append(f"[{ts}] {role} {meta}: {message['content']}")
+        else:
+            lines.append(f"[{ts}] {role}: {message['content']}")
     return "\n".join(lines)
+
+
+def _format_conversation_message_meta(message: dict) -> str:
+    parts: list[str] = []
+    for key in (
+        "group_id",
+        "speaker_id",
+        "sender_id",
+        "message_index",
+        "source_ref",
+        "onebot_message_id",
+    ):
+        value = str(message.get(key, "") or "").strip()
+        if value:
+            parts.append(f"{key}={value}")
+    if not parts:
+        return ""
+    return "(" + " ".join(parts) + ")"
+
+
+def _infer_session_scope(session: object) -> tuple[str, str]:
+    channel = str(getattr(session, "_channel", "") or "").strip()
+    chat_id = str(getattr(session, "_chat_id", "") or "").strip()
+    key = str(getattr(session, "key", "") or "").strip()
+    if (not channel or not chat_id) and ":" in key:
+        maybe_channel, maybe_chat = key.split(":", 1)
+        channel = channel or maybe_channel
+        chat_id = chat_id or maybe_chat
+    return channel, chat_id
+
+
+def _is_group_memory_scope(*, session: object, scope_chat_id: str) -> bool:
+    if str(scope_chat_id or "").startswith("gqq:"):
+        return True
+    metadata = getattr(session, "metadata", {}) or {}
+    if isinstance(metadata, dict):
+        if str(metadata.get("chat_type", "") or "") == "group":
+            return True
+        if str(metadata.get("group_id", "") or "").strip():
+            return True
+    return False
 
 
 def _select_recent_history_entries(history_text: str, *, limit: int = 3) -> list[str]:
@@ -717,10 +763,25 @@ ongoing_threads 严格限制：
             f"- {entry}" for entry in recent_history_entries
         )
 
-        scope_channel = getattr(session, "_channel", "")
-        scope_chat_id = getattr(session, "_chat_id", "")
+        scope_channel, scope_chat_id = _infer_session_scope(session)
+        is_group_scope = _is_group_memory_scope(
+            session=session,
+            scope_chat_id=scope_chat_id,
+        )
+        group_memory_instructions = ""
+        if is_group_scope:
+            group_memory_instructions = """
+## 群聊静默观察模式（必须遵守）
+当前待处理对话来自群聊观察，不是一对一用户画像。
+- history_entries 只记录群聊/项目事实，不记录个人偏好或用户画像。
+- pending_items 必须返回 []，不要写 identity/preference/requested_memory。
+- 摘要优先提取：任务、负责人、截止时间、决策结论、状态变化、文件/链接、阻塞点。
+- 如果原文 metadata 中有 group_id / speaker_id / sender_id / message_index / source_ref，摘要必须尽量保留这些定位信息。
+- 群聊中某个 speaker 的事实不得升级成当前用户的 personal memory。
+"""
 
         prompt = f"""你是记忆提取代理（Memory Extraction Agent）。从对话中精确提取结构化信息，返回 JSON。
+{group_memory_instructions}
 
 ## 字段说明
 
@@ -1068,6 +1129,10 @@ class MarkdownMemoryMaintenance:
         draft: "_ConsolidationDraft",
     ) -> None:
         history_entries = [entry for entry, _ in draft.history_entry_payloads]
+        is_group_scope = _is_group_memory_scope(
+            session=session,
+            scope_chat_id=draft.scope_chat_id,
+        )
         if history_entries:
             await asyncio.to_thread(
                 self._store.append_history_once,
@@ -1075,7 +1140,7 @@ class MarkdownMemoryMaintenance:
                 source_ref=draft.source_ref,
                 kind="history_entry",
             )
-        if draft.pending_items:
+        if draft.pending_items and not is_group_scope:
             appended = await asyncio.to_thread(
                 self._store.append_pending_once,
                 draft.pending_items,
@@ -1087,6 +1152,11 @@ class MarkdownMemoryMaintenance:
                     "Markdown memory: appended %d pending_items",
                     len(draft.pending_items.splitlines()),
                 )
+        elif draft.pending_items and is_group_scope:
+            logger.info(
+                "Markdown memory: dropped pending_items for group scope chat_id=%s",
+                draft.scope_chat_id,
+            )
         self._store.write_recent_context(draft.recent_context_text)
         if history_entries:
             await asyncio.to_thread(

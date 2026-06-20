@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q7_a7b8c9d0",
+  "question_type": "single-session-user",
+  "question": "What does the conversation suggest about the relationship between Priya and Lena within the group?",
+  "gold_answer": "Priya and Lena appear to be the closest pairing within the group, with an established dynamic where Priya helps Lena navigate group social situations. In Session 5, when Lena was running late to brunch, Priya immediately offered to go ahead with her: 'Lena and I will grab the table, she needs someone to help decode the menu anyway.' Lena confirmed this arrangement affectionately: 'Honestly Priya is the reason I survive these brunches.' The exchange suggests a well-worn pattern, not a one-time gesture.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.62,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

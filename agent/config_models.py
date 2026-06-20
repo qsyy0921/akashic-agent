@@ -26,6 +26,12 @@ class QQChannelConfig:
     allow_from: list[str] = field(default_factory=list)
     groups: list[QQGroupConfig] = field(default_factory=list)
     websocket_open_timeout_seconds: float = 5.0
+    channel_name: str = "qq"
+    ws_uri: str = ""
+    ws_token: str = "NcatBot"
+    observe_only: bool = False
+    observe_all_groups: bool = False
+    private_peer_ids: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -48,6 +54,7 @@ class QQBotChannelConfig:
 class ChannelsConfig:
     telegram: TelegramChannelConfig | None = None
     qq: QQChannelConfig | None = None
+    qq_accounts: list[QQChannelConfig] = field(default_factory=list)
     qqbot: QQBotChannelConfig | None = None
     socket: str = "/tmp/akashic.sock"
     cli_session_key: str = ""

@@ -176,8 +176,7 @@ def _load_channels_config(data: dict) -> ChannelsConfig:
                 channel_name=str(tg.get("channel_name", "telegram")),
             )
 
-    qq = None
-    if qq_data := channels_data.get("qq"):
+    def _load_qq_config(qq_data: dict) -> QQChannelConfig | None:
         bot_uin = _normalize_optional_config_text(str(qq_data.get("bot_uin", "")))
         if bool(qq_data.get("enabled", True)) and bot_uin:
             groups = [
@@ -193,7 +192,7 @@ def _load_channels_config(data: dict) -> ChannelsConfig:
                 )
                 for g in qq_data.get("groups", [])
             ]
-            qq = QQChannelConfig(
+            return QQChannelConfig(
                 bot_uin=bot_uin,
                 allow_from=[
                     str(u)
@@ -203,7 +202,44 @@ def _load_channels_config(data: dict) -> ChannelsConfig:
                 websocket_open_timeout_seconds=float(
                     qq_data.get("websocket_open_timeout_seconds", 5.0)
                 ),
+                channel_name=str(
+                    qq_data.get("channel_name", qq_data.get("channelName", "qq"))
+                    or "qq"
+                ),
+                ws_uri=str(qq_data.get("ws_uri", qq_data.get("wsUri", "")) or ""),
+                ws_token=str(
+                    qq_data.get("ws_token", qq_data.get("wsToken", "NcatBot"))
+                    or "NcatBot"
+                ),
+                observe_only=bool(
+                    qq_data.get("observe_only", qq_data.get("observeOnly", False))
+                ),
+                observe_all_groups=bool(
+                    qq_data.get(
+                        "observe_all_groups",
+                        qq_data.get("observeAllGroups", False),
+                    )
+                ),
+                private_peer_ids=[
+                    str(u)
+                    for u in qq_data.get(
+                        "private_peer_ids",
+                        qq_data.get("privatePeerIds", []),
+                    )
+                ],
             )
+        return None
+
+    qq = None
+    qq_accounts: list[QQChannelConfig] = []
+    if qq_data := channels_data.get("qq"):
+        qq = _load_qq_config(_as_dict(qq_data))
+        if qq is not None:
+            qq_accounts.append(qq)
+    for item in channels_data.get("qq_accounts", channels_data.get("qqAccounts", [])):
+        loaded = _load_qq_config(_as_dict(item))
+        if loaded is not None:
+            qq_accounts.append(loaded)
 
     qqbot = None
     if qqbot_data := channels_data.get("qqbot"):
@@ -252,6 +288,7 @@ def _load_channels_config(data: dict) -> ChannelsConfig:
     channels = ChannelsConfig(
         telegram=telegram,
         qq=qq,
+        qq_accounts=qq_accounts,
         qqbot=qqbot,
         socket=_normalize_cli_socket_endpoint(socket_value),
         cli_session_key=cli_session_key,

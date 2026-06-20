@@ -1,0 +1,86 @@
+{
+  "method_id": "method_15_consolidated_fact_precision_rerank",
+  "generated_at": "2026-06-18T07:24:40.065260",
+  "result_path": "eval\\results\\memory_methods\\method_15_consolidated_fact_precision_rerank.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_15_consolidated_fact_precision_rerank",
+  "memory_method": {
+    "method_id": "method_15_consolidated_fact_precision_rerank",
+    "strategy": "consolidated_fact_precision_rerank",
+    "description": "Rerank Method 14 compact facts by candidate and disputed slot before final answering.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_15_consolidated_fact_precision_rerank\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.2773,
+      "em": 0.0,
+      "judge_acc": 0.6939,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3421,
+        "em": 0.0,
+        "judge_acc": 0.9091,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2755,
+        "em": 0.0,
+        "judge_acc": 0.6471,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.2464,
+        "em": 0.0,
+        "judge_acc": 0.619,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.6938775510204082,
+  "latency": {
+    "avg_elapsed_s": 16.6784,
+    "p50_elapsed_s": 15.51,
+    "p95_elapsed_s": 30.68
+  },
+  "token_usage": {
+    "avg_token_usage": 50929.2174,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 50929.2174,
+    "avg_final_call_input_tokens_estimate": 32703.0435,
+    "avg_cache_prompt_tokens": 75728.9783,
+    "avg_cache_hit_tokens": 32203.1304,
+    "avg_answer_chars": 345.3,
+    "avg_tool_result_chars": 70409.44,
+    "avg_tool_calls": 1.92
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 15,
+    "judge_null": 1,
+    "error_type_counts": {
+      "memory_update_not_versioned": 1,
+      "personal_preference_attribution_error": 6,
+      "retrieval_failure": 4,
+      "retrieved_but_answer_wrong": 2,
+      "retrieved_but_evidence_unused": 10
+    }
+  }
+}

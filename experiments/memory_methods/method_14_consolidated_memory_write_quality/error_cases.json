@@ -1,0 +1,237 @@
+[
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1205,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya strongly dislikes cilantro (rejected Mariposa over it) and doesn't drink alcohol, preferring sparkling water instead.\n\n§cited:[363b09afcd89,870820f5f97e,lme:socialmem_Q1_a1b2c3d4:10,lme:socialmem_Q1_a1b2c3d4:73,lme:socialmem_Q1_a1b2c3d4:75]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 7,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 12.9,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3333,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya — she said \"honestly I just want somewhere you can actually have a conversation.\"\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:15]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 17.63,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.45,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "Sam and Jordan go back further than the rest of the group — Sam was involved in (or witnessed) a past incident at Mt. Tamalpais that left Jordan with some kind of lasting issue, and when the others asked what happened, Jordan deferred to Sam and Sam deflected with \"another time,\" indicating they share a history the friend group doesn't fully know about.\n\n§cited:[88bd094ef3eb,0763f27fa0ba,lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:40]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 18.73,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.2692,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "A. Adaora.\n\nAdaora was the first to push back on committing to specific Christmas dates, citing her thesis as the reason: \"thesis doesn't really pause for Christmas so I genuinely don't know yet.\"\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:10,lme:socialmem_Q4_n2e5f6a7:11,a74f0d777794]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 26.01,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2366,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass prefers woodland routes over exposed ridgeline or plateau terrain, choosing the Millbrook loop through Hartley Wood for its shaded, walkable character.\n\n§cited:[fcc26a20432e,948b1b218cb2,afdcfb341b4a]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 7.9,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3026,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's terse, label-and-year posts (Luiz Bonfá 1958 Odeon, Bobby Womack 1971 United Artists, Millie Jackson 1974 Spring Records) point to a focused collector hunting original pressings of 60s–70s soul, funk, and Brazilian records — she shares only the pressing facts, not the social experience.\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 8,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 11.85,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2763,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes — Gil went from sharing knowledge openly at group fairs (offering copies, identifying pressings) to being sceptical about the Camden fair (\"Probably not. Too many Taylor Swift reissues\"), but ultimately attended and came away with serious finds like an original Essiebons pressing of Ebo Taylor.\n\n§cited:[10adc3ae072b,1670b4f44997,8fde3d1cc7ff,cda858dd6459,lme:socialmem_Q8_v4s4c1:6,lme:socialmem_Q8_v4s4c1:15,lme:socialmem_Q8_v4s4c1:21,lme:socialmem_Q8_v4s4c1:34,lme:socialmem_Q8_v4s4c1:36,lme:socialmem_Q8_v4s4c1:47,lme:socialmem_Q8_v4s4c1:49]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 9,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 23.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3438,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus moved from practical frustration to genuine alarm across sessions. In session 1 (May 5) he raised skip/scaffolding blocking the school gate as a construction nuisance; by session 2 (May 12) he was strongly backing parking permits as a parent fed up with pavement parking; in session 3 (May 19) his engagement became personal and urgent after a car nearly hit his son outside school — he said he was \"still properly shaken\" and was raising it formally with highways; by session 5 (June 2) he'd recovered, joking about next year's street party with his kids.\n\n§cited:[43af898424f0,lme:socialmem_Q8_a5s3c1:2,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:47,lme:socialmem_Q8_a5s3c1:21]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 21.92,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a5s3c2",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2097,
+    "em": false,
+    "question": "The group has a norm of raising issues in the chat before contacting the council. Does that norm apply to everyone?\n\nOptions:\nA. Claudette\nB. Femi\nC. Jordan\nD. Vera",
+    "predicted_answer": "B. Femi — he explicitly asked the group to coordinate in the chat first rather than contacting the council individually.\n\n§cited:[lme:socialmem_Q6_a5s3c2:24,lme:socialmem_Q6_a5s3c2:25]§",
+    "gold_answer": "D. Vera\nNo — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her own objection to the council before the group had even agreed to a joint letter. In Session 3, after Marcus's school gate near-miss, she posted: 'Didn't post here first. Needed immediate action.' She is aware of the norm — she flags her departure from it rather than ignoring it — but she does not consider the norm binding on herself. Femi has gently challenged this twice; Vera has acknowledged and continued. The norm is real for the rest of the group but Vera operates outside it consistently.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 41.26,
+    "error": null
+  }
+]

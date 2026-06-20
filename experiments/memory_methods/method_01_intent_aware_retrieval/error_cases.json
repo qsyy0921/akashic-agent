@@ -1,0 +1,262 @@
+[
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3762,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya has a strong aversion to cilantro (she rejected Mariposa restaurant because cilantro was in everything, saying \"that herb ruins everything\"), and she enjoys ramen and is generally enthusiastic about trying new food spots.\n\n§cited:[lme:socialmem_Q1_a1b2c3d4:10,lme:socialmem_Q1_a1b2c3d4:42,lme:socialmem_Q1_a1b2c3d4:3§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 4,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 56.09,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1795,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam preferred the chicken ramen over the mushroom broth, suggesting they favor chicken-based soups over mushroom-based ones.\n\n§cited:[]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.35,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0312,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya.\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:15,lme:socialmem_Q4_d4e5f6a7:12]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 24.66,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_d0e1f2a3",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3382,
+    "em": false,
+    "question": "Did Sam's willingness to participate in outdoor activities like hiking change across the conversations?",
+    "predicted_answer": "Yes. Sam initially turned down hiking in session 4 (Jan 27), saying \"I'll sit the hiking out\" and explaining \"ankle still isn't great,\" but by session 5 (Feb 3) Sam was enthusiastically participating in the group outing, arriving early and saying \"already there\" and \"been here ten minutes.\"\n\n§cited:[lme:socialmem_Q8_d0e1f2a3:68,lme:socialmem_Q8_d0e1f2a3:70,lme:socialmem_Q8_d0e1f2a3:90,lme:socialmem_Q8_d0e1f2a3:92]§",
+    "gold_answer": "Yes. In Sessions 1–3, Sam showed no objection to group outdoor activities — there was no mention of hiking limitations. In Session 4, when Priya mentioned hiking trails on the Sonoma trip, Sam immediately said 'I'll sit the hiking out.' When Maya asked if they were OK, Sam explained 'ankle still isn't great' — suggesting a recent injury that had changed their ability or willingness to hike. The shift was clear and sudden, anchored to the ankle injury, which Sam mentioned only briefly and didn't elaborate on.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 6,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 53.6,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2921,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "Cass needs plant-based options at cafes; Bev definitely knows — she asked about them on Cass's behalf, and Dani also offered to check.\n\n§cited:[lme:socialmem_Q5_r3e5f6a7:22,lme:socialmem_Q5_r3e5f6a7:23]§",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 29.07,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2876,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's posts follow a strict pattern: she only shares after a fair, always solo, with just artist-name/pressing details—pointing to a disciplined collector focused exclusively on vintage original pressings from the 1950s–1970s (Luiz Bonfá 1958 Odeon, Bobby Womack 1971 United Artists, Millie Jackson 1974 Spring Records).\n\n§cited:[2eee434436d1,704e866afecf]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 50.12,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s2c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3494,
+    "em": false,
+    "question": "How has Rashida's approach to buying records at fairs changed over the sessions?",
+    "predicted_answer": "She started enthusiastic and impulsive — at Fitzroy she bought 4 records, two reissues, and sheepishly admitted she needed a budget. By Camden she actually stuck to it: bought only 2, walked away from 3 others, though she still gravitates toward reissues with great sleeve art over originals (much to Theo's dismay).\n\n§cited:[b1019359143f,e23e3a1f61e1]§",
+    "gold_answer": "Rashida started with no budget constraints — she bought freely and described purchases as 'beautiful' regardless of cost. At Session 2, she overdid it at Fitzroy Fair (four records, two of them reissues) and announced 'last fair for a while honestly. I need to behave myself — setting a budget for the next one.' By Session 4, she reiterated the self-imposed limit ('I'm on a budget this time. strict budget.') though Preet called this out as a repeated promise. By Session 5, she actually held to it: two records bought, three walked away from. The shift is from unconstrained enthusiasm to a self-managed spending limit, triggered by overspending and maintained with social accountability.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 3,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 60.98,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a5s1c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2128,
+    "em": false,
+    "question": "What does Claudette's behavior suggest about her stance on development and change on Maple Street?",
+    "predicted_answer": "Claudette consistently opposes development and change on Maple Street, linking increased building and new residents to the loss of the street's quieter, more neighbourly character, though she shows some flexibility when changes are framed as temporary trials rather than permanent alterations.\n\n§cited:[]§",
+    "gold_answer": "Claudette consistently opposes any planning application that would alter the street's residential character. In Session 1, her immediate response to the no. 22 loft conversion notice was 'This street does not need any more bulk added to it. I shall be objecting.' She frames this in terms of visual impact and preserving the street's character — not noise, not traffic. In Session 3, she linked the traffic danger Marcus experienced to development ('All this traffic is exactly what happens when you allow more development'). Her thirty-year tenure gives her a before-and-after frame that shapes all of her planning opinions.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 41.65,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3771,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus started with practical concerns (scaffolding blocking the school gate in session 1), became an active advocate for parking permits as a parent safety fix in session 2, then hit an emotional peak in session 3 after his son's near-miss with a reversing car — he was shaken and vowed to raise it formally. By sessions 4–5, his focus had shifted entirely to community life (street party, face painting for his kids), with no further mention of traffic safety.\n\n§cited:[]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 4,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 30.4,
+    "error": null
+  }
+]

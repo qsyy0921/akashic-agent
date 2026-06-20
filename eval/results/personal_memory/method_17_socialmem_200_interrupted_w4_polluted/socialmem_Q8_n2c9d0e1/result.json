@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_n2c9d0e1",
+  "question_type": "knowledge-update",
+  "question": "How did Chidi's attitude toward visiting his children in the UK change over the course of the conversations?",
+  "gold_answer": "Chidi shifted from his established position of resisting travel to proactively suggesting a visit. In Sessions 1 and 2, there was no mention of him visiting — the expectation was clearly that children come to him. By Session 3, Ngozi announced that Chidi had suggested coming to London in March, something she described as so unexpected she 'nearly fell off her chair.' Ngozi attributed the change to a health checkup that 'reminded him life is short.' Chidi himself confirmed: 'I will come in March' — a clear behavioral shift from his prior pattern.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 8.07,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

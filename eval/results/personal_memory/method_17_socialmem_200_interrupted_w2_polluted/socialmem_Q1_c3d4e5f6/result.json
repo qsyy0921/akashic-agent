@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q1_c3d4e5f6",
+  "question_type": "single-session-preference",
+  "question": "Does Lena appear to have any dietary restrictions based on the conversations?",
+  "gold_answer": "Yes. Lena appears to manage a dietary restriction she doesn't name directly. When the group was discussing the Sonoma wine bar's food options, Lena asked if there was food available, then said she'd 'check for my usual... dietary things when we get there' — a vague, casual reference suggesting she has a standing dietary need she handles quietly and doesn't want to make into a discussion.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 17.74,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

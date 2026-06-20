@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q6_f2a3b4c5",
+  "question_type": "single-session-preference",
+  "question": "The group seems to treat Sunday brunches as a standing commitment — something everyone shows up to. Does that hold for all members of the group?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+  "gold_answer": "A. Jordan\nNo — Jordan is an exception. In Session 5, Jordan cancelled on the morning of Sunday brunch saying 'Not coming. Weather is perfect. Riding.' Priya's reaction — 'this is like the third time' — confirms this is a recurring pattern, not a one-off. Jordan appears to prioritize cycling when conditions are good, treating the brunch as optional despite the group norm. The other four members treat it as the commitment Priya's comment implies it should be.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 4.27,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": false
+}

@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q6_a5s3c2",
+  "question_type": "single-session-preference",
+  "question": "The group has a norm of raising issues in the chat before contacting the council. Does that norm apply to everyone?\n\nOptions:\nA. Claudette\nB. Femi\nC. Jordan\nD. Vera",
+  "gold_answer": "D. Vera\nNo — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her own objection to the council before the group had even agreed to a joint letter. In Session 3, after Marcus's school gate near-miss, she posted: 'Didn't post here first. Needed immediate action.' She is aware of the norm — she flags her departure from it rather than ignoring it — but she does not consider the norm binding on herself. Femi has gently challenged this twice; Vera has acknowledged and continued. The norm is real for the rest of the group but Vera operates outside it consistently.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 12.88,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

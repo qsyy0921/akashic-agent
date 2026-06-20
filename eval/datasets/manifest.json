@@ -1,0 +1,267 @@
+{
+  "groupmembench": [
+    {
+      "repo": "kimperyang/GroupMemBench",
+      "file": "README.md",
+      "path": "eval\\datasets\\groupmembench\\README.md",
+      "bytes": 3507,
+      "sha256": "23a280b04166e9030acc1a691d08a7abac493d94e70dfe9ab3f51ee9d60c858d"
+    },
+    {
+      "repo": "kimperyang/GroupMemBench",
+      "file": "data/final/Finance/synthetic_domain_channels_rolevariants_Finance.json",
+      "path": "eval\\datasets\\groupmembench\\data\\final\\Finance\\synthetic_domain_channels_rolevariants_Finance.json",
+      "bytes": 48829376,
+      "sha256": "0dab291e46fc1c32a1c454b80d931bd75fa180bfa063280015d050c09325c0e8"
+    },
+    {
+      "repo": "kimperyang/GroupMemBench",
+      "file": "data/final/Technology/synthetic_domain_channels_rolevariants_Technology.json",
+      "path": "eval\\datasets\\groupmembench\\data\\final\\Technology\\synthetic_domain_channels_rolevariants_Technology.json",
+      "bytes": 48962871,
+      "sha256": "b2b5b816475a11c11c3ff80bfcfcb157c9ed5f793cd92f0a76d90253d22f9c5d"
+    },
+    {
+      "repo": "kimperyang/GroupMemBench",
+      "file": "data/final/Healthcare/synthetic_domain_channels_rolevariants_Healthcare.json",
+      "path": "eval\\datasets\\groupmembench\\data\\final\\Healthcare\\synthetic_domain_channels_rolevariants_Healthcare.json",
+      "bytes": 30874210,
+      "sha256": "bc665c792847bab5c5e8e35e4d5ce0489e0b1b8217d15dc8261d5f878155a7cf"
+    },
+    {
+      "repo": "kimperyang/GroupMemBench",
+      "file": "data/final/Manufacturing/synthetic_domain_channels_rolevariants_Manufacturing.json",
+      "path": "eval\\datasets\\groupmembench\\data\\final\\Manufacturing\\synthetic_domain_channels_rolevariants_Manufacturing.json",
+      "bytes": 29993277,
+      "sha256": "cfe2badca60e19f6d75c6d027402d32c0983dc25f06c9aa5fe5b6bf148ffa3c9"
+    }
+  ],
+  "evermembench_dynamic": [
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "README.md",
+      "path": "eval\\datasets\\evermembench_dynamic\\README.md",
+      "bytes": 3968,
+      "sha256": "df55ffbf39fd1db6a5688c41a94f2e18a6c26550335a0fe10713e53b611dd671"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "EverMemBench_Dialogues.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\EverMemBench_Dialogues.json",
+      "bytes": 26252486,
+      "sha256": "4440eceb67dba962fb985c35e3d3f7cec8ceaa57e137f902c77d20b04a463e86"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "EverMemBench_Dialogues_1m.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\EverMemBench_Dialogues_1m.json",
+      "bytes": 3636756,
+      "sha256": "5c4d3a780c3dcc70a822d7cfa937220f13d8ff0683a049e448042f7ece69c797"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "EverMemBench_QAR.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\EverMemBench_QAR.json",
+      "bytes": 281119,
+      "sha256": "577248e09f404e98b01f306f91b1e33454d63827bc3ea8202b3438e89c971783"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "EverMemBench_QAR_1m.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\EverMemBench_QAR_1m.json",
+      "bytes": 29053,
+      "sha256": "2ae9f5302d40e4d6d21462efeefd6c44179f217f02d775c01d10df20922439a6"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "profiles.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\profiles.json",
+      "bytes": 210206,
+      "sha256": "1ba5806f2e674282bb19fbbfeb52f733d02748a03de00bc11295521049a49ca2"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "unique_profiles.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\unique_profiles.json",
+      "bytes": 228422,
+      "sha256": "4f59d8b4e236d39afef87bcdd7fae9637808b5e80d6859150093baacbe582439"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "01/dialogue.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\01\\dialogue.json",
+      "bytes": 4297448,
+      "sha256": "16e4fc66c47eb742cc75097ab5ea6d95e1fae8963841391e58a8e4ec35ace2dc"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "01/qa_01.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\01\\qa_01.json",
+      "bytes": 1248210,
+      "sha256": "358e22d138e24c5e655fc2c09e7f63e22e25603a065d65c946ab30ed57884d3c"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "02/dialogue.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\02\\dialogue.json",
+      "bytes": 4269292,
+      "sha256": "37008035d1f7804a12079e4475f612a2b194b3c1c321c7a674e50d8ee57f4e0f"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "02/qa_02.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\02\\qa_02.json",
+      "bytes": 1199366,
+      "sha256": "46ac2dbe2e88b0752f9777feae4c430b033137dd84f1fe1bd749338dc4b1b446"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "03/dialogue.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\03\\dialogue.json",
+      "bytes": 4370338,
+      "sha256": "eeb18a989e6b4f59ae23d91fcc69d8ddbee8c917793c81ae623ecee9388dc8b5"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "03/qa_03.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\03\\qa_03.json",
+      "bytes": 1180153,
+      "sha256": "81b35a8349bdbfb0f5232dfb00a48779170f3eaa2b499ad5b09de5704c19d9e7"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "04/dialogue.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\04\\dialogue.json",
+      "bytes": 4216786,
+      "sha256": "3870ce44dfef56cebdc0236c19825eb0c5ea84e028b466e9f9fdb59349cbd56c"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "04/qa_04.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\04\\qa_04.json",
+      "bytes": 1232351,
+      "sha256": "47579156659cdedab6419d5ffa2f3030ca2a917bd3c3f134eaf16db318769797"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "05/dialogue.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\05\\dialogue.json",
+      "bytes": 4247034,
+      "sha256": "0434cd414d01ed4fb22e37c016ee647c3d0ea5e94fe1edf7d72dcf4ae42158e8"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "05/qa_05.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\05\\qa_05.json",
+      "bytes": 1266310,
+      "sha256": "2e5038135dcc6f8ae98b3bcbf956f0d03f9086335436c84504552a2124910d2b"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/004/dialogue_en.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\004\\dialogue_en.json",
+      "bytes": 3972473,
+      "sha256": "cba728fc900bb9e49cf19b423caeea59ec766d2b68d12d99813d5fbdf549978a"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/004/qa_004.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\004\\qa_004.json",
+      "bytes": 1072841,
+      "sha256": "d2bdd637a7c7ead418d46a08860d46ef9313528a105a39272bc0cc8cbc2296c5"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/005/dialogue_en.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\005\\dialogue_en.json",
+      "bytes": 3947845,
+      "sha256": "9c11fea58ac9a74719819ef6f1acfbb7a715da67c355c390b860f00b46a3a5f0"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/005/qa_005.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\005\\qa_005.json",
+      "bytes": 1047873,
+      "sha256": "0c58d5f66e73d6ea31dfc352dc3ae83d4deb800c38652b005d7c9848560a985d"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/010/dialogue_en.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\010\\dialogue_en.json",
+      "bytes": 4032387,
+      "sha256": "6ff2a35649ed6e8cd395c8f0a06c702d4044df52c82cdfa26a9d7cc99f181164"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/010/qa_010.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\010\\qa_010.json",
+      "bytes": 1079988,
+      "sha256": "47769378a46804def844940360d0c501c1558e87fda2b707d778c89ed458bc07"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/011/dialogue_en.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\011\\dialogue_en.json",
+      "bytes": 3897992,
+      "sha256": "68f27660fe71065e75f41f1fa7bd2770279308bee685caecae0d307999603791"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/011/qa_011.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\011\\qa_011.json",
+      "bytes": 1072697,
+      "sha256": "bdb5419fac069a32724d6dd036f7d7e3a1932a017b7e32803cb76267b83d207a"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/016/dialogue_en.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\016\\dialogue_en.json",
+      "bytes": 3927474,
+      "sha256": "17e8111bc63380db92e95ff82699f4bdfec78f199af274ec7ee121fd45e6f17a"
+    },
+    {
+      "repo": "EverMind-AI/EverMemBench-Dynamic",
+      "file": "dataset/016/qa_016.json",
+      "path": "eval\\datasets\\evermembench_dynamic\\dataset\\016\\qa_016.json",
+      "bytes": 1091849,
+      "sha256": "83348dc85c1321c5651ffc9cdf0c189c0e52aa81e3211947c9a3989d6e5d657f"
+    }
+  ],
+  "socialmembench": [
+    {
+      "repo": "anon4data/socialmembench",
+      "file": "README.md",
+      "path": "eval\\datasets\\socialmembench\\README.md",
+      "bytes": 8789,
+      "sha256": "8c809d319c398e075c4d1bbc34f50ed98a0fa396f4b9c44adb1958ff8568f82b"
+    },
+    {
+      "repo": "anon4data/socialmembench",
+      "file": "networks.parquet",
+      "path": "eval\\datasets\\socialmembench\\networks.parquet",
+      "bytes": 138771,
+      "sha256": "e85e7bfd5fd61bf4d5cbd7ad49b3c57a945198480e6c2dba46499fba1ced1a57"
+    },
+    {
+      "repo": "anon4data/socialmembench",
+      "file": "personas.parquet",
+      "path": "eval\\datasets\\socialmembench\\personas.parquet",
+      "bytes": 338600,
+      "sha256": "723d941291a0c5ce30c9892670cd7571796d6e0b0b6487212009c3a1ed026a62"
+    },
+    {
+      "repo": "anon4data/socialmembench",
+      "file": "conversations.parquet",
+      "path": "eval\\datasets\\socialmembench\\conversations.parquet",
+      "bytes": 756453,
+      "sha256": "f9ed5d10501cd8a46ca09bb914866ae3069136c259d99ee24dd175e30c90c88d"
+    },
+    {
+      "repo": "anon4data/socialmembench",
+      "file": "qa.parquet",
+      "path": "eval\\datasets\\socialmembench\\qa.parquet",
+      "bytes": 895444,
+      "sha256": "98990f88a25df0d9a017488d39ca50e76f432b6554c67b2beafa5f9421ee3f5e"
+    }
+  ]
+}

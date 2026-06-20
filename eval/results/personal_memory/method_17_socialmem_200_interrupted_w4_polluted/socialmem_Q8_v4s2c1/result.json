@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_v4s2c1",
+  "question_type": "knowledge-update",
+  "question": "How has Rashida's approach to buying records at fairs changed over the sessions?",
+  "gold_answer": "Rashida started with no budget constraints — she bought freely and described purchases as 'beautiful' regardless of cost. At Session 2, she overdid it at Fitzroy Fair (four records, two of them reissues) and announced 'last fair for a while honestly. I need to behave myself — setting a budget for the next one.' By Session 4, she reiterated the self-imposed limit ('I'm on a budget this time. strict budget.') though Preet called this out as a repeated promise. By Session 5, she actually held to it: two records bought, three walked away from. The shift is from unconstrained enthusiasm to a self-managed spending limit, triggered by overspending and maintained with social accountability.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 5.44,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

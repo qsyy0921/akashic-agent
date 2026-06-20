@@ -193,14 +193,18 @@ class Memorizer:
                     ):
                         text = ""
                 if text:
+                    event_extra: dict[str, object] = {
+                        "scope_channel": scope_channel,
+                        "scope_chat_id": scope_chat_id,
+                    }
+                    if str(scope_chat_id or "").startswith("gqq:"):
+                        event_extra["memory_scope"] = "group"
+                        event_extra["group_id"] = str(scope_chat_id)[len("gqq:") :]
                     result = self._store.upsert_consolidation_event(
                         source_ref=source_ref,
                         summary=text,
                         embedding=embedding,
-                        extra={
-                            "scope_channel": scope_channel,
-                            "scope_chat_id": scope_chat_id,
-                        },
+                        extra=event_extra,
                         happened_at=_parse_history_entry_happened_at(text),
                         emotional_weight=emotional_weight,
                     )

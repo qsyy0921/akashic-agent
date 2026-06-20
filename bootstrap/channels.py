@@ -58,29 +58,50 @@ async def start_channels(
         print("Telegram Bot 已启动")
 
     qq_channel = None
-    if config.channels.qq and config.channels.qq.bot_uin:
+    qq_configs = config.channels.qq_accounts or (
+        [config.channels.qq] if config.channels.qq and config.channels.qq.bot_uin else []
+    )
+    if qq_configs:
         from infra.channels.qq_channel import QQChannel
 
-        qq = config.channels.qq
-        qq_channel = QQChannel(
-            bot_uin=qq.bot_uin,
-            bus=bus,
-            session_manager=session_manager,
-            allow_from=qq.allow_from,
-            groups=qq.groups,
-            websocket_open_timeout_seconds=qq.websocket_open_timeout_seconds,
-            http_requester=http_resources.external_default,
-            event_bus=event_bus,
-            interrupt_controller=interrupt_controller,
-        )
-        await qq_channel.start()
-        push_tool.register_channel(
-            "qq",
-            text=qq_channel.send,
-            file=qq_channel.send_file,
-            image=qq_channel.send_image,
-        )
-        print(f"QQ Bot 已启动  |  QQ 号: {qq.bot_uin}")
+        for qq in qq_configs:
+            current = QQChannel(
+                bot_uin=qq.bot_uin,
+                bus=bus,
+                session_manager=session_manager,
+                allow_from=qq.allow_from,
+                groups=qq.groups,
+                websocket_open_timeout_seconds=qq.websocket_open_timeout_seconds,
+                channel_name=qq.channel_name,
+                ws_uri=qq.ws_uri,
+                ws_token=qq.ws_token,
+                observe_only=qq.observe_only,
+                observe_all_groups=qq.observe_all_groups,
+                private_peer_ids=qq.private_peer_ids,
+                http_requester=http_resources.external_default,
+                event_bus=event_bus,
+                interrupt_controller=interrupt_controller,
+            )
+            await current.start()
+            if qq_channel is None:
+                qq_channel = current
+            if not qq.observe_only:
+                push_tool.register_channel(
+                    qq.channel_name,
+                    text=current.send,
+                    file=current.send_file,
+                    image=current.send_image,
+                )
+            elif qq.private_peer_ids:
+                push_tool.register_channel(
+                    qq.channel_name,
+                    text=current.send,
+                )
+            mode = "observe_only" if qq.observe_only else "interactive"
+            print(
+                f"QQ Bot 已启动  |  QQ 号: {qq.bot_uin}  |  "
+                f"channel: {qq.channel_name}  |  模式: {mode}"
+            )
 
     qqbot_channel = None
     if config.channels.qqbot and config.channels.qqbot.app_id:

@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-06-17T16:29:57.734454",
+  "data": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\_smoke_method_02",
+  "method_config": "experiments\\memory_methods\\method_02_structured_memory_schema\\config.json",
+  "memory_method": {
+    "method_id": "method_02_structured_memory_schema",
+    "strategy": "structured_memory_schema",
+    "description": "Expose stable structured fields on each retrieved memory record: person_id, memory_type, session_id, timestamp, source_ref, confidence, valid_from, valid_to.",
+    "options": {},
+    "config_path": "experiments\\memory_methods\\method_02_structured_memory_schema\\config.json"
+  },
+  "offset": 0,
+  "limit": 1,
+  "workers": 1,
+  "skip_judge": true,
+  "scores": {
+    "overall": {
+      "f1": 0.2628,
+      "em": 0.0,
+      "n": 1,
+      "errors": 0
+    },
+    "by_type": {
+      "single-session-preference": {
+        "f1": 0.2628,
+        "em": 0.0,
+        "n": 1,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": null,
+  "results": [
+    {
+      "question_id": "socialmem_Q1_c0s3c1",
+      "question_type": "single-session-preference",
+      "question": "What does Josh's behavior in the group chat suggest about how he handles questions about his own career?",
+      "gold_answer": "Josh consistently deflects questions about his career with self-deprecating humour and then redirects to someone else. In Session 3, when Leon asked what everyone was up to professionally, Josh responded: 'still in the same chair 😂😂 living the dream' — and immediately pivoted to Priya. In Session 5, he used the same 'same chair' line again. He does not engage with follow-up, does not offer detail about what he actually does or wants, and accepts Mei's gentle reframe ('you know everything') with 'haha, very kind' — another deflection. The pattern is consistent across sessions and the self-deprecation is the tell.",
+      "predicted_answer": "He deflects questions about his own career with self-deprecating humor—repeatedly calling himself \"still in the same chair\" despite six years at the same place and redirecting attention to others' careers rather than engaging with his own.\n\n§cited:[4bbf623676af]§",
+      "tool_chain": [
+        {
+          "text": "调用工具 recall_memory",
+          "calls": [
+            {
+              "call_id": "call_095c91c158a743b98679343d",
+              "name": "recall_memory",
+              "status": "success",
+              "arguments": {
+                "description": "Recall Josh career deflection pattern",
+                "query": "Josh career self-deprecating humor deflects same chair group chat"
+              },
+              "final_arguments": {
+                "description": "Recall Josh career deflection pattern",
+                "query": "Josh career self-deprecating humor deflects same chair group chat"
+              },
+              "pre_hook_trace": [],
+              "post_hook_trace": [],
+              "artifacts": [],
+              "auto_dispatched_artifacts": [],
+              "auto_dispatched_media": [],
+              "auto_dispatched_text": "",
+              "result": "{\"count\": 1, \"items\": [{\"id\": \"4bbf623676af\", \"memory_type\": \"event\", \"summary\": \"[2025-10-06 00:00] 用户向助手展示了一段 group chat 的记录，聊天内容涉及计划月底周四在 Soho 进行季度聚会，参与者讨论了时间安排、地点选择和出席确认。\", \"score\": 0.2222, \"evidence\": [{\"kind\": \"message\", \"refs\": [\"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\"], \"resolver\": \"session\", \"source_ref\": \"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\", \"metadata\": {}}], \"signals\": {\"structured_schema\": {\"memory_id\": \"4bbf623676af\", \"memory_type\": \"event\", \"person_id\": \"chat\", \"session_id\": \"lme:socialmem_Q1_c0s3c1\", \"timestamp\": \"2025-10-06\", \"source_ref\": \"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\", \"confidence\": \"medium\", \"valid_from\": \"2025-10-06\", \"valid_to\": null}}, \"source_ref\": \"[\\\"lme:socialmem_Q1_c0s3c1:0\\\", \\\"lme:socialmem_Q1_c0s3c1:1\\\", \\\"lme:socialmem_Q1_c0s3c1:2\\\", \\\"lme:socialmem_Q1_c0s3c1:3\\\", \\\"lme:socialmem_Q1_c0s3c1:4\\\", \\\"lme:socialmem_Q1_c0s3c1:5\\\", \\\"lme:socialmem_Q1_c0s3c1:6\\\", \\\"lme:socialmem_Q1_c0s3c1:7\\\", \\\"lme:socialmem_Q1_c0s3c1:8\\\", \\\"lme:socialmem_Q1_c0s3c1:9\\\"]#h:5bbbf6e0eb93\"}], \"trace\": {\"source\": \"default\", \"intent\": \"answer\", \"hit_count\": 1, \"hyde_hypotheses\": [], \"method_id\": \"method_02_structured_memory_schema\", \"strategy\": \"structured_memory_schema\", \"enriched_records\": 1}, \"citation_required\": true, \"citation_format\": \"§cited:[id1,id2,...]§\", \"cited_item_ids\": [\"4bbf623676af\"], \"citation_rule\": \"若最终回复使用了本工具返回的任何记忆条目，必须在正文末尾输出 §cited:[实际使用的id列表]§\"}"
+            }
+          ]
+        }
+      ],
+      "react_stats": {
+        "iteration_count": 2,
+        "turn_input_sum_tokens": 38743,
+        "turn_input_peak_tokens": 19865,
+        "final_call_input_tokens": 19865,
+        "cache_prompt_tokens": 60979,
+        "cache_hit_tokens": 30336
+      },
+      "elapsed_s": 13.93,
+      "error": null,
+      "memory_method": {
+        "method_id": "method_02_structured_memory_schema",
+        "strategy": "structured_memory_schema",
+        "description": "Expose stable structured fields on each retrieved memory record: person_id, memory_type, session_id, timestamp, source_ref, confidence, valid_from, valid_to.",
+        "options": {},
+        "config_path": "experiments\\memory_methods\\method_02_structured_memory_schema\\config.json"
+      },
+      "judge_correct": null
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "method_id": "baseline_current",
+  "strategy": "baseline",
+  "description": "Current production-equivalent Akashic memory pipeline; no benchmark wrapper is applied.",
+  "options": {}
+}
+

@@ -1,0 +1,11 @@
+{
+  "cases": 5,
+  "by_source": {
+    "socialmembench:network": 5
+  },
+  "haystack_turns": {
+    "min": 50,
+    "max": 50,
+    "avg": 50.0
+  }
+}

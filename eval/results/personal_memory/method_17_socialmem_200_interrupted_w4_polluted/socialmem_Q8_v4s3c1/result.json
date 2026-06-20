@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q8_v4s3c1",
+  "question_type": "knowledge-update",
+  "question": "Did Theo always refuse to buy reissues, or did his position on this change over time?",
+  "gold_answer": "Theo's position started as strong skepticism and hardened into categorical refusal. In Session 1 he expressed doubt but not a ban ('reissues are a gamble'). In Session 2, he critiqued Rashida's reissue purchases for their mastering but had not yet announced a personal rule. In Session 3, he bought an expensive new Coltrane reissue himself, found the mastering to be terrible, and declared: 'Nothing with a digital chain in the mastering is worth buying. I'm done. Originals only from now.' The 'Never again' after describing it as a waste makes clear this is a permanent policy change. By Session 5, his position is unqualified: 'Originals only, Rashida. That is the whole point.'",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.44,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

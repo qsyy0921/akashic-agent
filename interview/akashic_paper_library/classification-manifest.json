@@ -1,0 +1,182 @@
+{
+  "library": "Akashic",
+  "zotero_parent_collection_key": "4FJ5IGSW",
+  "updated_at": "2026-06-16",
+  "categories": [
+    {
+      "id": "01",
+      "zotero_key": "AKBENCH1",
+      "name": "Benchmarks and Evaluation"
+    },
+    {
+      "id": "02",
+      "zotero_key": "AKPERS01",
+      "name": "Personalization and Dialogue Agents"
+    },
+    {
+      "id": "03",
+      "zotero_key": "AKARCH01",
+      "name": "Memory Architecture and OS"
+    },
+    {
+      "id": "04",
+      "zotero_key": "AKCONS01",
+      "name": "Memory Construction and Consolidation"
+    },
+    {
+      "id": "05",
+      "zotero_key": "AKRAG001",
+      "name": "Retrieval RAG and Indexing"
+    },
+    {
+      "id": "06",
+      "zotero_key": "AKTOOL01",
+      "name": "Tool Use and Proactivity"
+    },
+    {
+      "id": "07",
+      "zotero_key": "AKSAFE01",
+      "name": "Working Memory Factuality and Safety"
+    }
+  ],
+  "items": [
+    {
+      "zotero_key": "AJ4EBTYP",
+      "title": "Amory: Building Coherent Narrative-Driven Agent Memory through Agentic Reasoning",
+      "primary_category": "04",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "QBVYX7TJ",
+      "title": "Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions",
+      "primary_category": "01",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "KURW7TGE",
+      "title": "Evaluating Personalized Tool-Augmented LLMs from the Perspectives of Personalization and Proactivity",
+      "primary_category": "06",
+      "secondary_categories": ["01"]
+    },
+    {
+      "zotero_key": "K5WE3PX8",
+      "title": "Exploring the Potential of LLMs as Personalized Assistants: Dataset, Evaluation, and Analysis",
+      "primary_category": "01",
+      "secondary_categories": ["02"]
+    },
+    {
+      "zotero_key": "8KNJ25ST",
+      "title": "From Isolated Conversations to Hierarchical Schemas: Dynamic Tree Memory Representation for LLMs",
+      "primary_category": "03",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "QES7XJJ2",
+      "title": "From RAG to Memory: Non-Parametric Continual Learning for Large Language Models",
+      "primary_category": "05",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "GH5CF6K3",
+      "title": "H-MEM: Hierarchical Memory for High-Efficiency Long-Term Reasoning in LLM Agents",
+      "primary_category": "03",
+      "secondary_categories": ["05"]
+    },
+    {
+      "zotero_key": "WY2JCKHK",
+      "title": "H-Mem: Hybrid Multi-Dimensional Memory Management for Long-Context Conversational Agents",
+      "primary_category": "03",
+      "secondary_categories": ["05"]
+    },
+    {
+      "zotero_key": "755T9X2I",
+      "title": "Hello Again! LLM-powered Personalized Agent for Long-term Dialogue",
+      "primary_category": "02",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "8CITYPWK",
+      "title": "Improving Factuality with Explicit Working Memory",
+      "primary_category": "07",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "XDTETNVV",
+      "title": "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents",
+      "primary_category": "04",
+      "secondary_categories": ["02"]
+    },
+    {
+      "zotero_key": "M8334ZS5",
+      "title": "LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory",
+      "primary_category": "01",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "KLRUJESR",
+      "title": "Look Back to Reason Forward: Revisitable Memory for Long-Context LLM Agents",
+      "primary_category": "05",
+      "secondary_categories": ["07"]
+    },
+    {
+      "zotero_key": "53DKTP3C",
+      "title": "MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents",
+      "primary_category": "03",
+      "secondary_categories": ["07"]
+    },
+    {
+      "zotero_key": "ZUMQC6P2",
+      "title": "Mem-PAL: Towards Memory-based Personalized Dialogue Assistants for Long-term User-Agent Interaction",
+      "primary_category": "02",
+      "secondary_categories": ["01"]
+    },
+    {
+      "zotero_key": "NR2EIPY2",
+      "title": "MemAgent: Reshaping Long-Context LLM with Multi-Conv RL-based Memory Agent",
+      "primary_category": "03",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "RUE3RII9",
+      "title": "MemGuide: Intent-Driven Memory Selection for Goal-Oriented Multi-Session LLM Agents",
+      "primary_category": "05",
+      "secondary_categories": ["06"]
+    },
+    {
+      "zotero_key": "9BR4GGYN",
+      "title": "MemInsight: Autonomous Memory Augmentation for LLM Agents",
+      "primary_category": "04",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "PQKIZN9S",
+      "title": "MemoRAG: Boosting Long Context Processing with Global Memory-Enhanced Retrieval Augmentation",
+      "primary_category": "05",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "G66WVM52",
+      "title": "Memory OS of AI Agent",
+      "primary_category": "03",
+      "secondary_categories": []
+    },
+    {
+      "zotero_key": "SI5YAUDF",
+      "title": "Personalized Large Language Model Assistant with Evolving Conditional Memory",
+      "primary_category": "02",
+      "secondary_categories": ["04"]
+    },
+    {
+      "zotero_key": "CTH6EMLZ",
+      "title": "SeCom: On Memory Construction and Retrieval for Personalized Conversational Agents",
+      "primary_category": "04",
+      "secondary_categories": ["02", "05"]
+    },
+    {
+      "zotero_key": "S9M8SSSG",
+      "title": "Towards Lifelong Dialogue Agents via Timeline-based Memory Management",
+      "primary_category": "02",
+      "secondary_categories": []
+    }
+  ]
+}

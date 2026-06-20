@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q2_n2d4e5f6",
+  "question_type": "single-session-user",
+  "question": "What was decided about the Christmas dinner menu, and did all family members seem equally happy with that plan?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+  "gold_answer": "A. Adaora\nNgozi planned to cook the full traditional spread — goat, jollof, suya, fried plantain. Emeka and Tobenna were enthusiastic. Adaora, however, asked specifically if Ngozi could include beans dishes (moi moi, akara) and deflected from the meat options with 'I'll have whatever there is' — suggesting she has a preference for the plant-based side dishes. When Tobenna noted 'Ada you love goat,' she said only 'let me have the beans' without explaining. The rest of the family proceeded as if the standard menu was settled.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 7.39,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

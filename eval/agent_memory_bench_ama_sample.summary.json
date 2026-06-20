@@ -1,0 +1,11 @@
+{
+  "cases": 2,
+  "by_source": {
+    "ama_bench:babaisai": 2
+  },
+  "haystack_turns": {
+    "min": 201,
+    "max": 201,
+    "avg": 201.0
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "method_id": "method_02_structured_memory_schema",
+  "generated_at": "2026-06-17T18:30:00.957767",
+  "result_path": "eval\\results\\memory_methods\\method_02_structured_memory_schema.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_02_structured_memory_schema",
+  "memory_method": {
+    "method_id": "method_02_structured_memory_schema",
+    "strategy": "structured_memory_schema",
+    "description": "Expose stable structured fields on each retrieved memory record: person_id, memory_type, session_id, timestamp, source_ref, confidence, valid_from, valid_to.",
+    "options": {},
+    "config_path": "experiments\\memory_methods\\method_02_structured_memory_schema\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3065,
+      "em": 0.0,
+      "n": 50,
+      "errors": 0,
+      "judge_acc": 0.66
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3545,
+        "em": 0.0,
+        "n": 11,
+        "errors": 0,
+        "judge_acc": 0.7273
+      },
+      "single-session-preference": {
+        "f1": 0.2865,
+        "em": 0.0,
+        "n": 17,
+        "errors": 0,
+        "judge_acc": 0.5882
+      },
+      "single-session-user": {
+        "f1": 0.2979,
+        "em": 0.0,
+        "n": 22,
+        "errors": 0,
+        "judge_acc": 0.6818
+      }
+    }
+  },
+  "judge_acc": 0.66,
+  "latency": {
+    "avg_elapsed_s": 31.1114,
+    "p50_elapsed_s": 27.77,
+    "p95_elapsed_s": 56.52
+  },
+  "token_usage": {
+    "avg_token_usage": 32843.56,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 32843.56,
+    "avg_final_call_input_tokens_estimate": 13446.5,
+    "avg_cache_prompt_tokens": 67283.24,
+    "avg_cache_hit_tokens": 43742.72,
+    "avg_answer_chars": 360.08,
+    "avg_tool_result_chars": 22569.68,
+    "avg_tool_calls": 4.2
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 17,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 3,
+      "memory_write_failure": 12,
+      "personal_preference_attribution_error": 7,
+      "retrieved_but_answer_wrong": 4,
+      "retrieved_but_evidence_unused": 1
+    }
+  }
+}

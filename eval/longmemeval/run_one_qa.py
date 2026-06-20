@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import sys
 from pathlib import Path
 
 from agent.config import load_config
@@ -20,7 +21,20 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--workspace", required=True, type=Path)
     p.add_argument("--question-id", required=True)
     p.add_argument("--timeout", type=float, default=180.0)
+    p.add_argument("--judge-max-tokens", type=int, default=None)
+    p.add_argument("--method-config", type=Path, default=None)
     return p
+
+
+def _configure_utf8_stdio() -> None:
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(sys, stream_name, None)
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
 
 
 async def _run(args: argparse.Namespace) -> None:
@@ -29,9 +43,15 @@ async def _run(args: argparse.Namespace) -> None:
     if inst is None:
         raise SystemExit(f"question_id not found: {args.question_id}")
 
-    rt = await create_runtime(args.config, args.workspace)
+    rt = await create_runtime(
+        args.config,
+        args.workspace,
+        method_config=args.method_config,
+    )
     try:
         result = await run_qa_instance(rt, inst, timeout_s=args.timeout)
+        if rt.method:
+            result["memory_method"] = rt.method
         cfg = load_config(args.config)
         result["judge_correct"] = await judge_answer(
             rt.core.provider,
@@ -39,6 +59,7 @@ async def _run(args: argparse.Namespace) -> None:
             question=result["question"],
             gold=result["gold_answer"],
             predicted=result["predicted_answer"],
+            max_tokens=args.judge_max_tokens,
         )
     finally:
         await close_runtime(rt)
@@ -56,6 +77,7 @@ async def _run(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    _configure_utf8_stdio()
     args = _build_parser().parse_args()
     asyncio.run(_run(args))
 

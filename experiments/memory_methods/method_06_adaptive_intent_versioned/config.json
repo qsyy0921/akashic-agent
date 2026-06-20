@@ -1,0 +1,6 @@
+{
+  "method_id": "method_06_adaptive_intent_versioned",
+  "strategy": "adaptive_intent_versioned",
+  "description": "Route personal-memory questions to the strongest measured answer-time strategy: intent-aware retrieval for attribution/relationship/change questions, versioned/baseline retrieval for stable preferences.",
+  "options": {}
+}

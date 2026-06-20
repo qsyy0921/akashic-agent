@@ -1,0 +1,11 @@
+{
+  "cases": 2,
+  "by_source": {
+    "memoryarena:progressive_search": 2
+  },
+  "haystack_turns": {
+    "min": 2,
+    "max": 4,
+    "avg": 3.0
+  }
+}

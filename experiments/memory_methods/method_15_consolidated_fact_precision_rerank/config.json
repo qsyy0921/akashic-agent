@@ -1,0 +1,12 @@
+{
+  "method_id": "method_15_consolidated_fact_precision_rerank",
+  "strategy": "consolidated_fact_precision_rerank",
+  "description": "Rerank Method 14 compact facts by candidate and disputed slot before final answering.",
+  "options": {
+    "selected_evidence_limit": 8,
+    "consolidated_facts_per_session": 160,
+    "consolidated_fact_limit": 6,
+    "precision_raw_scan_limit": 24,
+    "precision_candidate_limit": 5
+  }
+}

@@ -59,6 +59,10 @@ _VECTOR_TOP_K = 15
 _ChatCall = Callable[..., Awaitable[LLMResponse]]
 
 
+def _is_group_scope(scope_chat_id: str) -> bool:
+    return str(scope_chat_id or "").startswith("gqq:")
+
+
 def _build_entry_source_ref(base_source_ref: str, entry: str) -> str:
     text = (entry or "").strip()
     digest = hashlib.sha1(text.encode("utf-8")).hexdigest()[:12] if text else "empty"
@@ -650,6 +654,8 @@ class DefaultMemoryEngine:
     def _on_turn_committed(self, event: TurnCommitted) -> None:
         if bool((event.extra or {}).get("skip_post_memory")):
             return
+        if str((event.extra or {}).get("memory_scope") or "") == "group":
+            return
         if self._event_bus is None:
             return
         source_ref = f"{event.session_key}@post_response"
@@ -669,6 +675,7 @@ class DefaultMemoryEngine:
         self,
         event: ConsolidationCommitted,
     ) -> None:
+        is_group_scope = _is_group_scope(event.scope_chat_id)
         save_coros = [
             self._save_from_consolidation(
                 history_entry=entry,
@@ -682,6 +689,12 @@ class DefaultMemoryEngine:
         ]
         if save_coros:
             await asyncio.gather(*save_coros)
+        if is_group_scope:
+            logger.info(
+                "consolidation implicit long_term skipped for group scope chat_id=%s",
+                event.scope_chat_id,
+            )
+            return
         implicit_result = await self._extract_implicit_long_term(
             conversation=event.conversation,
             existing_profile="",
@@ -729,7 +742,7 @@ class DefaultMemoryEngine:
             return result
         except Exception as e:
             logger.warning("consolidation long_term extraction failed: %s", e)
-            raise RuntimeError("consolidation long_term extraction failed") from e
+            return None
 
     def tool_profile(self) -> MemoryToolProfile:
         return _default_memory_tool_profile()
@@ -766,6 +779,7 @@ class DefaultMemoryEngine:
             time_start=request.filters.time_start,
             time_end=request.filters.time_end,
         )
+        self._attach_structured_evidence(items)
         text_block, injected_ids = retriever.build_injection_block(items)
         records = [
             self._build_record(item, injected_ids=injected_ids)
@@ -1152,6 +1166,7 @@ class DefaultMemoryEngine:
             keyword_enabled=True,
         )
         sliced = list(hits)[: request.limit]
+        self._attach_structured_evidence(sliced)
         return MemoryQueryResult(
             records=[self._build_record(item) for item in sliced if isinstance(item, dict)],
             trace={
@@ -1176,6 +1191,7 @@ class DefaultMemoryEngine:
             request.filters.time_end,
             limit=request.limit,
         )
+        self._attach_structured_evidence(hits)
         return MemoryQueryResult(
             records=[self._build_record(item) for item in hits if isinstance(item, dict)],
             trace={"source": self.DESCRIPTOR.name, "intent": "timeline", "hit_count": len(hits)},
@@ -1195,6 +1211,7 @@ class DefaultMemoryEngine:
             scope_chat_id=scope.chat_id or None,
             require_scope_match=should_require_scope_match(request, scope),
         )
+        self._attach_structured_evidence(hits)
         records = [self._build_record(item) for item in hits if isinstance(item, dict)]
         texts = [record.summary for record in records]
         return MemoryQueryResult(
@@ -1277,6 +1294,37 @@ class DefaultMemoryEngine:
         if self._v2_store is None:
             raise RuntimeError("memory v2 store unavailable")
         return self._v2_store
+
+    def _attach_structured_evidence(self, items: list[dict[str, object]]) -> None:
+        store = self._v2_store
+        if store is None or not items:
+            return
+        item_ids = [
+            str(item.get("id") or "").strip()
+            for item in items
+            if isinstance(item, dict) and str(item.get("id") or "").strip()
+        ]
+        if not item_ids:
+            return
+        try:
+            evidence_by_id = store.get_structured_evidence_for_items(item_ids)
+        except Exception as exc:
+            logger.debug("structured evidence attach failed: %s", exc)
+            return
+        for item in items:
+            item_id = str(item.get("id") or "").strip()
+            structured = evidence_by_id.get(item_id)
+            if not structured:
+                continue
+            extra = item.get("extra_json")
+            signals = dict(cast(dict[str, object], extra)) if isinstance(extra, dict) else {}
+            if (
+                structured.get("assertion")
+                or structured.get("raw_events")
+                or structured.get("event_facts")
+            ):
+                signals["structured_evidence"] = structured
+            item["extra_json"] = signals
 
     @classmethod
     def _build_record(

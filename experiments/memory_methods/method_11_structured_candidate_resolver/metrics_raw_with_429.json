@@ -1,0 +1,95 @@
+{
+  "method_id": "method_11_structured_candidate_resolver",
+  "generated_at": "2026-06-18T03:29:10.971527",
+  "result_path": "eval\\results\\memory_methods\\method_11_structured_candidate_resolver.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_11_structured_candidate_resolver",
+  "memory_method": {
+    "method_id": "method_11_structured_candidate_resolver",
+    "strategy": "structured_candidate_resolver",
+    "description": "Consume production memory2 raw-event schema for slot-specific candidate extraction, source-grounded ordering, and compact selected evidence before final generation.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "base_retrieval": "adaptive_intent_versioned",
+      "all_raw_event_backfill": true,
+      "all_raw_event_backfill_limit": 100000,
+      "all_raw_event_backfill_chunk_size": 200,
+      "selected_evidence_limit": 16,
+      "summary_pollution": false,
+      "wrap_search_fetch_tools": false
+    },
+    "config_path": "experiments\\memory_methods\\method_11_structured_candidate_resolver\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.3017,
+      "em": 0.0,
+      "judge_acc": 0.6327,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3834,
+        "em": 0.0,
+        "judge_acc": 0.6364,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2533,
+        "em": 0.0,
+        "judge_acc": 0.7647,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.2983,
+        "em": 0.0,
+        "judge_acc": 0.5238,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.6326530612244898,
+  "latency": {
+    "avg_elapsed_s": 18.123,
+    "p50_elapsed_s": 16.085,
+    "p95_elapsed_s": 32.39
+  },
+  "token_usage": {
+    "avg_token_usage": 42470.7391,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 42470.7391,
+    "avg_final_call_input_tokens_estimate": 26177.3261,
+    "avg_cache_prompt_tokens": 66575.413,
+    "avg_cache_hit_tokens": 30016.0,
+    "avg_answer_chars": 409.12,
+    "avg_tool_result_chars": 54549.78,
+    "avg_tool_calls": 1.98
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 18,
+    "judge_null": 1,
+    "error_type_counts": {
+      "memory_update_not_versioned": 4,
+      "memory_write_failure": 5,
+      "personal_preference_attribution_error": 4,
+      "retrieval_failure": 12,
+      "retrieved_but_evidence_unused": 2
+    }
+  }
+}

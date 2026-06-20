@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q4_v4s1c2",
+  "question_type": "single-session-user",
+  "question": "Both Theo and Nneka said they would not attend the fair as part of the group. Who gave speed or efficiency as their reason for preferring to go alone?\n\nOptions:\nA. Gil\nB. Nneka\nC. Preet\nD. Rashida",
+  "gold_answer": "B. Nneka\nNneka. Her stated reason was 'I move faster alone' — a direct efficiency argument about pace. Theo endorsed her position ('Nneka is correct. Group fairs are slower.') using similar surface language, but his preference for solo hunting is rooted in a different concern: Theo attends fairs to hunt specific original pressings, and group attendance is a distraction from that mission — it's about focus and quality, not logistics. Nneka's reason is purely procedural (she moves through stalls faster without others); Theo's is about not wasting a quality hunt on a social event.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.37,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

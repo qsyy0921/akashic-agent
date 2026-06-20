@@ -1,0 +1,61 @@
+[llm]
+provider = "openai"
+
+[llm.main]
+model = "mimo-v2.5-pro"
+api_key = "${MIMO_API_KEY}"
+base_url = "https://token-plan-cn.xiaomimimo.com/v1"
+multimodal = false
+
+[llm.fast]
+model = "mimo-v2.5-pro"
+api_key = "${MIMO_API_KEY}"
+base_url = "https://token-plan-cn.xiaomimimo.com/v1"
+
+[agent]
+system_prompt = "You are a helpful personal assistant with long-term memory. When the user asks about past conversations or personal details, use memory tools before answering. Answer concisely in English."
+max_tokens = 2048
+max_iterations = 12
+dev_mode = false
+
+[agent.context]
+memory_window = 40
+
+[agent.tools]
+search_enabled = false
+spawn_enabled = false
+
+[agent.wiring]
+context = "default"
+memory = "default"
+toolsets = ["meta_common"]
+
+[channels.telegram]
+token = ""
+allow_from = []
+
+[channels.qq]
+bot_uin = ""
+allow_from = []
+
+[channels.qqbot]
+app_id = ""
+client_secret = ""
+allow_from = []
+
+[memory]
+enabled = true
+engine = ""
+
+[memory.embedding]
+model = "local-hash-embedding"
+api_key = ""
+base_url = "local://hash"
+
+[proactive]
+enabled = false
+profile = "quiet"
+
+[proactive.target]
+channel = ""
+chat_id = ""

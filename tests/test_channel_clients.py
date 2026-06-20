@@ -18,6 +18,7 @@ from bus.events_lifecycle import (
     StreamDeltaReady,
     ToolCallCompleted,
     ToolCallStarted,
+    TurnCommitted,
     TurnStarted,
 )
 
@@ -38,12 +39,28 @@ class _SessionManager:
     def __init__(self) -> None:
         self.sessions = {}
         self.saved = []
+        self.appended = []
 
     def get_or_create(self, key: str):
-        return self.sessions.setdefault(key, SimpleNamespace(key=key, metadata={}))
+        session = self.sessions.get(key)
+        if session is None:
+            session = SimpleNamespace(key=key, metadata={}, messages=[])
+
+            def _add_message(role, content, media=None, **kwargs):
+                msg = {"role": role, "content": content, **kwargs}
+                if media:
+                    msg["media"] = list(media)
+                session.messages.append(msg)
+
+            session.add_message = _add_message
+            self.sessions[key] = session
+        return session
 
     async def save_async(self, session) -> None:
         self.saved.append(session.key)
+
+    async def append_messages(self, session, messages) -> None:
+        self.appended.append((session.key, list(messages)))
 
     def get_channel_metadata(self, channel: str):
         return []
@@ -1035,6 +1052,71 @@ async def test_qq_channel_paths(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
         await mod.QQChannel._run_on_bot_loop(channel, pending)
     pending.close()
     await channel.stop()
+
+
+@pytest.mark.asyncio
+async def test_qq_observe_only_records_group_without_inbound(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    mod = _import_qq_channel(monkeypatch)
+    bus = _Bus()
+    session_manager = _SessionManager()
+    event_bus = EventBus()
+    committed = []
+    event_bus.on(TurnCommitted, lambda event: committed.append(event))
+    group_filter = SimpleNamespace(should_process=AsyncMock(return_value=True))
+    channel = mod.QQChannel(
+        "42",
+        bus,
+        session_manager,
+        groups=[],
+        ws_uri="ws://127.0.0.1:3002",
+        observe_only=True,
+        observe_all_groups=True,
+        private_peer_ids=["2"],
+        group_filter=group_filter,
+        http_requester=SimpleNamespace(get=AsyncMock()),
+        event_bus=event_bus,
+    )
+    channel._onebot_call = AsyncMock(return_value={"data": {"user_id": 42}})
+    channel._run_direct_observer = AsyncMock(return_value=None)
+
+    await channel.start()
+    assert bus.outbound == []
+    await channel._handle_onebot_event(
+        {
+            "post_type": "message",
+            "message_type": "group",
+            "group_id": 100,
+            "user_id": 1,
+            "message_id": 88,
+            "time": 1780000000,
+            "raw_message": "quiet observe",
+        }
+    )
+    await event_bus.drain()
+
+    assert bus.inbound == []
+    session = session_manager.sessions["qq:gqq:100"]
+    assert session.metadata["observe_only"] is True
+    assert session.metadata["chat_type"] == "group"
+    assert session.messages[-1]["content"] == "quiet observe"
+    assert session.messages[-1]["observed"] is True
+    assert session.messages[-1]["sender_id"] == "1"
+    assert session.messages[-1]["speaker_id"] == "1"
+    assert session.messages[-1]["group_id"] == "100"
+    assert session.messages[-1]["message_index"] == 0
+    assert session.messages[-1]["source_ref"] == "qq:gqq:100:0"
+    assert session.messages[-1]["onebot_message_id"] == "88"
+    assert session_manager.appended[-1][0] == "qq:gqq:100"
+    assert committed[-1].session_key == "qq:gqq:100"
+    assert committed[-1].extra["memory_scope"] == "group"
+
+    channel._onebot_call.reset_mock()
+    await channel.send("gqq:100", "blocked")
+    channel._onebot_call.assert_not_awaited()
+    await channel.send("2", "peer only")
+    channel._onebot_call.assert_awaited_once()
 
 
 @pytest.mark.asyncio

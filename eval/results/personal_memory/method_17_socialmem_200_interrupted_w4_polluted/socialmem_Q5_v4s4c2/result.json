@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q5_v4s4c2",
+  "question_type": "single-session-user",
+  "question": "What spending pattern of Rashida's does Preet know about, and how does the conversation show that Preet knows it?",
+  "gold_answer": "Preet knows. In Session 4, when Rashida announced she was on a 'strict budget' for the Camden fair, Preet immediately replied 'Rashida said that last time 😂' — demonstrating recall of Rashida's identical promise after the Session 2 fair. Preet did not learn this from the group chat just then; they were with Rashida at the Fitzroy Fair in Session 2 when she overspent and made the budget promise. The knowledge comes from direct observation over time, not from being told. By Session 5, Preet acted as an informal accountability partner — reporting to the group that they watched Rashida walk away from three records.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 6.59,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

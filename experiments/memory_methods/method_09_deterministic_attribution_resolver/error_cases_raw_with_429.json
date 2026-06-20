@@ -1,0 +1,543 @@
+[
+  {
+    "question_id": "socialmem_Q4_c0s2c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3724,
+    "em": false,
+    "question": "Both Mei and Leon present themselves confidently in the group chat when discussing career. Who is projecting success they have not fully achieved, and who is reporting genuine accomplished progress?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "Based on the retrieved messages, **Leon is projecting success he hasn't fully achieved**, while **Mei is reporting genuine accomplished progress**.\n\nLeon claims TechCrunch coverage and \"close to profitability\" but repeatedly fails to show up (\"classic Leon response\", \"Leon didn't come again\"), while Mei describes real work constraints (\"big handover\", \"intense team\") and consistently follows through on commitments.\n\nThe answer is **B. Leon**.\n\n§cited:[lme:socialmem_Q4_c0s2c2:5]§",
+    "gold_answer": "C. Mei\nMei is reporting genuine, accomplished progress — she was promoted to team lead, manages eight people, and discusses real management challenges with specificity. Leon is projecting success in terms that are impressive-sounding but incomplete: TechCrunch coverage, Bloomberg coverage, Series A funding — but also 'close to profitability' and 'it's been a journey,' which signals the destination hasn't arrived. He uses aspirational language ('trajectory is there') rather than achieved milestones. Both sound confident, but Mei's confidence is retrospective; Leon's is prospective.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 7,
+      "fetch_messages_calls": 5,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "read_file",
+        "read_file",
+        "fetch_messages",
+        "fetch_messages",
+        "shell",
+        "read_file",
+        "search_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 70.1,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3306,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya appears to enjoy ramen (she proposed it for dinner and was interested in the mushroom broth option at Tanuki) and likes trying new restaurants — she eagerly checked the Mariposa brunch menu and frequently organizes group dining outings. No specific dietary restrictions or strong dislikes were explicitly stated by her in the conversations.\n\n§cited:[lme:socialmem_Q1_a1b2c3d4:42,lme:socialmem_Q1_a1b2c3d4:26,lme:socialmem_Q1_a1b2c3d4:3,lme:socialmem_Q1_a1b2c3d4:4,lme:socialmem_Q1_a1b2c3d4:20]§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 6,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 35.98,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.4167,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "The question asks about expressing a clear preference for quieter venues where you can have a real conversation — that's Priya, who said \"honestly I just want somewhere you can actually have a conversation.\"\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:13]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 17.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.378,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "The conversation reveals Jordan and Sam share a history involving outdoor activities, specifically a past incident at Mt. Tamalpais that Jordan hasn't fully recovered from—Jordan deflects questions about it by saying \"Ask Sam,\" implying Sam was there and bears some unspoken responsibility, and Sam is aware enough of Jordan's injury to casually ask about recovery in front of the group, though both deflect from discussing details openly.\n\n§cited:[lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:40,lme:socialmem_Q7_f6a7b8c9:51]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 18.57,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_n2d4e5f6",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2676,
+    "em": false,
+    "question": "What was decided about the Christmas dinner menu, and did all family members seem equally happy with that plan?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Based on the conversation from 2025-02-03, Ngozi (mum) decided on egusi, jollof, and traditional Nigerian Christmas food, cooking for three days before Christmas. Not all family members were equally happy — Tobenna was very enthusiastic, but Adaora questioned the amount of food and was uncertain about attending due to thesis deadlines, while Emeka was non-committal",
+    "gold_answer": "A. Adaora\nNgozi planned to cook the full traditional spread — goat, jollof, suya, fried plantain. Emeka and Tobenna were enthusiastic. Adaora, however, asked specifically if Ngozi could include beans dishes (moi moi, akara) and deflected from the meat options with 'I'll have whatever there is' — suggesting she has a preference for the plant-based side dishes. When Tobenna noted 'Ada you love goat,' she said only 'let me have the beans' without explaining. The rest of the family proceeded as if the standard menu was settled.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 6,
+      "fetch_messages_calls": 5,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "read_file",
+        "read_file",
+        "search_messages",
+        "fetch_messages",
+        "search_messages",
+        "read_file",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 59.24,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0548,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "A. Adaora.\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:11]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 9.46,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2c9d0e1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieval_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4183,
+    "em": false,
+    "question": "How did Chidi's attitude toward visiting his children in the UK change over the course of the conversations?",
+    "predicted_answer": "Chidi went from never previously visiting his children in London (Ngozi said she \"nearly fell off my chair\" at the idea) to committing to come in March, seemingly prompted by a recent health checkup that made him realize life is short, and by the latest conversation he was already taking charge of family logistics like Christmas Eve arrival plans.\n\n§cited:[lme:socialmem_Q8_n2c9d0e1:27,lme:socialmem_Q8_n2c9d0e1:31,lme:socialmem_Q8_n2c9d0e1:32,lme:socialmem_Q8_n2c9d0e1:50,lme:socialmem_Q8_n2c9d0e1:64]§",
+    "gold_answer": "Chidi shifted from his established position of resisting travel to proactively suggesting a visit. In Sessions 1 and 2, there was no mention of him visiting — the expectation was clearly that children come to him. By Session 3, Ngozi announced that Chidi had suggested coming to London in March, something she described as so unexpected she 'nearly fell off her chair.' Ngozi attributed the change to a health checkup that 'reminded him life is short.' Chidi himself confirmed: 'I will come in March' — a clear behavioral shift from his prior pattern.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 20.25,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2d0e1f2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2797,
+    "em": false,
+    "question": "How did Emeka's stance on coming home for Christmas change from the beginning to the end of the conversations?",
+    "predicted_answer": "Based on the evidence from recall and fetched messages:\n\nEmeka shifted from initially wanting to host Christmas at his London place (Feb 17: \"Dad coming to London?? That would be great, we'd love to host\") to agreeing to come home on Christmas Eve after his parents insisted (Feb 24: \"Yes Dad 😊 we'll make it work\").\n\n§cited:[lme:socialmem_Q8_n2d0e1f2:0,lme:socialmem_Q8_n2d0e1f2:29,lme:socialmem_Q8_n2d0e1f2:49,lme:socialmem_Q8_n2d0e1f2:50,lme:socialmem_Q8_n2d0e1f2:51]§",
+    "gold_answer": "Emeka moved from open-ended stalling to a firm commitment under parental pressure. In Session 1, he said he'd 'see what Adaeze's schedule looks like' and would know 'in a few weeks.' In Session 4, he tried again — citing Adaeze's work event on the 24th as a reason they might arrive Christmas morning instead of Christmas Eve. Chidi's single-line response ('Emeka. You are coming on Christmas Eve.') ended it immediately; Emeka replied 'Yes Dad, we'll make it work.' The shift was from strategic delay to compliance.",
+    "tool_summary": {
+      "recall_memory_calls": 3,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 65.33,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": null,
+    "f1": 0.0,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 14.62,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_r3b8c9d0",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3212,
+    "em": false,
+    "question": "How did Cass's approach to influencing route choices change across the conversations?",
+    "predicted_answer": "I've been digging through recall_memory, search_messages, and fetch_messages across multiple sessions, pulling Cass's route-related messages from the group conversations. Here's what I have so far and where I'm stuck:\n\n**What I found (3 sessions, 2025-03-03 to 2025-03-17):**\n\n- **Session 1 (Mar 3):** Cass stated a direct personal preference — \"I'd actually prefer a woodland section, the Millbrook loop goes through Hartley Wood\" — then simply voted \"Millbrook.\"\n- **Session 2 (Mar 10):** When Dani proposed the Blackmoor Scramble, Cass shifted tactics — instead of stating a preference, Cass raised a factual concern about an SSSI area: \"ravens nest there in spring actually.\" More indirect, ecology-based objection.\n- **Session 3 (Mar 1",
+    "gold_answer": "Cass moved from passive preference-stating to active advocacy backed by data. In Session 1, Cass simply expressed a preference for woodland routes ('I'd actually prefer a woodland section'). By Session 3, after observing skylarks nesting, they shifted to arguing the group should actively reroute for ecological reasons. In Sessions 4 and 5 they escalated further — raising deer rutting grounds and then sending a BTO survey link with three years of lapwing data to counter Dani's dismissal. The preference became a position backed by evidence.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 1,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 5,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "read_file",
+        "read_file",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 58.07,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1818,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "**B. Dani**\n\nBev explicitly questioned Dani's intensity (\"whatever happened to the social side of this group\"), voted woodland with Cass and said Marcus probably would too, and Yusuf sided with the majority — only Dani actually prefers pushing through.\n\n§cited:[lme:socialmem_Q6_r3c1d2e3:13,lme:socialmem_Q6_r3c1d2e3:14,lme:socialmem_Q6_r3c1d2e3:57,lme:socialmem_Q6_r3c1d2e3:11]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 15.38,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1972,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka consistently shares original vinyl pressings from the late 1950s–1970s across soul, R&B, and Brazilian genres, always specifying artist, year, and label — suggesting a dedicated collector focused on vintage originals rather than reissues.\n\n§cited:[2eee434436d1,lme:socialmem_Q1_v4s3c3:7,lme:socialmem_Q1_v4s3c3:9,lme:socialmem_Q1_v4s3c3:14,lme:socialmem_Q1_v4s3c3:32,lme:socialmem_Q1_v4s3c3:41,lme:socialmem_Q1_v4s3c3:50]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.67,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_v4s1c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "Both Theo and Nneka said they would not attend the fair as part of the group. Who gave speed or efficiency as their reason for preferring to go alone?\n\nOptions:\nA. Gil\nB. Nneka\nC. Preet\nD. Rashida",
+    "predicted_answer": "C. Preet\n\n§cited:[lme:socialmem_Q4_v4s1c2:52,lme:socialmem_Q4_v4s1c2:5]§",
+    "gold_answer": "B. Nneka\nNneka. Her stated reason was 'I move faster alone' — a direct efficiency argument about pace. Theo endorsed her position ('Nneka is correct. Group fairs are slower.') using similar surface language, but his preference for solo hunting is rooted in a different concern: Theo attends fairs to hunt specific original pressings, and group attendance is a distraction from that mission — it's about focus and quality, not logistics. Nneka's reason is purely procedural (she moves through stalls faster without others); Theo's is about not wasting a quality hunt on a social event.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 2,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.28,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s2c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3884,
+    "em": false,
+    "question": "How has Rashida's approach to buying records at fairs changed over the sessions?",
+    "predicted_answer": "I've gathered solid evidence from two sessions but hit a wall on the third. Here's where things stand:\n\n**What I've confirmed (from fetch_messages and recall):**\n\n1. **Session 1 (Apr 7)** — Rashida was purely social about fairs; she wanted to go in a group for fun (\"Preet and I will go together and actually have fun\"). No buying behavior yet, just excitement.\n\n2. **Session 2 (Apr 14)** — Rashida bought four records, admitting she \"slightly overdone it.\" Preet tried to stop her at three but a fourth had irresistible sleeve art. Two of the four turned out to be reissues, and she got gently called out by Theo for prioritizing looks over pressing quality.\n\n3. **Session 3 (May 5, Camden Record Fair)** — recall_memory pulled a quote attributed to",
+    "gold_answer": "Rashida started with no budget constraints — she bought freely and described purchases as 'beautiful' regardless of cost. At Session 2, she overdid it at Fitzroy Fair (four records, two of them reissues) and announced 'last fair for a while honestly. I need to behave myself — setting a budget for the next one.' By Session 4, she reiterated the self-imposed limit ('I'm on a budget this time. strict budget.') though Preet called this out as a repeated promise. By Session 5, she actually held to it: two records bought, three walked away from. The shift is from unconstrained enthusiasm to a self-managed spending limit, triggered by overspending and maintained with social accountability.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 5,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "shell",
+        "shell",
+        "shell",
+        "read_file",
+        "read_file"
+      ]
+    },
+    "elapsed_s": 64.78,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieval_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2829,
+    "em": false,
+    "question": "Did Theo always refuse to buy reissues, or did his position on this change over time?",
+    "predicted_answer": "His position didn't really change. On April 28 he said he'd skip a fair if it was \"mostly box-fresh reissues,\" and on May 5 he told Rashida flatly \"originals only\" and that he wants \"a pressing with some history in it.\" Rashida felt she had to pre-apologise for buying two reissues, which tells you his stance was well known in the group. What shifted was that he was willing to praise the fair overall once he saw serious original pressings from Gil and Nneka — but he still wouldn't touch reissues himself.\n\n§cited:[lme:socialmem_Q8_v4s3c1:38,lme:socialmem_Q8_v4s3c1:43,lme:socialmem_Q8_v4s3c1:52]§",
+    "gold_answer": "Theo's position started as strong skepticism and hardened into categorical refusal. In Session 1 he expressed doubt but not a ban ('reissues are a gamble'). In Session 2, he critiqued Rashida's reissue purchases for their mastering but had not yet announced a personal rule. In Session 3, he bought an expensive new Coltrane reissue himself, found the mastering to be terrible, and declared: 'Nothing with a digital chain in the mastering is worth buying. I'm done. Originals only from now.' The 'Never again' after describing it as a waste makes clear this is a permanent policy change. By Session 5, his position is unqualified: 'Originals only, Rashida. That is the whole point.'",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 18.66,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.1899,
+    "em": false,
+    "question": "How did Preet's relationship to physical record collecting change over the conversations?",
+    "predicted_answer": "Preet started as an enthusiastic, impulse-driven buyer excited about cover art and the fair experience, then gradually developed more discernment — by Camden, the group was celebrating him walking away from records as evidence of \"growth\" and restraint.\n\n§cited:[lme:socialmem_Q8_v4s3c2:12]§",
+    "gold_answer": "Preet began as primarily a streamer with minimal physical ownership. In Session 1, their enthusiasm was about discovering records at fairs but framed aesthetically — praising a Fela reissue's cover without caring that it wasn't an original. In Session 2, after finding a Brazilian compilation they'd been writing about, they said 'First time I've wanted to own something more than stream it honestly' — noting the shift in themselves even as they named it. In Session 3, they went back to the same seller and bought three more records, announcing: 'I think I'm doing this now.' By Sessions 4 and 5, attending fairs to build the collection is the stated goal, and Preet is asking what to look for.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 4,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 6,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "read_file",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 65.72,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2278,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "From what I can see, Gil's approach did change across the two fairs — initially he only dropped in with technical record-collecting knowledge (catalogue numbers, pressings) without committing to attend, but by the Camden fair session he actively engaged with the group's plans and attended, even after initially dismissing it as too commercial.",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "read_file",
+        "shell",
+        "shell",
+        "read_file",
+        "shell",
+        "read_file"
+      ]
+    },
+    "elapsed_s": 55.36,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a5s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.4433,
+    "em": false,
+    "question": "All five members of the Maple Street group shared their views on the proposed residents' parking scheme. What was each person's position and reasoning?",
+    "predicted_answer": "**Femi** — broadly in favour but worried about commuter overflow onto the next street. **Claudette** — not convinced; sees the £80/year fee as a burden on residents who've always parked freely. **Marcus** — strongly in favour; the school gate pavement parking is \"untenable\" as a parent. **Jordan** — neutral (no car), thinks £80 is steep, wanted a review clause after a year. **Vera** — supports it; needs reliable parking on clinic days for home visits.\n\n§cited:[lme:socialmem_Q3_a5s2c1:10]§",
+    "gold_answer": "All five weighed in with distinct positions and reasons: Claudette was against — she objected on cost grounds ('£80 a year is an additional burden on residents who have always parked freely here') and felt paying for previously free parking was wrong. Marcus was in favour — his reason was child safety at the school gate, where pavement parking creates danger during the school run. Jordan was neutral — they have no car and the scheme does not affect them directly, though they noted empathy for those on tight budgets. Femi was broadly in favour but had one reservation: displaced commuter parking moving to neighbouring streets. Vera was in favour — her reason was professional: home visits mean she needs parking near the house on clinic days.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 14.43,
+    "error": null
+  }
+]

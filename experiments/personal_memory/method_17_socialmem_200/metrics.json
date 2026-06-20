@@ -1,0 +1,85 @@
+{
+  "method_id": "method_17_socialmem_200",
+  "generated_at": "2026-06-18T22:38:00.683873",
+  "result_path": "eval\\results\\personal_memory\\method_17_socialmem_200.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_17_structured_answer_contract_200",
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "limit": 200,
+  "offset": 0,
+  "n": 200,
+  "scores": {
+    "overall": {
+      "f1": 0.2988,
+      "em": 0.0,
+      "judge_acc": 0.71,
+      "n": 200,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.3574,
+        "em": 0.0,
+        "judge_acc": 0.7885,
+        "n": 52,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2413,
+        "em": 0.0,
+        "judge_acc": 0.6066,
+        "n": 61,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.3041,
+        "em": 0.0,
+        "judge_acc": 0.7356,
+        "n": 87,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.71,
+  "latency": {
+    "avg_elapsed_s": 29.181,
+    "p50_elapsed_s": 27.715,
+    "p95_elapsed_s": 50.86
+  },
+  "token_usage": {
+    "avg_token_usage": 71482.765,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 71482.765,
+    "avg_final_call_input_tokens_estimate": 44633.82,
+    "avg_cache_prompt_tokens": 101017.54,
+    "avg_cache_hit_tokens": 43656.64,
+    "avg_answer_chars": 431.19,
+    "avg_tool_result_chars": 111245.855,
+    "avg_tool_calls": 2.44
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 58,
+    "judge_null": 0,
+    "error_type_counts": {
+      "memory_update_not_versioned": 11,
+      "personal_preference_attribution_error": 24,
+      "retrieved_but_answer_wrong": 28,
+      "retrieved_but_evidence_unused": 30
+    }
+  }
+}

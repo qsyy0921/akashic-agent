@@ -90,6 +90,79 @@ CREATE INDEX IF NOT EXISTS ix_memory_replacements_old_item
     ON memory_replacements (old_item_id, created_at);
 CREATE INDEX IF NOT EXISTS ix_memory_replacements_new_item
     ON memory_replacements (new_item_id, created_at);
+CREATE TABLE IF NOT EXISTS memory_raw_events (
+    source_ref    TEXT PRIMARY KEY,
+    session_key   TEXT,
+    speaker_id    TEXT,
+    speaker       TEXT,
+    message_index INTEGER,
+    seq           INTEGER,
+    timestamp     TEXT,
+    date          TEXT,
+    content       TEXT,
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_memory_raw_events_session
+    ON memory_raw_events (session_key, message_index);
+CREATE INDEX IF NOT EXISTS ix_memory_raw_events_speaker
+    ON memory_raw_events (speaker_id, speaker);
+CREATE INDEX IF NOT EXISTS ix_memory_raw_events_date
+    ON memory_raw_events (date);
+CREATE TABLE IF NOT EXISTS memory_entities (
+    id               TEXT PRIMARY KEY,
+    entity_type      TEXT NOT NULL DEFAULT 'person',
+    name             TEXT NOT NULL,
+    aliases_json     TEXT,
+    source_refs_json TEXT,
+    created_at       TEXT NOT NULL,
+    updated_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_memory_entities_name
+    ON memory_entities (name);
+CREATE TABLE IF NOT EXISTS memory_event_facts (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id          TEXT,
+    predicate        TEXT NOT NULL,
+    subject          TEXT,
+    object_value     TEXT,
+    time             TEXT,
+    source_refs_json TEXT,
+    confidence       REAL NOT NULL DEFAULT 0.5,
+    created_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_memory_event_facts_item
+    ON memory_event_facts (item_id);
+CREATE INDEX IF NOT EXISTS ix_memory_event_facts_subject
+    ON memory_event_facts (subject, predicate);
+CREATE TABLE IF NOT EXISTS memory_assertions (
+    item_id          TEXT PRIMARY KEY,
+    summary          TEXT NOT NULL,
+    kind             TEXT NOT NULL,
+    valid_from       TEXT,
+    valid_to         TEXT,
+    version_of       TEXT,
+    status           TEXT NOT NULL DEFAULT 'active',
+    source_refs_json TEXT,
+    created_at       TEXT NOT NULL,
+    updated_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_memory_assertions_status
+    ON memory_assertions (status, kind);
+CREATE TABLE IF NOT EXISTS memory_relation_facts (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id          TEXT,
+    person_a         TEXT NOT NULL,
+    relation         TEXT NOT NULL,
+    person_b         TEXT NOT NULL,
+    source_refs_json TEXT,
+    confidence       REAL NOT NULL DEFAULT 0.5,
+    created_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_memory_relation_facts_item
+    ON memory_relation_facts (item_id);
+CREATE INDEX IF NOT EXISTS ix_memory_relation_facts_pair
+    ON memory_relation_facts (person_a, person_b, relation);
 """
 
 # VEC_SCHEMA 在 MemoryStore2.__init__ 中按 vec_dim 动态生成
@@ -142,6 +215,206 @@ def _json_object(raw: object) -> dict[str, object]:
         return {}
     data = json.loads(str(raw))
     return cast(dict[str, object], data) if isinstance(data, dict) else {}
+
+
+def _safe_json_object(raw: object) -> dict[str, object]:
+    if isinstance(raw, dict):
+        return cast(dict[str, object], raw)
+    try:
+        return _json_object(raw)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return {}
+
+
+def _json_list(values: Sequence[object]) -> str:
+    return json.dumps([str(value) for value in values if str(value).strip()], ensure_ascii=False)
+
+
+def _load_json_list(raw: object) -> list[str]:
+    if not raw:
+        return []
+    try:
+        data = json.loads(str(raw))
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return []
+    if not isinstance(data, list):
+        return []
+    result: list[str] = []
+    for value in data:
+        text = str(value or "").strip()
+        if text and text not in result:
+            result.append(text)
+    return result
+
+
+def _raw_event_query_terms(query: str) -> list[str]:
+    seen: set[str] = set()
+    terms: list[str] = []
+    stopwords = {
+        "about",
+        "after",
+        "answer",
+        "before",
+        "both",
+        "does",
+        "each",
+        "from",
+        "group",
+        "have",
+        "into",
+        "members",
+        "options",
+        "people",
+        "question",
+        "their",
+        "there",
+        "this",
+        "what",
+        "when",
+        "where",
+        "which",
+        "with",
+        "would",
+    }
+    for token in re.findall(r"[A-Za-z][A-Za-z0-9_\-']+", str(query or "")):
+        text = token.lower().strip("'")
+        if len(text) < 3 or text in stopwords:
+            continue
+        if text not in seen:
+            seen.add(text)
+            terms.append(text)
+        if len(terms) >= 16:
+            break
+    return terms
+
+
+def _clean_source_ref(source_ref: object) -> str:
+    return str(source_ref or "").strip()
+
+
+def _source_refs_from_source_ref(source_ref: object) -> list[str]:
+    raw = _clean_source_ref(source_ref)
+    if not raw:
+        return []
+    base = raw.split("#", 1)[0].strip()
+    if base.startswith("["):
+        try:
+            loaded = json.loads(base)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            loaded = None
+        if isinstance(loaded, list):
+            refs = []
+            for value in loaded:
+                text = str(value or "").strip()
+                if text and text not in refs:
+                    refs.append(text)
+            return refs
+    return [base or raw]
+
+
+def _first_nonempty_text(extra: dict[str, object], *keys: str) -> str:
+    for key in keys:
+        value = extra.get(key)
+        text = str(value or "").strip()
+        if text:
+            return text
+    return ""
+
+
+def _first_int(extra: dict[str, object], *keys: str) -> int | None:
+    for key in keys:
+        value = extra.get(key)
+        if value is None or value == "":
+            continue
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _source_ref_message_index(source_ref: str) -> int | None:
+    base = _clean_source_ref(source_ref).split("#", 1)[0]
+    match = re.search(r"(?::|@)(\d+)$", base)
+    if match is None:
+        return None
+    try:
+        return int(match.group(1))
+    except ValueError:
+        return None
+
+
+def _source_ref_session_key(source_ref: str, extra: dict[str, object]) -> str:
+    explicit = _first_nonempty_text(extra, "session_key", "scope_session_key", "chat_key")
+    if explicit:
+        return explicit
+    channel = _first_nonempty_text(extra, "scope_channel", "channel")
+    chat_id = _first_nonempty_text(extra, "scope_chat_id", "chat_id")
+    if channel and chat_id:
+        return f"{channel}:{chat_id}"
+    base = _clean_source_ref(source_ref).split("#", 1)[0]
+    if not base:
+        return ""
+    if re.search(r"(?::|@)\d+$", base):
+        return re.sub(r"(?::|@)\d+$", "", base)
+    return base
+
+
+def _event_date(timestamp: str) -> str:
+    text = str(timestamp or "").strip()
+    if not text:
+        return ""
+    match = re.match(r"(\d{4}-\d{2}-\d{2})", text)
+    return match.group(1) if match else ""
+
+
+def _entity_id(name: str) -> str:
+    normalized = re.sub(r"\s+", " ", name.strip().lower())
+    digest = hashlib.sha1(normalized.encode("utf-8")).hexdigest()[:12]
+    return f"person:{digest}"
+
+
+def _entity_names(summary: str, extra: dict[str, object]) -> list[str]:
+    names: list[str] = []
+    for key in ("speaker", "speaker_name", "sender_name", "name", "person", "user_name"):
+        text = _first_nonempty_text(extra, key)
+        if text and text not in names:
+            names.append(text)
+    stop = {
+        "The",
+        "This",
+        "That",
+        "User",
+        "Assistant",
+        "Session",
+        "Memory",
+        "Based",
+    }
+    for match in re.finditer(r"\b[A-Z][a-zA-Z]{1,31}\b", summary or ""):
+        value = match.group(0)
+        if value not in stop and value not in names:
+            names.append(value)
+        if len(names) >= 8:
+            break
+    return names
+
+
+def _message_metadata_from_content(content: object) -> dict[str, object]:
+    text = str(content or "")
+    metadata: dict[str, object] = {}
+    speaker_id = re.search(r"\bspeaker_id=([^\s\]]+)", text)
+    if speaker_id:
+        metadata["speaker_id"] = speaker_id.group(1)
+    message_index = re.search(r"\bmessage_index=(\d+)", text)
+    if message_index:
+        metadata["message_index"] = int(message_index.group(1))
+    date = re.search(r"\bdate=(\d{4}-\d{2}-\d{2})", text)
+    if date:
+        metadata["date"] = date.group(1)
+    speaker = re.search(r"\]\s*([^:\]\n]{1,80}):", text)
+    if speaker:
+        metadata["speaker"] = speaker.group(1).strip()
+    return metadata
 
 
 def _json_embedding(raw: object) -> list[float] | None:
@@ -385,6 +658,630 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
         self.close()
 
     # ------------------------------------------------------------------
+    # Structured memory projection
+    # ------------------------------------------------------------------
+
+    def _sync_structured_item_by_id(
+        self,
+        item_id: str,
+        *,
+        version_of: str | None = None,
+    ) -> None:
+        row = self._db.execute(
+            "SELECT id, memory_type, summary, extra_json, source_ref, happened_at, "
+            "status, created_at, updated_at "
+            "FROM memory_items WHERE id=?",
+            (item_id,),
+        ).fetchone()
+        if row is None:
+            return
+        (
+            row_id,
+            memory_type,
+            summary,
+            extra_json,
+            source_ref,
+            happened_at,
+            status,
+            created_at,
+            updated_at,
+        ) = row
+        item = {
+            "id": str(row_id),
+            "memory_type": str(memory_type),
+            "summary": str(summary),
+            "extra_json": _safe_json_object(extra_json),
+            "source_ref": str(source_ref) if source_ref else "",
+            "happened_at": str(happened_at) if happened_at else "",
+            "status": str(status or "active"),
+            "created_at": str(created_at) if created_at else _now_iso(),
+            "updated_at": str(updated_at) if updated_at else _now_iso(),
+        }
+        self._sync_structured_item(item, version_of=version_of)
+
+    def _sync_structured_item(
+        self,
+        item: dict[str, object],
+        *,
+        version_of: str | None = None,
+    ) -> None:
+        item_id = str(item.get("id") or "").strip()
+        if not item_id:
+            return
+        summary = str(item.get("summary") or "").strip()
+        memory_type = str(item.get("memory_type") or "event").strip() or "event"
+        extra = cast(dict[str, object], item.get("extra_json") or {})
+        status = str(item.get("status") or "active").strip() or "active"
+        happened_at = str(item.get("happened_at") or "").strip()
+        created_at = str(item.get("created_at") or _now_iso())
+        updated_at = str(item.get("updated_at") or _now_iso())
+        source_refs = _source_refs_from_source_ref(item.get("source_ref"))
+        source_refs_json = _json_list(source_refs)
+
+        self._db.execute(
+            """
+            INSERT INTO memory_assertions
+                (item_id, summary, kind, valid_from, valid_to, version_of,
+                 status, source_refs_json, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(item_id) DO UPDATE SET
+                summary=excluded.summary,
+                kind=excluded.kind,
+                valid_from=excluded.valid_from,
+                valid_to=excluded.valid_to,
+                version_of=COALESCE(excluded.version_of, memory_assertions.version_of),
+                status=excluded.status,
+                source_refs_json=excluded.source_refs_json,
+                updated_at=excluded.updated_at
+            """,
+            (
+                item_id,
+                summary,
+                memory_type,
+                happened_at or None,
+                updated_at if status != "active" else None,
+                version_of,
+                status,
+                source_refs_json,
+                created_at,
+                updated_at,
+            ),
+        )
+
+        self._db.execute("DELETE FROM memory_event_facts WHERE item_id=?", (item_id,))
+        self._db.execute("DELETE FROM memory_relation_facts WHERE item_id=?", (item_id,))
+
+        names = _entity_names(summary, extra)
+        for source_ref in source_refs:
+            message_index = _first_int(extra, "message_index", "message_idx", "seq")
+            if message_index is None:
+                message_index = _source_ref_message_index(source_ref)
+            timestamp = _first_nonempty_text(
+                extra,
+                "timestamp",
+                "datetime",
+                "time",
+                "date",
+            ) or happened_at
+            speaker = _first_nonempty_text(
+                extra,
+                "speaker",
+                "speaker_name",
+                "sender_name",
+                "name",
+                "user_name",
+            )
+            speaker_id = _first_nonempty_text(
+                extra,
+                "speaker_id",
+                "sender_id",
+                "user_id",
+                "author_id",
+            )
+            content = _first_nonempty_text(
+                extra,
+                "content",
+                "message",
+                "quote",
+                "preview",
+                "raw_text",
+            )
+            self._db.execute(
+                """
+                INSERT INTO memory_raw_events
+                    (source_ref, session_key, speaker_id, speaker, message_index,
+                     seq, timestamp, date, content, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(source_ref) DO UPDATE SET
+                    session_key=COALESCE(NULLIF(excluded.session_key, ''), memory_raw_events.session_key),
+                    speaker_id=COALESCE(NULLIF(excluded.speaker_id, ''), memory_raw_events.speaker_id),
+                    speaker=COALESCE(NULLIF(excluded.speaker, ''), memory_raw_events.speaker),
+                    message_index=CASE
+                        WHEN COALESCE(memory_raw_events.content, '') != ''
+                             AND COALESCE(excluded.content, '') = ''
+                        THEN memory_raw_events.message_index
+                        ELSE COALESCE(excluded.message_index, memory_raw_events.message_index)
+                    END,
+                    seq=CASE
+                        WHEN COALESCE(memory_raw_events.content, '') != ''
+                             AND COALESCE(excluded.content, '') = ''
+                        THEN memory_raw_events.seq
+                        ELSE COALESCE(excluded.seq, memory_raw_events.seq)
+                    END,
+                    timestamp=COALESCE(NULLIF(excluded.timestamp, ''), memory_raw_events.timestamp),
+                    date=COALESCE(NULLIF(excluded.date, ''), memory_raw_events.date),
+                    content=COALESCE(NULLIF(excluded.content, ''), memory_raw_events.content),
+                    updated_at=excluded.updated_at
+                """,
+                (
+                    source_ref,
+                    _source_ref_session_key(source_ref, extra),
+                    speaker_id,
+                    speaker,
+                    message_index,
+                    message_index,
+                    timestamp,
+                    _event_date(timestamp),
+                    content,
+                    created_at,
+                    updated_at,
+                ),
+            )
+
+        for name in names:
+            entity_id = _entity_id(name)
+            self._db.execute(
+                """
+                INSERT INTO memory_entities
+                    (id, entity_type, name, aliases_json, source_refs_json, created_at, updated_at)
+                VALUES (?, 'person', ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    name=excluded.name,
+                    source_refs_json=excluded.source_refs_json,
+                    updated_at=excluded.updated_at
+                """,
+                (entity_id, name, _json_list([name]), source_refs_json, created_at, updated_at),
+            )
+
+        subject = names[0] if names else _first_nonempty_text(extra, "speaker", "name")
+        self._db.execute(
+            """
+            INSERT INTO memory_event_facts
+                (item_id, predicate, subject, object_value, time, source_refs_json, confidence, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                item_id,
+                memory_type,
+                subject,
+                summary,
+                happened_at or None,
+                source_refs_json,
+                0.7 if source_refs else 0.45,
+                created_at,
+            ),
+        )
+
+        if len(names) >= 2:
+            for other in names[1:4]:
+                self._db.execute(
+                    """
+                    INSERT INTO memory_relation_facts
+                        (item_id, person_a, relation, person_b, source_refs_json, confidence, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        item_id,
+                        names[0],
+                        "mentioned_with",
+                        other,
+                        source_refs_json,
+                        0.45,
+                        created_at,
+                    ),
+                )
+
+    def _delete_structured_items(self, item_ids: list[str]) -> None:
+        if not item_ids:
+            return
+        placeholders = ",".join("?" for _ in item_ids)
+        self._db.execute(
+            f"DELETE FROM memory_assertions WHERE item_id IN ({placeholders})",
+            item_ids,
+        )
+        self._db.execute(
+            f"DELETE FROM memory_event_facts WHERE item_id IN ({placeholders})",
+            item_ids,
+        )
+        self._db.execute(
+            f"DELETE FROM memory_relation_facts WHERE item_id IN ({placeholders})",
+            item_ids,
+        )
+
+    def list_memory_source_refs(self, *, limit: int = 10000) -> list[str]:
+        rows = self._db.execute(
+            "SELECT source_ref FROM memory_items "
+            "WHERE COALESCE(source_ref, '') != '' "
+            "ORDER BY updated_at DESC LIMIT ?",
+            (max(1, int(limit)),),
+        ).fetchall()
+        refs: list[str] = []
+        for (source_ref,) in rows:
+            for ref in _source_refs_from_source_ref(source_ref):
+                if ref and ref not in refs:
+                    refs.append(ref)
+        return refs
+
+    def upsert_raw_events_from_messages(self, messages: list[dict[str, object]]) -> int:
+        if not messages:
+            return 0
+        now = _now_iso()
+        rows: list[tuple[object, ...]] = []
+        for message in messages:
+            source_ref = str(
+                message.get("source_ref")
+                or message.get("id")
+                or ""
+            ).strip()
+            if not source_ref:
+                continue
+            extra = _safe_json_object(message.get("extra"))
+            content = str(message.get("content") or "")
+            parsed = _message_metadata_from_content(content)
+            session_key = str(message.get("session_key") or "").strip()
+            seq = _coerce_int(message.get("seq"), _source_ref_message_index(source_ref) or 0)
+            speaker_id = str(
+                message.get("speaker_id")
+                or message.get("sender_id")
+                or extra.get("speaker_id")
+                or parsed.get("speaker_id")
+                or ""
+            ).strip()
+            speaker = str(
+                message.get("speaker")
+                or message.get("sender_name")
+                or extra.get("speaker")
+                or parsed.get("speaker")
+                or ""
+            ).strip()
+            message_index_value = (
+                message.get("message_index")
+                or extra.get("message_index")
+                or parsed.get("message_index")
+                or seq
+            )
+            message_index = _coerce_int(message_index_value, seq)
+            timestamp = str(
+                message.get("timestamp")
+                or message.get("ts")
+                or extra.get("timestamp")
+                or ""
+            ).strip()
+            date = str(
+                message.get("date")
+                or extra.get("date")
+                or parsed.get("date")
+                or _event_date(timestamp)
+            ).strip()
+            rows.append(
+                (
+                    source_ref,
+                    session_key,
+                    speaker_id,
+                    speaker,
+                    message_index,
+                    seq,
+                    timestamp,
+                    date,
+                    content,
+                    now,
+                    now,
+                )
+            )
+        if not rows:
+            return 0
+        self._db.executemany(
+            """
+            INSERT INTO memory_raw_events
+                (source_ref, session_key, speaker_id, speaker, message_index,
+                 seq, timestamp, date, content, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(source_ref) DO UPDATE SET
+                session_key=COALESCE(NULLIF(excluded.session_key, ''), memory_raw_events.session_key),
+                speaker_id=COALESCE(NULLIF(excluded.speaker_id, ''), memory_raw_events.speaker_id),
+                speaker=COALESCE(NULLIF(excluded.speaker, ''), memory_raw_events.speaker),
+                message_index=COALESCE(excluded.message_index, memory_raw_events.message_index),
+                seq=COALESCE(excluded.seq, memory_raw_events.seq),
+                timestamp=COALESCE(NULLIF(excluded.timestamp, ''), memory_raw_events.timestamp),
+                date=COALESCE(NULLIF(excluded.date, ''), memory_raw_events.date),
+                content=COALESCE(NULLIF(excluded.content, ''), memory_raw_events.content),
+                updated_at=excluded.updated_at
+            """,
+            rows,
+        )
+        self._db.commit()
+        return len(rows)
+
+    def get_structured_evidence_for_items(
+        self,
+        item_ids: list[str],
+    ) -> dict[str, dict[str, object]]:
+        clean_ids = [str(item_id).strip() for item_id in item_ids if str(item_id).strip()]
+        if not clean_ids:
+            return {}
+        placeholders = ",".join("?" for _ in clean_ids)
+        existing_assertions = {
+            str(row[0])
+            for row in self._db.execute(
+                f"SELECT item_id FROM memory_assertions WHERE item_id IN ({placeholders})",
+                clean_ids,
+            ).fetchall()
+        }
+        missing = [item_id for item_id in clean_ids if item_id not in existing_assertions]
+        if missing:
+            for item_id in missing:
+                self._sync_structured_item_by_id(item_id)
+            self._db.commit()
+
+        assertions = self._db.execute(
+            "SELECT item_id, summary, kind, valid_from, valid_to, version_of, "
+            "status, source_refs_json, created_at, updated_at "
+            f"FROM memory_assertions WHERE item_id IN ({placeholders})",
+            clean_ids,
+        ).fetchall()
+        result: dict[str, dict[str, object]] = {
+            item_id: {
+                "assertion": None,
+                "source_refs": [],
+                "raw_events": [],
+                "entities": [],
+                "event_facts": [],
+                "relation_facts": [],
+            }
+            for item_id in clean_ids
+        }
+        source_refs_by_item: dict[str, list[str]] = {}
+        for row in assertions:
+            (
+                item_id,
+                summary,
+                kind,
+                valid_from,
+                valid_to,
+                version_of,
+                status,
+                source_refs_json,
+                created_at,
+                updated_at,
+            ) = row
+            source_refs = _load_json_list(source_refs_json)
+            source_refs_by_item[str(item_id)] = source_refs
+            result[str(item_id)]["assertion"] = {
+                "item_id": str(item_id),
+                "summary": str(summary),
+                "kind": str(kind),
+                "valid_from": str(valid_from or ""),
+                "valid_to": str(valid_to or ""),
+                "version_of": str(version_of or ""),
+                "status": str(status or ""),
+                "source_refs": source_refs,
+                "created_at": str(created_at or ""),
+                "updated_at": str(updated_at or ""),
+            }
+            result[str(item_id)]["source_refs"] = source_refs
+
+        fact_rows = self._db.execute(
+            "SELECT item_id, predicate, subject, object_value, time, source_refs_json, "
+            "confidence, created_at "
+            f"FROM memory_event_facts WHERE item_id IN ({placeholders}) ORDER BY id ASC",
+            clean_ids,
+        ).fetchall()
+        for row in fact_rows:
+            item_id, predicate, subject, object_value, time_value, refs_json, confidence, created_at = row
+            refs = _load_json_list(refs_json)
+            source_refs_by_item.setdefault(str(item_id), [])
+            for ref in refs:
+                if ref not in source_refs_by_item[str(item_id)]:
+                    source_refs_by_item[str(item_id)].append(ref)
+            result[str(item_id)]["event_facts"].append(
+                {
+                    "predicate": str(predicate),
+                    "subject": str(subject or ""),
+                    "object_value": str(object_value or ""),
+                    "time": str(time_value or ""),
+                    "source_refs": refs,
+                    "confidence": float(confidence or 0.0),
+                    "created_at": str(created_at or ""),
+                }
+            )
+
+        relation_rows = self._db.execute(
+            "SELECT item_id, person_a, relation, person_b, source_refs_json, "
+            "confidence, created_at "
+            f"FROM memory_relation_facts WHERE item_id IN ({placeholders}) ORDER BY id ASC",
+            clean_ids,
+        ).fetchall()
+        for row in relation_rows:
+            item_id, person_a, relation, person_b, refs_json, confidence, created_at = row
+            result[str(item_id)]["relation_facts"].append(
+                {
+                    "person_a": str(person_a),
+                    "relation": str(relation),
+                    "person_b": str(person_b),
+                    "source_refs": _load_json_list(refs_json),
+                    "confidence": float(confidence or 0.0),
+                    "created_at": str(created_at or ""),
+                }
+            )
+
+        all_refs = sorted({ref for refs in source_refs_by_item.values() for ref in refs})
+        raw_events_by_ref: dict[str, dict[str, object]] = {}
+        if all_refs:
+            ref_placeholders = ",".join("?" for _ in all_refs)
+            raw_rows = self._db.execute(
+                "SELECT source_ref, session_key, speaker_id, speaker, message_index, "
+                "seq, timestamp, date, content "
+                f"FROM memory_raw_events WHERE source_ref IN ({ref_placeholders})",
+                all_refs,
+            ).fetchall()
+            for row in raw_rows:
+                source_ref, session_key, speaker_id, speaker, message_index, seq, timestamp, date, content = row
+                raw_events_by_ref[str(source_ref)] = {
+                    "source_ref": str(source_ref),
+                    "session_key": str(session_key or ""),
+                    "speaker_id": str(speaker_id or ""),
+                    "speaker": str(speaker or ""),
+                    "message_index": message_index,
+                    "seq": seq,
+                    "timestamp": str(timestamp or ""),
+                    "date": str(date or ""),
+                    "content": str(content or ""),
+                }
+        for item_id, refs in source_refs_by_item.items():
+            result[item_id]["raw_events"] = [
+                raw_events_by_ref[ref] for ref in refs if ref in raw_events_by_ref
+            ]
+
+        entity_rows = self._db.execute(
+            "SELECT id, entity_type, name, aliases_json, source_refs_json "
+            "FROM memory_entities ORDER BY updated_at DESC LIMIT 500"
+        ).fetchall()
+        for item_id, refs in source_refs_by_item.items():
+            ref_set = set(refs)
+            entities: list[dict[str, object]] = []
+            for row in entity_rows:
+                entity_id, entity_type, name, aliases_json, refs_json = row
+                entity_refs = _load_json_list(refs_json)
+                if ref_set and not ref_set.intersection(entity_refs):
+                    continue
+                entities.append(
+                    {
+                        "id": str(entity_id),
+                        "entity_type": str(entity_type),
+                        "name": str(name),
+                        "aliases": _load_json_list(aliases_json),
+                        "source_refs": entity_refs,
+                    }
+                )
+                if len(entities) >= 8:
+                    break
+            result[item_id]["entities"] = entities
+
+        return result
+
+    def search_raw_events(
+        self,
+        query: str,
+        *,
+        limit: int = 30,
+        session_key: str = "",
+        speaker_id: str = "",
+        date_from: str = "",
+        date_to: str = "",
+    ) -> list[dict[str, object]]:
+        """Search production raw-event projections.
+
+        This intentionally reads `memory_raw_events`, not SessionStore. It lets
+        answer-time resolvers consume the source-grounded schema created by
+        memory2 instead of falling back to ad hoc message search.
+        """
+        terms = _raw_event_query_terms(query)
+        if not terms:
+            return []
+        safe_limit = max(1, min(int(limit), 200))
+        where_parts: list[str] = []
+        params: list[object] = []
+        if session_key:
+            where_parts.append("session_key = ?")
+            params.append(session_key)
+        if speaker_id:
+            where_parts.append("(speaker_id = ? OR speaker = ?)")
+            params.extend([speaker_id, speaker_id])
+        if date_from:
+            where_parts.append("COALESCE(date, '') >= ?")
+            params.append(date_from)
+        if date_to:
+            where_parts.append("COALESCE(date, '') <= ?")
+            params.append(date_to)
+
+        term_parts: list[str] = []
+        for term in terms:
+            term_parts.append(
+                "(LOWER(COALESCE(content, '')) LIKE ? "
+                "OR LOWER(COALESCE(speaker, '')) LIKE ? "
+                "OR LOWER(COALESCE(speaker_id, '')) LIKE ? "
+                "OR LOWER(COALESCE(session_key, '')) LIKE ?)"
+            )
+            like = f"%{term.lower()}%"
+            params.extend([like, like, like, like])
+        where_parts.append(f"({' OR '.join(term_parts)})")
+        where_sql = " AND ".join(where_parts)
+        rows = self._db.execute(
+            "SELECT source_ref, session_key, speaker_id, speaker, message_index, "
+            "seq, timestamp, date, content "
+            "FROM memory_raw_events "
+            f"WHERE {where_sql} "
+            "ORDER BY COALESCE(date, '') ASC, "
+            "COALESCE(message_index, seq, 999999) ASC, "
+            "source_ref ASC "
+            "LIMIT ?",
+            (*params, max(safe_limit * 8, safe_limit)),
+        ).fetchall()
+        scored: list[tuple[dict[str, object], int]] = []
+        for row in rows:
+            (
+                source_ref,
+                row_session_key,
+                row_speaker_id,
+                speaker,
+                message_index,
+                seq,
+                timestamp,
+                date,
+                content,
+            ) = row
+            content_text = str(content or "")
+            haystack = " ".join(
+                [
+                    content_text,
+                    str(speaker or ""),
+                    str(row_speaker_id or ""),
+                    str(row_session_key or ""),
+                ]
+            ).lower()
+            matched_terms = [term for term in terms if term in haystack]
+            if not matched_terms:
+                continue
+            score = sum(3 if len(term) >= 7 else 1 for term in matched_terms)
+            scored.append(
+                (
+                    {
+                        "source_ref": str(source_ref),
+                        "session_key": str(row_session_key or ""),
+                        "speaker_id": str(row_speaker_id or ""),
+                        "speaker": str(speaker or ""),
+                        "message_index": message_index,
+                        "seq": seq,
+                        "timestamp": str(timestamp or ""),
+                        "date": str(date or ""),
+                        "content": content_text,
+                        "matched_terms": matched_terms,
+                        "raw_event_score": score,
+                    },
+                    score,
+                )
+            )
+        scored.sort(
+            key=lambda pair: (
+                -pair[1],
+                str(pair[0].get("session_key") or ""),
+                _coerce_int(pair[0].get("message_index"), 999999),
+                _coerce_int(pair[0].get("seq"), 999999),
+            )
+        )
+        return [item for item, _score in scored[:safe_limit]]
+
+    # ------------------------------------------------------------------
     # 写操作
     # ------------------------------------------------------------------
 
@@ -407,20 +1304,24 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
         ).fetchone()
         if existing:
             row_id, status = existing
+            now = _now_iso()
             if status == "superseded":
                 self._db.execute(
                     "UPDATE memory_items SET status='active', reinforcement=reinforcement+1, updated_at=?, emotional_weight=MAX(emotional_weight, ?) WHERE id=?",
-                    (_now_iso(), emotional_weight, row_id),
+                    (now, emotional_weight, row_id),
                 )
             else:
                 self._db.execute(
                     "UPDATE memory_items SET reinforcement=reinforcement+1, updated_at=?, emotional_weight=MAX(emotional_weight, ?) WHERE id=?",
-                    (_now_iso(), emotional_weight, row_id),
+                    (now, emotional_weight, row_id),
                 )
+            self._db.commit()
+            self._sync_structured_item_by_id(str(row_id))
             self._db.commit()
             return f"reinforced:{row_id}"
 
         item_id = hashlib.md5(f"{chash}{time.time()}".encode()).hexdigest()[:12]
+        now = _now_iso()
         cur = self._db.execute(
             """INSERT INTO memory_items
                (id, memory_type, summary, content_hash, embedding, emotional_weight,
@@ -436,8 +1337,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                 json.dumps(extra) if extra else None,
                 source_ref,
                 happened_at,
-                _now_iso(),
-                _now_iso(),
+                now,
+                now,
             ),
         )
         item_rowid = cur.lastrowid
@@ -447,6 +1348,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
             self._vec_insert(item_rowid, embedding)
             self._db.commit()
 
+        self._sync_structured_item_by_id(item_id)
+        self._db.commit()
         return f"new:{item_id}"
 
     def upsert_consolidation_event(
@@ -534,6 +1437,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                 self._vec_insert(new_item_rowid, new_item_emb)
                 self._db.commit()
 
+            self._sync_structured_item_by_id(str(item_id))
+            self._db.commit()
             return result
         except Exception:
             try:
@@ -556,6 +1461,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
             (_now_iso(), item_id),
         )
         self._db.commit()
+        self._sync_structured_item_by_id(item_id)
+        self._db.commit()
 
     def mark_superseded_batch(self, ids: list[str]) -> None:
         if not ids:
@@ -565,6 +1472,9 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
             "UPDATE memory_items SET status='superseded', updated_at=? WHERE id=?",
             [(now, item_id) for item_id in ids],
         )
+        self._db.commit()
+        for item_id in ids:
+            self._sync_structured_item_by_id(item_id)
         self._db.commit()
 
     def get_items_by_ids(self, ids: list[str]) -> list[dict[str, object]]:
@@ -648,6 +1558,15 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             rows,
         )
+        self._db.commit()
+        old_ids = [str(item.get("id")) for item in old_items if item.get("id")]
+        for old_id in old_ids:
+            self._sync_structured_item_by_id(old_id)
+            self._db.execute(
+                "UPDATE memory_assertions SET status='superseded', valid_to=?, updated_at=? WHERE item_id=?",
+                (now, now, old_id),
+            )
+        self._sync_structured_item_by_id(str(new_item.get("id")), version_of=old_ids[0] if old_ids else None)
         self._db.commit()
         return len(rows)
 
@@ -906,6 +1825,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
             self._db.commit()
             if cur.rowcount <= 0:
                 return None
+            self._sync_structured_item_by_id(item_id)
+            self._db.commit()
         return self.get_item_for_dashboard(item_id)
 
     def delete_item(self, item_id: str) -> bool:
@@ -920,6 +1841,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                 "DELETE FROM memory_items WHERE id=?",
                 (item_id,),
             )
+            self._delete_structured_items([item_id])
             self._vec_delete([row[0]])
             self._db.commit()
             return cur.rowcount > 0
@@ -940,6 +1862,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                 f"DELETE FROM memory_items WHERE id IN ({placeholders})",
                 ids,
             )
+            self._delete_structured_items(ids)
             self._vec_delete(rowids)
             self._db.commit()
             return int(cur.rowcount or 0)
@@ -1497,6 +2420,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
                     (new_summary, new_hash, json.dumps(new_embedding), _now_iso(), item_id),
                 )
             self._db.commit()
+            self._sync_structured_item_by_id(item_id)
+            self._db.commit()
 
             # 同步更新 vec_items（embedding 变了）
             if self._vec_enabled:
@@ -1624,15 +2549,15 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_items USING vec0(
 
     def delete_by_source_ref(self, source_ref: str) -> int:
         """删除指定 source_ref 的所有条目，返回删除行数。"""
-        rowids = [
-            r[0]
-            for r in self._db.execute(
-                "SELECT rowid FROM memory_items WHERE source_ref=?", (source_ref,)
-            ).fetchall()
-        ]
+        rows = self._db.execute(
+            "SELECT rowid, id FROM memory_items WHERE source_ref=?", (source_ref,)
+        ).fetchall()
+        rowids = [r[0] for r in rows]
+        ids = [str(r[1]) for r in rows]
         cur = self._db.execute(
             "DELETE FROM memory_items WHERE source_ref=?", (source_ref,)
         )
+        self._delete_structured_items(ids)
         self._vec_delete(rowids)
         self._db.commit()
         return cur.rowcount

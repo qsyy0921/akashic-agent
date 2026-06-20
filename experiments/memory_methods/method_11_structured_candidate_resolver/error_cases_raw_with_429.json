@@ -1,0 +1,479 @@
+[
+  {
+    "question_id": "socialmem_Q3_c0s3c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3125,
+    "em": false,
+    "question": "What does the group chat reveal about each member's attitude toward discussing their career in the group?",
+    "predicted_answer": "Leon actively broadcasts career milestones and asks others about theirs; Mei openly shares updates and explicitly values the group for career transition talk; Josh consistently deflects with self-deprecating humor (\"still in the same chair\") and redirects to others; Priya is reluctant to discuss career in the group, preferring to talk in person instead.\n\n§cited:[lme:socialmem_Q3_c0s3c2:20,lme:socialmem_Q3_c0s3c2:40,lme:socialmem_Q3_c0s3c2:30,lme:socialmem_Q3_c0s3c2:33,lme:socialmem_Q3_c0s3c2:22,lme:socialmem_Q3_c0s3c2:25,lme:socialmem_Q3_c0s3c2:31,lme:socialmem_Q3_c0s3c2:35]§",
+    "gold_answer": "Mei is comfortable and open — she talks about her team size, management challenges, and promotions without registering how this compares relative to the others. Leon uses the group as a broadcast channel for career news (TechCrunch, Bloomberg, Series A) — career talk is self-promotional for him. Josh deflects every career question with self-deprecating humour and immediately changes the subject; he has stopped sharing about his trajectory after watching others advance. Priya gives short, vague answers and pivots to logistics whenever career comes up ('it's a lot. Different kind of hard. Anyway — are we doing next quarter?') — she discusses it only with Josh privately.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 16.77,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_c0s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.4176,
+    "em": false,
+    "question": "By Session 2, what pattern of attendance has the group come to anticipate from one specific member, and what in Josh's framing of the situation signals that the group has already adjusted to it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "D. Leon. Josh's \"Leon didn't come **again**\" in Session 2 treats Leon's absence as a known, already-expected pattern rather than an event — the group has already normalized him not showing up.\n\n§cited:[lme:socialmem_Q2_c0s2c1:10,lme:socialmem_Q2_c0s2c1:14,lme:socialmem_Q2_c0s2c1:4]§",
+    "gold_answer": "B. Leon\nNo — Leon did not come. Josh noted it as a pattern: 'Leon didn't come again.' Leon's explanation was an investor call that ran over. This is the second consecutive event he has missed; by Session 2 the group has quietly adjusted its expectations and plans without counting on him. Mei, Josh, and Priya all attended.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 37.57,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a1b2c3d4",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1818,
+    "em": false,
+    "question": "Based on the group's conversations, what can you tell about Maya's food preferences?",
+    "predicted_answer": "Maya hates cilantro (\"that herb ruins everything\"), is interested in mushroom broth ramen, prefers sparkling water over alcohol (she's been off drinks), and likes checking menus in advance before trying new places.\n\n§cited:[lme:socialmem_Q1_a1b2c3d4:9,lme:socialmem_Q1_a1b2c3d4:73,lme:socialmem_Q1_a1b2c3d4:26,lme:socialmem_Q1_a1b2c3d4:4,lme:socialmem_Q1_a1b2c3d4:42,lme:socialmem_Q1_a1b2c3d4:43§",
+    "gold_answer": "Maya has a strong aversion to cilantro. In Session 1, when the group was considering Mariposa for brunch, Maya immediately vetoed it after looking at the menu more closely, noting they 'put cilantro in like everything' and calling it 'that herb that ruins everything.' She treats cilantro as a dealbreaker when choosing restaurants, though she never describes it as an allergy — just a strong distaste.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 3,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 18.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_e1f2a3b4",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.233,
+    "em": false,
+    "question": "What did the group decide about where to go for drinks after dinner? Did everyone seem equally on board?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "They decided on Rooftop Fox for drinks after ramen, but not everyone was equally enthusiastic—Jordan was the holdout, saying just \"Fine\" and then complaining \"It'll be loud.\"\n\n§cited:[lme:socialmem_Q2_e1f2a3b4:42,lme:socialmem_Q2_e1f2a3b4:43,lme:socialmem_Q2_e1f2a3b4:45,lme:socialmem_Q2_e1f2a3b4:60]§",
+    "gold_answer": "D. Sam\nThe group decided on Rooftop Fox, a loud rooftop bar. Most members confirmed quickly — Lena was enthusiastic, Jordan said 'Fine,' and Priya joined late and called it 'perfect.' Sam was the exception: when asked directly, Sam initially responded with only '...' and then, when prompted again, gave a minimal 'sure.' Sam later asked about outdoor seating but didn't raise any objection — their reluctance was visible only through the silence and delayed response.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.72,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3333,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya — she said \"honestly I just want somewhere you can actually have a conversation.\"\n\n§cited:[lme:socialmem_Q4_d4e5f6a7:15]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 16.02,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_e5f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3889,
+    "em": false,
+    "question": "What is Jordan's attitude toward team sports and group physical activities? And who in the conversation revealed this?",
+    "predicted_answer": "Jordan is not interested in team sports, and **Maya** was the one who revealed this by saying \"team sports aren't really your thing\" after Jordan declined the work football event.",
+    "gold_answer": "Jordan strongly dislikes team sports and group fitness activities. This was revealed by Maya in Session 2. When Jordan bluntly declined an invitation to Priya's office football event, Maya immediately said 'yeah figured, team sports aren't really your thing' — demonstrating that she already knew about this preference without needing to ask. Jordan confirmed with 'Still no.' but Maya's comment was the revealing moment: she had prior knowledge of Jordan's aversion and stated it as a known fact.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 18.2,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_f6a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.4,
+    "em": false,
+    "question": "What does the conversation reveal about the history between Jordan and Sam?",
+    "predicted_answer": "The conversations reveal that Jordan and Sam share a history beyond the group — Sam was aware of (and possibly present for) a past incident involving Jordan at Mt. Tamalpais, and Jordan deflected a question about it by telling others to \"Ask Sam,\" suggesting they were both there and have a shared memory neither wanted to discuss publicly.\n\n§cited:[lme:socialmem_Q7_f6a7b8c9:36,lme:socialmem_Q7_f6a7b8c9:40,lme:socialmem_Q7_f6a7b8c9:37,lme:socialmem_Q7_f6a7b8c9:38,lme:socialmem_Q7_f6a7b8c9:41,lme:socialmem_Q7_f6a7b8c9:51]§",
+    "gold_answer": "The conversation reveals that Jordan and Sam share a history involving a hiking trip to Mt. Tam that went badly. In Session 2, Sam brought it up out of nowhere: 'Jordan did you ever fully recover from the Mt. Tam thing.' Jordan's response — 'I've chosen not to think about it' — confirmed it was a memorable negative experience. Neither explains what happened, and when Maya asked, Sam deferred ('another time'). The exchange is casual and knowing, suggesting this incident is a standing private reference point between them that they don't share with the wider group.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 20.92,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_b8c9d0e1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2742,
+    "em": false,
+    "question": "How did Jordan's role in organizing group plans change over the course of the conversations?",
+    "predicted_answer": "Jordan started as the go-to person who handled all the bookings and knew where to go, then gradually became passive — just saying \"Fine\" or \"Lena can do it\" — and eventually started skipping group plans altogether.\n\n§cited:[lme:socialmem_Q8_b8c9d0e1:51,lme:socialmem_Q8_b8c9d0e1:52,lme:socialmem_Q8_b8c9d0e1:53,lme:socialmem_Q8_b8c9d0e1:84,lme:socialmem_Q8_b8c9d0e1:86,lme:socialmem_Q8_b8c9d0e1:88]§",
+    "gold_answer": "Jordan's role as group organizer clearly eroded across the sessions. In Session 1, Maya referenced Jordan's old role implicitly ('Jordan used to handle all the bookings') and appealed to him for help booking a venue in Session 3. By Session 3, Jordan declined entirely: when Maya said 'you always knew where to go,' Jordan responded with 'Lena can do it.' — passing all logistics to Lena without explanation. The shift was from default organizer to complete disengagement; the group adjusted around it without directly challenging him.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 16.15,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2069,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Adaora — she said her thesis wouldn't pause for Christmas and she genuinely didn't know yet.\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:10]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 15.14,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_n2b8c9d0",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.1314,
+    "em": false,
+    "question": "What does the family chat reveal about Chidi's role in family discussions?",
+    "predicted_answer": "Chidi acts as the family's organizer and authority figure — confirming other members' travel dates (\"Emeka. Confirm your dates\"), correcting how announcements are made (\"Ngozi should not have announced it like a news broadcast\"), and checking on siblings' wellbeing (\"Is Adaora ill\").\n\n§cited:[lme:socialmem_Q7_n2b8c9d0:32,lme:socialmem_Q7_n2b8c9d0:8,lme:socialmem_Q7_n2b8c9d0:50,lme:socialmem_Q7_n2b8c9d0:64,lme:socialmem_Q7_n2b8c9d0:23,lme:socialmem_Q7_n2b8c9d0:34]§",
+    "gold_answer": "Chidi participates infrequently and briefly, but his messages carry decisive weight. He typically arrives late to a conversation that has already been debated at length, then issues a short statement that ends the discussion. In Session 2, when the family had been going back and forth about Ngozi's cooking, Chidi arrived late with simply 'The soup was fine.' — which closed the subject. Emeka acknowledged this dynamic directly: 'Dad always has the final word.' In Session 4, a single line from Chidi ('Emeka. You are coming on Christmas Eve.') ended Emeka's weeks of stalling.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 13.12,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_n2c9d0e1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3265,
+    "em": false,
+    "question": "How did Chidi's attitude toward visiting his children in the UK change over the course of the conversations?",
+    "predicted_answer": "He went from insisting the children come home to him (\"expecting everyone home this year,\" \"Emeka. Confirm your dates\") to offering to visit them in London after a health checkup made him reflect (\"I will come in March\"), then reverted back to directing them to come home for Christmas by the next session.\n\n§cited:[lme:socialmem_Q8_n2c9d0e1:0,lme:socialmem_Q8_n2c9d0e1:8,lme:socialmem_Q8_n2c9d0e1:27,lme:socialmem_Q8_n2c9d0e1:31,lme:socialmem_Q8_n2c9d0e1:32,lme:socialmem_Q8_n2c9d0e1:50]§",
+    "gold_answer": "Chidi shifted from his established position of resisting travel to proactively suggesting a visit. In Sessions 1 and 2, there was no mention of him visiting — the expectation was clearly that children come to him. By Session 3, Ngozi announced that Chidi had suggested coming to London in March, something she described as so unexpected she 'nearly fell off her chair.' Ngozi attributed the change to a health checkup that 'reminded him life is short.' Chidi himself confirmed: 'I will come in March' — a clear behavioral shift from his prior pattern.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 22.51,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2626,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass consistently prefers woodland routes over ridgelines and prioritizes wildlife conservation—avoiding nesting sites for skylarks, ravens, and lapwings, and flagging breeding-season and rutting-ground disturbance as reasons to reroute.\n\n§cited:[lme:socialmem_Q1_r3a1b2c3:4,lme:socialmem_Q1_r3a1b2c3:29,lme:socialmem_Q1_r3a1b2c3:31,lme:socialmem_Q1_r3a1b2c3:15,lme:socialmem_Q1_r3a1b2c3:51,lme:socialmem_Q1_r3a1b2c3:46]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 11.31,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": null,
+    "f1": 0.0,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.87,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_r3a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 4.47,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1871,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's posts suggest she collects vintage 1960s–70s original pressings—soul, jazz, and Brazilian music—sharing only artist, year, and label with no elaboration, which points to a focused, solo, quality-over-quantity approach to digging.\n\n§cited:[2eee434436d1,lme:socialmem_Q1_v4s3c3:14,lme:socialmem_Q1_v4s3c3:7,lme:socialmem_Q1_v4s3c3:50,lme:socialmem_Q1_v4s3c3:41,lme:socialmem_Q1_v4s3c3:9,lme:socialmem_Q1_v4s3c3:32]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 13.86,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_v4s1c2",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieval_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "Both Theo and Nneka said they would not attend the fair as part of the group. Who gave speed or efficiency as their reason for preferring to go alone?\n\nOptions:\nA. Gil\nB. Nneka\nC. Preet\nD. Rashida",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "B. Nneka\nNneka. Her stated reason was 'I move faster alone' — a direct efficiency argument about pace. Theo endorsed her position ('Nneka is correct. Group fairs are slower.') using similar surface language, but his preference for solo hunting is rooted in a different concern: Theo attends fairs to hunt specific original pressings, and group attendance is a distraction from that mission — it's about focus and quality, not logistics. Nneka's reason is purely procedural (she moves through stalls faster without others); Theo's is about not wasting a quality hunt on a social event.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 12.6,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s2c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.2821,
+    "em": false,
+    "question": "How has Rashida's approach to buying records at fairs changed over the sessions?",
+    "predicted_answer": "Rashida went from buying impulsively (4 records at Fitzroy, admitting \"overdone it\") to setting a budget she failed to keep, then finally showing real restraint at Camden — buying only 2 and walking away from 3 others, with Preet calling it \"growth.\"\n\n§cited:[b1019359143f,lme:socialmem_Q8_v4s2c1:12,lme:socialmem_Q8_v4s2c1:19,lme:socialmem_Q8_v4s2c1:39,lme:socialmem_Q8_v4s2c1:43,lme:socialmem_Q8_v4s2c1:44]§",
+    "gold_answer": "Rashida started with no budget constraints — she bought freely and described purchases as 'beautiful' regardless of cost. At Session 2, she overdid it at Fitzroy Fair (four records, two of them reissues) and announced 'last fair for a while honestly. I need to behave myself — setting a budget for the next one.' By Session 4, she reiterated the self-imposed limit ('I'm on a budget this time. strict budget.') though Preet called this out as a repeated promise. By Session 5, she actually held to it: two records bought, three walked away from. The shift is from unconstrained enthusiasm to a self-managed spending limit, triggered by overspending and maintained with social accountability.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 20.39,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3494,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus started with practical concerns about school-gate access during building work (session 1), then actively supported the parking zone as a parent safety issue (session 2), escalated to formally reporting a near-miss incident involving his son and was visibly shaken (session 3), and by sessions 4–5 had shifted to relaxed, community-focused participation — suggesting the incident galvanised him but the emotional intensity faded once the issue was being acted on.\n\n§cited:[lme:socialmem_Q8_a5s3c1:2,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:20,lme:socialmem_Q8_a5s3c1:21,lme:socialmem_Q8_a5s3c1:32,lme:socialmem_Q8_a5s3c1:43]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 15.71,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_a5s3c2",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieval_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.0,
+    "em": false,
+    "question": "The group has a norm of raising issues in the chat before contacting the council. Does that norm apply to everyone?\n\nOptions:\nA. Claudette\nB. Femi\nC. Jordan\nD. Vera",
+    "predicted_answer": "处理消息时出错，请稍后再试。",
+    "gold_answer": "D. Vera\nNo — Vera explicitly and repeatedly bypasses it. In Session 1, she sent her own objection to the council before the group had even agreed to a joint letter. In Session 3, after Marcus's school gate near-miss, she posted: 'Didn't post here first. Needed immediate action.' She is aware of the norm — she flags her departure from it rather than ignoring it — but she does not consider the norm binding on herself. Femi has gently challenged this twice; Vera has acknowledged and continued. The norm is real for the rest of the group but Vera operates outside it consistently.",
+    "tool_summary": {
+      "recall_memory_calls": 0,
+      "recall_items": 0,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": []
+    },
+    "elapsed_s": 12.91,
+    "error": null
+  }
+]

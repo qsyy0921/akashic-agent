@@ -1,0 +1,469 @@
+[
+  {
+    "question_id": "socialmem_Q1_c0s3c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3008,
+    "em": false,
+    "question": "What does Josh's behavior in the group chat suggest about how he handles questions about his own career?",
+    "predicted_answer": "He consistently deflects questions about his own career with self-deprecating humor (\"still in the same chair,\" \"living the dream\") and redirects attention to others, while actively protecting others from unwanted career scrutiny.\n\n§cited:[4bbf623676af]§",
+    "gold_answer": "Josh consistently deflects questions about his career with self-deprecating humour and then redirects to someone else. In Session 3, when Leon asked what everyone was up to professionally, Josh responded: 'still in the same chair 😂😂 living the dream' — and immediately pivoted to Priya. In Session 5, he used the same 'same chair' line again. He does not engage with follow-up, does not offer detail about what he actually does or wants, and accepts Mei's gentle reframe ('you know everything') with 'haha, very kind' — another deflection. The pattern is consistent across sessions and the self-deprecation is the tell.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 2,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 5,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 53.28,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_c0s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0333,
+    "em": false,
+    "question": "By Session 2, what pattern of attendance has the group come to anticipate from one specific member, and what in Josh's framing of the situation signals that the group has already adjusted to it?\n\nOptions:\nA. Josh\nB. Leon\nC. Mei\nD. Priya",
+    "predicted_answer": "D. Priya.",
+    "gold_answer": "B. Leon\nNo — Leon did not come. Josh noted it as a pattern: 'Leon didn't come again.' Leon's explanation was an investor call that ran over. This is the second consecutive event he has missed; by Session 2 the group has quietly adjusted its expectations and plans without counting on him. Mei, Josh, and Priya all attended.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 17.8,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2278,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam chose the chicken ramen over the signature mushroom broth, suggesting they prefer meat-based broth over vegetable/mushroom options.\n\n§cited:[lme:socialmem_Q1_b2c3d4e5:22,lme:socialmem_Q1_b2c3d4e5:24,lme:socialmem_Q1_b2c3d4e5:25,lme:socialmem_Q1_b2c3d4e5:27]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 26.23,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q2_e1f2a3b4",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3667,
+    "em": false,
+    "question": "What did the group decide about where to go for drinks after dinner? Did everyone seem equally on board?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "The group decided on Rooftop Fox for drinks after ramen. Not everyone was equally enthusiastic — **Jordan** just said \"Fine\" and later complained \"It'll be loud,\" showing the least buy-in, while Lena and Priya were excited and Sam needed extra convincing to say \"sure.\"\n\n§cited:[]§",
+    "gold_answer": "D. Sam\nThe group decided on Rooftop Fox, a loud rooftop bar. Most members confirmed quickly — Lena was enthusiastic, Jordan said 'Fine,' and Priya joined late and called it 'perfect.' Sam was the exception: when asked directly, Sam initially responded with only '...' and then, when prompted again, gave a minimal 'sure.' Sam later asked about outdoor seating but didn't raise any objection — their reluctance was visible only through the silence and delayed response.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.26,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_d4e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3617,
+    "em": false,
+    "question": "Someone in the group expressed a clear preference for quieter venues where people can actually have a real conversation. Who said it?\n\nOptions:\nA. Jordan\nB. Maya\nC. Priya\nD. Sam",
+    "predicted_answer": "C. Priya.\n\nShe explicitly said \"I just want somewhere you can actually have a conversation\" and also suggested a place because it was \"calm enough that we could actually sit and talk.\"\n\n§cited:[]§",
+    "gold_answer": "A. Jordan\nJordan said it. When Priya suggested a noodle bar on Judah as an alternative to Mariposa, Jordan responded with 'Quieter. Better.' — a terse, direct expression of preference for quieter venues. Priya also expressed a similar sentiment shortly after ('I just want somewhere you can actually have a conversation'), but the more direct and first-stated preference came from Jordan.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 17.86,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_n2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2203,
+    "em": false,
+    "question": "What do the conversations reveal about how Tobenna feels about discussing his job search with the family?",
+    "predicted_answer": "Tobenna feels awkward and pressured when the family asks about his job search — he deflects with subject changes and embarrassed emojis (🙈🙈), and explicitly asks to be the one to share updates when ready.\n\n§cited:[]§",
+    "gold_answer": "Tobenna consistently avoids the topic. In Session 3, when Ngozi asked about the job search, Tobenna responded with monkey-covering-eyes emoji followed by 'Did anyone watch the Arsenal game?' — a complete subject change. In Session 5 he gave a vague 'Not yet Mum, soon though' before Adaora's situation took over. He never provides any substance on the job front, always deflecting with humor, emoji, or a redirect. The pattern suggests the search isn't going well and he doesn't want to discuss it.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 36.02,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q4_n2e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.0278,
+    "em": false,
+    "question": "Who first pushed back on committing to specific Christmas dates — citing outside obligations as the reason?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+    "predicted_answer": "Adaora.\n\n§cited:[lme:socialmem_Q4_n2e5f6a7:10]§",
+    "gold_answer": "C. Emeka\nEmeka. When Ngozi announced Christmas plans, Emeka immediately said 'We'll see what Adaeze's schedule looks like — should know more in a few weeks.' This was the first hesitation, and it cited his wife's work schedule as the constraint. Adaora also expressed uncertainty, but she framed it around thesis deadlines and came after Emeka's message. The first person to invoke an external reason for not committing was Emeka.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 12.37,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_r3a1b2c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2178,
+    "em": false,
+    "question": "What does Cass's behavior suggest about their preferences when choosing hiking routes?",
+    "predicted_answer": "Cass consistently prioritizes ecological sensitivity—preferring woodland over exposed ridgelines, and repeatedly raising wildlife-disturbance concerns (nesting skylarks, ravens near SSSI, red deer rutting ground) backed by sourced data like BTO surveys.\n\n§cited:[lme:socialmem_Q1_r3a1b2c3:15,lme:socialmem_Q1_r3a1b2c3:29,lme:socialmem_Q1_r3a1b2c3:31,lme:socialmem_Q1_r3a1b2c3:46,lme:socialmem_Q1_r3a1b2c3:56,lme:socialmem_Q1_r3a1b2c3:57]§",
+    "gold_answer": "Cass consistently advocates for woodland or ecologically rich routes over open ridgelines. In Session 1, they suggested Millbrook specifically because it passes through Hartley Wood. By Session 3, they had moved from preference to active advocacy, citing ground-nesting skylark disturbance as a reason to reroute. In Sessions 4 and 5 they raised deer rutting grounds and lapwing breeding data respectively. The ecological rationale is always present alongside the route preference.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 33.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_r3e5f6a7",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.3738,
+    "em": false,
+    "question": "Does Cass have any dietary preferences that affect cafe stop planning? And who in the group knows about this?",
+    "predicted_answer": "Yes — Cass follows a plant-based diet (Bev explicitly asked about \"plant-based options\" for Cass, and Cass confirmed they're usually fine if a cafe has soup). **Bev** clearly knows and advocates for it; **Dani** also knows and took on cafe-checking duty.\n\n§cited:[lme:socialmem_Q5_r3e5f6a7:22,lme:socialmem_Q5_r3e5f6a7:23,lme:socialmem_Q5_r3e5f6a7:24]§",
+    "gold_answer": "Cass is vegan and needs plant-based options at cafe stops. This was revealed by Bev, not Cass. In Session 2, when the Blackmoor Cafe was mentioned, Bev proactively asked 'Does the Blackmoor Cafe have plant-based options? asking for Cass' — demonstrating she already knew about Cass's dietary needs. Cass then confirmed: 'yeah I'll check, usually fine if they have soup.' Cass hadn't raised it themselves.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 22.57,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q7_r3a7b8c9",
+    "question_type": "single-session-user",
+    "labels": [
+      "memory_write_failure"
+    ],
+    "judge_correct": false,
+    "f1": 0.2424,
+    "em": false,
+    "question": "What does the conversation reveal about the relationship between Bev and Marcus within the group?",
+    "predicted_answer": "Bev is notably attentive to Marcus — noticing his limp and his knee issues — and even speaks on his behalf when voting, while Marcus keeps things terse and downplays his physical concerns.\n\n§cited:[]§",
+    "gold_answer": "Bev and Marcus function as quiet allies — both prefer more moderate routes compared to Dani's increasingly ambitious proposals, and Bev actively looks out for Marcus. In Session 3, Bev noticed Marcus limping after the scramble and called it out directly: 'The knee has been bothering you for a while hasn't it.' This shows she has been paying attention to his physical state over multiple hikes, even though Marcus minimizes it. In Session 5, Bev told Dani 'Cass and I vote woodland. Marcus probably does too' — speaking on Marcus's behalf as a natural extension of their alignment.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 22.88,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.125,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "B. Dani — she's the only one who prefers the push-through approach; Bev wants social stops and cafe breaks, and Marcus has knee issues that make constant movement difficult.\n\n§cited:[]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 3,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 32.84,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1818,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Her posts consistently highlight soul/R&B original pressings from the late 1960s–1970s (Bobby Womack, Millie Jackson), showing a focused interest in that era and genre.\n\n§cited:[2eee434436d1]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 18.72,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s3c2",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3263,
+    "em": false,
+    "question": "How did Preet's relationship to physical record collecting change over the conversations?",
+    "predicted_answer": "Preet went from naive enthusiasm (didn't know her Fela was a reissue, couldn't tell originals from reprints), to impulsive buying (\"bought three more records, I think I'm doing this now\"), to wanting to learn seriously (\"I need to build the collection and I want to know what I'm looking for\"), and finally showed self-discipline at Camden — others noted \"growth\" as she walked away from records instead of buying everything.\n\n§cited:[138781eb9da5,65c7c65a10c5,981c0f490dbc,def915779b5c]§",
+    "gold_answer": "Preet began as primarily a streamer with minimal physical ownership. In Session 1, their enthusiasm was about discovering records at fairs but framed aesthetically — praising a Fela reissue's cover without caring that it wasn't an original. In Session 2, after finding a Brazilian compilation they'd been writing about, they said 'First time I've wanted to own something more than stream it honestly' — noting the shift in themselves even as they named it. In Session 3, they went back to the same seller and bought three more records, announcing: 'I think I'm doing this now.' By Sessions 4 and 5, attending fairs to build the collection is the stated goal, and Preet is asking what to look for.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 4,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 25.09,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_v4s4c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3111,
+    "em": false,
+    "question": "Has Gil's approach to attending group record fairs changed over the sessions?",
+    "predicted_answer": "Yes. Across the four sessions, Gil shifted from neutral observer at Fitzroy (sharing knowledge from his own collection without committing to attend) → skeptical gatekeeper before Camden (asking \"specialist or commercial?\", dismissing it as \"too many Taylor Swift reissues\") → actually attending Camden anyway and finding serious originals at the specialist stalls (Ebo Taylor 1974 Essiebons). He vetted the fair more critically over time but ultimately still showed up when specialist sellers were there.\n\n§cited:[cda858dd6459,1670b4f44997,8fde3d1cc7ff]§",
+    "gold_answer": "Gil has become significantly more selective about which fairs he attends. Earlier sessions show him participating in fair planning without objection. By Session 4, when Rashida announced a large Camden fair with 80 stalls, Gil's first question was 'Is it specialist or commercial?' — and when told it was a mix, he declined: 'Probably not. Too many Taylor Swift reissues in those rooms now.' He is now vetting fairs by their specialist-to-commercial ratio before committing. In Session 5, he found an Ebo Taylor original at an 'Archway Specialist stall' — indicating he sought out a specialist venue independently rather than attending the large commercial fair.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 3,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 2,
+      "tool_names": [
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 41.59,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a5s1c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "memory_write_failure",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.3378,
+    "em": false,
+    "question": "What does Claudette's behavior suggest about her stance on development and change on Maple Street?",
+    "predicted_answer": "Claudette is consistently opposed to development and change on Maple Street — she objects to building conversions (\"This street does not need any more bulk\"), blames new development for increased traffic and danger, rejects outside newcomers, and frames herself as a long-time resident defending the street's original character.\n\n§cited:[lme:socialmem_Q1_a5s1c1:1,lme:socialmem_Q1_a5s1c1:22,lme:socialmem_Q1_a5s1c1:41,lme:socialmem_Q1_a5s1c1:36,lme:socialmem_Q1_a5s1c1:4]§",
+    "gold_answer": "Claudette consistently opposes any planning application that would alter the street's residential character. In Session 1, her immediate response to the no. 22 loft conversion notice was 'This street does not need any more bulk added to it. I shall be objecting.' She frames this in terms of visual impact and preserving the street's character — not noise, not traffic. In Session 3, she linked the traffic danger Marcus experienced to development ('All this traffic is exactly what happens when you allow more development'). Her thirty-year tenure gives her a before-and-after frame that shapes all of her planning opinions.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "search_messages"
+      ]
+    },
+    "elapsed_s": 19.32,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q3_a5s2c1",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_answer_wrong"
+    ],
+    "judge_correct": false,
+    "f1": 0.3948,
+    "em": false,
+    "question": "All five members of the Maple Street group shared their views on the proposed residents' parking scheme. What was each person's position and reasoning?",
+    "predicted_answer": "**Femi** — broadly in favour, but worried about commuter overflow onto the next street. **Claudette** — sceptical; thinks £80/year is an unfair burden on long-standing residents, though she could accept a trial period rather than a permanent scheme. **Marcus** — in favour; as a parent he sees the school-gate pavement parking as untenable and believes permits would fix it. **Jordan** — neutral; doesn't own a car so largely unaffected, but still thinks £80 is steep and wanted a review after one year. **Vera** — supports it; she needs reliable parking on clinic days when doing home visits, and backed the idea of a review clause.\n\n§cited:[8e938bd7fdd5]§",
+    "gold_answer": "All five weighed in with distinct positions and reasons: Claudette was against — she objected on cost grounds ('£80 a year is an additional burden on residents who have always parked freely here') and felt paying for previously free parking was wrong. Marcus was in favour — his reason was child safety at the school gate, where pavement parking creates danger during the school run. Jordan was neutral — they have no car and the scheme does not affect them directly, though they noted empathy for those on tight budgets. Femi was broadly in favour but had one reservation: displaced commuter parking moving to neighbouring streets. Vera was in favour — her reason was professional: home visits mean she needs parking near the house on clinic days.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 1,
+      "search_messages_calls": 2,
+      "fetch_messages_calls": 1,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "search_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 24.98,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "memory_write_failure",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.4076,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus went from practical concern to urgent advocacy to quiet confidence. In session 1 he flagged scaffolding blocking the school gate; by session 2 he was the strongest voice in favour of resident parking permits, calling the pavement-parking situation \"untenable\" as a parent; in session 3 the issue became personal when a car nearly hit his son, and he committed to raising it formally while still shaken. After that turning point he stopped pressing the traffic issue — by sessions 4 and 5 his energy shifted entirely to community participation (face-painting station, asking for \"same time next year\"), suggesting the safety escalation worked or at least gave him enough resolution to re-engage on a lighter note.",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 0,
+      "search_messages_calls": 1,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "search_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 27.94,
+    "error": null
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "method_id": "method_12_question_aware_structured_router",
+  "generated_at": "2026-06-18T04:19:31.062115",
+  "result_path": "eval\\results\\memory_methods\\method_12_question_aware_structured_router.json",
+  "dataset": "eval\\agent_memory_bench_socialmem_full_local.json",
+  "workspace": "runtime\\eval\\memory_methods\\method_12_question_aware_structured_router",
+  "memory_method": {
+    "method_id": "method_12_question_aware_structured_router",
+    "strategy": "question_aware_structured_router",
+    "description": "Use the original benchmark question/options to session-scope memory2 raw-event retrieval, remove generic terms and option-name-only scoring, and return a compact source-grounded evidence table before final generation.",
+    "options": {
+      "schema_tables": [
+        "memory_raw_events",
+        "memory_entities",
+        "memory_event_facts",
+        "memory_assertions",
+        "memory_relation_facts"
+      ],
+      "base_retrieval": "adaptive_intent_versioned",
+      "all_raw_event_backfill": true,
+      "all_raw_event_backfill_limit": 100000,
+      "all_raw_event_backfill_chunk_size": 200,
+      "selected_evidence_limit": 8,
+      "summary_pollution": false,
+      "wrap_search_fetch_tools": false,
+      "question_context": true,
+      "session_scoped_raw_events": true
+    },
+    "config_path": "experiments\\memory_methods\\method_12_question_aware_structured_router\\config.json"
+  },
+  "limit": 50,
+  "offset": 0,
+  "n": 50,
+  "scores": {
+    "overall": {
+      "f1": 0.2633,
+      "em": 0.0,
+      "judge_acc": 0.7143,
+      "n": 50,
+      "errors": 0
+    },
+    "by_type": {
+      "knowledge-update": {
+        "f1": 0.383,
+        "em": 0.0,
+        "judge_acc": 0.6364,
+        "n": 11,
+        "errors": 0
+      },
+      "single-session-preference": {
+        "f1": 0.2282,
+        "em": 0.0,
+        "judge_acc": 0.7647,
+        "n": 17,
+        "errors": 0
+      },
+      "single-session-user": {
+        "f1": 0.2305,
+        "em": 0.0,
+        "judge_acc": 0.7143,
+        "n": 22,
+        "errors": 0
+      }
+    }
+  },
+  "judge_acc": 0.7142857142857143,
+  "latency": {
+    "avg_elapsed_s": 18.7004,
+    "p50_elapsed_s": 17.605,
+    "p95_elapsed_s": 35.31
+  },
+  "token_usage": {
+    "avg_token_usage": 41304.0682,
+    "avg_token_usage_source": "react_stats.turn_input_sum_tokens estimate",
+    "actual_avg_total_tokens": null,
+    "note": "Provider prompt/completion usage is not stored yet. avg_token_usage uses the agent loop's input-token estimate when react_stats exists; proxy character fields are kept separate and must not be reported as token counts.",
+    "avg_input_tokens_estimate": 41304.0682,
+    "avg_final_call_input_tokens_estimate": 24780.0227,
+    "avg_cache_prompt_tokens": 68220.2727,
+    "avg_cache_hit_tokens": 31627.6364,
+    "avg_answer_chars": 357.86,
+    "avg_tool_result_chars": 48384.82,
+    "avg_tool_calls": 2.06
+  },
+  "failure_counts": {
+    "runtime_errors": 0,
+    "judge_false": 14,
+    "judge_null": 1,
+    "error_type_counts": {
+      "memory_update_not_versioned": 4,
+      "memory_write_failure": 4,
+      "personal_preference_attribution_error": 4,
+      "retrieval_failure": 8,
+      "retrieved_but_answer_wrong": 1,
+      "retrieved_but_evidence_unused": 2
+    }
+  }
+}

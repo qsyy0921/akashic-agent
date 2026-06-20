@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q6_n2a7b8c9",
+  "question_type": "single-session-preference",
+  "question": "The family seems to assume that when Ngozi cooks for Christmas, everyone eats what she makes. Is that assumption accurate for all members?\n\nOptions:\nA. Adaora\nB. Chidi\nC. Emeka\nD. Ngozi",
+  "gold_answer": "A. Adaora\nNot for Adaora. While Emeka and Tobenna enthusiastically requested specific dishes from Ngozi's traditional spread, Adaora quietly tried to steer toward plant-based options and said she'd been 'eating a bit differently lately.' In Session 5, she tried to bring her own dish — a lentil preparation — and told her mother she'd explain properly when she was home. The family norm assumes everyone eats the full traditional Christmas menu, but Adaora has a significant dietary restriction she has not yet disclosed.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 7.29,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

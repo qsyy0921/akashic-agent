@@ -1,0 +1,25 @@
+{
+  "question_id": "socialmem_Q4_a5s1c2",
+  "question_type": "single-session-user",
+  "question": "Both Claudette and Vera expressed concern about parking in relation to the no. 22 planning application. Who was specifically concerned about parking being blocked during construction works, and who was opposed to the development on character grounds?\n\nOptions:\nA. Claudette\nB. Femi\nC. Jordan\nD. Vera",
+  "gold_answer": "D. Vera\nVera raised the parking concern specifically about construction disruption — her objection to the council included 'scaffolding access, parking disruption during works.' This is a practical, temporary concern about her ability to park during the build period. Claudette's objection was on character grounds entirely: 'This street does not need any more bulk added to it.' She never mentioned parking. Their concerns look similar on the surface (both object to the application) but are entirely different in kind: Vera's is logistical and temporary; Claudette's is aesthetic and permanent.",
+  "predicted_answer": "处理消息时出错，请稍后再试。",
+  "tool_chain": [],
+  "react_stats": {},
+  "elapsed_s": 22.2,
+  "error": null,
+  "memory_method": {
+    "method_id": "method_17_structured_answer_contract",
+    "strategy": "structured_answer_contract",
+    "description": "Use Method 14 compact facts plus a verified final-answer contract for high-confidence option-style slots.",
+    "options": {
+      "selected_evidence_limit": 8,
+      "consolidated_facts_per_session": 160,
+      "consolidated_fact_limit": 6,
+      "precision_raw_scan_limit": 24,
+      "precision_candidate_limit": 5
+    },
+    "config_path": "experiments\\memory_methods\\method_17_structured_answer_contract\\config.json"
+  },
+  "judge_correct": null
+}

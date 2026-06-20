@@ -1,0 +1,13 @@
+[
+  {
+    "method_id": "method_17_socialmem_200",
+    "n": 200,
+    "judge_acc": 0.71,
+    "f1": 0.2988,
+    "em": 0.0,
+    "avg_elapsed_s": 29.181,
+    "runtime_errors": 0,
+    "judge_false": 58,
+    "metrics_path": "experiments\\personal_memory\\method_17_socialmem_200\\metrics.json"
+  }
+]

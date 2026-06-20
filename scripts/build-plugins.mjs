@@ -60,7 +60,8 @@ function buildOne(command, panel) {
   const result = spawnSync(command[0], buildArgs(command, panel), {
     cwd: projectRoot,
     stdio: "inherit",
-    shell: false,
+    shell: isWindows,
+    windowsHide: true,
   });
   if (typeof result.status === "number" && result.status !== 0) {
     process.exitCode = result.status;
@@ -75,7 +76,8 @@ function watchAll(command, panels) {
     spawn(command[0], buildArgs(command, panel, { watch: true }), {
       cwd: projectRoot,
       stdio: "inherit",
-      shell: false,
+      shell: isWindows,
+      windowsHide: true,
     }),
   );
 

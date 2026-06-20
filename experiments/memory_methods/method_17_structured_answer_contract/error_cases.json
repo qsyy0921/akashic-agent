@@ -1,0 +1,158 @@
+[
+  {
+    "question_id": "socialmem_Q1_b2c3d4e5",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2979,
+    "em": false,
+    "question": "What does Sam's behavior at the ramen dinner suggest about their food preferences?",
+    "predicted_answer": "Sam chose the chicken ramen at Tanuki on 9th despite the restaurant's signature being mushroom broth, and explicitly said they \"just prefer the chicken,\" suggesting a preference for chicken over other broth/protein options. §cited:[eddb93fad553,74daab911dfa]§",
+    "gold_answer": "Sam has an aversion to mushrooms. When Priya described Tanuki's signature mushroom broth ramen, Sam immediately said 'I'll do the chicken one' without explanation. When Maya asked if the mushroom wasn't good, Sam gave only a vague 'just prefer the chicken...' — deflecting rather than explaining. Sam never names mushrooms as the issue, but the pattern of avoidance is clear.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 9.75,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q5_e5f6a7b8",
+    "question_type": "single-session-user",
+    "labels": [
+      "retrieved_but_evidence_unused"
+    ],
+    "judge_correct": false,
+    "f1": 0.2766,
+    "em": false,
+    "question": "What is Jordan's attitude toward team sports and group physical activities? And who in the conversation revealed this?",
+    "predicted_answer": "Jordan doesn't like team sports (\"team sports aren't really your thing\"), as revealed by Maya.\n\n§cited:[lme:socialmem_Q5_e5f6a7b8:31]§",
+    "gold_answer": "Jordan strongly dislikes team sports and group fitness activities. This was revealed by Maya in Session 2. When Jordan bluntly declined an invitation to Priya's office football event, Maya immediately said 'yeah figured, team sports aren't really your thing' — demonstrating that she already knew about this preference without needing to ask. Jordan confirmed with 'Still no.' but Maya's comment was the revealing moment: she had prior knowledge of Jordan's aversion and stated it as a known fact.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.34,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q6_r3c1d2e3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.242,
+    "em": false,
+    "question": "Dani keeps the group moving on hikes and expects everyone to push through to the end without stopping. Is that actually how all members prefer to approach a day out?\n\nOptions:\nA. Bev\nB. Dani\nC. Marcus\nD. Yusuf",
+    "predicted_answer": "B. Dani\n\nDani explicitly said \"No stopping mid-route though, we need to maintain pace\" and \"The whole point is to push ourselves,\" while Bev pushed back asking \"whatever happened to the social side of this group,\" showing the approach isn't universally shared.\n\n§cited:[b6f3b84ff62a,e1c6993ff24c,lme:socialmem_Q6_r3c1d2e3:3,lme:socialmem_Q6_r3c1d2e3:7]§",
+    "gold_answer": "A. Bev\nNo — Bev consistently dissents from the no-stopping norm. Across multiple sessions, her first question when a route is proposed is whether there is a cafe stop built in. In Session 1, she asked about the \"tea situation\" before even committing to the route. By Session 4 she was explicitly asking Dani to pick routes with \"a decent tea stop this time,\" and in Session 5 she named the lack of anywhere to stop as a mark against an exposed ridgeline route. For Bev, the social stop is not optional — it is the point of the outing, and she signals this consistently even though the group norm runs the other way.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 27.57,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_v4s3c3",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.2394,
+    "em": false,
+    "question": "What does the pattern of Nneka's posts to the group chat suggest about her collecting focus?",
+    "predicted_answer": "Nneka's posts consistently show short, declarative artist-year-label hauls (Luiz Bonfá 1958 Odeon, Bobby Womack 1971 United Artists, Millie Jackson 1974 Spring Records), suggesting a focus on original pressings of 1950s–1970s soul and Brazilian music.\n\n§cited:[2eee434436d1,704e866afecf,lme:socialmem_Q1_v4s3c3:14,lme:socialmem_Q1_v4s3c3:32,lme:socialmem_Q1_v4s3c3:50]§",
+    "gold_answer": "Nneka only shares finds from soul and gospel music from the 1960s–70s. In Session 3 she posts 'Bobby Womack. 1971. United Artists.' In Session 5: 'Millie Jackson. 1974. Spring Records.' Her format is always the same — artist, year, label, nothing else — and the genre is always the same. She never responds to jazz, world music, or pressing-quality discussions, and never asks about records outside her specialist area. This is consistent with her persona: she has collected for fifteen years with a narrow, deep focus on soul and gospel, and the group chat is simply where she archives what she found, not a space for discussion.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 16,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 21.64,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q1_a5s1c1",
+    "question_type": "single-session-preference",
+    "labels": [
+      "retrieved_but_evidence_unused",
+      "personal_preference_attribution_error"
+    ],
+    "judge_correct": false,
+    "f1": 0.1926,
+    "em": false,
+    "question": "What does Claudette's behavior suggest about her stance on development and change on Maple Street?",
+    "predicted_answer": "Claudette is strongly opposed to development and change on Maple Street, viewing it as a threat to the street's quiet character and child safety, and preferring to preserve its longstanding community identity over new growth.\n\n§cited:[lme:socialmem_Q1_a5s1c1:22,8421af4fbf7d,30a058ec2164]§",
+    "gold_answer": "Claudette consistently opposes any planning application that would alter the street's residential character. In Session 1, her immediate response to the no. 22 loft conversion notice was 'This street does not need any more bulk added to it. I shall be objecting.' She frames this in terms of visual impact and preserving the street's character — not noise, not traffic. In Session 3, she linked the traffic danger Marcus experienced to development ('All this traffic is exactly what happens when you allow more development'). Her thirty-year tenure gives her a before-and-after frame that shapes all of her planning opinions.",
+    "tool_summary": {
+      "recall_memory_calls": 1,
+      "recall_items": 6,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 0,
+      "tool_names": [
+        "recall_memory"
+      ]
+    },
+    "elapsed_s": 12.69,
+    "error": null
+  },
+  {
+    "question_id": "socialmem_Q8_a5s3c1",
+    "question_type": "knowledge-update",
+    "labels": [
+      "retrieved_but_answer_wrong",
+      "memory_update_not_versioned"
+    ],
+    "judge_correct": false,
+    "f1": 0.3191,
+    "em": false,
+    "question": "How has Marcus's engagement with traffic and safety issues on Maple Street changed over the sessions?",
+    "predicted_answer": "Marcus's engagement shifted from practical logistics to personal crisis and then to community recovery. In Session 1 (May 5) he raised school-gate access concerns about scaffolding; by Session 2 (May 12) he was actively advocating for parking permits as a parent; in Session 3 (May 19) his son narrowly avoided being hit by a car, which turned the issue deeply personal and prompted him to raise it formally with highways; and by Session 5 (June 2) he had re-engaged lightheartedly in street-party planning for his kids, suggesting emotional recovery through community involvement.\n\n§cited:[lme:socialmem_Q8_a5s3c1:2,lme:socialmem_Q8_a5s3c1:12,lme:socialmem_Q8_a5s3c1:20,lme:socialmem_Q8_a5s3c1:26,lme:socialmem_Q8_a5s3c1:47]§",
+    "gold_answer": "Marcus mentioned traffic concerns incidentally in Session 1 (worried about scaffolding blocking the school gate during works) but did not escalate. By Session 3, after a car reversed toward his son at the school gate without seeing him, Marcus shifted immediately to formal escalation: 'As a parent this has to be dealt with. I'm raising this formally today.' From that point his engagement intensified — he frames almost every subsequent safety or development discussion through the lens of child safety at the school gate, and he follows up unresolved threads rather than letting them drop.",
+    "tool_summary": {
+      "recall_memory_calls": 2,
+      "recall_items": 12,
+      "search_messages_calls": 0,
+      "fetch_messages_calls": 4,
+      "tool_names": [
+        "recall_memory",
+        "recall_memory",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages",
+        "fetch_messages"
+      ]
+    },
+    "elapsed_s": 44.21,
+    "error": null
+  }
+]
