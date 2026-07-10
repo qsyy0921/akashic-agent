@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import json
 import sqlite3
 import threading
 from datetime import datetime
@@ -201,14 +202,6 @@ def _seed_workspace(tmp_path) -> None:
     memory_store.close()
 
     proactive_store = ProactiveStateStore(tmp_path / "proactive.db")
-    proactive_store.mark_items_seen(
-        [
-            ("mcp:feed:event-1", "feed-1"),
-            ("mcp:feed:event-2", "feed-2"),
-            ("rss:news", "rss-1"),
-        ],
-        now=datetime.fromisoformat("2026-04-19T02:00:00+00:00"),
-    )
     proactive_store.mark_delivery(
         "telegram:100",
         "delivery-a",
@@ -218,29 +211,6 @@ def _seed_workspace(tmp_path) -> None:
         "cli:local",
         "delivery-b",
         now=datetime.fromisoformat("2026-04-19T02:06:00+00:00"),
-    )
-    proactive_store.mark_rejection_cooldown(
-        [("mcp:feed:event-3", "feed-3")],
-        hours=24,
-        now=datetime.fromisoformat("2026-04-19T02:10:00+00:00"),
-    )
-    proactive_store.mark_semantic_items(
-        [
-            {
-                "source_key": "rss:news",
-                "item_id": "rss-1",
-                "text": "今天有新游戏资讯",
-            },
-            {
-                "source_key": "mcp:feed",
-                "item_id": "feed-2",
-                "text": "用户昨天提到过奶茶",
-            },
-        ],
-        now=datetime.fromisoformat("2026-04-19T02:20:00+00:00"),
-    )
-    proactive_store.mark_bg_context_main_send(
-        now=datetime.fromisoformat("2026-04-19T02:30:00+00:00")
     )
     proactive_store.mark_context_only_send(
         "telegram:100",
@@ -742,7 +712,6 @@ def test_proactive_dashboard_endpoints(tmp_path) -> None:
         overview_resp = client.get("/api/dashboard/proactive/overview")
         assert overview_resp.status_code == 200
         overview = overview_resp.json()
-        assert overview["counts"]["seen_items"] == 3
         assert overview["counts"]["deliveries"] == 2
         assert overview["counts"]["tick_logs"] == 2
         assert overview["flow_counts"]["drift"] == 1
@@ -758,20 +727,6 @@ def test_proactive_dashboard_endpoints(tmp_path) -> None:
         assert deliveries_resp.status_code == 200
         assert deliveries_resp.json()["total"] == 1
         assert deliveries_resp.json()["items"][0]["delivery_key"] == "delivery-a"
-
-        seen_resp = client.get(
-            "/api/dashboard/proactive/seen_items",
-            params={"source_key": "mcp:feed"},
-        )
-        assert seen_resp.status_code == 200
-        assert seen_resp.json()["total"] == 2
-
-        semantic_resp = client.get(
-            "/api/dashboard/proactive/semantic_items",
-            params={"window_hours": 100000},
-        )
-        assert semantic_resp.status_code == 200
-        assert semantic_resp.json()["total"] == 2
 
         tick_logs_resp = client.get(
             "/api/dashboard/proactive/tick_logs",
@@ -811,111 +766,94 @@ def test_proactive_dashboard_endpoints(tmp_path) -> None:
         assert tick_steps_resp.json()["items"][1]["terminal_action_after"] == "reply"
 
 
-def test_status_commands_kvcache_dashboard_uses_workspace_observe(tmp_path) -> None:
+def test_dashboard_lists_installed_plugin_panels(tmp_path, monkeypatch) -> None:
     _seed_workspace(tmp_path)
-    observe_dir = tmp_path / "observe"
-    observe_dir.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(observe_dir / "observe.db")
-    try:
-        conn.execute("""
-            CREATE TABLE turns(
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ts TEXT NOT NULL,
-                source TEXT NOT NULL,
-                session_key TEXT NOT NULL,
-                user_msg TEXT,
-                llm_output TEXT NOT NULL DEFAULT '',
-                react_cache_prompt_tokens INTEGER,
-                react_cache_hit_tokens INTEGER
-            )
-            """)
-        conn.execute(
-            """
-            INSERT INTO turns(
-                ts, source, session_key, user_msg, llm_output,
-                react_cache_prompt_tokens, react_cache_hit_tokens
-            ) VALUES(?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                "2026-04-19T03:20:00+00:00",
-                "agent",
-                "telegram:100",
-                "again",
-                "ok",
-                300,
-                260,
-            ),
-        )
-        conn.commit()
-    finally:
-        conn.close()
+    home = tmp_path / "home"
+    plugin_dir = tmp_path / "installed" / "status_commands" / "0.1.0"
+    plugin_dir.mkdir(parents=True, exist_ok=True)
+    (plugin_dir / "dashboard.py").write_text(
+        "from fastapi import FastAPI\n"
+        "def register(app: FastAPI, plugin_dir, workspace):\n"
+        "    return None\n",
+        encoding="utf-8",
+    )
+    (plugin_dir / "dashboard_panel.js").write_text("export default {};\n", encoding="utf-8")
+    registry_dir = home / ".akashic-plugin"
+    registry_dir.mkdir(parents=True, exist_ok=True)
+    (registry_dir / "registry.json").write_text(
+        json.dumps(
+            {
+                "plugins": {
+                    "status_commands@github": {
+                        "plugin_id": "status_commands@github",
+                        "source_type": "installed",
+                        "active": True,
+                        "plugin_root": str(plugin_dir),
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HOME", str(home))
+
     with TestClient(create_dashboard_app(tmp_path)) as client:
-        overview = client.get("/api/dashboard/status-commands/kvcache/overview")
-        turns = client.get("/api/dashboard/status-commands/kvcache/turns")
+        plugins = client.get("/api/dashboard/plugins").json()
+    installed = next(item for item in plugins if item["id"] == "status_commands@github")
+    assert installed == {
+        "id": "status_commands@github",
+        "panels": [
+            {
+                "name": "dashboard_panel",
+                "js_version": str((plugin_dir / "dashboard_panel.js").stat().st_mtime_ns),
+                "has_css": False,
+            }
+        ],
+    }
 
-        assert overview.status_code == 200
-        assert overview.json()["tracked_turn_count"] == 1
-        assert overview.json()["hit_rate"] == 260 / 300
-        assert turns.status_code == 200
-        payload = turns.json()
-        assert payload["total"] == 1
-        assert payload["items"][0]["session_key"] == "telegram:100"
-        assert payload["items"][0]["user_preview"] == "again"
 
-
-def test_proactive_dashboard_batch_delete(tmp_path) -> None:
+def test_installed_plugin_dashboard_supports_relative_imports(tmp_path, monkeypatch) -> None:
     _seed_workspace(tmp_path)
+    home = tmp_path / "home"
+    plugin_dir = tmp_path / "installed" / "observe" / "0.1.0"
+    plugin_dir.mkdir(parents=True, exist_ok=True)
+    (plugin_dir / "db.py").write_text(
+        "def ping():\n"
+        "    return 'ok'\n",
+        encoding="utf-8",
+    )
+    (plugin_dir / "dashboard.py").write_text(
+        "from fastapi import FastAPI\n"
+        "from .db import ping\n"
+        "def register(app: FastAPI, plugin_dir, workspace):\n"
+        "    @app.get('/api/dashboard/test-relative-import')\n"
+        "    def route():\n"
+        "        return {'value': ping()}\n",
+        encoding="utf-8",
+    )
+    registry_dir = home / ".akashic-plugin"
+    registry_dir.mkdir(parents=True, exist_ok=True)
+    (registry_dir / "registry.json").write_text(
+        json.dumps(
+            {
+                "plugins": {
+                    "observe@github": {
+                        "plugin_id": "observe@github",
+                        "source_type": "installed",
+                        "active": True,
+                        "plugin_root": str(plugin_dir),
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HOME", str(home))
+
     with TestClient(create_dashboard_app(tmp_path)) as client:
-        seen_delete_resp = client.request(
-            "DELETE",
-            "/api/dashboard/proactive/seen_items/batch",
-            json={"source_key": "mcp:feed", "item_ids": ["feed-1"]},
-        )
-        assert seen_delete_resp.status_code == 200
-        assert seen_delete_resp.json()["deleted_count"] == 1
-
-        seen_resp = client.get(
-            "/api/dashboard/proactive/seen_items",
-            params={"source_key": "mcp:feed"},
-        )
-        assert seen_resp.json()["total"] == 1
-
-        cooldown_delete_resp = client.request(
-            "DELETE",
-            "/api/dashboard/proactive/rejection_cooldown/batch",
-            json={"source_key": "mcp:feed", "item_ids": ["feed-3"]},
-        )
-        assert cooldown_delete_resp.status_code == 200
-        assert cooldown_delete_resp.json()["deleted_count"] == 1
-
-        cooldown_resp = client.get(
-            "/api/dashboard/proactive/rejection_cooldown",
-            params={"source_key": "mcp:feed"},
-        )
-        assert cooldown_resp.status_code == 200
-        assert cooldown_resp.json()["total"] == 0
-
-
-def test_proactive_dashboard_batch_delete_rejects_empty_payload(tmp_path) -> None:
-    _seed_workspace(tmp_path)
-    with TestClient(create_dashboard_app(tmp_path)) as client:
-        seen_delete_resp = client.request(
-            "DELETE",
-            "/api/dashboard/proactive/seen_items/batch",
-            json={},
-        )
-        assert seen_delete_resp.status_code == 400
-        assert seen_delete_resp.json()["detail"] == "至少提供 source_key 或 item_ids"
-
-        cooldown_delete_resp = client.request(
-            "DELETE",
-            "/api/dashboard/proactive/rejection_cooldown/batch",
-            json={},
-        )
-        assert cooldown_delete_resp.status_code == 400
-        assert (
-            cooldown_delete_resp.json()["detail"] == "至少提供 source_key 或 item_ids"
-        )
+        response = client.get("/api/dashboard/test-relative-import")
+    assert response.status_code == 200
+    assert response.json() == {"value": "ok"}
 
 
 def test_plugin_asset_paths_reject_cross_platform_traversal(tmp_path) -> None:

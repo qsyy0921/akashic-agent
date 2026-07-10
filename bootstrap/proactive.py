@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from agent.config_models import Config
 from agent.looping.core import AgentLoop
 from agent.provider import LLMProvider
 from agent.tool_hooks import ToolHook
 from agent.tools.message_push import MessagePushTool
+from bus.event_bus import EventBus
 from proactive_v2.loop import ProactiveLoop
 from proactive_v2.memory_optimizer import MemoryOptimizer, MemoryOptimizerLoop
 from proactive_v2.presence import PresenceStore
@@ -15,7 +16,6 @@ from proactive_v2.state import ProactiveStateStore
 from session.manager import SessionManager
 
 if TYPE_CHECKING:
-    from core.memory.engine import MemoryEngine
     from core.memory.markdown import MarkdownMemoryStore
     from core.memory.runtime import MemoryRuntime
 
@@ -45,12 +45,16 @@ def build_proactive_runtime(
     *,
     session_manager: SessionManager,
     provider: LLMProvider,
-    light_provider: LLMProvider | None,
     push_tool: MessagePushTool,
     memory_store: "MemoryRuntime | None",
     presence: PresenceStore,
     agent_loop: AgentLoop,
+    event_bus: EventBus | None = None,
     tool_hooks: list[ToolHook] | None = None,
+    proactive_modules: list[object] | None = None,
+    proactive_lifecycles: list[object] | None = None,
+    proactive_module_factories: list[object] | None = None,
+    proactive_runtime_factories: list[object] | None = None,
 ) -> tuple[list, ProactiveLoop | None]:
     tasks: list = []
     # 1. 总开关关闭时，主动链路完全不启动。
@@ -75,13 +79,16 @@ def build_proactive_runtime(
         state_store=proactive_state,
         memory_store=memory_store,
         presence=presence,
-        light_provider=light_provider,
-        light_model=config.light_model,
         passive_busy_fn=(
             agent_loop.processing_state.is_busy if agent_loop.processing_state else None
         ),
         shared_tools=getattr(agent_loop, "tools", None),
+        event_bus=event_bus,
         tool_hooks=tool_hooks,
+        proactive_modules=proactive_modules,
+        proactive_lifecycles=proactive_lifecycles,
+        proactive_module_factories=proactive_module_factories,
+        proactive_runtime_factories=proactive_runtime_factories,
     )
 
     # 4. 主动链路本体以后台任务方式常驻运行。

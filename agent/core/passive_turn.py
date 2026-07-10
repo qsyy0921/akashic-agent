@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import asyncio
-import json
+import hashlib
 import logging
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
@@ -25,13 +26,6 @@ from agent.tool_runtime import (
     tool_call_batch_snapshot,
 )
 from agent.tools.base import normalize_tool_result
-from agent.tools.artifacts import (
-    ToolArtifact,
-    artifacts_to_dicts,
-    extract_tool_artifacts,
-    image_paths_from_artifacts,
-)
-from agent.tools.tool_search import ToolSearchTool
 from agent.turns.outbound import OutboundDispatch, OutboundPort
 from bus.event_bus import EventBus
 from bus.events import InboundMessage, OutboundMessage
@@ -42,7 +36,6 @@ from bus.events_lifecycle import (
 from agent.lifecycle.phase import Phase
 from agent.lifecycle.phases.after_reasoning import (
     AfterReasoningFrame,
-    _CHATGPT_IMAGEGEN_TOOL,
     default_after_reasoning_modules,
 )
 from agent.lifecycle.phases.after_step import AfterStepFrame, default_after_step_modules
@@ -52,7 +45,11 @@ from agent.lifecycle.phases.before_reasoning import (
     default_before_reasoning_modules,
 )
 from agent.lifecycle.phases.before_step import BeforeStepFrame, default_before_step_modules
-from agent.lifecycle.phases.before_turn import BeforeTurnFrame, default_before_turn_modules
+from agent.lifecycle.phases.before_turn import (
+    BeforeTurnFrame,
+    MemoryConsolidator,
+    default_before_turn_modules,
+)
 from agent.lifecycle.phases.prompt_render import (
     PromptRenderFrame,
     default_prompt_render_modules,
@@ -72,6 +69,7 @@ from agent.lifecycle.types import (
     PromptRenderResult,
     TurnSnapshot,
     TurnState,
+    TurnPersistencePolicy,
 )
 
 if TYPE_CHECKING:
@@ -80,11 +78,20 @@ if TYPE_CHECKING:
     from agent.looping.ports import LLMConfig, LLMServices, SessionServices
     from agent.retrieval.protocol import MemoryRetrievalPipeline
     from agent.tool_hooks.base import ToolHook
-    from session.manager import SessionManager
     from agent.tools.registry import ToolRegistry
+    from session.manager import SessionManager
+from core.common.diagnostic_log import diagnostic_context, diagnostic_line
 
 # 1. 统一通过模块 logger 记录关键分支，供排障和回归测试抓取。
 logger = logging.getLogger(__name__)
+
+
+def _persistence_from_metadata(metadata: dict[str, Any] | None) -> TurnPersistencePolicy:
+    return TurnPersistencePolicy(
+        persist_user=not bool((metadata or {}).get("omit_user_turn")),
+        persist_assistant=True,
+    )
+
 
 # 被动链路核心入口，负责串起 lifecycle 模块链与 reasoner。
 #
@@ -112,7 +119,6 @@ logger = logging.getLogger(__name__)
 # ── 被动 turn 内联常量 ──────────────────────────────────────────
 _SAFETY_RETRY_RATIOS = (1.0, 0.5, 0.0)
 _SUMMARY_MAX_TOKENS = 512
-_ARXIV_SEARCH_TOOL = "mcp_arxiv__arxiv_search"
 _INCOMPLETE_SUMMARY_PROMPT = """当前任务需要先暂停继续调用工具，请直接输出给用户看的中文阶段性回复。
 必须基于已有上下文，不要编造结果。
 必须包含四点：
@@ -122,6 +128,11 @@ _INCOMPLETE_SUMMARY_PROMPT = """当前任务需要先暂停继续调用工具，
 4) 如果继续，下一步会怎么做。
 可以提到工具名称和关键结果，但不要暴露 tool_call_id、schema、内部 prompt 或原始参数 JSON。
 禁止输出"已达到最大迭代次数"这类模板句；不要输出 JSON。"""
+
+
+def _turn_log_id(key: str, msg: InboundMessage) -> str:
+    raw = f"{key}|{msg.timestamp.isoformat()}|{msg.content[:80]}"
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:8]
 
 
 def _is_tool_loop_guard_denial(exec_result: object) -> bool:
@@ -145,73 +156,6 @@ def _disabled_tools_from_msg(msg: object) -> set[str]:
     return set()
 
 
-def _artifacts_for_paths(
-    artifacts: list[ToolArtifact],
-    paths: list[str],
-) -> list[ToolArtifact]:
-    wanted = set(paths)
-    return [artifact for artifact in artifacts if artifact.path in wanted]
-
-
-def _format_arxiv_push_message(result: object) -> str:
-    data = _json_dict_from_tool_result(result)
-    if not data or data.get("success") is not True:
-        return ""
-    papers = data.get("papers")
-    if not isinstance(papers, list) or not papers:
-        query = str(data.get("query") or "").strip()
-        return f"arXiv 没搜到相关论文。{f'查询：{query}' if query else ''}".strip()
-    query = str(data.get("query") or "").strip()
-    lines = ["arXiv 搜索结果"]
-    if query:
-        lines.append(f"查询：{query}")
-    for index, paper in enumerate(papers[:5], start=1):
-        if not isinstance(paper, dict):
-            continue
-        title = _compact_line(paper.get("title"), 140)
-        authors = paper.get("authors")
-        if isinstance(authors, list):
-            author_text = ", ".join(str(item) for item in authors[:3] if str(item).strip())
-            if len(authors) > 3:
-                author_text += " 等"
-        else:
-            author_text = ""
-        published = str(paper.get("published") or "")[:10]
-        category = str(paper.get("primary_category") or "").strip()
-        summary = _compact_line(paper.get("summary"), 180)
-        abstract_url = str(paper.get("abstract_url") or "").strip()
-        pdf_url = str(paper.get("pdf_url") or "").strip()
-        lines.append("")
-        lines.append(f"{index}. {title}")
-        details = " | ".join(item for item in (author_text, category, published) if item)
-        if details:
-            lines.append(details)
-        if summary:
-            lines.append(summary)
-        if abstract_url:
-            lines.append(f"Abstract: {abstract_url}")
-        if pdf_url:
-            lines.append(f"PDF: {pdf_url}")
-    return "\n".join(lines).strip()
-
-
-def _json_dict_from_tool_result(result: object) -> dict[str, Any]:
-    if not isinstance(result, str) or not result.strip():
-        return {}
-    try:
-        parsed = json.loads(result)
-    except json.JSONDecodeError:
-        return {}
-    return parsed if isinstance(parsed, dict) else {}
-
-
-def _compact_line(value: object, limit: int) -> str:
-    text = " ".join(str(value or "").split())
-    if len(text) <= limit:
-        return text
-    return text[: max(0, limit - 1)].rstrip() + "…"
-
-
 class _NoopOutboundPort:
     async def dispatch(self, outbound: OutboundDispatch) -> bool:
         return False
@@ -227,6 +171,7 @@ class AgentCoreDeps:
     event_bus: "EventBus | None" = None
     outbound_port: "OutboundPort | None" = None
     history_window: int = 500
+    memory_consolidator: MemoryConsolidator | None = None
     before_turn_plugin_modules: list[object] | None = None
     before_reasoning_plugin_modules: list[object] | None = None
     before_step_plugin_modules: list[object] | None = None
@@ -318,6 +263,7 @@ class PassiveTurnPipeline:
             add_after_step(list(deps.after_step_plugin_modules or []))
         self._outbound_port = deps.outbound_port or _NoopOutboundPort()
         self._history_window = deps.history_window
+        self._memory_consolidator = deps.memory_consolidator
         self._before_turn_plugin_modules = list(deps.before_turn_plugin_modules or [])
         self._before_reasoning_plugin_modules = list(
             deps.before_reasoning_plugin_modules or []
@@ -368,6 +314,8 @@ class PassiveTurnPipeline:
                 self._bus,
                 self._session.session_manager,
                 self._context_store,
+                keep_count=self._history_window,
+                consolidator=self._memory_consolidator,
                 plugin_modules=cast("list[Any]", self._before_turn_plugin_modules),
             ),
             frame_factory=BeforeTurnFrame,
@@ -421,77 +369,238 @@ class PassiveTurnPipeline:
         *,
         dispatch_outbound: bool = True,
     ) -> OutboundMessage:
+        started = time.perf_counter()
+        turn_id = _turn_log_id(key, msg)
         state = TurnState(
             msg=msg,
             session_key=key,
             dispatch_outbound=dispatch_outbound,
+            persistence=_persistence_from_metadata(msg.metadata),
         )
-        # try/except 只包前置模块链和 reasoning：在派发前兜底并返回错误提示。
-        try:
-            # Phase 1: BeforeTurn 模块链（会话、上下文、BeforeTurn 事件）。
-            before_turn = await self._before_turn.run(state)
-            # TurnState 存内部默认 metadata；BeforeTurnCtx 存插件导出，同名 key 以后者覆盖。
-            state.extra_metadata.update(before_turn.extra_metadata)
-            if before_turn.abort:
+        with diagnostic_context(session=key, flow="passive", turn=turn_id):
+            logger.info(
+                diagnostic_line(
+                    "PassiveTurnPipeline.run",
+                    event="start",
+                    flow="passive",
+                    phase="before_turn",
+                    session=key,
+                    turn=turn_id,
+                    action="run",
+                )
+            )
+            # try/except 只包前置模块链和 reasoning：在派发前兜底并返回错误提示。
+            try:
+                # Phase 1: BeforeTurn 模块链（会话、上下文、BeforeTurn 事件）。
+                with diagnostic_context(phase="before_turn"):
+                    before_turn = await self._before_turn.run(state)
+                # TurnState 存内部默认 metadata；BeforeTurnCtx 存插件导出，同名 key 以后者覆盖。
+                state.extra_metadata.update(before_turn.extra_metadata)
+                if before_turn.abort:
+                    logger.info(
+                        diagnostic_line(
+                            "PassiveTurnPipeline.run",
+                            event="gate_exit",
+                            flow="passive",
+                            phase="before_turn",
+                            session=key,
+                            turn=turn_id,
+                            action="abort",
+                            reason="before_turn_abort",
+                            duration_ms=int((time.perf_counter() - started) * 1000),
+                        )
+                    )
+                    return await self._control_outbound(
+                        state,
+                        OutboundMessage(
+                            channel=msg.channel,
+                            chat_id=msg.chat_id,
+                            content=before_turn.abort_reply,
+                        ),
+                    )
+                logger.info(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="end",
+                        flow="passive",
+                        phase="before_turn",
+                        session=key,
+                        turn=turn_id,
+                        action="continue",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                    )
+                )
+
+                # Phase 2: BeforeReasoning 模块链（工具上下文、BeforeReasoning 事件、prompt warmup）。
+                with diagnostic_context(phase="before_reasoning"):
+                    before_reasoning = await self._before_reasoning.run(
+                        BeforeReasoningInput(state=state, before_turn=before_turn)
+                    )
+                if before_reasoning.abort:
+                    logger.info(
+                        diagnostic_line(
+                            "PassiveTurnPipeline.run",
+                            event="gate_exit",
+                            flow="passive",
+                            phase="before_reasoning",
+                            session=key,
+                            turn=turn_id,
+                            action="abort",
+                            reason="before_reasoning_abort",
+                            duration_ms=int((time.perf_counter() - started) * 1000),
+                        )
+                    )
+                    return await self._control_outbound(
+                        state,
+                        OutboundMessage(
+                            channel=msg.channel,
+                            chat_id=msg.chat_id,
+                            content=before_reasoning.abort_reply,
+                        ),
+                    )
+                logger.info(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="end",
+                        flow="passive",
+                        phase="before_reasoning",
+                        session=key,
+                        turn=turn_id,
+                        action="continue",
+                        counts=f"skills:{len(before_reasoning.skill_names)},hints:{len(before_reasoning.extra_hints)}",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                    )
+                )
+
+                # Phase 3-4: Reasoning（BeforeStep/AfterStep 模块链在 Reasoner 内部执行）。
+                session = state.session
+                if session is None:
+                    raise RuntimeError("Passive turn requires TurnState.session")
+                with diagnostic_context(phase="reasoner"):
+                    turn_result = await self._reasoner.run_turn(
+                        msg=msg,
+                        skill_names=list(before_reasoning.skill_names) or None,
+                        session=session,
+                        base_history=None,
+                        retrieved_memory_block=before_reasoning.retrieved_memory_block,
+                        extra_hints=list(before_reasoning.extra_hints) or None,
+                    )
+                state.extra_metadata["turn_duration_ms"] = int(
+                    (time.perf_counter() - started) * 1000
+                )
+                logger.info(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="end",
+                        flow="passive",
+                        phase="reasoner",
+                        session=key,
+                        turn=turn_id,
+                        action="continue",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                    )
+                )
+            except Exception as exc:
+                logger.exception(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="phase_error",
+                        flow="passive",
+                        phase="reasoner",
+                        session=key,
+                        turn=turn_id,
+                        action="fail",
+                        reason="provider_error",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                        error_type=type(exc).__name__,
+                        note=str(exc)[:160],
+                    )
+                )
                 return await self._control_outbound(
                     state,
                     OutboundMessage(
                         channel=msg.channel,
                         chat_id=msg.chat_id,
-                        content=before_turn.abort_reply,
+                        content="处理消息时出错，请稍后再试。",
                     ),
                 )
 
-            # Phase 2: BeforeReasoning 模块链（工具上下文、BeforeReasoning 事件、prompt warmup）。
-            before_reasoning = await self._before_reasoning.run(
-                BeforeReasoningInput(state=state, before_turn=before_turn)
-            )
-            if before_reasoning.abort:
-                return await self._control_outbound(
-                    state,
-                    OutboundMessage(
-                        channel=msg.channel,
-                        chat_id=msg.chat_id,
-                        content=before_reasoning.abort_reply,
-                    ),
+            try:
+                # Phase 5: AfterReasoning 模块链（parse、AfterReasoning 事件、持久化、出站消息）。
+                with diagnostic_context(phase="after_reasoning"):
+                    after_reasoning = await self._after_reasoning.run(
+                        AfterReasoningInput(state=state, turn_result=turn_result)
+                    )
+            except Exception as exc:
+                logger.exception(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="phase_error",
+                        flow="passive",
+                        phase="after_reasoning",
+                        session=key,
+                        turn=turn_id,
+                        action="fail",
+                        reason="invalid_output",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                        error_type=type(exc).__name__,
+                        note=str(exc)[:160],
+                    )
                 )
-
-            # Phase 3-4: Reasoning（BeforeStep/AfterStep 模块链在 Reasoner 内部执行）。
-            session = state.session
-            if session is None:
-                raise RuntimeError("Passive turn requires TurnState.session")
-            turn_result = await self._reasoner.run_turn(
-                msg=msg,
-                skill_names=list(before_reasoning.skill_names) or None,
-                session=session,
-                base_history=None,
-                retrieved_memory_block=before_reasoning.retrieved_memory_block,
-                extra_hints=list(before_reasoning.extra_hints) or None,
-            )
-        except Exception:
-            logger.exception("PassiveTurnPipeline.run failed before dispatch session=%s", key)
-            return await self._control_outbound(
-                state,
-                OutboundMessage(
-                    channel=msg.channel,
-                    chat_id=msg.chat_id,
-                    content="处理消息时出错，请稍后再试。",
-                ),
+                raise
+            logger.info(
+                diagnostic_line(
+                    "PassiveTurnPipeline.run",
+                    event="end",
+                    flow="passive",
+                    phase="after_reasoning",
+                    session=key,
+                    turn=turn_id,
+                    action="continue",
+                    duration_ms=int((time.perf_counter() - started) * 1000),
+                )
             )
 
-        # Phase 5: AfterReasoning 模块链（parse、AfterReasoning 事件、持久化、出站消息）。
-        after_reasoning = await self._after_reasoning.run(
-            AfterReasoningInput(state=state, turn_result=turn_result)
-        )
-
-        # Phase 6: AfterTurn 模块链（TurnCommitted fanout、AfterTurn fanout、dispatch）。
-        return await self._after_turn.run(
-            TurnSnapshot(
-                state=state,
-                outbound=after_reasoning.outbound,
-                ctx=after_reasoning.ctx,
+            try:
+                # Phase 6: AfterTurn 模块链（TurnCommitted fanout、AfterTurn fanout、dispatch）。
+                with diagnostic_context(phase="after_turn"):
+                    outbound = await self._after_turn.run(
+                        TurnSnapshot(
+                            state=state,
+                            outbound=after_reasoning.outbound,
+                            ctx=after_reasoning.ctx,
+                        )
+                    )
+            except Exception as exc:
+                logger.exception(
+                    diagnostic_line(
+                        "PassiveTurnPipeline.run",
+                        event="phase_error",
+                        flow="passive",
+                        phase="after_turn",
+                        session=key,
+                        turn=turn_id,
+                        action="fail",
+                        reason="write_error",
+                        duration_ms=int((time.perf_counter() - started) * 1000),
+                        error_type=type(exc).__name__,
+                        note=str(exc)[:160],
+                    )
+                )
+                raise
+            logger.info(
+                diagnostic_line(
+                    "PassiveTurnPipeline.run",
+                    event="end",
+                    flow="passive",
+                    phase="after_turn",
+                    session=key,
+                    turn=turn_id,
+                    action="done",
+                    duration_ms=int((time.perf_counter() - started) * 1000),
+                )
             )
-        )
+            return outbound
 
     # 供外部调用方（如 spawn completion）复用 AfterReasoning + dispatch 流程。
     async def post_reasoning(
@@ -501,12 +610,14 @@ class PassiveTurnPipeline:
         turn_result: "TurnRunResult",
         *,
         dispatch_outbound: bool = True,
+        persistence: TurnPersistencePolicy | None = None,
     ) -> OutboundMessage:
         state = TurnState(
             msg=msg,
             session_key=session_key,
             dispatch_outbound=dispatch_outbound,
             session=self._session.session_manager.get_or_create(session_key),
+            persistence=persistence or _persistence_from_metadata(msg.metadata),
         )
         after_reasoning = await self._after_reasoning.run(
             AfterReasoningInput(state=state, turn_result=turn_result)
@@ -604,9 +715,15 @@ class DefaultContextStore(ContextStore):
             )
 
         # 3. 最后补齐 ContextBundle，把主链正式字段直接收进显式合同。
+        skill_names = [
+            record.name
+            for record in self._context.skills.list_skill_records(
+                filter_unavailable=False
+            )
+        ]
         skill_mentions = support.collect_skill_mentions(
             msg.content,
-            self._context.skills.list_skills(filter_unavailable=False),
+            skill_names,
         )
         return ContextBundle(
             history=support.to_chat_messages(raw_history),
@@ -695,7 +812,6 @@ class DefaultReasoner(Reasoner):
         context: "ContextBuilder | None" = None,
         session_manager: "SessionManager | None" = None,
         event_bus: "EventBus | None" = None,
-        outbound_port: "OutboundPort | None" = None,
     ) -> None:
         self._llm = llm
         self._llm_config = llm_config
@@ -705,17 +821,10 @@ class DefaultReasoner(Reasoner):
         self._memory_window = memory_window
         self._context = context
         self._session_manager = session_manager
-        self._outbound_port = outbound_port or _NoopOutboundPort()
         self._event_bus = event_bus
         self._prompt_render_plugin_modules: list[object] = []
         self._before_step_plugin_modules: list[object] = []
         self._after_step_plugin_modules: list[object] = []
-        # Direct reference to ToolSearchTool so we can pass excluded_names
-        # explicitly instead of routing through the ContextVar side-channel.
-        _ts = tools.get_tool("tool_search")
-        self._tool_search_tool: ToolSearchTool | None = (
-            _ts if isinstance(_ts, ToolSearchTool) else None
-        )
         self._tool_executor = ToolExecutor([])
         self._stream_sink_factory: Callable[
             [object], Callable[[dict[str, str] | str], Awaitable[None]] | None
@@ -914,6 +1023,7 @@ class DefaultReasoner(Reasoner):
                 tools_used = list(result.metadata.get("tools_used") or [])
                 tools_unlocked = list(result.metadata.get("tools_unlocked") or [])
                 tool_chain = list(result.metadata.get("tool_chain") or [])
+                media = list(result.metadata.get("media") or [])
                 if attempt > 0:
                     window = plan["history_window"]
                     retry_trace["selected_plan"] = plan["name"]
@@ -949,6 +1059,7 @@ class DefaultReasoner(Reasoner):
                     reply=result.reply,
                     tools_used=tools_used,
                     tool_chain=tool_chain,
+                    media=[str(item) for item in media if str(item).strip()],
                     thinking=result.thinking,
                     streamed=result.streamed,
                     context_retry=retry_trace,
@@ -1012,10 +1123,7 @@ class DefaultReasoner(Reasoner):
         tools_used: list[str] = []
         tools_unlocked: list[str] = []
         tool_chain: list[dict[str, Any]] = []
-        artifacts_by_call_id: dict[str, list[dict[str, Any]]] = {}
-        auto_dispatched_artifacts_by_call_id: dict[str, list[dict[str, Any]]] = {}
-        auto_dispatched_by_call_id: dict[str, list[str]] = {}
-        auto_dispatched_text_by_call_id: dict[str, str] = {}
+        outbound_media: list[str] = []
         # 2. 初始化本轮可见工具集合。
         visible_names: set[str] | None = None
         visible_order: list[str] | None = None
@@ -1070,6 +1178,7 @@ class DefaultReasoner(Reasoner):
                     reply=step_ctx.early_stop_reply or summary,
                     tools_used=tools_used,
                     tool_chain=tool_chain,
+                    media=outbound_media,
                     visible_names=visible_names,
                     thinking=None,
                     streamed=False,
@@ -1252,6 +1361,7 @@ class DefaultReasoner(Reasoner):
                                 reply=summary,
                                 tools_used=tools_used,
                                 tool_chain=tool_chain,
+                                media=outbound_media,
                                 visible_names=visible_names,
                                 thinking=None,
                                 streamed=False,
@@ -1298,16 +1408,19 @@ class DefaultReasoner(Reasoner):
                         continue
 
                     # 6.2 通过统一执行器跑 pre/post hooks + 真实工具。
-                    # For tool_search: pass visible_names explicitly via
-                    # set_excluded_names() instead of the old ContextVar channel.
-                    if (
-                        tool_call.name == "tool_search"
-                        and visible_names is not None
-                        and self._tool_search_tool is not None
-                    ):
-                        self._tool_search_tool.set_excluded_names(
-                            visible_names | disabled
-                        )
+                    async def _execute_tool(
+                        name: str,
+                        arguments: dict[str, Any],
+                    ) -> Any:
+                        if name == "tool_search" and visible_names is not None:
+                            arguments = {
+                                **arguments,
+                                "excluded_names": visible_names | disabled,
+                            }
+                        if name == "message_push":
+                            arguments = {**arguments, "_commit_role": "passive"}
+                        return await self._tools.execute(name, arguments)
+
                     _args_preview = support.log_preview(tool_call.arguments, 120)
                     logger.info("[工具执行→] %s  args=%s", tool_call.name, _args_preview)
                     await self._observe_tool_call_started(
@@ -1340,9 +1453,8 @@ class DefaultReasoner(Reasoner):
                             tool_batch=tool_batch,
                             tool_batch_index=tool_batch_index,
                         ),
-                        # 真实工具执行入口仍是 ToolRegistry.execute；
                         # hook 只负责拦截与记录，不替代 registry。
-                        self._tools.execute,
+                        _execute_tool,
                     )
                     if exec_result.status == "success":
                         tools_used.append(tool_call.name)
@@ -1357,112 +1469,6 @@ class DefaultReasoner(Reasoner):
                         status=exec_result.status,
                     ))
                     normalized = normalize_tool_result(result)
-                    artifacts = (
-                        extract_tool_artifacts(tool_call.name, normalized.text)
-                        if exec_result.status == "success"
-                        else []
-                    )
-                    if artifacts:
-                        artifacts_by_call_id[tool_call.id] = artifacts_to_dicts(artifacts)
-                    if (
-                        exec_result.status == "success"
-                        and tool_call.name == _CHATGPT_IMAGEGEN_TOOL
-                    ):
-                        imagegen_payload = _json_dict_from_tool_result(normalized.text)
-                        if imagegen_payload.get("success") is False:
-                            disabled.add(_CHATGPT_IMAGEGEN_TOOL)
-                            result = (
-                                f"{normalized.text}\n\n"
-                                "[系统提示] 图片生成工具本轮已经失败。"
-                                "不要再次调用同一个 imagegen 工具重试；"
-                                "请直接向用户说明 ChatGPT 网页端没有产出图片，并建议稍后重试。"
-                            )
-                            normalized = normalize_tool_result(result)
-                            logger.warning(
-                                "[imagegen失败禁用重试] tool_call=%s error=%s",
-                                tool_call.id,
-                                imagegen_payload.get("error"),
-                            )
-                        image_paths = image_paths_from_artifacts(artifacts)
-                        if image_paths and tool_event_channel and tool_event_chat_id:
-                            first_image = image_paths[0]
-                            first_artifacts = _artifacts_for_paths(artifacts, [first_image])
-                            sent = await self._outbound_port.dispatch(
-                                OutboundDispatch(
-                                    channel=tool_event_channel,
-                                    chat_id=tool_event_chat_id,
-                                    content="",
-                                    media=[first_image],
-                                    metadata={
-                                        "auto_dispatched": True,
-                                        "source_tool": tool_call.name,
-                                        "tool_call_id": tool_call.id,
-                                    },
-                                )
-                            )
-                            if sent:
-                                auto_dispatched_by_call_id[tool_call.id] = [first_image]
-                                auto_dispatched_artifacts_by_call_id[tool_call.id] = (
-                                    artifacts_to_dicts(first_artifacts)
-                                )
-                                result = (
-                                    f"{normalized.text}\n\n"
-                                    "[系统提示] 第一张生成图片已自动推送给用户。"
-                                    "不要再调用 read_image_vision 或 message_push 发送同一张图片；"
-                                    "直接用简短文字确认即可。"
-                                )
-                                normalized = normalize_tool_result(result)
-                                logger.info(
-                                    "[imagegen即时推送] tool_call=%s image=%s",
-                                    tool_call.id,
-                                    first_image,
-                                )
-                            else:
-                                logger.warning(
-                                    "[imagegen即时推送失败] tool_call=%s image=%s",
-                                    tool_call.id,
-                                    first_image,
-                                )
-                    if (
-                        exec_result.status == "success"
-                        and tool_call.name == _ARXIV_SEARCH_TOOL
-                        and tool_event_channel == "telegram"
-                        and tool_event_chat_id
-                    ):
-                        push_text = _format_arxiv_push_message(normalized.text)
-                        if push_text:
-                            sent = await self._outbound_port.dispatch(
-                                OutboundDispatch(
-                                    channel=tool_event_channel,
-                                    chat_id=tool_event_chat_id,
-                                    content=push_text,
-                                    metadata={
-                                        "auto_dispatched": True,
-                                        "source_tool": tool_call.name,
-                                        "tool_call_id": tool_call.id,
-                                        "strategy": "arxiv_result_push",
-                                    },
-                                )
-                            )
-                            if sent:
-                                auto_dispatched_text_by_call_id[tool_call.id] = push_text
-                                result = (
-                                    f"{normalized.text}\n\n"
-                                    "[系统提示] arXiv 搜索结果已主动推送给 Telegram 用户。"
-                                    "不要再调用 message_push 重复发送同一批论文；"
-                                    "直接用简短文字确认即可。"
-                                )
-                                normalized = normalize_tool_result(result)
-                                logger.info(
-                                    "[arxiv主动推送] tool_call=%s chars=%d",
-                                    tool_call.id,
-                                    len(push_text),
-                                )
-                            else:
-                                logger.warning(
-                                    "[arxiv主动推送失败] tool_call=%s",
-                                    tool_call.id,
-                                )
                     _result_preview = support.log_preview(normalized.preview())
                     _result_len = len(normalized.preview() or "")
                     await self._observe_tool_call_completed(
@@ -1489,6 +1495,13 @@ class DefaultReasoner(Reasoner):
                         content=result,
                         tool_name=tool_call.name,
                     )
+                    if exec_result.status == "success" and tool_call.name == "message_push":
+                        _collect_current_web_push_media(
+                            outbound_media,
+                            exec_result.final_arguments,
+                            channel=tool_event_channel,
+                            chat_id=tool_event_chat_id,
+                        )
 
                     # 6.3 tool_search 的结果会扩展下一轮可见工具。
                     if (
@@ -1544,19 +1557,6 @@ class DefaultReasoner(Reasoner):
                                 }
                                 for item in exec_result.post_hook_trace
                             ],
-                            "artifacts": artifacts_by_call_id.get(tool_call.id, []),
-                            "auto_dispatched_artifacts": auto_dispatched_artifacts_by_call_id.get(
-                                tool_call.id,
-                                [],
-                            ),
-                            "auto_dispatched_media": auto_dispatched_by_call_id.get(
-                                tool_call.id,
-                                [],
-                            ),
-                            "auto_dispatched_text": auto_dispatched_text_by_call_id.get(
-                                tool_call.id,
-                                "",
-                            ),
                             "result": normalized.preview(),
                         }
                     )
@@ -1584,6 +1584,7 @@ class DefaultReasoner(Reasoner):
                             reply=summary,
                             tools_used=tools_used,
                             tool_chain=tool_chain,
+                            media=outbound_media,
                             visible_names=visible_names,
                             thinking=None,
                             streamed=False,
@@ -1631,6 +1632,7 @@ class DefaultReasoner(Reasoner):
                         reply=summary,
                         tools_used=tools_used,
                         tool_chain=tool_chain,
+                        media=outbound_media,
                         visible_names=visible_names,
                         thinking=None,
                         streamed=False,
@@ -1698,6 +1700,7 @@ class DefaultReasoner(Reasoner):
                 reply=response.content or "（无响应）",
                 tools_used=tools_used,
                 tool_chain=tool_chain,
+                media=outbound_media,
                 visible_names=visible_names,
                 thinking=response.thinking,
                 streamed=streamed,
@@ -1724,6 +1727,7 @@ class DefaultReasoner(Reasoner):
             reply=summary,
             tools_used=tools_used,
             tool_chain=tool_chain,
+            media=outbound_media,
             visible_names=visible_names,
             thinking=None,
             streamed=False,
@@ -1840,6 +1844,7 @@ class DefaultReasoner(Reasoner):
         reply: str,
         tools_used: list[str],
         tool_chain: list[dict[str, Any]],
+        media: list[str],
         visible_names: set[str] | None,
         thinking: str | None,
         streamed: bool,
@@ -1887,6 +1892,7 @@ class DefaultReasoner(Reasoner):
             "tools_used": list(tools_used),
             "tools_unlocked": list(tools_unlocked or []),
             "tool_chain": list(tool_chain),
+            "media": list(media),
             "visible_names": set(visible_names) if visible_names is not None else None,
             "react_stats": react_stats,
         }
@@ -1990,6 +1996,25 @@ def extract_model_facing_turn(
     if isinstance(frame_content, str) and is_context_frame(frame_content):
         return user_content, frame_content
     return user_content, None
+
+
+def _collect_current_web_push_media(
+    target: list[str],
+    arguments: dict[str, Any],
+    *,
+    channel: str,
+    chat_id: str,
+) -> None:
+    if channel != "web":
+        return
+    if str(arguments.get("channel") or "").strip() != channel:
+        return
+    if str(arguments.get("chat_id") or "").strip() != chat_id:
+        return
+    for key in ("image", "file"):
+        value = str(arguments.get(key) or "").strip()
+        if value and value not in target:
+            target.append(value)
 
 
 def build_turn_injection_prompt(

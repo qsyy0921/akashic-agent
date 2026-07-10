@@ -36,7 +36,6 @@ def build_agent_static_identity_prompt(*, workspace: Path) -> str:
 - 根目录：{workspace_path}
 - 长期记忆：{workspace_path}/memory/MEMORY.md
 - 自我认知：{workspace_path}/memory/SELF.md
-- 历史日志：{workspace_path}/memory/HISTORY.md（支持 grep 搜索）
 - 近期语境摘要：{workspace_path}/memory/RECENT_CONTEXT.md
   这是面向 proactive / drift 的近期上下文压缩结果，用来帮助判断“最近在聊什么、什么适合自然续接”。
   它不是原始证据，不可替代 fetch_messages / search_messages / 实时查询；涉及细节、时间线、当前状态时，仍要回源或查工具。
@@ -147,8 +146,7 @@ def build_agent_behavior_rules_prompt(*, workspace: Path) -> str:
    - 结果不足/不相关/摘要全是”询问行为”元噪声 → 改调 `search_messages` 关键词补搜
 3. `search_messages` 拿到 source_ref → `fetch_messages` 取原文后作答
 判断要点：单点事件（”买 Zigbee 时说了什么”）recall 命中即止；长周期事件（”重构的印象”）若 recall 条目时间分散/数量稀少，必须补 `search_messages`。
-禁止只凭 recall 摘要或 search 预览直接作答；fetch 原文才是证据。
-宏观时间线浏览：`read_file {workspace_path}/memory/HISTORY.md`。"""
+禁止只凭 recall 摘要或 search 预览直接作答；fetch 原文才是证据。"""
 
 
 # ─── 动态上下文层：环境 + channel ────────────────────────────────────────────
@@ -195,11 +193,12 @@ def build_skills_catalog_prompt(skills_summary: str) -> str:
 
 **触发规则（强制，不可跳过）**
 - 用户消息中出现技能名称（含 `$技能名` 语法），或任务明显与某技能描述匹配 → 该轮**必须**使用该技能
-- 使用方式：先 `read_file` 读取 `<location>` 中的完整 SKILL.md 指令，再执行；不得在未读取指令的情况下执行
+- 使用方式：先调用 `load_skill(skill="技能名")` 读取完整 SKILL.md 指令，再执行；不得在未读取指令的情况下执行
+- 不要自己猜测或 `read_file` 读取 SKILL.md 路径；skill 的根目录由 `load_skill` 返回
 - 同时匹配多个技能时，全部使用，说明执行顺序
 - 跳过了明显匹配的技能时，必须说明理由
 - 技能不跨轮沿用，除非用户再次提及
-- `available="false"` 的技能表示依赖未安装，先按技能指令安装依赖，再执行
+- `available="false"` 的技能表示依赖未安装，不要加载正文；先根据 `<requires>` 排查依赖
 
 {skills_summary}"""
 

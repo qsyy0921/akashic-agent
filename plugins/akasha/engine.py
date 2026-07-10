@@ -12,7 +12,7 @@ import hashlib
 import sqlite3
 import threading
 from contextlib import closing
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -28,12 +28,16 @@ from plugins.akasha.core import (
     AkashaCandidate,
     AkashaNode,
     CoreConfig,
+    DENSE_CANDIDATE_LIMIT,
+    DENSE_SEED_LIMIT,
     EdgeUpdate,
+    RecallBudget,
     SourceMessage,
     build_dense_message_index,
     turn_key,
     # Algorithm functions (aliased with _ prefix for internal convention)
     activation_edge_updates as _activation_edge_updates,
+    local_residual as _local_residual,
     activation_updates as _activation_updates,
     compute_candidates as _core_compute_candidates,
     compute_candidates_from_snapshot as _core_compute_candidates_from_snapshot,
@@ -44,8 +48,11 @@ from plugins.akasha.core import (
     graph_seed_keys_from_snapshot as _graph_seed_keys_from_snapshot,
     parse_turn_key as _parse_turn_key,
     bounded_add as _bounded_add,
+    recall_budget_from_dense as _recall_budget_from_dense,
+    reinforce_boost_from_payload as _reinforce_boost_from_payload,
+    reinforced_activation_items as _reinforced_activation_items,
 )
-from agent.config_models import Config
+from agent.config_models import Config  # noqa: F401
 from bus.events_lifecycle import TurnCommitted
 from core.memory.engine import (
     EngineProfile,
@@ -90,6 +97,7 @@ class PendingActivation:
     seq: int          # 仅作 query_log 标识用
     ts: float         # 用于 EdgeUpdate / last_used_ts
     items: list[AkashaCandidate]
+    query_vec: np.ndarray = field(default_factory=lambda: np.array([], dtype=np.float32))
 
 
 class AkashaMemoryEngine:
@@ -138,10 +146,12 @@ class AkashaMemoryEngine:
             or config.light_api_key
             or config.api_key,
             model=embedding.model,
+            output_dimensionality=embedding.output_dimensionality,
             requester=http_resources.external_default,
         )
         self._event_bus = event_publisher
         self._pending_by_session: dict[str, PendingActivation] = {}
+        self._prev_activation_by_session: dict[str, list[AkashaCandidate]] = {}
         self._graph_lock = threading.RLock()
         self._nodes: dict[str, AkashaNode] = {}
         self._edges: dict[tuple[str, str], float] = {}
@@ -161,7 +171,7 @@ class AkashaMemoryEngine:
             build_idf_table, idf_table_is_stale, load_idf_from_db, set_idf_table,
         )
         sessions_db = str(self._session_db_path)
-        conn = self._store._db
+        conn = self._store.db
         try:
             stale = idf_table_is_stale(sessions_db, conn)
         except Exception:
@@ -224,7 +234,30 @@ class AkashaMemoryEngine:
                     "required": ["query"],
                 },
                 search_hint="历史对话 原始消息 Akasha 右脑联想",
-            )
+            ),
+            tools=(
+                MemoryToolSpec(
+                    name="reinforce_memory",
+                    description=(
+                        "加强当前轮的 Akasha 记忆信号。仅当用户纠正你刚才的回答/工具选择,或明确说以后要记住某条做法时调用。"
+                        "本工具强化的是当前对话轮,不需要也不能填写上一轮 source_ref;不要为了普通闲聊、新事实、已知偏好重复调用。"
+                        "常见用法:用户说'昨晚睡眠要用 fitbit_health_snapshot/snapshot,不是 sleep_report'时,加强正确工具选择。"
+                        "也适合强化流程纠正:例如'要先 fetch_messages(source_ref) 看原文再下结论'。调用后仍要正常回复用户。"
+                    ),
+                    parameters={
+                        "type": "object",
+                        "properties": {
+                            "note": {"type": "string", "description": "为什么加强(简述纠正/强调的要点)"},
+                        },
+                        "required": [],
+                    },
+                    risk="write",
+                    search_hint=(
+                        "纠正 强调 记牢 加强记忆 当前轮 source_ref "
+                        "snapshot fitbit_health_snapshot sleep_report fetch_messages"
+                    ),
+                ),
+            ),
         )
 
     # 根据 MemoryQuery 执行 Akasha 检索。
@@ -254,13 +287,21 @@ class AkashaMemoryEngine:
                 }
             )
         query_vec = np.array(await self._embedder.embed(query_text), dtype=np.float32)
-        result = self._retrieve(query_text, query_vec, request, now_ts=now_ts)
-        if request.intent in {"context", "answer"}:
-            self._remember_pending_activation(request, result.activation_items, now_ts=now_ts)
+        stateful = request.effect != "read_only"
+        result = self._retrieve(
+            query_text,
+            query_vec,
+            request,
+            now_ts=now_ts,
+            update_state=stateful,
+        )
+        if stateful and request.intent in {"context", "answer"}:
+            self._remember_pending_activation(request, result.activation_items, query_vec, now_ts=now_ts)
 
-        # 4. context 注入按 Akasha 配置展示 topK；工具查询继续尊重调用方 limit。
-        dense_limit = self._akasha_config.dense_top_k
-        ripple_limit = self._akasha_config.ripple_top_k
+        # 4. dense 高原越强，左脑少展示重复共振，右脑多展开。
+        budget = result.budget
+        dense_limit = budget.dense_k
+        ripple_limit = budget.ripple_k
         if request.intent != "context":
             dense_limit = min(request.limit, dense_limit)
             ripple_limit = min(request.limit, ripple_limit)
@@ -287,7 +328,7 @@ class AkashaMemoryEngine:
         cards = [*dense_cards, *ripple_cards]
 
         # 5. 记录检索诊断日志（context/answer intent 才有意义）。
-        if request.intent in {"context", "answer"} and request.scope.session_key:
+        if stateful and request.intent in {"context", "answer"} and request.scope.session_key:
             self._write_query_log(
                 request=request,
                 result=result,
@@ -304,8 +345,13 @@ class AkashaMemoryEngine:
                 "engine": self.DESCRIPTOR.name,
                 "profile": self.DESCRIPTOR.profile.value,
                 "intent": request.intent,
+                "effect": request.effect,
                 "dense_count": len(dense_cards),
                 "ripple_count": len(ripple_cards),
+                "activation_count": len(result.activation_items),
+                "plateau_strength": budget.plateau_strength,
+                "dense_support": budget.dense_support,
+                "dense_tail_ratio": budget.tail_ratio,
                 "seed_count": result.trace.seed_count,
                 "pool_count": result.trace.pool_count,
             },
@@ -500,6 +546,7 @@ class AkashaMemoryEngine:
         request: MemoryQuery,
         *,
         now_ts: float,
+        update_state: bool,
     ) -> "_AkashaRetrieval":
         # 1. 准备内存图和当前查询所在的预测 seq。
         snapshot = self._graph_snapshot()
@@ -518,13 +565,17 @@ class AkashaMemoryEngine:
                 snapshot.nodes,
                 snapshot.message_embeddings,
                 snapshot.message_turn_keys,
-                limit=max(self._akasha_config.dense_top_k, request.limit),
+                limit=max(DENSE_CANDIDATE_LIMIT, request.limit),
                 message_index=snapshot.message_index,
+            )
+            budget = _recall_budget_from_dense(
+                dense_items,
+                self._akasha_config.dense_seed_threshold,
             )
             graph_seed_keys = _graph_seed_keys_from_snapshot(
                 query_vec,
                 snapshot,
-                limit=self._akasha_config.dense_top_k,
+                limit=DENSE_SEED_LIMIT,
             )
             activation_items, _, _ = _compute_candidates_from_snapshot(
                 query,
@@ -534,12 +585,12 @@ class AkashaMemoryEngine:
                 config=self._akasha_config,
                 source_cursor=source_cursor,
                 soft_recall=False,
-                return_limit=self._akasha_config.activate_limit,
+                return_limit=budget.activation_k,
                 graph_seed_keys=graph_seed_keys,
             )
             display_limit = max(
                 24,
-                max(self._akasha_config.ripple_top_k, request.limit) * 3,
+                max(budget.ripple_k, request.limit) * 3,
             )
             ripple_items, _, trace = _compute_candidates_from_snapshot(
                 query,
@@ -556,15 +607,17 @@ class AkashaMemoryEngine:
             if source_db is not None:
                 source_db.close()
 
-        # 3. 查询阶段只更新旧节点状态，当前 turn 的边等 after-turn 再补。
-        updates = _activation_updates(activation_items, snapshot.nodes, now_ts)
-        self._store.update_activation_batch(updates)
-        self._apply_activation_updates(updates)
+        # 3. 只读查询没有记忆动力学副作用。
+        if update_state:
+            updates = _activation_updates(activation_items, snapshot.nodes, now_ts)
+            self._store.update_activation_batch(updates)
+            self._apply_activation_updates(updates)
         return _AkashaRetrieval(
             dense_items=dense_items,
             ripple_items=ripple_items,
             activation_items=activation_items,
             trace=trace,
+            budget=budget,
             seq=seq,
         )
 
@@ -573,6 +626,7 @@ class AkashaMemoryEngine:
         self,
         request: MemoryQuery,
         items: list[AkashaCandidate],
+        query_vec: np.ndarray,
         *,
         now_ts: float,
     ) -> None:
@@ -585,12 +639,13 @@ class AkashaMemoryEngine:
             seq=seq,
             ts=now_ts,
             items=list(items),
+            query_vec=query_vec,
         )
 
     # TurnCommitted 后把真实 user/assistant 写入 sidecar，并补本轮共激活边。
     async def _on_turn_committed(self, event: TurnCommitted) -> None:
         # 1. 跳过不应进入记忆的系统轮次。
-        if bool((event.extra or {}).get("skip_post_memory")):
+        if event.session_key.startswith("scheduler:") or bool((event.extra or {}).get("skip_post_memory")):
             return
         messages = _load_committed_turn_messages(self._session_db_path, event)
         if not messages:
@@ -610,19 +665,51 @@ class AkashaMemoryEngine:
             self._refresh_cached_message(message, embedding, current_key)
 
         # 3. 用真实 current_key 建边，并记录激活诊断。
+        #    reinforce 标记 = 本轮调用了 reinforce_memory 工具(记在 tool_chain)或 extra 回填；
+        #    与离线重建(build._load_reinforce_boosts)读同一来源，live 与重放一致。
+        reinforce_boost = _reinforce_boost_for_turn(
+            event.extra,
+            event.tool_chain_raw,
+        )
         pending = self._pending_by_session.pop(event.session_key, None)
         if current_key and pending is not None:
-            self._commit_pending_activation(current_key, pending)
+            self._commit_pending_activation(
+                current_key,
+                pending,
+                session_key=event.session_key,
+                reinforce_boost=reinforce_boost,
+            )
 
     # 把 pending activation 转成边和事件。
     def _commit_pending_activation(
         self,
         current_key: str,
         pending: PendingActivation,
+        session_key: str = "",
+        reinforce_boost: float = 1.0,
     ) -> None:
-        edge_updates = _activation_edge_updates(current_key, pending.items, pending.ts)
+        query_residual = self._compute_query_residual(pending.query_vec, current_key)
+        prev_by_session = getattr(self, "_prev_activation_by_session", {})
+        edge_items = _reinforced_activation_items(
+            pending.items,
+            prev_by_session.get(session_key, []),
+            reinforce_boost,
+        )
+        with self._graph_lock:
+            edge_nodes = dict(getattr(self, "_nodes", {}))
+        edge_updates = _activation_edge_updates(
+            current_key,
+            edge_items,
+            pending.ts,
+            query_residual=query_residual,
+            reinforce_boost=reinforce_boost,
+            nodes=edge_nodes,
+        )
         self._store.upsert_edges(edge_updates)
         self._apply_edge_updates(edge_updates)
+        if session_key:
+            prev_by_session[session_key] = list(pending.items)
+            self._prev_activation_by_session = prev_by_session
 
         # 2. 记录本轮激活明细，便于之后诊断。
         self._store.insert_activation_events([
@@ -729,6 +816,24 @@ class AkashaMemoryEngine:
             self._message_embeddings[message.id] = np.array(embedding, dtype=np.float32)
             self._message_turn_keys[message.id] = turn_key_value
             self._message_index = build_dense_message_index(self._message_embeddings)
+
+    # ν_turn = 1 − max_{j<i} cos(query, prior_j)²；当前 turn 自身排除。
+    def _compute_query_residual(self, query_vec: np.ndarray, current_key: str) -> float:
+        if query_vec.size == 0:
+            return 1.0
+        with self._graph_lock:
+            embeddings = [
+                node.embedding
+                for key, node in getattr(self, "_nodes", {}).items()
+                if key != current_key and node.embedding.size > 0
+            ]
+        if not embeddings:
+            return 1.0
+        prior = np.stack(embeddings).astype(np.float32)
+        norms = np.linalg.norm(prior, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        prior = prior / norms
+        return _local_residual(query_vec, prior)
 
     # 把新增或增强的边同步进内存图。
     def _apply_edge_updates(self, updates: list[EdgeUpdate]) -> None:
@@ -981,11 +1086,18 @@ class _AkashaRetrieval:
     activation_items: list[AkashaCandidate]
     trace: ActivationTrace
     seq: int
+    budget: RecallBudget = RecallBudget(10, 10, 8, 0.0, 0, 0.0)
+
+
+def _reinforce_boost_for_turn(
+    event_extra: dict[str, object] | None,
+    tool_chain: list[dict[str, object]],
+) -> float:
+    return _reinforce_boost_from_payload(event_extra, tool_chain)
 
 
 def _core_config(config: AkashaConfig) -> CoreConfig:
     return CoreConfig(
-        dense_top_k=config.dense_top_k,
         dense_seed_threshold=config.dense_seed_threshold,
         activation_threshold=config.activation_threshold,
         cross_boost=config.cross_boost,
@@ -993,7 +1105,6 @@ def _core_config(config: AkashaConfig) -> CoreConfig:
         nearby_dense_threshold=config.nearby_dense_threshold,
         soft_recall_threshold=config.soft_recall_threshold,
         soft_recall_direct_floor=config.soft_recall_direct_floor,
-        activate_limit=config.activate_limit,
     )
 
 

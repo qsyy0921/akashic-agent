@@ -12,8 +12,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from proactive_v2.context import AgentTickContext
-from proactive_v2.tools import _get_recent_chat
+from plugins.default_proactive.context import AgentTickContext
+from plugins.proactive_flow.tools import _get_recent_chat
 from tests.proactive_v2.conftest import make_proactive_pipeline
 
 
@@ -135,7 +135,7 @@ async def test_get_recent_chat_mixed_passive_and_proactive():
 
 def _make_system_prompt() -> str:
     tick = make_proactive_pipeline(llm_fn=None)
-    return tick._build_system_prompt()
+    return tick._prompt_builder.build_system_prompt(tick._proactive_prompt_sections)
 
 
 def test_system_prompt_contains_no_hallucination_rule():

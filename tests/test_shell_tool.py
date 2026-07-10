@@ -783,12 +783,14 @@ async def test_shell_auto_promotes_to_background_after_fg_threshold(monkeypatch)
     assert task_id is not None, "应返回 background_task_id"
     assert result["status"] == "running"
     assert result.get("auto_promoted") is True
-    assert result["timeout_s"] is None
+    assert result["timeout_s"] == shell_mod._DEFAULT_TIMEOUT
     assert task_id in shell_mod._BG_REGISTRY
-    assert shell_mod._BG_REGISTRY[task_id].timeout_s is None
-    assert shell_mod._BG_REGISTRY[task_id].timeout_handle is None
+    assert shell_mod._BG_REGISTRY[task_id].timeout_s == shell_mod._DEFAULT_TIMEOUT
+    assert shell_mod._BG_REGISTRY[task_id].timeout_handle is not None
 
-    # 清理
+    handle = shell_mod._BG_REGISTRY[task_id].timeout_handle
+    if handle is not None:
+        handle.cancel()
     shell_mod._BG_REGISTRY.pop(task_id, None)
 
 
@@ -989,6 +991,90 @@ async def test_task_output_timeout_expired(monkeypatch, tmp_path):
     assert "超时" in result["error"]
     assert task_id not in shell_mod._BG_REGISTRY
     assert not log_path.exists()
+
+
+@pytest.mark.asyncio
+async def test_task_output_clamps_block_timeout(monkeypatch, tmp_path):
+    """超大 timeout_ms 被钳到 _BLOCK_MAX_MS，单次 block 不会长时间死等。"""
+    import agent.tools.shell as shell_mod
+
+    log_path = tmp_path / "running.log"
+    log_path.write_text("running output", encoding="utf-8")
+
+    fake_proc = _FakeProc(stdout="", stderr="", returncode=None)  # 运行中
+    fake_proc.pid = 4567
+
+    task_id = "shell_clamp"
+    shell_mod._BG_REGISTRY[task_id] = shell_mod._BackgroundTask(
+        proc=fake_proc,
+        log_path=str(log_path),
+        pump_task=asyncio.ensure_future(asyncio.sleep(100)),  # 测试期间不会完成
+        started_at=shell_mod.time.monotonic(),
+        wall_started_at_ms=0,
+        timeout_s=3600,
+    )
+
+    captured: dict[str, float] = {}
+
+    async def fake_wait_for(aw, timeout):
+        captured["timeout"] = timeout
+        if hasattr(aw, "cancel"):
+            aw.cancel()
+        raise asyncio.TimeoutError
+
+    monkeypatch.setattr(shell_mod.asyncio, "wait_for", fake_wait_for)
+
+    tool = ShellTaskOutputTool()
+    result = json.loads(
+        await tool.execute(task_id=task_id, block=True, timeout_ms=99_999_999)
+    )
+
+    # 实际传给 wait_for 的超时被钳到 30s，而非 99999999ms
+    assert captured["timeout"] == shell_mod._BLOCK_MAX_MS / 1000
+    assert result["status"] == "running"
+
+    bg = shell_mod._BG_REGISTRY.pop(task_id, None)
+    if bg is not None and bg.pump_task is not None:
+        bg.pump_task.cancel()
+
+
+@pytest.mark.asyncio
+async def test_task_output_handles_internal_timeout_cancellation(monkeypatch, tmp_path):
+    import agent.tools.shell as shell_mod
+
+    monkeypatch.setattr("agent.tools.shell._kill_process_tree", lambda *_: None)
+
+    log_path = tmp_path / "internal_timeout.log"
+    log_path.write_text("", encoding="utf-8")
+
+    fake_proc = _FakeProc(stdout="", stderr="", returncode=None)
+    fake_proc.pid = 5678
+    pump_task = asyncio.ensure_future(asyncio.sleep(100))
+
+    task_id = "shell_internal_timeout"
+    shell_mod._BG_REGISTRY[task_id] = shell_mod._BackgroundTask(
+        proc=fake_proc,
+        log_path=str(log_path),
+        pump_task=pump_task,
+        started_at=shell_mod.time.monotonic(),
+        wall_started_at_ms=0,
+        timeout_s=60,
+    )
+
+    async def fake_wait_for(aw, timeout):
+        shell_mod._bg_timeout(task_id)
+        raise asyncio.CancelledError
+
+    monkeypatch.setattr(shell_mod.asyncio, "wait_for", fake_wait_for)
+
+    tool = ShellTaskOutputTool()
+    result = json.loads(
+        await tool.execute(task_id=task_id, block=True, timeout_ms=30000)
+    )
+
+    assert "error" in result
+    assert "超时" in result["error"]
+    assert task_id not in shell_mod._BG_REGISTRY
 
 
 @pytest.mark.asyncio

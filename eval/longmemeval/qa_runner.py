@@ -100,12 +100,6 @@ async def run_qa_instance(
     timeout_s: float = _DEFAULT_TIMEOUT_S,
 ) -> dict:
     """Run one QA turn and return a result dict with tool trace."""
-    from .methods import (
-        apply_structured_answer_contract_to_result,
-        reset_benchmark_question_context,
-        set_benchmark_question_context,
-    )
-
     loop = rt.core.loop
     qa_key = instance.qa_session_key
 
@@ -118,63 +112,34 @@ async def run_qa_instance(
     try:
         question_dt = _parse_question_date(instance.question_date)
         msg = InboundMessage(
-            channel="lme",
+            channel="benchmark",
             sender="user",
             chat_id=instance.question_id,
             content=instance.question + "\n\n[Respond in English only. One sentence or short phrase.]",
             timestamp=question_dt,
         )
-        context_token = set_benchmark_question_context(
-            {
-                "question_id": instance.question_id,
-                "question_type": instance.question_type,
-                "question": instance.question,
-                "question_date": instance.question_date,
-                "haystack_session_ids": list(instance.haystack_session_ids),
-            }
+        outbound = await asyncio.wait_for(
+            loop._process(msg, session_key=qa_key, dispatch_outbound=False),
+            timeout=timeout_s,
         )
-        try:
-            outbound = await asyncio.wait_for(
-                loop._process(msg, session_key=qa_key, dispatch_outbound=False),
-                timeout=timeout_s,
-            )
-        finally:
-            reset_benchmark_question_context(context_token)
         predicted = outbound.content if outbound else ""
-        react_stats = _extract_react_stats_from_outbound(outbound)
     except asyncio.TimeoutError:
         error = f"timeout after {timeout_s}s"
         logger.warning("QA timeout: %s", instance.question_id)
-        react_stats = {}
     except Exception as exc:
         error = str(exc)
         logger.exception("QA error: %s", instance.question_id)
-        react_stats = {}
 
     elapsed = time.monotonic() - t0
     tool_chain = _extract_tool_trace(rt.core.session_manager, qa_key)
 
-    result = {
+    return {
         "question_id": instance.question_id,
         "question_type": instance.question_type,
         "question": instance.question,
         "gold_answer": instance.answer,
         "predicted_answer": predicted,
         "tool_chain": tool_chain,
-        "react_stats": react_stats,
         "elapsed_s": round(elapsed, 2),
         "error": error,
     }
-    apply_structured_answer_contract_to_result(result, rt.method)
-    return result
-
-
-def _extract_react_stats_from_outbound(outbound: object) -> dict[str, object]:
-    metadata = getattr(outbound, "metadata", None)
-    if not isinstance(metadata, dict):
-        return {}
-    context_retry = metadata.get("context_retry")
-    if not isinstance(context_retry, dict):
-        return {}
-    react_stats = context_retry.get("react_stats")
-    return dict(react_stats) if isinstance(react_stats, dict) else {}

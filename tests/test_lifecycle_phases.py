@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import importlib
-import json
 import sqlite3
-from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -70,13 +67,44 @@ from agent.prompting import PromptSectionRender
 from agent.turns.outbound import OutboundDispatch
 from session.manager import SessionManager
 
-_observe_db = importlib.import_module("plugins.observe.db")
-open_observe_db = cast(
-    Callable[[Path], sqlite3.Connection],
-    getattr(_observe_db, "open_db"),
-)
-
 _now = datetime.now()
+
+
+def open_observe_db(path: Path) -> sqlite3.Connection:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS turns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts TEXT NOT NULL,
+            source TEXT NOT NULL,
+            session_key TEXT NOT NULL,
+            user_msg TEXT,
+            llm_output TEXT NOT NULL DEFAULT '',
+            raw_llm_output TEXT,
+            meme_tag TEXT,
+            meme_media_count INTEGER,
+            tool_calls TEXT,
+            tool_chain_json TEXT,
+            history_window INTEGER,
+            history_messages INTEGER,
+            history_chars INTEGER,
+            history_tokens INTEGER,
+            prompt_tokens INTEGER,
+            next_turn_baseline_tokens INTEGER,
+            error TEXT,
+            react_iteration_count INTEGER,
+            react_input_sum_tokens INTEGER,
+            react_input_peak_tokens INTEGER,
+            react_final_input_tokens INTEGER,
+            react_cache_prompt_tokens INTEGER,
+            react_cache_hit_tokens INTEGER
+        )
+        """
+    )
+    return conn
 
 
 class _MemoryStatusPluginModule:
@@ -413,6 +441,139 @@ async def test_before_turn_memory_status_command_aborts_without_context_prepare(
     assert "尚未整理的用户消息数：1" in ctx.abort_reply
     assert "当前会话消息数：4" in ctx.abort_reply
     assert "内部" not in ctx.abort_reply
+    ctx_store.prepare.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_before_turn_memory_context_guard_blocks_unconsolidated_tail():
+    bus = EventBus()
+    session = _DummySession("telegram:123")
+    session.messages = [
+        {"role": "user", "content": f"u{i}"}
+        for i in range(30)
+    ]
+    session.last_consolidated = 0
+    session_mgr = SimpleNamespace(get_or_create=lambda key: session)
+    ctx_store = SimpleNamespace(prepare=AsyncMock())
+
+    phase = Phase(
+        default_before_turn_modules(
+            bus,
+            cast(SessionManager, session_mgr),
+            cast(ContextStore, ctx_store),
+            keep_count=20,
+        ),
+        frame_factory=BeforeTurnFrame,
+    )
+    msg = _inbound()
+    state = TurnState(msg=msg, session_key="telegram:123", dispatch_outbound=True)
+
+    ctx = await phase.run(state)
+
+    assert ctx.abort is True
+    assert "记忆归档现在处于异常积压状态" in ctx.abort_reply
+    assert "当前未归档消息数 30" in ctx.abort_reply
+    assert "安全阈值 30" in ctx.abort_reply
+    assert "热上下文保留 20" in ctx.abort_reply
+    assert "last_consolidated=0" in ctx.abort_reply
+    assert "total_messages=30" in ctx.abort_reply
+    assert ctx.extra_metadata["memory_context_guard"] == {
+        "pending": 30,
+        "threshold": 30,
+        "keep_count": 20,
+        "last_consolidated": 0,
+        "total_messages": 30,
+    }
+    ctx_store.prepare.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_before_turn_memory_context_guard_consolidates_before_blocking():
+    bus = EventBus()
+    session = _DummySession("telegram:123")
+    session.messages = [
+        {"role": "user", "content": f"u{i}"}
+        for i in range(30)
+    ]
+    session.last_consolidated = 0
+    session_mgr = SimpleNamespace(get_or_create=lambda key: session)
+    ctx_store = SimpleNamespace(
+        prepare=AsyncMock(return_value=ContextBundle(history_messages=[]))
+    )
+
+    class _Consolidator:
+        async def trigger_memory_consolidation(
+            self,
+            session_key: str,
+            *,
+            archive_all: bool = False,
+            force: bool = False,
+        ) -> bool:
+            assert session_key == "telegram:123"
+            assert archive_all is False
+            assert force is False
+            session.last_consolidated = len(session.messages) - 20
+            return True
+
+    phase = Phase(
+        default_before_turn_modules(
+            bus,
+            cast(SessionManager, session_mgr),
+            cast(ContextStore, ctx_store),
+            keep_count=20,
+            consolidator=_Consolidator(),
+        ),
+        frame_factory=BeforeTurnFrame,
+    )
+    msg = _inbound()
+    state = TurnState(msg=msg, session_key="telegram:123", dispatch_outbound=True)
+
+    ctx = await phase.run(state)
+
+    assert ctx.abort is False
+    assert session.last_consolidated == 10
+    ctx_store.prepare.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_before_turn_memory_context_guard_blocks_after_consolidation_failure():
+    bus = EventBus()
+    session = _DummySession("telegram:123")
+    session.messages = [
+        {"role": "user", "content": f"u{i}"}
+        for i in range(30)
+    ]
+    session.last_consolidated = 0
+    session_mgr = SimpleNamespace(get_or_create=lambda key: session)
+    ctx_store = SimpleNamespace(prepare=AsyncMock())
+
+    class _Consolidator:
+        async def trigger_memory_consolidation(
+            self,
+            session_key: str,
+            *,
+            archive_all: bool = False,
+            force: bool = False,
+        ) -> bool:
+            return False
+
+    phase = Phase(
+        default_before_turn_modules(
+            bus,
+            cast(SessionManager, session_mgr),
+            cast(ContextStore, ctx_store),
+            keep_count=20,
+            consolidator=_Consolidator(),
+        ),
+        frame_factory=BeforeTurnFrame,
+    )
+    msg = _inbound()
+    state = TurnState(msg=msg, session_key="telegram:123", dispatch_outbound=True)
+
+    ctx = await phase.run(state)
+
+    assert ctx.abort is True
+    assert "记忆归档现在处于异常积压状态" in ctx.abort_reply
     ctx_store.prepare.assert_not_called()
 
 
@@ -1275,6 +1436,7 @@ async def test_after_reasoning_collects_persist_and_outbound_slots():
         reply="reply",
         tool_chain=[],
         tools_used=[],
+        media=["/tmp/from-turn.png"],
         thinking=None,
         streamed=False,
         context_retry={},
@@ -1292,123 +1454,10 @@ async def test_after_reasoning_collects_persist_and_outbound_slots():
 
     assert session.messages[0]["user_flag"] == "u"
     assert session.messages[1]["assistant_flag"] == "a"
+    assert session.messages[1]["media"] == ["/tmp/from-turn.png"]
     assert result.outbound.metadata["before_turn_flag"] == "bt"
     assert result.outbound.metadata["plugin_flag"] == "m"
-    assert result.outbound.media == ["/tmp/a.png"]
-
-
-@pytest.mark.asyncio
-async def test_after_reasoning_attaches_chatgpt_imagegen_media(tmp_path: Path):
-    image = tmp_path / "west-lake.png"
-    image.write_bytes(b"\x89PNG\r\n\x1a\n")
-    session = _DummySession("telegram:123")
-    msg = _inbound()
-    state = TurnState(msg=msg, session_key=session.key, dispatch_outbound=True)
-    state.session = session
-    services = SimpleNamespace(
-        presence=Mock(),
-        session_manager=SimpleNamespace(append_messages=AsyncMock()),
-    )
-    turn_result = TurnRunResult(
-        reply="已生成图片。",
-        tool_chain=[
-            {
-                "text": "",
-                "calls": [
-                    {
-                        "name": "mcp_chatgpt_imagegen__chatgpt_image_generate",
-                        "status": "success",
-                        "artifacts": [
-                            {
-                                "type": "image",
-                                "path": str(image),
-                                "mime": "image/png",
-                            }
-                        ],
-                        "result": json.dumps(
-                            {"success": True, "images": [str(image)]},
-                            ensure_ascii=False,
-                        ),
-                    }
-                ],
-            }
-        ],
-        tools_used=["mcp_chatgpt_imagegen__chatgpt_image_generate"],
-        thinking=None,
-        streamed=False,
-        context_retry={},
-    )
-    phase = Phase(
-        default_after_reasoning_modules(EventBus(), cast(Any, services)),
-        frame_factory=AfterReasoningFrame,
-    )
-
-    result = await phase.run(AfterReasoningInput(state=state, turn_result=turn_result))
-
-    assert result.outbound.content == "已生成图片。"
-    assert result.outbound.media == [str(image)]
-    assert session.messages[1]["media"] == [str(image)]
-
-
-@pytest.mark.asyncio
-async def test_after_reasoning_skips_auto_dispatched_chatgpt_imagegen_media(tmp_path: Path):
-    image = tmp_path / "hanfu.png"
-    image.write_bytes(b"\x89PNG\r\n\x1a\n")
-    session = _DummySession("telegram:123")
-    msg = _inbound()
-    state = TurnState(msg=msg, session_key=session.key, dispatch_outbound=True)
-    state.session = session
-    services = SimpleNamespace(
-        presence=Mock(),
-        session_manager=SimpleNamespace(append_messages=AsyncMock()),
-    )
-    turn_result = TurnRunResult(
-        reply="已发送。",
-        tool_chain=[
-            {
-                "text": "",
-                "calls": [
-                    {
-                        "name": "mcp_chatgpt_imagegen__chatgpt_image_generate",
-                        "status": "success",
-                        "artifacts": [
-                            {
-                                "type": "image",
-                                "path": str(image),
-                                "mime": "image/png",
-                            }
-                        ],
-                        "auto_dispatched_artifacts": [
-                            {
-                                "type": "image",
-                                "path": str(image),
-                                "mime": "image/png",
-                            }
-                        ],
-                        "auto_dispatched_media": [str(image)],
-                        "result": json.dumps(
-                            {"success": True, "images": [str(image)]},
-                            ensure_ascii=False,
-                        ),
-                    }
-                ],
-            }
-        ],
-        tools_used=["mcp_chatgpt_imagegen__chatgpt_image_generate"],
-        thinking=None,
-        streamed=False,
-        context_retry={},
-    )
-    phase = Phase(
-        default_after_reasoning_modules(EventBus(), cast(Any, services)),
-        frame_factory=AfterReasoningFrame,
-    )
-
-    result = await phase.run(AfterReasoningInput(state=state, turn_result=turn_result))
-
-    assert result.outbound.content == "已发送。"
-    assert result.outbound.media == []
-    assert "media" not in session.messages[1]
+    assert result.outbound.media == ["/tmp/from-turn.png", "/tmp/a.png"]
 
 
 @pytest.mark.asyncio

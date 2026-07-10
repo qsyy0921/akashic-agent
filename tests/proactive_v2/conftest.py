@@ -11,8 +11,9 @@ from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock
 
 from proactive_v2.config import ProactiveConfig
-from proactive_v2.gateway import GatewayDeps
-from proactive_v2.tools import ToolDeps
+from proactive_v2.frame import new_proactive_frame
+from plugins.default_proactive.gateway import GatewayDeps
+from plugins.proactive_flow.tools import ToolDeps
 from agent.looping.ports import SessionServices
 from agent.turns.orchestrator import TurnOrchestrator, TurnOrchestratorDeps
 from agent.turns.outbound import OutboundDispatch
@@ -103,19 +104,16 @@ class FakeRng:
 # ── FakeAckSink ──────────────────────────────────────────────────────────
 
 class FakeAckSink:
-    """记录所有 ACK 调用的 (compound_key, ttl_hours) 对。"""
+    """记录所有 ACK 调用。"""
 
     def __init__(self):
-        self.calls: list[tuple[str, int]] = []
+        self.calls: list[tuple[str, str]] = []
 
-    async def __call__(self, compound_key: str, ttl_hours: int) -> None:
-        self.calls.append((compound_key, ttl_hours))
+    async def __call__(self, compound_key: str, feedback: str) -> None:
+        self.calls.append((compound_key, feedback))
 
-    def acked(self, key: str, ttl: int) -> bool:
-        return (key, ttl) in self.calls
-
-    def ttls_for(self, key: str) -> list[int]:
-        return [ttl for k, ttl in self.calls if k == key]
+    def acked(self, key: str) -> bool:
+        return any(k == key for k, _ in self.calls)
 
     def not_acked(self, key: str) -> bool:
         return all(k != key for k, _ in self.calls)
@@ -217,10 +215,11 @@ def make_proactive_pipeline(
     recent_proactive_fn: Any = None,
     workspace_context_fn: Any = None,
     drift_pipeline: Any = None,
+    event_bus: Any = None,
 ):
-    from agent.core.proactive_turn import (
-        ProactiveTurnPipeline,
-        ProactiveTurnPipelineDeps,
+    from plugins.default_proactive.runtime import (
+        ProactiveFlowRuntime,
+        ProactiveFlowDeps,
     )
 
     # 合理的默认值：所有 gate 都放行
@@ -278,8 +277,8 @@ def make_proactive_pipeline(
         )
     )
 
-    return ProactiveTurnPipeline(
-        ProactiveTurnPipelineDeps(
+    return ProactiveFlowRuntime(
+        ProactiveFlowDeps(
             cfg=cfg or cfg_with(),
             session_key=session_key,
             state_store=state_store,
@@ -295,6 +294,35 @@ def make_proactive_pipeline(
             recent_proactive_fn=recent_proactive_fn,
             workspace_context_fn=workspace_context_fn,
             drift_pipeline=drift_pipeline,
+            event_bus=event_bus,
             tool_hooks=None,
         )
     )
+
+
+async def run_proactive_pipeline(
+    tick: Any,
+    *,
+    session_key: str = "test_session",
+    slots: dict[str, Any] | None = None,
+) -> float | None:
+    from plugins.default_proactive.runtime import build_default_proactive_modules
+    from plugins.drift_flow.modules import build_drift_flow_modules
+    from plugins.proactive_flow.modules import build_proactive_flow_modules
+    from proactive_v2.lifecycle import ProactiveLifecycleBuilder, ProactiveLifecycleSpec
+
+    lifecycle = ProactiveLifecycleBuilder().build(
+        ProactiveLifecycleSpec(
+            id="test",
+            terminal_slots=("run:next_wakeup",),
+        ),
+        [
+            *build_default_proactive_modules(tick),
+            *build_proactive_flow_modules(tick),
+            *build_drift_flow_modules(tick),
+        ],
+    )
+    frame = await lifecycle.run(new_proactive_frame(session_key, slots))
+    if frame.output is None:
+        return None
+    return frame.output.base_score

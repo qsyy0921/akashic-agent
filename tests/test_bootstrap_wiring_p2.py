@@ -201,6 +201,7 @@ def test_config_load_reads_embedding_and_ignores_private_memory_sections(tmp_pat
                 "embedding": {
                     "model": "legacy-embedding",
                     "api_key": "legacy-key",
+                    "output_dimensionality": 1536,
                 },
                 "retrieval": {
                     "score_threshold": 0.99,
@@ -217,6 +218,7 @@ def test_config_load_reads_embedding_and_ignores_private_memory_sections(tmp_pat
     assert cfg.memory.engine == ""
     assert cfg.memory.embedding.model == "legacy-embedding"
     assert cfg.memory.embedding.api_key == "legacy-key"
+    assert cfg.memory.embedding.output_dimensionality == 1536
 
 
 def test_config_load_reads_memory_window_and_socket(tmp_path: Path):
@@ -342,14 +344,13 @@ def test_config_load_skips_unfilled_channels(tmp_path: Path, monkeypatch: pytest
 
     assert cfg.channels.telegram is None
     assert cfg.channels.qq is None
-    assert cfg.channels.qqbot is not None
-    assert cfg.channels.qqbot.app_id == "app"
-    assert cfg.channels.qqbot.client_secret == "secret"
-    assert cfg.channels.qqbot.allow_from == ["user-openid"]
-    assert cfg.channels.qqbot.groups[0].group_openid == "group-openid"
-    assert cfg.channels.qqbot.groups[0].allow_from == ["member-openid"]
-    assert cfg.channels.qqbot.groups[0].require_at is True
-    assert cfg.channels.qqbot.groups[0].allow_proactive is True
+    assert cfg.plugins["qqbot"]["app_id"] == "app"
+    assert cfg.plugins["qqbot"]["client_secret"] == "secret"
+    assert cfg.plugins["qqbot"]["allow_from"] == ["user-openid"]
+    assert cfg.plugins["qqbot"]["groups"][0]["group_openid"] == "group-openid"
+    assert cfg.plugins["qqbot"]["groups"][0]["allow_from"] == ["member-openid"]
+    assert cfg.plugins["qqbot"]["groups"][0]["require_at"] is True
+    assert cfg.plugins["qqbot"]["groups"][0]["allow_proactive"] is True
     assert cfg.channels.socket == DEFAULT_SOCKET
 
 
@@ -454,6 +455,71 @@ def test_config_load_reads_qq_websocket_timeout(tmp_path: Path):
     assert cfg.channels.qq.websocket_open_timeout_seconds == 9.5
 
 
+def test_config_load_reads_telegram_proxy(tmp_path: Path):
+    cfg_path = tmp_path / "config.toml"
+    _write_toml(
+        cfg_path,
+        {
+            "llm": {
+                "provider": "openai",
+                "main": {
+                    "model": "m",
+                    "api_key": "k",
+                },
+            },
+            "agent": {
+                "system_prompt": "s",
+            },
+            "channels": {
+                "telegram": {
+                    "token": "test-token",
+                    "allow_from": ["tester"],
+                    "proxy_url": "socks5://127.0.0.1:7890",
+                },
+            },
+        },
+    )
+
+    cfg = Config.load(cfg_path)
+
+    assert cfg.channels.telegram is not None
+    assert cfg.channels.telegram.proxy_url == "socks5://127.0.0.1:7890"
+
+
+def test_config_load_reads_web_chat_config(tmp_path: Path):
+    cfg_path = tmp_path / "config.toml"
+    _write_toml(
+        cfg_path,
+        {
+            "llm": {
+                "provider": "openai",
+                "main": {
+                    "model": "m",
+                    "api_key": "k",
+                },
+            },
+            "agent": {
+                "system_prompt": "s",
+            },
+            "channels": {
+                "chat": {
+                    "enabled": True,
+                    "host": "127.0.0.2",
+                    "port": 6324,
+                    "channel_name": "web_test",
+                },
+            },
+        },
+    )
+
+    cfg = Config.load(cfg_path)
+
+    assert cfg.channels.chat.enabled is True
+    assert cfg.channels.chat.host == "127.0.0.2"
+    assert cfg.channels.chat.port == 6324
+    assert cfg.channels.chat.channel_name == "web_test"
+
+
 def test_build_registered_tools_respects_toolset_order_and_subset(monkeypatch, tmp_path: Path):
     calls: list[str] = []
 
@@ -501,7 +567,7 @@ def test_build_registered_tools_respects_toolset_order_and_subset(monkeypatch, t
         config=config,
         workspace=tmp_path,
         http_resources=cast(Any, SimpleNamespace()),
-        bus=cast(Any, SimpleNamespace()),
+        bus=cast(Any, SimpleNamespace(chat_lane=None)),
         provider=object(),
         light_provider=object(),
         session_store=object(),
@@ -539,7 +605,7 @@ def test_build_loop_deps_uses_context_factory(monkeypatch, tmp_path: Path):
     deps = _build_loop_deps(
         config=config,
         workspace=tmp_path,
-        bus=cast(Any, SimpleNamespace()),
+        bus=cast(Any, SimpleNamespace(chat_lane=None)),
         provider=cast(Any, object()),
         light_provider=None,
         tools=ToolRegistry(),
@@ -717,7 +783,7 @@ def test_build_registered_tools_without_mcp_toolset_still_returns_empty_registry
         config=config,
         workspace=tmp_path,
         http_resources=cast(Any, SimpleNamespace()),
-        bus=cast(Any, SimpleNamespace()),
+        bus=cast(Any, SimpleNamespace(chat_lane=None)),
         provider=object(),
         light_provider=object(),
         session_store=object(),

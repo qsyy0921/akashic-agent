@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from proactive_v2.config import ProactiveConfig
 
@@ -11,6 +12,7 @@ class TelegramChannelConfig:
     token: str
     allow_from: list[str] = field(default_factory=list)
     channel_name: str = "telegram"
+    proxy_url: str = ""
 
 
 @dataclass
@@ -26,12 +28,6 @@ class QQChannelConfig:
     allow_from: list[str] = field(default_factory=list)
     groups: list[QQGroupConfig] = field(default_factory=list)
     websocket_open_timeout_seconds: float = 5.0
-    channel_name: str = "qq"
-    ws_uri: str = ""
-    ws_token: str = "NcatBot"
-    observe_only: bool = False
-    observe_all_groups: bool = False
-    private_peer_ids: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -43,19 +39,18 @@ class QQBotGroupConfig:
 
 
 @dataclass
-class QQBotChannelConfig:
-    app_id: str
-    client_secret: str
-    allow_from: list[str] = field(default_factory=list)
-    groups: list[QQBotGroupConfig] = field(default_factory=list)
+class WebChatConfig:
+    enabled: bool = True
+    host: str = "127.0.0.1"
+    port: int = 6322
+    channel_name: str = "web"
 
 
 @dataclass
 class ChannelsConfig:
     telegram: TelegramChannelConfig | None = None
     qq: QQChannelConfig | None = None
-    qq_accounts: list[QQChannelConfig] = field(default_factory=list)
-    qqbot: QQBotChannelConfig | None = None
+    chat: WebChatConfig = field(default_factory=WebChatConfig)
     socket: str = "/tmp/akashic.sock"
     cli_session_key: str = ""
 
@@ -65,6 +60,7 @@ class MemoryEmbeddingConfig:
     model: str = "text-embedding-v3"
     api_key: str = ""
     base_url: str = ""
+    output_dimensionality: int | None = None
 
 
 @dataclass
@@ -137,6 +133,7 @@ class Config:
     dev_mode: bool = False
     peer_agents: list[PeerAgentConfig] = field(default_factory=list)
     wiring: WiringConfig = field(default_factory=WiringConfig)
+    plugins: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     @classmethod
     def load(cls, path: str | Path = "config.toml") -> Config:
@@ -153,9 +150,9 @@ __all__ = [
     "MemoryEmbeddingConfig",
     "PeerAgentConfig",
     "QQChannelConfig",
-    "QQBotChannelConfig",
     "QQBotGroupConfig",
     "QQGroupConfig",
     "TelegramChannelConfig",
+    "WebChatConfig",
     "WiringConfig",
 ]

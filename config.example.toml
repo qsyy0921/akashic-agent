@@ -45,6 +45,13 @@ memory_window = 40
 [agent.tools]
 search_enabled = true
 
+# Web Chatbox 默认跟主进程一起启动，只监听本机。
+[channels.chat]
+enabled = true
+host = "127.0.0.1"
+port = 6322
+channel_name = "web"
+
 # 可选：长期记忆整理任务（默认已启用，通常无需修改）
 # [agent.maintenance]
 # memory_optimizer_enabled = true
@@ -67,6 +74,8 @@ allow_from = ["your_username"]
 # channel 标识符，决定 session key 前缀（如 telegram:12345）。
 # 多个 bot 想要隔离记忆时，改成不同的名字（如 "telegram_work"）。
 # channel_name = "telegram"
+# 可选：仅为 Telegram Bot API 配置代理，例如 socks5://127.0.0.1:7890。
+# proxy_url = ""
 
 [channels.qq]
 # 填 QQ 号启用 QQ 频道，留空跳过。
@@ -80,7 +89,7 @@ websocket_open_timeout_seconds = 5.0
 # allow_from = ["your_qq_number"]
 # require_at = true
 
-[channels.qqbot]
+[plugins.qqbot]
 # 官方 QQBot，和 NapCat QQ 通道并存。留空跳过。
 app_id = ""
 client_secret = ""
@@ -88,11 +97,30 @@ client_secret = ""
 allow_from = []
 
 # 当前实现仅启用私聊；群配置先保留为后续扩展占位。
-# [[channels.qqbot.groups]]
+# [[plugins.qqbot.groups]]
 # group_openid = "GROUP_OPENID"
 # allow_from = ["MEMBER_OPENID"]
 # require_at = true
 # allow_proactive = false
+
+[plugins.feishu]
+# 飞书自建应用（长连接模式，无需公网回调）。留空跳过。
+# app_id / app_secret 来自开放平台「凭证与基础信息」。
+app_id = ""
+app_secret = ""
+# 私聊白名单填 open_id（ou_...）/ user_id / union_id，留空允许所有人。
+allow_from = []
+# 私有化部署改 domain，如 https://open.larksuite.com（Lark 国际版）。
+# domain = "https://open.feishu.cn"
+
+[plugins.daynight_gate]
+# 默认在北京时间凌晨降低主动 tick 过 gate 概率。
+enabled = true
+timezone = "Asia/Shanghai"
+start = "00:00"
+end = "06:00"
+pass_probability = 0.15
+reason = "quiet_hours"
 
 # =============================================================================
 # 语义记忆

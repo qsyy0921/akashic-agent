@@ -6,6 +6,48 @@
 
 ---
 
+## 先装常用插件
+
+如果你想让自己的 Akashic 具备和作者差不多的扩展能力，先看社区插件组织：
+
+- <https://github.com/orgs/akashic-plugins/repositories>
+
+很多能力现在都不是写死在主仓里，而是做成独立插件仓库，例如：
+
+- `steam-mcp`
+- `feed-mcp`
+- `huayue-skills`
+
+如果 Akashic 已经在运行，你通常可以直接像聊天一样让它安装：
+
+```text
+帮我安装这个插件试试看：
+https://github.com/akashic-plugins/steam-mcp
+```
+
+或者更自然一点：
+
+```text
+steam mcp 我想用插件方式加载，你帮我把这个插件装一下看看能不能用：
+https://github.com/akashic-plugins/steam-mcp
+```
+
+Akashic 理想上的动作应该是：
+
+```text
+安装插件
+├─ 识别这是一个 GitHub 插件仓库
+├─ 执行 plugin-install
+├─ 检查 registry / skills / mcp_servers
+└─ 提醒你重启后生效
+```
+
+当前这套插件系统默认按“重启后生效”理解，尤其是 lifecycle、skill、MCP 声明变更后。
+
+想看完整机制，直接看 [插件系统 Handbook](./_handbook/plugins-tutorial.md)。
+
+---
+
 ## Quickstart
 
 需要 Python 3.12。
@@ -62,11 +104,17 @@ base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 [channels.telegram]
 token = "123456:ABC..."
 allow_from = ["your_username"]
+
+[channels.chat]
+enabled = true
+host = "127.0.0.1"
+port = 6322
+channel_name = "web"
 ```
 
 **个人推荐**：
 这个项目和 deepseekv4flash 以及 qwen 相性比较好，其他模型不保证效果。特别是一些连 xml 输出都做不好的国产模型。
-通信渠道推荐 telegram，提供了丰富好看的流式输出。
+通信渠道推荐 telegram，提供了丰富好看的流式输出。只想先本机试用的话，`channels.chat` 默认开启，启动后直接打开 `http://127.0.0.1:6322`。
 
 **3. 启动**
 
@@ -74,7 +122,7 @@ allow_from = ["your_username"]
 uv run python main.py
 ```
 
-给 bot 发一条消息即可开始对话。
+打开 `http://127.0.0.1:6322` 可以使用 Web Chatbox；如果配置了 Telegram / QQ，也可以直接给 bot 发一条消息开始对话。
 
 ---
 
@@ -94,6 +142,7 @@ uv run python main.py
 
 | 想看什么 | 文档 |
 |---------|------|
+| 怎么打开本机 Web Chatbox | 启动后访问 `http://127.0.0.1:6322`，配置见 `config.toml` 的 `[channels.chat]` |
 | 怎么让 agent 主动推送消息、怎么配数据源 | [_handbook/proactive-guide.md](./_handbook/proactive-guide.md) |
 | 怎么写后台任务让 agent 空闲时自动干活 | [_handbook/drift-guide.md](./_handbook/drift-guide.md) |
 | MEMORY.md / SELF.md / consolidation / 记忆怎么流转 | [_handbook/memory-markdown.md](./_handbook/memory-markdown.md) |
@@ -136,6 +185,7 @@ Agent 根据电量模型自适应调整轮询频率——你刚聊完时不烦�
 ```bash
 uv run python main.py cli       # 连接运行中的 agent（TUI）
 uv run python main.py dashboard # 打开 Dashboard（默认 :2236）
+# Web Chatbox 跟主进程一起启动，默认 http://127.0.0.1:6322
 uv run python main.py --help    # 查看全部子命令
 
 pytest tests/

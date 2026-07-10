@@ -1,12 +1,12 @@
 import asyncio
 import json
 from datetime import datetime
-from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
 
 from agent.core.passive_turn import DefaultReasoner
 from agent.core.runtime_support import LLMServices, ToolDiscoveryState
+from agent.lifecycle.types import AfterStepCtx
 from agent.looping.ports import LLMConfig
 from agent.provider import LLMResponse, ToolCall
 from agent.tools.base import Tool
@@ -14,8 +14,35 @@ from agent.tools.registry import ToolRegistry
 from agent.tools.tool_search import ToolSearchTool
 from bus.event_bus import EventBus
 from bus.events_lifecycle import ToolCallCompleted, ToolCallStarted
-import plugins.context_pressure.plugin as context_pressure_plugin
-from plugins.context_pressure.plugin import ContextPressureStopModule
+
+_TEST_CONTEXT_PRESSURE_STOP_THRESHOLD_TOKENS = 1
+
+
+class ContextPressureStopModule:
+    slot = "context_pressure.stop"
+    requires = ("after_step.copy_input", "step:ctx")
+    produces = (
+        "step:early_stop_reason",
+        "step:telemetry:context_pressure_tokens",
+        "step:telemetry:context_pressure_threshold",
+    )
+
+    async def run(self, frame: object) -> object:
+        raw_slots = getattr(frame, "slots", None)
+        if not isinstance(raw_slots, dict):
+            return frame
+        slots = cast(dict[str, object], raw_slots)
+        ctx = slots.get("step:ctx")
+        if not isinstance(ctx, AfterStepCtx) or not ctx.has_more:
+            return frame
+        if ctx.context_tokens_estimate <= _TEST_CONTEXT_PRESSURE_STOP_THRESHOLD_TOKENS:
+            return frame
+        slots["step:early_stop_reason"] = "context_pressure"
+        slots["step:telemetry:context_pressure_tokens"] = ctx.context_tokens_estimate
+        slots["step:telemetry:context_pressure_threshold"] = (
+            _TEST_CONTEXT_PRESSURE_STOP_THRESHOLD_TOKENS
+        )
+        return frame
 
 
 class _DummyTool(Tool):
@@ -49,27 +76,6 @@ class _InflateTool(Tool):
         return f"payload-{kwargs.get('value', '')}-" + ("x" * 2400)
 
 
-class _StaticTool(Tool):
-    def __init__(self, name: str, result: str) -> None:
-        self._name = name
-        self._result = result
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def description(self) -> str:
-        return self._name
-
-    @property
-    def parameters(self) -> dict:
-        return {"type": "object", "properties": {}, "required": []}
-
-    async def execute(self, **kwargs: Any) -> str:
-        return self._result
-
-
 class _Provider:
     def __init__(self, responses: list[LLMResponse]) -> None:
         self._responses = list(responses)
@@ -89,15 +95,6 @@ class _TimeoutProvider:
     async def chat(self, **kwargs: Any) -> LLMResponse:
         self.calls.append(kwargs)
         raise asyncio.TimeoutError
-
-
-class _CaptureOutboundPort:
-    def __init__(self) -> None:
-        self.items: list[Any] = []
-
-    async def dispatch(self, outbound: Any) -> bool:
-        self.items.append(outbound)
-        return True
 
 
 def test_default_reasoner_runs_tool_loop_and_returns_reasoner_result():
@@ -144,170 +141,6 @@ def test_default_reasoner_runs_tool_loop_and_returns_reasoner_result():
     assert not any("未加载工具目录" in str(m.get("content", "")) for m in first_messages)
 
 
-def test_default_reasoner_auto_dispatches_chatgpt_imagegen_media(tmp_path: Path):
-    image = tmp_path / "image.png"
-    image.write_bytes(b"\x89PNG\r\n\x1a\n")
-    tool_name = "mcp_chatgpt_imagegen__chatgpt_image_generate"
-    provider = _Provider(
-        [
-            LLMResponse(content="", tool_calls=[ToolCall("c1", tool_name, {})]),
-            LLMResponse(content="已发送。", tool_calls=[]),
-        ]
-    )
-    tools = ToolRegistry()
-    tools.register(
-        _StaticTool(
-            tool_name,
-            json.dumps({"success": True, "images": [str(image)]}, ensure_ascii=False),
-        ),
-        always_on=True,
-    )
-    outbound = _CaptureOutboundPort()
-    reasoner = DefaultReasoner(
-        llm=cast(Any, LLMServices(provider=cast(Any, provider), light_provider=cast(Any, provider))),
-        llm_config=LLMConfig(model="m", max_iterations=4, max_tokens=512),
-        tools=tools,
-        discovery=ToolDiscoveryState(),
-        tool_search_enabled=False,
-        memory_window=40,
-        outbound_port=cast(Any, outbound),
-    )
-
-    result = asyncio.run(
-        reasoner.run(
-            [{"role": "user", "content": "生成图片"}],
-            tool_event_channel="telegram",
-            tool_event_chat_id="123",
-        )
-    )
-
-    assert result.reply == "已发送。"
-    assert outbound.items[0].channel == "telegram"
-    assert outbound.items[0].chat_id == "123"
-    assert outbound.items[0].media == [str(image)]
-    call = result.metadata["tool_chain"][0]["calls"][0]
-    assert call["artifacts"][0]["path"] == str(image)
-    assert call["auto_dispatched_artifacts"][0]["path"] == str(image)
-    assert call["auto_dispatched_media"] == [str(image)]
-    second_messages = provider.calls[1]["messages"]
-    assert any("第一张生成图片已自动推送给用户" in str(m) for m in second_messages)
-
-
-def test_default_reasoner_disables_imagegen_retry_after_failed_result():
-    tool_name = "mcp_chatgpt_imagegen__chatgpt_image_generate"
-    provider = _Provider(
-        [
-            LLMResponse(content="", tool_calls=[ToolCall("c1", tool_name, {})]),
-            LLMResponse(content="ChatGPT 网页端这次没有产出图片，请稍后重试。", tool_calls=[]),
-        ]
-    )
-    tools = ToolRegistry()
-    tools.register(
-        _StaticTool(
-            tool_name,
-            json.dumps(
-                {
-                    "success": False,
-                    "error": "ChatGPT stopped responding without producing a new generated image.",
-                },
-                ensure_ascii=False,
-            ),
-        ),
-        always_on=True,
-    )
-    reasoner = DefaultReasoner(
-        llm=cast(Any, LLMServices(provider=cast(Any, provider), light_provider=cast(Any, provider))),
-        llm_config=LLMConfig(model="m", max_iterations=4, max_tokens=512),
-        tools=tools,
-        discovery=ToolDiscoveryState(),
-        tool_search_enabled=False,
-        memory_window=40,
-    )
-
-    result = asyncio.run(reasoner.run([{"role": "user", "content": "生成图片"}]))
-
-    assert result.reply == "ChatGPT 网页端这次没有产出图片，请稍后重试。"
-    second_tool_names = {
-        schema["function"]["name"] for schema in provider.calls[1]["tools"]
-    }
-    assert tool_name not in second_tool_names
-    second_messages = provider.calls[1]["messages"]
-    assert any("图片生成工具本轮已经失败" in str(m) for m in second_messages)
-
-
-def test_default_reasoner_auto_dispatches_arxiv_results_to_telegram():
-    tool_name = "mcp_arxiv__arxiv_search"
-    provider = _Provider(
-        [
-            LLMResponse(
-                content="",
-                tool_calls=[
-                    ToolCall(
-                        "c1",
-                        tool_name,
-                        {"query": "token pruning", "category": "cs.CV"},
-                    )
-                ],
-            ),
-            LLMResponse(content="已推送。", tool_calls=[]),
-        ]
-    )
-    tools = ToolRegistry()
-    tools.register(
-        _StaticTool(
-            tool_name,
-            json.dumps(
-                {
-                    "success": True,
-                    "query": 'all:"token pruning" AND cat:cs.CV',
-                    "papers": [
-                        {
-                            "title": "PPT: Token Pruning and Pooling",
-                            "summary": "Efficient vision transformer token reduction.",
-                            "authors": ["Alice Example", "Bob Example"],
-                            "published": "2024-02-05T09:21:28Z",
-                            "primary_category": "cs.CV",
-                            "abstract_url": "http://arxiv.org/abs/2310.01812v3",
-                            "pdf_url": "https://arxiv.org/pdf/2310.01812v3",
-                        }
-                    ],
-                },
-                ensure_ascii=False,
-            ),
-        ),
-        always_on=True,
-    )
-    outbound = _CaptureOutboundPort()
-    reasoner = DefaultReasoner(
-        llm=cast(Any, LLMServices(provider=cast(Any, provider), light_provider=cast(Any, provider))),
-        llm_config=LLMConfig(model="m", max_iterations=4, max_tokens=512),
-        tools=tools,
-        discovery=ToolDiscoveryState(),
-        tool_search_enabled=False,
-        memory_window=40,
-        outbound_port=cast(Any, outbound),
-    )
-
-    result = asyncio.run(
-        reasoner.run(
-            [{"role": "user", "content": "搜论文"}],
-            tool_event_channel="telegram",
-            tool_event_chat_id="123",
-        )
-    )
-
-    assert result.reply == "已推送。"
-    assert outbound.items[0].channel == "telegram"
-    assert outbound.items[0].chat_id == "123"
-    assert "arXiv 搜索结果" in outbound.items[0].content
-    assert "PPT: Token Pruning and Pooling" in outbound.items[0].content
-    assert outbound.items[0].media == []
-    call = result.metadata["tool_chain"][0]["calls"][0]
-    assert "PPT: Token Pruning and Pooling" in call["auto_dispatched_text"]
-    second_messages = provider.calls[1]["messages"]
-    assert any("arXiv 搜索结果已主动推送给 Telegram 用户" in str(m) for m in second_messages)
-
-
 def test_default_reasoner_blocks_disabled_tool_even_if_model_calls_it():
     provider = _Provider(
         [
@@ -347,6 +180,46 @@ def test_default_reasoner_blocks_disabled_tool_even_if_model_calls_it():
     calls = result.metadata["tool_chain"][0]["calls"]
     assert calls[0]["name"] == "message_push"
     assert calls[0]["status"] == "blocked"
+
+
+def test_default_reasoner_forces_passive_message_push_role():
+    provider = _Provider(
+        [
+            LLMResponse(
+                content="",
+                tool_calls=[
+                    ToolCall(
+                        "c1",
+                        "message_push",
+                        {"message": "hi", "_commit_role": "non_passive"},
+                    )
+                ],
+            ),
+            LLMResponse(content="done", tool_calls=[]),
+        ]
+    )
+    push = _DummyTool("message_push")
+    tools = ToolRegistry()
+    tools.register(push, always_on=True, risk="external-side-effect")
+    reasoner = DefaultReasoner(
+        llm=cast(
+            Any,
+            LLMServices(
+                provider=cast(Any, provider),
+                light_provider=cast(Any, provider),
+            ),
+        ),
+        llm_config=LLMConfig(model="m", max_iterations=4, max_tokens=512),
+        tools=tools,
+        discovery=ToolDiscoveryState(),
+        tool_search_enabled=False,
+        memory_window=40,
+    )
+
+    result = asyncio.run(reasoner.run([{"role": "user", "content": "hi"}]))
+
+    assert result.reply == "done"
+    assert push.calls == [{"message": "hi", "_commit_role": "passive"}]
 
 
 def test_default_reasoner_tool_search_cannot_reunlock_disabled_tool():
@@ -428,7 +301,6 @@ def test_default_reasoner_zero_max_iterations_is_unlimited():
 
 
 def test_default_reasoner_stops_on_context_pressure_after_tool_batch(monkeypatch):
-    monkeypatch.setattr(context_pressure_plugin, "_CONTEXT_PRESSURE_STOP_THRESHOLD_TOKENS", 1)
     provider = _Provider(
         [
             LLMResponse(content="", tool_calls=[ToolCall("c1", "inflate_probe", {"value": 1})]),
@@ -472,7 +344,6 @@ def test_default_reasoner_stops_on_context_pressure_after_tool_batch(monkeypatch
 
 
 def test_default_reasoner_context_pressure_policy_lives_in_after_step_plugin(monkeypatch):
-    monkeypatch.setattr(context_pressure_plugin, "_CONTEXT_PRESSURE_STOP_THRESHOLD_TOKENS", 1)
     provider = _Provider(
         [
             LLMResponse(content="", tool_calls=[ToolCall("c1", "inflate_probe", {"value": 1})]),

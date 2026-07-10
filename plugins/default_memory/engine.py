@@ -44,7 +44,7 @@ from memory2.procedure_tagger import ProcedureTagger
 from memory2.query_builder import build_procedure_queries
 from memory2.retriever import Retriever
 from memory2.rule_schema import build_procedure_rule_schema
-from memory2.store import MemoryStore2
+from memory2.store import VEC_DIM, MemoryStore2
 from plugins.default_memory.config import DefaultMemoryConfig, resolve_memory_db_path
 
 if TYPE_CHECKING:
@@ -57,10 +57,6 @@ _HYPOTHESIS_TIMEOUT_S = 3.0
 _VECTOR_SCORE_THRESHOLD = 0.35
 _VECTOR_TOP_K = 15
 _ChatCall = Callable[..., Awaitable[LLMResponse]]
-
-
-def _is_group_scope(scope_chat_id: str) -> bool:
-    return str(scope_chat_id or "").startswith("gqq:")
 
 
 def _build_entry_source_ref(base_source_ref: str, entry: str) -> str:
@@ -576,7 +572,10 @@ class DefaultMemoryEngine:
         )
         embedding = config.memory.embedding
         retrieval = default_config.retrieval
-        self._v2_store = MemoryStore2(db_path)
+        self._v2_store = MemoryStore2(
+            db_path,
+            vec_dim=embedding.output_dimensionality or VEC_DIM,
+        )
         self._embedder = Embedder(
             base_url=embedding.base_url
             or config.light_base_url
@@ -586,6 +585,7 @@ class DefaultMemoryEngine:
             or config.light_api_key
             or config.api_key,
             model=embedding.model,
+            output_dimensionality=embedding.output_dimensionality,
             requester=http_resources.external_default,
         )
         self._memorizer = Memorizer(self._v2_store, self._embedder)
@@ -614,7 +614,10 @@ class DefaultMemoryEngine:
             provider=self._light_provider,
             model=self._light_model,
             skills_fn=lambda: [
-                s["name"] for s in skills_loader.list_skills(filter_unavailable=False)
+                record.name
+                for record in skills_loader.list_skill_records(
+                    filter_unavailable=False
+                )
             ],
         )
         self._post_response_worker = PostResponseMemoryWorker(
@@ -654,8 +657,6 @@ class DefaultMemoryEngine:
     def _on_turn_committed(self, event: TurnCommitted) -> None:
         if bool((event.extra or {}).get("skip_post_memory")):
             return
-        if str((event.extra or {}).get("memory_scope") or "") == "group":
-            return
         if self._event_bus is None:
             return
         source_ref = f"{event.session_key}@post_response"
@@ -675,7 +676,6 @@ class DefaultMemoryEngine:
         self,
         event: ConsolidationCommitted,
     ) -> None:
-        is_group_scope = _is_group_scope(event.scope_chat_id)
         save_coros = [
             self._save_from_consolidation(
                 history_entry=entry,
@@ -689,12 +689,6 @@ class DefaultMemoryEngine:
         ]
         if save_coros:
             await asyncio.gather(*save_coros)
-        if is_group_scope:
-            logger.info(
-                "consolidation implicit long_term skipped for group scope chat_id=%s",
-                event.scope_chat_id,
-            )
-            return
         implicit_result = await self._extract_implicit_long_term(
             conversation=event.conversation,
             existing_profile="",
@@ -742,7 +736,7 @@ class DefaultMemoryEngine:
             return result
         except Exception as e:
             logger.warning("consolidation long_term extraction failed: %s", e)
-            return None
+            raise RuntimeError("consolidation long_term extraction failed") from e
 
     def tool_profile(self) -> MemoryToolProfile:
         return _default_memory_tool_profile()
@@ -779,7 +773,6 @@ class DefaultMemoryEngine:
             time_start=request.filters.time_start,
             time_end=request.filters.time_end,
         )
-        self._attach_structured_evidence(items)
         text_block, injected_ids = retriever.build_injection_block(items)
         records = [
             self._build_record(item, injected_ids=injected_ids)
@@ -792,6 +785,7 @@ class DefaultMemoryEngine:
                 "engine": self.DESCRIPTOR.name,
                 "profile": self.DESCRIPTOR.profile.value,
                 "intent": request.intent,
+                "effect": request.effect,
             },
             raw={"items": items},
         )
@@ -1166,12 +1160,12 @@ class DefaultMemoryEngine:
             keyword_enabled=True,
         )
         sliced = list(hits)[: request.limit]
-        self._attach_structured_evidence(sliced)
         return MemoryQueryResult(
             records=[self._build_record(item) for item in sliced if isinstance(item, dict)],
             trace={
                 "source": self.DESCRIPTOR.name,
                 "intent": request.intent,
+                "effect": request.effect,
                 "hit_count": len(sliced),
                 "hyde_hypotheses": aux_queries,
             },
@@ -1184,17 +1178,25 @@ class DefaultMemoryEngine:
     ) -> MemoryQueryResult:
         if request.filters.time_start is None or request.filters.time_end is None:
             return MemoryQueryResult(
-                trace={"source": self.DESCRIPTOR.name, "intent": "timeline_missing_time"}
+                trace={
+                    "source": self.DESCRIPTOR.name,
+                    "intent": "timeline_missing_time",
+                    "effect": request.effect,
+                }
             )
         hits = self.list_events_by_time_range(
             request.filters.time_start,
             request.filters.time_end,
             limit=request.limit,
         )
-        self._attach_structured_evidence(hits)
         return MemoryQueryResult(
             records=[self._build_record(item) for item in hits if isinstance(item, dict)],
-            trace={"source": self.DESCRIPTOR.name, "intent": "timeline", "hit_count": len(hits)},
+            trace={
+                "source": self.DESCRIPTOR.name,
+                "intent": "timeline",
+                "effect": request.effect,
+                "hit_count": len(hits),
+            },
             raw={"items": list(hits)},
         )
 
@@ -1211,13 +1213,16 @@ class DefaultMemoryEngine:
             scope_chat_id=scope.chat_id or None,
             require_scope_match=should_require_scope_match(request, scope),
         )
-        self._attach_structured_evidence(hits)
         records = [self._build_record(item) for item in hits if isinstance(item, dict)]
         texts = [record.summary for record in records]
         return MemoryQueryResult(
             text_block="\n---\n".join(texts),
             records=records,
-            trace={"source": self.DESCRIPTOR.name, "intent": "interest"},
+            trace={
+                "source": self.DESCRIPTOR.name,
+                "intent": "interest",
+                "effect": request.effect,
+            },
             raw={"items": list(hits)},
         )
 
@@ -1294,37 +1299,6 @@ class DefaultMemoryEngine:
         if self._v2_store is None:
             raise RuntimeError("memory v2 store unavailable")
         return self._v2_store
-
-    def _attach_structured_evidence(self, items: list[dict[str, object]]) -> None:
-        store = self._v2_store
-        if store is None or not items:
-            return
-        item_ids = [
-            str(item.get("id") or "").strip()
-            for item in items
-            if isinstance(item, dict) and str(item.get("id") or "").strip()
-        ]
-        if not item_ids:
-            return
-        try:
-            evidence_by_id = store.get_structured_evidence_for_items(item_ids)
-        except Exception as exc:
-            logger.debug("structured evidence attach failed: %s", exc)
-            return
-        for item in items:
-            item_id = str(item.get("id") or "").strip()
-            structured = evidence_by_id.get(item_id)
-            if not structured:
-                continue
-            extra = item.get("extra_json")
-            signals = dict(cast(dict[str, object], extra)) if isinstance(extra, dict) else {}
-            if (
-                structured.get("assertion")
-                or structured.get("raw_events")
-                or structured.get("event_facts")
-            ):
-                signals["structured_evidence"] = structured
-            item["extra_json"] = signals
 
     @classmethod
     def _build_record(

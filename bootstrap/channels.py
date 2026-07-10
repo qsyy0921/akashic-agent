@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
+import logging
 
 from agent.config_models import Config
 from agent.looping.interrupt import InterruptController
 from agent.tools.message_push import MessagePushTool
+from bootstrap.channel_host import ChannelHost
 from bus.event_bus import EventBus
 from bus.queue import MessageBus
 from core.net.http import SharedHttpResources
+from infra.channels.base import AttachmentStore
+from infra.channels.contract import Channel, ChannelContext
 from session.manager import SessionManager
 
 
@@ -21,7 +24,8 @@ async def start_channels(
     event_bus: EventBus,
     bot_commands: list[tuple[str, str]] | None = None,
     interrupt_controller: InterruptController | None = None,
-) -> tuple[Any, Any, Any, Any]:
+    plugin_channels: list[Channel] | None = None,
+) -> tuple[object, ChannelHost]:
     from infra.channels.ipc_server import IPCServerChannel
 
     ipc = IPCServerChannel(
@@ -32,12 +36,28 @@ async def start_channels(
     await ipc.start()
     print(f"Agent 已启动  |  CLI 连接地址: {config.channels.socket}")
 
-    tg_channel = None
+    attachment_store = AttachmentStore()
+
+    def _ctx_factory(channel: Channel) -> ChannelContext:
+        return ChannelContext(
+            bus=bus,
+            session_manager=session_manager,
+            event_bus=event_bus,
+            push_tool=push_tool,
+            attachment_store=attachment_store,
+            http_resources=http_resources,
+            interrupt_controller=interrupt_controller,
+            bot_commands=bot_commands or [],
+            log=logging.getLogger(f"channels.{channel.name}"),
+        )
+
+    host = ChannelHost(_ctx_factory)
+
     if config.channels.telegram and config.channels.telegram.token:
         from infra.channels.telegram_channel import TelegramChannel
 
         tg = config.channels.telegram
-        tg_channel = TelegramChannel(
+        host.add(TelegramChannel(
             token=tg.token,
             bus=bus,
             session_manager=session_manager,
@@ -46,84 +66,26 @@ async def start_channels(
             event_bus=event_bus,
             interrupt_controller=interrupt_controller,
             channel_name=tg.channel_name,
-        )
-        await tg_channel.start()
-        push_tool.register_channel(
-            tg.channel_name,
-            text=tg_channel.send,
-            stream_text=tg_channel.send_stream,
-            file=tg_channel.send_file,
-            image=tg_channel.send_image,
-        )
-        print("Telegram Bot 已启动")
+            proxy_url=tg.proxy_url,
+        ))
 
-    qq_channel = None
-    qq_configs = config.channels.qq_accounts or (
-        [config.channels.qq] if config.channels.qq and config.channels.qq.bot_uin else []
-    )
-    if qq_configs:
+    if config.channels.qq and config.channels.qq.bot_uin:
         from infra.channels.qq_channel import QQChannel
 
-        for qq in qq_configs:
-            current = QQChannel(
-                bot_uin=qq.bot_uin,
-                bus=bus,
-                session_manager=session_manager,
-                allow_from=qq.allow_from,
-                groups=qq.groups,
-                websocket_open_timeout_seconds=qq.websocket_open_timeout_seconds,
-                channel_name=qq.channel_name,
-                ws_uri=qq.ws_uri,
-                ws_token=qq.ws_token,
-                observe_only=qq.observe_only,
-                observe_all_groups=qq.observe_all_groups,
-                private_peer_ids=qq.private_peer_ids,
-                http_requester=http_resources.external_default,
-                event_bus=event_bus,
-                interrupt_controller=interrupt_controller,
-            )
-            await current.start()
-            if qq_channel is None:
-                qq_channel = current
-            if not qq.observe_only:
-                push_tool.register_channel(
-                    qq.channel_name,
-                    text=current.send,
-                    file=current.send_file,
-                    image=current.send_image,
-                )
-            elif qq.private_peer_ids:
-                push_tool.register_channel(
-                    qq.channel_name,
-                    text=current.send,
-                )
-            mode = "observe_only" if qq.observe_only else "interactive"
-            print(
-                f"QQ Bot 已启动  |  QQ 号: {qq.bot_uin}  |  "
-                f"channel: {qq.channel_name}  |  模式: {mode}"
-            )
-
-    qqbot_channel = None
-    if config.channels.qqbot and config.channels.qqbot.app_id:
-        from infra.channels.qqbot_channel import QQBotChannel
-
-        qqbot = config.channels.qqbot
-        qqbot_channel = QQBotChannel(
-            app_id=qqbot.app_id,
-            client_secret=qqbot.client_secret,
+        qq = config.channels.qq
+        host.add(QQChannel(
+            bot_uin=qq.bot_uin,
             bus=bus,
             session_manager=session_manager,
-            allow_from=qqbot.allow_from,
-            groups=qqbot.groups,
+            allow_from=qq.allow_from,
+            groups=qq.groups,
+            websocket_open_timeout_seconds=qq.websocket_open_timeout_seconds,
+            http_requester=http_resources.external_default,
             event_bus=event_bus,
             interrupt_controller=interrupt_controller,
-        )
-        await qqbot_channel.start()
-        push_tool.register_channel(
-            "qqbot",
-            text=qqbot_channel.send_proactive,
-            stream_text=qqbot_channel.send_stream,
-        )
-        print(f"官方 QQBot 已启动  |  AppID: {qqbot.app_id}")
+        ))
 
-    return ipc, tg_channel, qq_channel, qqbot_channel
+    for channel in plugin_channels or []:
+        host.add(channel)
+
+    return ipc, host

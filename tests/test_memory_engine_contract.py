@@ -27,6 +27,7 @@ from core.memory.markdown import (
     ConsolidateRequest,
     ConsolidateResult,
     _ConsolidationDraft,
+    _ConsolidationFailure,
     _ConsolidationWindow,
     MarkdownMemoryMaintenance,
     MarkdownMemoryStore,
@@ -150,6 +151,40 @@ async def test_default_memory_engine_retrieve_keeps_raw_items_and_mode_trace():
     assert cast(dict[str, object], raw_items[0])["id"] == "e1"
     assert result.records[0].id == "e1"
     assert result.records[0].injected is True
+
+
+async def test_default_memory_engine_interest_preserves_read_only_effect():
+    retriever = SimpleNamespace(
+        retrieve=AsyncMock(
+            return_value=[
+                {
+                    "id": "p1",
+                    "summary": "用户偏好中文回复",
+                    "score": 0.8,
+                    "source_ref": "telegram:1@seed",
+                    "memory_type": "preference",
+                    "extra_json": {},
+                }
+            ]
+        ),
+        build_injection_block=lambda items: ("", []),
+    )
+    engine = _make_default_engine(retriever=cast(Any, retriever))
+
+    result = await engine.query(
+        MemoryQuery(
+            text="中文回复",
+            intent="interest",
+            effect="read_only",
+            scope=MemoryScope(session_key="telegram:1"),
+            limit=2,
+        )
+    )
+
+    assert result.trace["intent"] == "interest"
+    assert result.trace["effect"] == "read_only"
+    assert result.records[0].id == "p1"
+    retriever.retrieve.assert_awaited_once()
 
 
 async def test_default_memory_engine_retrieve_falls_back_to_session_scope():
@@ -437,10 +472,40 @@ async def test_markdown_consolidation_advances_window_when_consumer_fails(tmp_pa
         await maintenance.consolidate(ConsolidateRequest(session=session))
 
     assert session.last_consolidated == 6
-    assert "用户测试记忆" in (tmp_path / "memory" / "HISTORY.md").read_text(
-        encoding="utf-8"
-    )
+    assert not (tmp_path / "memory" / "HISTORY.md").exists()
     await event_bus.aclose()
+
+
+async def test_markdown_consolidation_failure_trace_does_not_advance_cursor(tmp_path: Path):
+    session = SimpleNamespace(
+        key="cli:1",
+        messages=[{"role": "user", "content": f"u{i}"} for i in range(8)],
+        last_consolidated=0,
+    )
+    maintenance = MarkdownMemoryMaintenance(
+        store=MarkdownMemoryStore(tmp_path),
+        provider=cast(Any, SimpleNamespace()),
+        model="lm",
+        keep_count=4,
+    )
+    maintenance._worker.prepare_consolidation = AsyncMock(
+        return_value=_ConsolidationFailure(
+            step="recent_context",
+            error="TimeoutError",
+            elapsed_ms=180000,
+        )
+    )
+
+    result = await maintenance.consolidate(ConsolidateRequest(session=session))
+
+    assert result.consolidated_count == 0
+    assert result.trace == {
+        "mode": "failed",
+        "step": "recent_context",
+        "error": "TimeoutError",
+        "elapsed_ms": 180000,
+    }
+    assert session.last_consolidated == 0
 
 
 async def test_default_memory_engine_serializes_lifecycle_maintenance():
@@ -790,8 +855,8 @@ def test_build_memory_runtime_exposes_default_memory_engine(
         def __init__(self, workspace):
             self.workspace = workspace
 
-        def list_skills(self, filter_unavailable=False):
-            return [{"name": "demo"}]
+        def list_skill_records(self, filter_unavailable=False):
+            return [SimpleNamespace(name="demo")]
 
     class _WriteFileTool:
         pass

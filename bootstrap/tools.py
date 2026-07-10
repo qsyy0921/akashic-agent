@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import inspect
+
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -52,6 +54,7 @@ from bootstrap.wiring import (
     resolve_toolset_provider,
 )
 from agent.lifecycle.facade import TurnLifecycle
+from agent.plugins.jobs import ProviderPluginLlmService
 from bootstrap.providers import build_providers, build_vl_provider
 from bus.event_bus import EventBus
 from bus.processing import ProcessingState
@@ -83,6 +86,7 @@ class CoreRuntime:
     peer_poller: PeerAgentPoller | None
     agent_provider: LLMProvider | None = None
     plugin_manager: "PluginManager | None" = None
+    workspace: Path | None = None
 
     async def start(self) -> None:
         self.mcp_registry.start_connect_all_background()
@@ -107,6 +111,31 @@ class CoreRuntime:
             self.peer_poller.start()
         if self.plugin_manager is not None:
             await self.plugin_manager.load_all()
+            if self.workspace is not None:
+                from agent.plugins.skill_links import PluginSkillLinker
+
+                link_result = PluginSkillLinker(
+                    workspace=self.workspace,
+                    plugin_roots=self.plugin_manager.plugin_dirs,
+                    memory_engine=getattr(self.memory_runtime, "engine", None),
+                ).sync(self.plugin_manager.active_plugins())
+                logger.info(
+                    "插件 skill 同步完成: expected=%d created=%d repaired=%d removed=%d skipped=%d",
+                    link_result.expected,
+                    link_result.created,
+                    link_result.repaired,
+                    link_result.removed,
+                    link_result.skipped,
+                )
+            sync_plugin_servers = getattr(self.mcp_registry, "sync_plugin_servers", None)
+            if callable(sync_plugin_servers):
+                sync_result = sync_plugin_servers(self.plugin_manager.active_plugins())
+                if inspect.isawaitable(sync_result):
+                    await sync_result
+            sync_global_registry = getattr(self.plugin_manager, "sync_global_registry", None)
+            if callable(sync_global_registry):
+                registry_path = sync_global_registry()
+                logger.info("插件全局注册表已同步: %s", registry_path)
             logger.info("插件加载完成: %d 个", self.plugin_manager.loaded_count)
             self.loop.add_before_turn_plugin_modules(
                 self.plugin_manager.before_turn_modules,
@@ -284,7 +313,7 @@ def build_registered_tools(
         http_resources, multimodal=multimodal, vl_available=vl_available
     )
     store = session_store or SessionStore(workspace / "sessions.db")
-    push_tool = MessagePushTool()
+    push_tool = MessagePushTool(chat_lane=bus.chat_lane)
     memory_result = resolve_memory_toolset_provider(wiring.memory).register(
         tools,
         ToolsetDeps(
@@ -502,10 +531,18 @@ def build_core_runtime(
         workspace=workspace,
         session_manager=session_manager,
         memory_engine=memory_runtime.engine,
+        llm=ProviderPluginLlmService(
+            provider=provider,
+            model=config.model,
+            max_tokens=config.max_tokens,
+        ),
+        plugin_configs=config.plugins,
+        installed_cache_root=_resolve_installed_plugin_cache_root(),
     )
 
     return CoreRuntime(
         config=config,
+        workspace=workspace,
         http_resources=http_resources,
         loop=loop,
         bus=bus,
@@ -529,3 +566,7 @@ def build_core_runtime(
 def _resolve_plugin_dirs(workspace: Path) -> list[Path]:
     project_root = Path(__file__).resolve().parent.parent
     return [project_root / "plugins"]
+
+
+def _resolve_installed_plugin_cache_root() -> Path:
+    return Path.home() / ".akashic-plugin" / "cache"

@@ -31,7 +31,6 @@ import json
 import logging
 import shutil
 import sqlite3
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -55,18 +54,6 @@ from rich.progress import (
 logger = logging.getLogger("eval.longmemeval")
 
 
-def _configure_utf8_stdio() -> None:
-    """Avoid Rich/Windows GBK crashes when model outputs emoji or CJK text."""
-    for stream_name in ("stdout", "stderr"):
-        stream = getattr(sys, stream_name, None)
-        reconfigure = getattr(stream, "reconfigure", None)
-        if callable(reconfigure):
-            try:
-                reconfigure(encoding="utf-8", errors="replace")
-            except Exception:
-                logger.debug("failed to reconfigure %s", stream_name, exc_info=True)
-
-
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="Run LongMemEval benchmark against the akashic agent runtime."
@@ -80,8 +67,6 @@ def _build_parser() -> argparse.ArgumentParser:
                    help="Output JSON (default: eval/longmemeval/results/<ts>.json)")
     p.add_argument("--limit", type=int, default=0,
                    help="Only process the first N instances (0 = all)")
-    p.add_argument("--offset", type=int, default=0,
-                   help="Skip the first N instances after filtering (default: 0)")
     p.add_argument("--workers", type=int, default=1,
                    help="Concurrent workers (default: 1)")
     p.add_argument("--resume", action="store_true",
@@ -92,14 +77,8 @@ def _build_parser() -> argparse.ArgumentParser:
                    help="Skip ingest entirely")
     p.add_argument("--ingest-only", action="store_true",
                    help="Run ingest + consolidation only, skip QA")
-    p.add_argument("--skip-judge", action="store_true",
-                   help="Skip LLM-as-judge and compute only F1/EM.")
-    p.add_argument("--judge-max-tokens", type=int, default=None,
-                   help="Max tokens for each LLM-as-judge call; defaults to AKASHIC_LME_JUDGE_MAX_TOKENS or 1024.")
     p.add_argument("--timeout", type=float, default=180.0,
                    help="Per-question agent timeout in seconds (default: 180)")
-    p.add_argument("--method-config", type=Path, default=None,
-                   help="Optional benchmark memory method config.")
     p.add_argument("--type", dest="question_type", default=None,
                    help="Filter to a specific question_type (e.g. single-session-preference)")
     return p
@@ -124,13 +103,13 @@ def _make_progress(console: Console) -> Progress:
 
 def _judge_str(jc) -> str:
     if jc is None:
-        return "-"
-    return "yes" if jc else "no"
+        return "—"
+    return "✅" if jc else "❌"
 
 
 def _f1_str(f1: float) -> str:
-    label = "ok" if f1 >= 0.8 else ("mid" if f1 >= 0.3 else "low")
-    return f"{label} {f1:.2f}"
+    icon = "✅" if f1 >= 0.8 else ("⚠" if f1 >= 0.3 else "✗")
+    return f"{icon} {f1:.2f}"
 
 
 def _instance_result_path(workspace: Path) -> Path:
@@ -199,7 +178,6 @@ async def _process_instance(
     *,
     args,
     judge_model: str,
-    judge_max_tokens: int | None,
     sem: asyncio.Semaphore,
     progress,
     overall_task,
@@ -247,11 +225,7 @@ async def _process_instance(
             if should_ingest and _workspace_has_partial_data(inst_workspace, inst.question_id):
                 _reset_instance_workspace(inst_workspace)
 
-        rt = await create_runtime(
-            args.config,
-            inst_workspace,
-            method_config=args.method_config,
-        )
+        rt = await create_runtime(args.config, inst_workspace)
         try:
             # ── Ingest ────────────────────────────────────────────────────────
             if should_ingest:
@@ -282,21 +256,16 @@ async def _process_instance(
                             description=f"[cyan]{short_id}[/]  [yellow]agent[/]",
                             completed=0, total=1)
             result = await run_qa_instance(rt, inst, timeout_s=args.timeout)
-            if rt.method:
-                result["memory_method"] = rt.method
             results.append(result)
 
             # ── Judge ─────────────────────────────────────────────────────────
-            if args.skip_judge:
-                result["judge_correct"] = None
-            elif not result["error"]:
+            if not result["error"]:
                 provider = rt.core.provider
                 result["judge_correct"] = await judge_answer(
                     provider, judge_model,
                     question=result["question"],
                     gold=result["gold_answer"],
                     predicted=result["predicted_answer"],
-                    max_tokens=judge_max_tokens,
                 )
             else:
                 result["judge_correct"] = None
@@ -384,10 +353,11 @@ async def _process_instance(
 # ── main ──────────────────────────────────────────────────────────────────────
 
 async def _run(args: argparse.Namespace) -> None:
+    import sys
+
     from agent.config import load_config
     from .dataset import SUPPORTED_QUESTION_TYPES, load_dataset
     from .metrics import score_results
-    from .methods import load_method_spec
     from .runtime import close_runtime, create_runtime
 
     logging.basicConfig(
@@ -411,8 +381,6 @@ async def _run(args: argparse.Namespace) -> None:
             print(f"ERROR: unsupported --type {args.question_type!r}; choices: {choices}")
             sys.exit(1)
         instances = [i for i in instances if i.question_type == args.question_type]
-    if args.offset > 0:
-        instances = instances[args.offset :]
     if args.limit > 0:
         instances = instances[: args.limit]
     args._n_total = len(instances)
@@ -422,7 +390,6 @@ async def _run(args: argparse.Namespace) -> None:
 
     bench_config = load_config(args.config)
     judge_model = bench_config.model
-    method_spec = load_method_spec(args.method_config)
 
     console = Console()
     console.print(Rule(f"[bold]LongMemEval[/]  {len(instances)} instances  workers={args.workers}"))
@@ -446,7 +413,6 @@ async def _run(args: argparse.Namespace) -> None:
                 inst,
                 args=args,
                 judge_model=judge_model,
-                judge_max_tokens=args.judge_max_tokens,
                 sem=sem,
                 progress=progress,
                 overall_task=overall_task,
@@ -474,7 +440,7 @@ async def _run(args: argparse.Namespace) -> None:
     ov = scores["overall"]
 
     judged = [r for r in results if r.get("judge_correct") is not None]
-    judge_acc = sum(1 for r in judged if r["judge_correct"]) / len(judged) if judged else None
+    judge_acc = sum(1 for r in judged if r["judge_correct"]) / len(judged) if judged else 0.0
 
     table = Table(title=f"Results  —  elapsed {elapsed/3600:.1f}h", show_header=True,
                   header_style="bold", min_width=70)
@@ -487,7 +453,7 @@ async def _run(args: argparse.Namespace) -> None:
 
     table.add_row(
         "[bold]Overall[/]",
-        f"[bold]{judge_acc:.1%}[/]" if judge_acc is not None else "-",
+        f"[bold]{judge_acc:.1%}[/]",
         f"[bold]{ov['f1']:.4f}[/]",
         f"[bold]{ov['em']:.4f}[/]",
         str(ov["n"]),
@@ -497,8 +463,8 @@ async def _run(args: argparse.Namespace) -> None:
     for qt, s in sorted(scores["by_type"].items()):
         qt_judged = [r for r in results if r.get("question_type") == qt
                      and r.get("judge_correct") is not None]
-        qt_acc = sum(1 for r in qt_judged if r["judge_correct"]) / len(qt_judged) if qt_judged else None
-        table.add_row(qt, f"{qt_acc:.1%}" if qt_acc is not None else "-", f"{s['f1']:.4f}", f"{s['em']:.4f}",
+        qt_acc = sum(1 for r in qt_judged if r["judge_correct"]) / len(qt_judged) if qt_judged else 0.0
+        table.add_row(qt, f"{qt_acc:.1%}", f"{s['f1']:.4f}", f"{s['em']:.4f}",
                       str(s["n"]), str(s.get("errors", 0)))
 
     console.print(table)
@@ -515,12 +481,7 @@ async def _run(args: argparse.Namespace) -> None:
         "timestamp": datetime.now().isoformat(),
         "data": str(args.data),
         "workspace": str(base_workspace),
-        "method_config": str(args.method_config) if args.method_config else "",
-        "memory_method": method_spec.as_dict() if method_spec is not None else None,
-        "offset": args.offset,
-        "limit": args.limit,
         "workers": args.workers,
-        "skip_judge": args.skip_judge,
         "scores": scores,
         "judge_acc": judge_acc,
         "results": results,
@@ -530,7 +491,6 @@ async def _run(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    _configure_utf8_stdio()
     parser = _build_parser()
     args = parser.parse_args()
     asyncio.run(_run(args))

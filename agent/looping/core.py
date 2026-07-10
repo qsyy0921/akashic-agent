@@ -4,8 +4,9 @@ import time
 from collections.abc import Awaitable, Callable
 from dataclasses import replace
 from datetime import datetime
-from typing import TYPE_CHECKING, TypeAlias, cast
+from typing import TYPE_CHECKING, Any, TypeAlias, cast
 
+from core.error_context import current_session_key
 from agent.context import ContextBuilder
 from agent.core.passive_turn import (
     AgentCore,
@@ -73,8 +74,15 @@ def _is_positive_int(value: str) -> bool:
         return False
 
 
+def _is_nonempty(value: str) -> bool:
+    return bool(value)
+
+
 _STREAM_SUPPORT_POLICIES: dict[str, StreamSupportPolicy] = {
     "telegram": _is_positive_int,
+    "web": _is_nonempty,
+    # 飞书私聊渠道：chat_id 形如 oc_xxx，全程支持流式预览（卡片 PATCH 消费 StreamDeltaReady）。
+    "feishu": _is_nonempty,
 }
 
 
@@ -117,6 +125,7 @@ class AgentLoop:
         self._running = False
         self._processing_state = deps.processing_state
         self._event_bus = deps.event_bus or EventBus()
+        self._passive_runtime_lock = asyncio.Lock()
 
         # ── 中断控制面（纯内存态） ──
         self._active_tasks: dict[str, asyncio.Task] = {}
@@ -286,7 +295,6 @@ class AgentLoop:
             context=self._context,
             session_manager=self.session_manager,
             event_bus=self._event_bus,
-            outbound_port=BusOutboundPort(self.bus),
         )
 
         # 3. 最后串 passive prepare / execute / commit 主链。
@@ -309,6 +317,7 @@ class AgentLoop:
                 event_bus=self._event_bus,
                 outbound_port=BusOutboundPort(self.bus),
                 history_window=config.memory.keep_count,
+                memory_consolidator=self,
             )
         )
         self._agent_core = agent_core
@@ -370,7 +379,7 @@ class AgentLoop:
 
             key = item.session_key
             self._active_turn_states[key] = self._build_initial_turn_state(item, key)
-            task = asyncio.create_task(self._process(item))
+            task = asyncio.create_task(self._process_with_runtime_admission(item))
             self._active_tasks[key] = task
             try:
                 await task
@@ -386,6 +395,7 @@ class AgentLoop:
                     )
                 )
             finally:
+                await self.bus.complete_inbound(item)
                 self._active_tasks.pop(key, None)
                 self._active_turn_states.pop(key, None)
 
@@ -518,7 +528,7 @@ class AgentLoop:
                 )
         raise TypeError(f"unsupported inbound item: {type(item).__name__}")
 
-    def _resume_interrupted_message(
+    async def _resume_interrupted_message(
         self,
         msg: InboundItem,
         key: str,
@@ -530,12 +540,13 @@ class AgentLoop:
         if interrupted is None:
             return msg, False
 
-        # 2. 有中断态时，把上一轮进度和本轮补充拼成新的用户消息。
+        # 2. 有中断态时，补一段结构化历史；当前用户消息保持原文。
+        await self._persist_interrupted_turn_marker(key, interrupted)
         resumed = InboundMessage(
             channel=msg.channel,
             sender=msg.sender,
             chat_id=msg.chat_id,
-            content=_build_resume_content(interrupted, msg.content),
+            content=msg.content,
             timestamp=msg.timestamp,
             media=msg.media,
             metadata={**(msg.metadata or {}), "resumed_from_interrupt": True},
@@ -543,10 +554,36 @@ class AgentLoop:
         logger.info(f"Resuming interrupted turn for {key}")
         self._active_turn_states[key] = TurnInterruptState(
             session_key=key,
-            original_user_message=resumed.content,
+            original_user_message=msg.content,
             original_metadata=dict(resumed.metadata or {}),
         )
         return resumed, True
+
+    async def _persist_interrupted_turn_marker(
+        self,
+        key: str,
+        state: TurnInterruptState,
+    ) -> None:
+        if not state.original_user_message.strip():
+            return
+        session = self.session_manager.get_or_create(key)
+        start = len(getattr(session, "messages", []))
+        session.add_message(
+            "user",
+            state.original_user_message,
+        )
+        tool_chain = (
+            cast(list[dict[str, Any]], list(state.tool_chain_partial))
+            if state.tool_chain_partial
+            else None
+        )
+        session.add_message(
+            "assistant",
+            "[interrupted]",
+            tools_used=list(state.tools_used) if state.tools_used else None,
+            tool_chain=tool_chain,
+        )
+        await self.session_manager.append_messages(session, session.messages[start:])
 
     async def _observe_turn_started(
         self,
@@ -570,13 +607,17 @@ class AgentLoop:
         self,
         msg: InboundItem,
         session_key: str | None = None,
+        busy_session_key: str | None = None,
         dispatch_outbound: bool = True,
     ) -> OutboundMessage:
         started = time.time()
         key = session_key or msg.session_key
+        busy_key = busy_session_key or key
+        # 给本 turn task 打上 session 归属，供 observe 全局错误采集关联。
+        _ = current_session_key.set(key)
 
         # 1. 先处理可能存在的续跑态，并发布 turn started。
-        msg, resumed_from_interrupt = self._resume_interrupted_message(msg, key)
+        msg, resumed_from_interrupt = await self._resume_interrupted_message(msg, key)
         await self._observe_turn_started(msg, key)
         content = _item_content(msg)
         preview = content[:60] + "..." if len(content) > 60 else content
@@ -584,7 +625,7 @@ class AgentLoop:
 
         # 2. 再进入 busy 状态并执行核心处理。
         if self._processing_state:
-            self._processing_state.enter(key)
+            self._processing_state.enter(busy_key)
         try:
             outbound = await self._core_runner.process(
                 msg,
@@ -597,13 +638,32 @@ class AgentLoop:
         finally:
             # 3. 最后无论成功失败都直接释放 busy 状态。
             if self._processing_state:
-                self._processing_state.exit(key)
+                self._processing_state.exit(busy_key)
             _ = started
+
+    async def _process_with_runtime_admission(
+        self,
+        msg: InboundItem,
+        session_key: str | None = None,
+        busy_session_key: str | None = None,
+        dispatch_outbound: bool = True,
+    ) -> OutboundMessage:
+        key = session_key or msg.session_key
+        if self._passive_runtime_lock.locked():
+            logger.info("[runtime_admission] 等待 passive runtime session=%s", key)
+        async with self._passive_runtime_lock:
+            return await self._process(
+                msg,
+                session_key=session_key,
+                busy_session_key=busy_session_key,
+                dispatch_outbound=dispatch_outbound,
+            )
 
     async def process_direct(
         self,
         content: str,
         session_key: str = "cli:direct",
+        busy_session_key: str | None = None,
         channel: str = "cli",
         chat_id: str = "direct",
         omit_user_turn: bool = False,
@@ -630,9 +690,10 @@ class AgentLoop:
             content=content,
             metadata=metadata,
         )
-        response = await self._process(
+        response = await self._process_with_runtime_admission(
             msg,
             session_key=session_key,
+            busy_session_key=busy_session_key,
             dispatch_outbound=False,
         )
         return response.content if response else ""
@@ -715,29 +776,10 @@ class AgentLoop:
             )
         except TimeoutError as exc:
             raise TimeoutError("memory consolidation busy") from exc
-        if result.trace.get("mode") != "skipped":
+        if result.trace.get("mode") == "markdown":
             await self.session_manager.save_async(session)
             return True
         return False
 
 
 # ── 模块级辅助 ────────────────────────────────────────────────────
-
-
-def _build_resume_content(state: TurnInterruptState, new_message: str) -> str:
-    """将中断态 + 用户补充消息拼装为续跑输入。"""
-    parts = [
-        "【上一轮任务（被用户中断）】",
-        state.original_user_message,
-        "",
-        "【上一轮已生成但未完成的中间结果】",
-        state.partial_reply or "（无）",
-    ]
-    if state.tools_used:
-        parts.append(f"已使用工具：{', '.join(state.tools_used)}")
-    parts += [
-        "",
-        "【用户补充要求】",
-        new_message,
-    ]
-    return "\n".join(parts)

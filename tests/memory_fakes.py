@@ -63,7 +63,7 @@ class FakeMemoryEngine:
 
     async def consolidate(self, request: ConsolidateRequest) -> ConsolidateResult:
         self.consolidate_calls.append(request)
-        return ConsolidateResult()
+        return ConsolidateResult(trace={"mode": "markdown"})
 
     async def refresh_recent_turns(self, request) -> None:
         return None
@@ -81,14 +81,6 @@ class FakeMemoryEngine:
     def write_self(self, content: str) -> None:
         if self._store is not None:
             self._store.write_self(content)
-
-    def read_recent_history(self, *, max_chars: int = 0) -> str:
-        return self.read_history(max_chars=max_chars)
-
-    def read_history(self, max_chars: int = 0) -> str:
-        if self._store is None:
-            return ""
-        return self._store.read_history(max_chars=max_chars)
 
     def read_recent_context(self) -> str:
         return self._store.read_recent_context() if self._store is not None else ""
@@ -137,41 +129,6 @@ class FakeMemoryEngine:
     def rollback_pending_snapshot(self) -> None:
         if self._store is not None:
             self._store.rollback_pending_snapshot()
-
-    def append_history(self, entry: str) -> None:
-        if self._store is not None:
-            self._store.append_history(entry)
-
-    def append_history_once(
-        self,
-        entry: str,
-        source_ref: str,
-        kind: str = "history_entry",
-    ) -> bool:
-        if self._store is None:
-            return False
-        return self._store.append_history_once(
-            entry,
-            source_ref=source_ref,
-            kind=kind,
-        )
-
-    def append_journal(
-        self,
-        date_str: str,
-        entry: str,
-        *,
-        source_ref: str = "",
-        kind: str = "journal",
-    ) -> bool:
-        if self._store is None:
-            return False
-        return self._store.append_journal(
-            date_str,
-            entry,
-            source_ref=source_ref,
-            kind=kind,
-        )
 
     def keyword_match_procedures(
         self,

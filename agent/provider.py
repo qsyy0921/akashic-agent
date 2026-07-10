@@ -26,9 +26,6 @@ _LLM_PAYLOAD_SNAPSHOT_ENABLED = False
 _LAST_PAYLOAD_PATH = Path(tempfile.gettempdir()) / "akashic-last-llm-payload.json"
 _PAYLOAD_SNAPSHOT_DIR = Path(tempfile.gettempdir()) / "akashic-llm-payloads"
 _PAYLOAD_SNAPSHOT_SEQ = itertools.count(1)
-_GLOBAL_RATE_LIMIT_LOCK: asyncio.Lock | None = None
-_GLOBAL_RATE_LIMIT_LOOP: asyncio.AbstractEventLoop | None = None
-_GLOBAL_LAST_REQUEST_AT = 0.0
 StreamDelta = dict[str, str]
 
 # 安全审查错误码（各厂商）
@@ -226,22 +223,7 @@ class LLMProvider:
                 else stream_idle_timeout_s
             ),
         )
-        self._max_retries = max(
-            0,
-            _env_int("AKASHIC_LLM_MAX_RETRIES", int(max_retries)),
-        )
-        self._retry_base_delay_s = max(
-            0.0,
-            _env_float("AKASHIC_LLM_RETRY_BASE_DELAY_S", 1.0),
-        )
-        self._retry_max_delay_s = max(
-            self._retry_base_delay_s,
-            _env_float("AKASHIC_LLM_RETRY_MAX_DELAY_S", 8.0),
-        )
-        self._min_request_interval_s = max(
-            0.0,
-            _env_float("AKASHIC_LLM_MIN_INTERVAL_S", 0.0),
-        )
+        self._max_retries = max(0, int(max_retries))
         self._force_disable_thinking = force_disable_thinking
         self._payload_snapshot_enabled = (
             _LLM_PAYLOAD_SNAPSHOT_ENABLED
@@ -426,7 +408,6 @@ class LLMProvider:
         last_err: Exception | None = None
         for attempt in range(self._max_retries + 1):
             try:
-                await _apply_global_request_interval(self._min_request_interval_s)
                 return await asyncio.wait_for(
                     self._client.chat.completions.create(**kwargs),
                     timeout=self._request_timeout_s,
@@ -451,10 +432,7 @@ class LLMProvider:
                 exhausted = attempt >= self._max_retries
                 if (not retryable) or exhausted:
                     raise
-                wait_s = min(
-                    self._retry_max_delay_s,
-                    self._retry_base_delay_s * (2**attempt),
-                )
+                wait_s = min(8.0, 1.0 * (2**attempt))
                 logger.warning(
                     "[llm] 请求失败，将重试 attempt=%d/%d wait=%.1fs err=%s",
                     attempt + 1,
@@ -655,47 +633,6 @@ def _select_provider_strategy(
 def _drop_thinking_keys(extra_body: dict[str, Any]) -> None:
     for key in ("enable_thinking", "thinking", "reasoning_effort"):
         extra_body.pop(key, None)
-
-
-def _env_int(name: str, default: int) -> int:
-    raw = os.getenv(name)
-    if raw is None or not raw.strip():
-        return default
-    try:
-        return int(raw)
-    except ValueError:
-        logger.warning("invalid integer env %s=%r; using %d", name, raw, default)
-        return default
-
-
-def _env_float(name: str, default: float) -> float:
-    raw = os.getenv(name)
-    if raw is None or not raw.strip():
-        return default
-    try:
-        return float(raw)
-    except ValueError:
-        logger.warning("invalid float env %s=%r; using %.3f", name, raw, default)
-        return default
-
-
-async def _apply_global_request_interval(interval_s: float) -> None:
-    if interval_s <= 0:
-        return
-
-    global _GLOBAL_LAST_REQUEST_AT, _GLOBAL_RATE_LIMIT_LOCK, _GLOBAL_RATE_LIMIT_LOOP
-
-    loop = asyncio.get_running_loop()
-    if _GLOBAL_RATE_LIMIT_LOCK is None or _GLOBAL_RATE_LIMIT_LOOP is not loop:
-        _GLOBAL_RATE_LIMIT_LOCK = asyncio.Lock()
-        _GLOBAL_RATE_LIMIT_LOOP = loop
-
-    async with _GLOBAL_RATE_LIMIT_LOCK:
-        now = loop.time()
-        wait_s = interval_s - (now - _GLOBAL_LAST_REQUEST_AT)
-        if wait_s > 0:
-            await asyncio.sleep(wait_s)
-        _GLOBAL_LAST_REQUEST_AT = loop.time()
 
 
 def _deepseek_thinking_disabled(extra_body: dict[str, Any]) -> bool:

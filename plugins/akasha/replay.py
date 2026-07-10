@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
 import json
@@ -5,7 +7,7 @@ import sqlite3
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Sequence
+from typing import Protocol, Sequence
 
 import numpy as np
 
@@ -13,11 +15,17 @@ from plugins.akasha.config import AkashaConfig
 from plugins.akasha.core import (
     ActivationEventRow,
     ActivationTrace,
+    ActivationUpdate,
     AkashaActivationSnapshot,
     AkashaCandidate,
+    AkashaNode,
+    EdgeUpdate,
     CoreConfig,
+    DENSE_CANDIDATE_LIMIT,
+    DENSE_SEED_LIMIT,
     SourceMessage,
     activation_edge_updates,
+    local_residual,
     activation_updates,
     compute_candidates_from_snapshot,
     dense_message_candidates,
@@ -26,6 +34,8 @@ from plugins.akasha.core import (
     graph_seed_keys_from_snapshot,
     parse_turn_key,
     parse_ts_unix,
+    recall_budget_from_dense,
+    reinforced_activation_items,
     turn_key,
 )
 from plugins.akasha.engine import (
@@ -38,9 +48,46 @@ from plugins.akasha.engine import (
     _query_log_id,
     _sort_cards_by_time,
 )
-from plugins.akasha.store import AkashaStore
-
 CONTEXT_QUERY_LIMIT = 8
+
+
+class ReplayStore(Protocol):
+    """AkashaReplayRuntime 依赖的 store 接口。
+
+    落库版 store.AkashaStore 与内存版 fast.MemoryStore/CapturingMemoryStore 都结构性满足，
+    runtime 不关心底层是 sqlite 还是内存。
+    """
+
+    def list_nodes(self) -> list[AkashaNode]: ...
+    def load_edges_with_meta(
+        self,
+    ) -> tuple[dict[tuple[str, str], float], dict[tuple[str, str], float]]: ...
+    def update_activation_batch(self, updates: list[ActivationUpdate]) -> None: ...
+    def upsert_message_node(self, message: SourceMessage, embedding: list[float]) -> str: ...
+    def upsert_edges(self, updates: list[EdgeUpdate]) -> None: ...
+    def insert_activation_events(self, rows: list[ActivationEventRow]) -> None: ...
+    def insert_query_log(
+        self,
+        *,
+        query_id: str,
+        session_key: str,
+        seq: int,
+        query_text: str,
+        intent: str,
+        ts: str,
+        seed_count: int,
+        pool_count: int,
+        activated_count: int,
+        activation_threshold: float,
+        dense_count: int,
+        ripple_count: int,
+        inject_chars: int,
+        source_ref_count: int,
+        activation_items_json: str,
+        dense_items_json: str,
+        ripple_items_json: str,
+        text_block_preview: str,
+    ) -> None: ...
 
 
 @dataclass(frozen=True)
@@ -67,12 +114,13 @@ class AkashaReplayRuntime:
     def __init__(
         self,
         *,
-        store: AkashaStore,
+        store: ReplayStore,
         config: AkashaConfig,
         source_db_path: Path,
         source_cursor: sqlite3.Cursor,
         message_embeddings: dict[str, np.ndarray],
         message_turn_keys: dict[str, str],
+        reinforce_boosts: dict[str, float] | None = None,
     ) -> None:
         self._store = store
         self._config = config
@@ -81,6 +129,9 @@ class AkashaReplayRuntime:
         self._source_cursor = source_cursor
         self._message_embeddings = dict(message_embeddings)
         self._message_turn_keys = dict(message_turn_keys)
+        # turn_key -> gain_boost：来自 messages.extra["akasha_reinforce"]，重放时定向加厚该轮边。
+        self._reinforce_boosts = dict(reinforce_boosts or {})
+        self._prev_activation_by_session: dict[str, list[AkashaCandidate]] = {}
 
     # 按线上状态机回放一轮：先激活旧图，再提交当前 turn。
     def replay_turn(
@@ -142,7 +193,7 @@ class AkashaReplayRuntime:
         graph_seed_keys = graph_seed_keys_from_snapshot(
             query_vec,
             snapshot,
-            limit=self._config.dense_top_k,
+            limit=DENSE_SEED_LIMIT,
         )
         now_ts = parse_ts_unix(message.ts)
         dense_items = dense_message_candidates(
@@ -150,7 +201,11 @@ class AkashaReplayRuntime:
             snapshot.nodes,
             snapshot.message_embeddings,
             snapshot.message_turn_keys,
-            limit=max(self._config.dense_top_k, CONTEXT_QUERY_LIMIT),
+            limit=DENSE_CANDIDATE_LIMIT,
+        )
+        budget = recall_budget_from_dense(
+            dense_items,
+            self._config.dense_seed_threshold,
         )
         candidates, _, trace = compute_candidates_from_snapshot(
             query_text,
@@ -160,12 +215,12 @@ class AkashaReplayRuntime:
             config=self._core_config,
             source_cursor=self._source_cursor,
             soft_recall=False,
-            return_limit=self._config.activate_limit,
+            return_limit=budget.activation_k,
             graph_seed_keys=graph_seed_keys,
         )
         display_limit = max(
             24,
-            max(self._config.ripple_top_k, CONTEXT_QUERY_LIMIT) * 3,
+            max(budget.ripple_k, CONTEXT_QUERY_LIMIT) * 3,
         )
         ripple_items, _, trace = compute_candidates_from_snapshot(
             query_text,
@@ -199,21 +254,64 @@ class AkashaReplayRuntime:
         if current_key and activation_items:
             trigger = next((item.message for item in items if item.message.role == "user"), items[0].message)
             ts = parse_ts_unix(trigger.ts)
-            self._store.upsert_edges(activation_edge_updates(current_key, activation_items, ts))
+            reinforce_boost = self._reinforce_boosts.get(current_key, 1.0)
+            trigger_emb = next(
+                (item.embedding for item in items if item.message.role == "user"),
+                items[0].embedding,
+            )
+            query_residual = self._query_residual(trigger_emb, current_key)
+            edge_items = reinforced_activation_items(
+                activation_items,
+                self._prev_activation_by_session.get(trigger.session_key, []),
+                reinforce_boost,
+            )
+            self._store.upsert_edges(
+                activation_edge_updates(
+                    current_key,
+                    edge_items,
+                    ts,
+                    query_residual=query_residual,
+                    reinforce_boost=reinforce_boost,
+                    nodes={node.key: node for node in self._store.list_nodes()},
+                )
+            )
             self._store.insert_activation_events(_activation_events(trigger, activation_items))
+        session_key = next((item.message.session_key for item in items if item.message.session_key), "")
+        if session_key and activation_items:
+            self._prev_activation_by_session[session_key] = list(activation_items)
         return current_key
+
+    # ν_turn = 1 − max_{j<i} cos(query, prior_j)²；当前 turn 自身排除。
+    def _query_residual(self, embedding: list[float], current_key: str) -> float:
+        prior_vecs = []
+        for node in self._store.list_nodes():
+            if node.key == current_key or node.embedding.size == 0:
+                continue
+            prior_vecs.append(node.embedding)
+        if not prior_vecs:
+            return 1.0
+        prior = np.stack(prior_vecs).astype(np.float32)
+        norms = np.linalg.norm(prior, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        prior = prior / norms
+        query_vec = np.array(embedding, dtype=np.float32)
+        return local_residual(query_vec, prior)
 
     def _write_query_log(
         self,
         message: SourceMessage,
         activation: ReplayActivation,
     ) -> None:
+        budget = recall_budget_from_dense(
+            activation.dense_items,
+            self._config.dense_seed_threshold,
+        )
         dense_cards = _cards_from_candidates(
             self._source_db_path,
             self._config,
             activation.dense_items,
             lane="dense",
-            limit=self._config.dense_top_k,
+            limit=budget.dense_k,
         )
         dense_keys = {card.key for card in dense_cards}
         dense_pairs = {_card_dedupe_key(card) for card in dense_cards}
@@ -222,7 +320,7 @@ class AkashaReplayRuntime:
             self._config,
             [item for item in activation.ripple_items if item.key not in dense_keys],
             lane="ripple",
-            limit=self._config.ripple_top_k,
+            limit=budget.ripple_k,
             skip_pairs=dense_pairs,
         )
         text_block = _format_context_block(
@@ -277,7 +375,6 @@ class AkashaReplayRuntime:
 
 def _core_config(config: AkashaConfig) -> CoreConfig:
     return CoreConfig(
-        dense_top_k=config.dense_top_k,
         dense_seed_threshold=config.dense_seed_threshold,
         activation_threshold=config.activation_threshold,
         cross_boost=config.cross_boost,
@@ -285,7 +382,6 @@ def _core_config(config: AkashaConfig) -> CoreConfig:
         nearby_dense_threshold=config.nearby_dense_threshold,
         soft_recall_threshold=config.soft_recall_threshold,
         soft_recall_direct_floor=config.soft_recall_direct_floor,
-        activate_limit=config.activate_limit,
     )
 
 

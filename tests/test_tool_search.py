@@ -13,7 +13,7 @@ import asyncio
 import json
 from pathlib import Path
 from typing import Any, cast
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 
 import pytest
@@ -335,54 +335,6 @@ class TestRegistrySearch:
 
 
 class TestMcpToolSearch:
-    @pytest.mark.asyncio
-    async def test_chatgpt_imagegen_uses_long_mcp_timeout(self):
-        client = AsyncMock()
-        client.name = "chatgpt_imagegen"
-        info = McpToolInfo(
-            name="chatgpt_image_generate",
-            description="Generate an image",
-            input_schema={"type": "object", "properties": {}},
-        )
-        wrapper = McpToolWrapper(client, info)
-
-        await wrapper.execute(prompt="西湖", timeout_seconds=240)
-
-        client.call.assert_awaited_once()
-        assert client.call.await_args.kwargs["timeout"] == 330.0
-
-    @pytest.mark.asyncio
-    async def test_chatgpt_file_ask_uses_long_mcp_timeout(self):
-        client = AsyncMock()
-        client.name = "chatgpt_file"
-        info = McpToolInfo(
-            name="chatgpt_file_ask",
-            description="Upload files and ask ChatGPT",
-            input_schema={"type": "object", "properties": {}},
-        )
-        wrapper = McpToolWrapper(client, info)
-
-        await wrapper.execute(prompt="review", timeout_seconds=1200)
-
-        client.call.assert_awaited_once()
-        assert client.call.await_args.kwargs["timeout"] == 1320.0
-
-    @pytest.mark.asyncio
-    async def test_chatgpt_file_batch_ask_uses_long_mcp_timeout(self):
-        client = AsyncMock()
-        client.name = "chatgpt_file"
-        info = McpToolInfo(
-            name="chatgpt_file_batch_ask",
-            description="Upload files and ask ChatGPT in parallel",
-            input_schema={"type": "object", "properties": {}},
-        )
-        wrapper = McpToolWrapper(client, info)
-
-        await wrapper.execute(jobs=[], timeout_seconds=1200)
-
-        client.call.assert_awaited_once()
-        assert client.call.await_args.kwargs["timeout"] == 1320.0
-
     def test_mcp_tool_discoverable_by_capability(self):
         reg = ToolRegistry()
         client = MagicMock()
@@ -660,8 +612,10 @@ class TestToolSearchTool:
         tool = ToolSearchTool(reg)
 
         async def _run():
-            tool.set_excluded_names({"schedule"})
-            return await tool.execute(query="select:schedule")
+            return await tool.execute(
+                query="select:schedule",
+                excluded_names={"schedule"},
+            )
 
         data = json.loads(asyncio.run(_run()))
         assert all(r["name"] != "schedule" for r in data.get("matched", []))
@@ -742,11 +696,13 @@ class TestBaseline:
     """
 
     @pytest.fixture(scope="class")
-    def reg(self):
+    @classmethod
+    def reg(cls):
         return _make_registry()
 
     @pytest.fixture(scope="class")
-    def cases(self):
+    @classmethod
+    def cases(cls):
         return json.loads(_BASELINE_PATH.read_text(encoding="utf-8"))
 
     def test_baseline_cases(self, reg, cases):

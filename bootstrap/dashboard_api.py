@@ -6,13 +6,11 @@ from pathlib import Path, PureWindowsPath
 import importlib.util
 import logging
 import json
-import re
 import sqlite3
 import sys
 import threading
 import os
 import shutil
-from datetime import timedelta
 from types import ModuleType
 from typing import Any, Protocol, cast
 
@@ -27,7 +25,6 @@ from pydantic import BaseModel
 from agent.memory import MemoryStore
 from proactive_v2.memory_optimizer import MemoryOptimizerBusy
 from proactive_v2.state import ProactiveStateStore
-from core.common.timekit import utcnow
 from core.memory.engine import MemoryAdminApi
 from session.store import SessionStore
 
@@ -38,6 +35,46 @@ _DASHBOARD_ACCESS_PREFIXES = ("/api/dashboard", "/assets", "/plugins/")
 
 def _is_plugin_disabled(plugin_dir: Path) -> bool:
     return (plugin_dir / "plugin.disabled").exists()
+
+
+def _dashboard_plugin_dirs(project_root: Path) -> dict[str, Path]:
+    result: dict[str, Path] = {}
+    plugins_root = project_root / "plugins"
+    if plugins_root.is_dir():
+        for plugin_dir in sorted(plugins_root.iterdir()):
+            if not plugin_dir.is_dir() or _is_plugin_disabled(plugin_dir):
+                continue
+            result[plugin_dir.name] = plugin_dir
+
+    registry_path = Path.home() / ".akashic-plugin" / "registry.json"
+    if not registry_path.exists():
+        return result
+    try:
+        loaded = json.loads(registry_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        logger.warning("插件注册表读取失败 (%s): %s", registry_path, e)
+        return result
+    if not isinstance(loaded, dict):
+        return result
+    raw_plugins = loaded.get("plugins")
+    if not isinstance(raw_plugins, dict):
+        return result
+    for raw_plugin_id, raw_entry in sorted(raw_plugins.items()):
+        if not isinstance(raw_plugin_id, str) or not isinstance(raw_entry, dict):
+            continue
+        entry = cast(dict[str, object], raw_entry)
+        if str(entry.get("source_type") or "") != "installed":
+            continue
+        if entry.get("active") is False:
+            continue
+        plugin_root_text = str(entry.get("plugin_root") or "").strip()
+        if not plugin_root_text:
+            continue
+        plugin_root = Path(plugin_root_text).resolve(strict=False)
+        if not plugin_root.is_dir() or _is_plugin_disabled(plugin_root):
+            continue
+        result[raw_plugin_id] = plugin_root
+    return result
 
 
 def _is_dashboard_access_record(record: logging.LogRecord) -> bool:
@@ -118,11 +155,6 @@ class MemoryBatchDeletePayload(BaseModel):
     ids: list[str]
 
 
-class ProactiveDeletePayload(BaseModel):
-    source_key: str | None = None
-    item_ids: list[str] | None = None
-
-
 class ManualConsolidator(Protocol):
     async def trigger_memory_consolidation(
         self,
@@ -156,11 +188,7 @@ class ProactiveDashboardReader:
 
     def get_overview(self) -> dict[str, Any]:
         counts = {
-            "seen_items": self._count("seen_items"),
             "deliveries": self._count("deliveries"),
-            "rejection_cooldown": self._count("rejection_cooldown"),
-            "semantic_items": self._count("semantic_items"),
-            "kv_state": self._count("kv_state"),
             "session_state": self._count("session_state"),
             "context_only_timestamps": self._count("context_only_timestamps"),
             "tick_logs": self._count("tick_log"),
@@ -241,61 +269,6 @@ class ProactiveDashboardReader:
             columns="session_key, delivery_key, sent_at",
         )
 
-    def list_seen_items(
-        self,
-        *,
-        source_key: str = "",
-        page: int = 1,
-        page_size: int = 50,
-    ) -> tuple[list[dict[str, Any]], int]:
-        where, params = self._build_filters(("source_key = ?", source_key))
-        return self._list_rows(
-            table="seen_items",
-            where=where,
-            params=params,
-            order_by="seen_at DESC, source_key ASC, item_id ASC",
-            page=page,
-            page_size=page_size,
-            columns="source_key, item_id, seen_at",
-        )
-
-    def list_rejection_cooldown(
-        self,
-        *,
-        source_key: str = "",
-        page: int = 1,
-        page_size: int = 50,
-    ) -> tuple[list[dict[str, Any]], int]:
-        where, params = self._build_filters(("source_key = ?", source_key))
-        return self._list_rows(
-            table="rejection_cooldown",
-            where=where,
-            params=params,
-            order_by="rejected_at DESC, source_key ASC, item_id ASC",
-            page=page,
-            page_size=page_size,
-            columns="source_key, item_id, rejected_at",
-        )
-
-    def list_semantic_items(
-        self,
-        *,
-        window_hours: int = 168,
-        page: int = 1,
-        page_size: int = 50,
-    ) -> tuple[list[dict[str, Any]], int]:
-        cutoff = (utcnow() - timedelta(hours=max(window_hours, 1))).isoformat()
-        where, params = self._build_filters(("ts >= ?", cutoff))
-        return self._list_rows(
-            table="semantic_items",
-            where=where,
-            params=params,
-            order_by="ts DESC, id DESC",
-            page=page,
-            page_size=page_size,
-            columns="id, source_key, item_id, text, ts",
-        )
-
     def list_tick_logs(
         self,
         *,
@@ -352,7 +325,7 @@ class ProactiveDashboardReader:
                 "tick_id, session_key, started_at, finished_at, gate_exit, "
                 "terminal_action, skip_reason, steps_taken, alert_count, "
                 "content_count, context_count, interesting_ids, discarded_ids, "
-                "cited_ids, drift_entered, final_message"
+                "cited_ids, drift_entered, final_message, proactive_effects_json"
             ),
             row_mapper=self._row_to_tick_log,
         )
@@ -365,7 +338,7 @@ class ProactiveDashboardReader:
                 SELECT tick_id, session_key, started_at, finished_at, gate_exit,
                        terminal_action, skip_reason, steps_taken, alert_count,
                        content_count, context_count, interesting_ids, discarded_ids,
-                       cited_ids, drift_entered, final_message
+                       cited_ids, drift_entered, final_message, proactive_effects_json
                 FROM tick_log
                 WHERE tick_id = ?
                 """,
@@ -388,53 +361,6 @@ class ProactiveDashboardReader:
                 (tick_id,),
             ).fetchall()
         return [self._row_to_tick_step(row) for row in rows]
-
-    def delete_seen_items(
-        self,
-        *,
-        source_key: str = "",
-        item_ids: list[str] | None = None,
-    ) -> int:
-        return self._delete_rows("seen_items", source_key=source_key, item_ids=item_ids)
-
-    def delete_rejection_cooldown(
-        self,
-        *,
-        source_key: str = "",
-        item_ids: list[str] | None = None,
-    ) -> int:
-        return self._delete_rows(
-            "rejection_cooldown",
-            source_key=source_key,
-            item_ids=item_ids,
-        )
-
-    def _delete_rows(
-        self,
-        table: str,
-        *,
-        source_key: str = "",
-        item_ids: list[str] | None = None,
-    ) -> int:
-        if not source_key and not item_ids:
-            raise ValueError("至少提供 source_key 或 item_ids")
-        clauses: list[str] = []
-        params: list[Any] = []
-        if source_key:
-            clauses.append("source_key = ?")
-            params.append(source_key)
-        if item_ids:
-            placeholders = ", ".join("?" for _ in item_ids)
-            clauses.append(f"item_id IN ({placeholders})")
-            params.extend(item_ids)
-        where_sql = f" WHERE {' AND '.join(clauses)}" if clauses else ""
-        with self._lock:
-            result = self._db.execute(
-                f"DELETE FROM {table}{where_sql}",
-                tuple(params),
-            )
-            self._db.commit()
-        return int(result.rowcount or 0)
 
     def _list_rows(
         self,
@@ -511,8 +437,24 @@ class ProactiveDashboardReader:
         )
         payload["discarded_ids"] = self._decode_json_list(payload.get("discarded_ids"))
         payload["cited_ids"] = self._decode_json_list(payload.get("cited_ids"))
+        payload["proactive_effects"] = self._decode_json_object_list(
+            payload.pop("proactive_effects_json", "")
+        )
         payload["drift_entered"] = bool(payload.get("drift_entered"))
         return payload
+
+    @staticmethod
+    def _decode_json_object_list(raw: Any) -> list[dict[str, Any]]:
+        text = str(raw or "").strip()
+        if not text:
+            return []
+        try:
+            value = json.loads(text)
+        except Exception:
+            return []
+        if not isinstance(value, list):
+            return []
+        return [item for item in value if isinstance(item, dict)]
 
     def _row_to_tick_step(self, row: sqlite3.Row) -> dict[str, Any]:
         payload = self._row_to_dict(row)
@@ -565,7 +507,7 @@ def _esbuild_command(project_root: Path) -> list[str] | None:
 
 def _build_plugin_panels_js(project_root: Path, plugin_dir: Path) -> None:
     esbuild_cmd: list[str] | None = None
-    for ts_path in sorted(plugin_dir.glob("dashboard_panel*.ts")):
+    for ts_path in _iter_plugin_panel_sources(plugin_dir):
         js_path = ts_path.with_suffix(".js")
         if js_path.exists() and js_path.stat().st_mtime >= ts_path.stat().st_mtime:
             continue
@@ -578,6 +520,14 @@ def _build_plugin_panels_js(project_root: Path, plugin_dir: Path) -> None:
         _run_esbuild(esbuild_cmd, ts_path, js_path, f"{plugin_dir.name}/{ts_path.stem}")
 
 
+def _iter_plugin_panel_sources(plugin_dir: Path) -> list[Path]:
+    return sorted(
+        path
+        for path in plugin_dir.glob("dashboard_panel*")
+        if path.suffix in {".ts", ".tsx"}
+    )
+
+
 def _run_esbuild(cmd: list[str], ts_path: Path, js_path: Path, name: str) -> None:
     try:
         result = subprocess.run(
@@ -585,10 +535,16 @@ def _run_esbuild(cmd: list[str], ts_path: Path, js_path: Path, name: str) -> Non
                 *cmd,
                 str(ts_path),
                 f"--outfile={js_path}",
-                "--bundle=false",
+                "--bundle",
                 "--platform=browser",
                 "--target=es2020",
-                "--format=iife",
+                "--format=esm",
+                "--jsx=automatic",
+                "--external:react",
+                "--external:react-dom",
+                "--external:react-dom/client",
+                "--external:react/jsx-runtime",
+                "--external:@akashic/dashboard-ui",
             ],
             capture_output=True,
             text=True,
@@ -602,16 +558,18 @@ def _run_esbuild(cmd: list[str], ts_path: Path, js_path: Path, name: str) -> Non
         logger.warning("插件面板编译异常 (%s): %s", name, exc)
 
 
-def _resolve_plugin_dir(plugins_root: Path, plugin_id: str) -> Path:
+def _resolve_plugin_dir(
+    plugin_dirs: dict[str, Path],
+    plugin_id: str,
+) -> Path:
     if not plugin_id or "/" in plugin_id or "\\" in plugin_id:
         raise HTTPException(status_code=400, detail="invalid plugin id")
     win_path = PureWindowsPath(plugin_id)
     if Path(plugin_id).is_absolute() or win_path.drive or win_path.root:
         raise HTTPException(status_code=400, detail="invalid plugin id")
-    plugin_dir = (plugins_root / plugin_id).resolve()
-    root = plugins_root.resolve()
-    if plugin_dir.parent != root:
-        raise HTTPException(status_code=400, detail="invalid plugin id")
+    plugin_dir = plugin_dirs.get(plugin_id)
+    if plugin_dir is None:
+        raise HTTPException(status_code=404, detail="plugin not found")
     return plugin_dir
 
 
@@ -646,7 +604,7 @@ async def _compile_pending_plugins_async() -> None:
     version = stdout.decode("utf-8", errors="replace").strip()
     logger.info("npx esbuild 就绪 (%s)，开始编译插件面板...", version)
     for root, pdir in pending:
-        for ts_path in sorted(pdir.glob("dashboard_panel*.ts")):
+        for ts_path in _iter_plugin_panel_sources(pdir):
             js_path = ts_path.with_suffix(".js")
             if not (js_path.exists() and js_path.stat().st_mtime >= ts_path.stat().st_mtime):
                 _run_esbuild(esbuild_cmd, ts_path, js_path, f"{pdir.name}/{ts_path.stem}")
@@ -681,14 +639,24 @@ def _plugin_dashboard_enabled(app: FastAPI, plugin_dir: Path) -> bool:
 
 def _load_plugin_dashboard_module(plugin_dir: Path) -> ModuleType:
     dash_path = plugin_dir / "dashboard.py"
-    module_name = f"akasic_dashboard_plugin_{plugin_dir.name}"
-    spec = importlib.util.spec_from_file_location(module_name, dash_path)
+    module_name = _dashboard_module_name(plugin_dir)
+    spec = importlib.util.spec_from_file_location(
+        module_name,
+        dash_path,
+        submodule_search_locations=[str(plugin_dir)],
+    )
     if spec is None or spec.loader is None:
         raise ImportError(f"cannot load {dash_path}")
     mod = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = mod
     spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
+
+
+def _dashboard_module_name(plugin_dir: Path) -> str:
+    raw = str(plugin_dir.resolve(strict=False))
+    normalized = "".join(ch if ch.isalnum() else "_" for ch in raw)
+    return f"akasic_dashboard_plugin_{normalized}"
 
 
 def _dashboard_closeables(value: object) -> list[object]:
@@ -739,7 +707,6 @@ def create_dashboard_app(
     optimizer_last_error: str | None = None
     plugin_closeables: list[object] = []
     project_root = Path(__file__).resolve().parent.parent
-    plugins_root = project_root / "plugins"
     static_dir = project_root / "static" / "dashboard"
 
     def get_proactive_reader() -> ProactiveDashboardReader:
@@ -770,40 +737,45 @@ def create_dashboard_app(
     app = FastAPI(title="Akashic Dashboard API", lifespan=lifespan)
     app.state.memory_admin = memory_admin
     app.state.memory_store = memory_store or MemoryStore(workspace)
-    app.mount("/assets", StaticFiles(directory=static_dir), name="dashboard-assets")
+    # Vite build output is gitignored, so a fresh clone (or CI) may lack it. Keep
+    # the directory present and mount without a dir check so app creation never
+    # depends on the build having run; dashboard_index() reports if it's missing.
+    static_dir.mkdir(parents=True, exist_ok=True)
+    app.mount(
+        "/assets",
+        StaticFiles(directory=static_dir, check_dir=False),
+        name="dashboard-assets",
+    )
+    plugin_dirs = _dashboard_plugin_dirs(project_root)
 
     # Compile TypeScript plugin panels and mount plugin routes
-    if plugins_root.is_dir():
-        for _plugin_dir in sorted(plugins_root.iterdir()):
-            if not _plugin_dir.is_dir():
-                continue
-            if _is_plugin_disabled(_plugin_dir):
-                continue
-            if not _plugin_dashboard_enabled(app, _plugin_dir):
-                continue
-            _build_plugin_panels_js(project_root, _plugin_dir)
-            if (_plugin_dir / "dashboard.py").exists():
-                plugin_closeables.extend(
-                    _load_plugin_dashboard(app, _plugin_dir, workspace)
-                )
+    for _plugin_id, _plugin_dir in sorted(plugin_dirs.items()):
+        if not _plugin_dashboard_enabled(app, _plugin_dir):
+            continue
+        _build_plugin_panels_js(project_root, _plugin_dir)
+        if (_plugin_dir / "dashboard.py").exists():
+            plugin_closeables.extend(
+                _load_plugin_dashboard(app, _plugin_dir, workspace)
+            )
 
+    # Vite emits index.html with content-hashed asset URLs under /assets, so it
+    # is served verbatim — no manual cache-busting needed.
     @app.get("/")
     def dashboard_index() -> Response:
-        html = (static_dir / "index.html").read_text(encoding="utf-8")
-        app_v = str(int((static_dir / "app.js").stat().st_mtime_ns))
-        css_v = str(int((static_dir / "styles.css").stat().st_mtime_ns))
-        html = re.sub(r'(/assets/styles\.css)(\?[^"]*)?', rf'\1?v={css_v}', html)
-        html = re.sub(r'(/assets/app\.js)(\?[^"]*)?', rf'\1?v={app_v}', html)
+        index_file = static_dir / "index.html"
+        if not index_file.exists():
+            return Response(
+                content="Dashboard 前端尚未构建，请先运行 `npm run build`。",
+                media_type="text/plain; charset=utf-8",
+                status_code=503,
+            )
+        html = index_file.read_text(encoding="utf-8")
         return Response(content=html, media_type="text/html")
 
     @app.get("/api/dashboard/plugins")
     def list_dashboard_plugins() -> list[dict[str, Any]]:
-        if not plugins_root.is_dir():
-            return []
         result: list[dict[str, Any]] = []
-        for plugin_dir in sorted(plugins_root.iterdir()):
-            if not plugin_dir.is_dir() or _is_plugin_disabled(plugin_dir):
-                continue
+        for plugin_id, plugin_dir in sorted(_dashboard_plugin_dirs(project_root).items()):
             if not _plugin_dashboard_enabled(app, plugin_dir):
                 continue
             _build_plugin_panels_js(project_root, plugin_dir)
@@ -816,14 +788,17 @@ def create_dashboard_app(
                     "has_css": css_path.exists(),
                 })
             if panels:
-                result.append({"id": plugin_dir.name, "panels": panels})
+                result.append({"id": plugin_id, "panels": panels})
         return result
 
     @app.get("/plugins/{plugin_id}/{panel_name}.js")
     def get_plugin_panel_js(plugin_id: str, panel_name: str) -> FileResponse:
         if not panel_name.startswith("dashboard_panel"):
             raise HTTPException(status_code=404, detail="plugin panel not found")
-        plugin_dir = _resolve_plugin_dir(plugins_root, plugin_id)
+        plugin_dir = _resolve_plugin_dir(
+            _dashboard_plugin_dirs(project_root),
+            plugin_id,
+        )
         if _is_plugin_disabled(plugin_dir) or not _plugin_dashboard_enabled(app, plugin_dir):
             raise HTTPException(status_code=404, detail="plugin panel not found")
         _build_plugin_panels_js(project_root, plugin_dir)
@@ -836,7 +811,10 @@ def create_dashboard_app(
     def get_plugin_panel_css(plugin_id: str, panel_name: str) -> FileResponse:
         if not panel_name.startswith("dashboard_panel"):
             raise HTTPException(status_code=404, detail="plugin panel css not found")
-        plugin_dir = _resolve_plugin_dir(plugins_root, plugin_id)
+        plugin_dir = _resolve_plugin_dir(
+            _dashboard_plugin_dirs(project_root),
+            plugin_id,
+        )
         if _is_plugin_disabled(plugin_dir) or not _plugin_dashboard_enabled(app, plugin_dir):
             raise HTTPException(status_code=404, detail="plugin panel css not found")
         css_path = plugin_dir / f"{panel_name}.css"
@@ -1247,61 +1225,6 @@ def create_dashboard_app(
             "page_size": max(1, min(page_size, 200)),
         }
 
-    @app.get("/api/dashboard/proactive/seen_items")
-    def list_proactive_seen_items(
-        source_key: str = "",
-        page: int = 1,
-        page_size: int = 50,
-    ) -> dict[str, Any]:
-        items, total = get_proactive_reader().list_seen_items(
-            source_key=source_key,
-            page=page,
-            page_size=page_size,
-        )
-        return {
-            "items": items,
-            "total": total,
-            "page": max(1, page),
-            "page_size": max(1, min(page_size, 200)),
-        }
-
-    @app.get("/api/dashboard/proactive/rejection_cooldown")
-    def list_proactive_rejection_cooldown(
-        source_key: str = "",
-        page: int = 1,
-        page_size: int = 50,
-    ) -> dict[str, Any]:
-        items, total = get_proactive_reader().list_rejection_cooldown(
-            source_key=source_key,
-            page=page,
-            page_size=page_size,
-        )
-        return {
-            "items": items,
-            "total": total,
-            "page": max(1, page),
-            "page_size": max(1, min(page_size, 200)),
-        }
-
-    @app.get("/api/dashboard/proactive/semantic_items")
-    def list_proactive_semantic_items(
-        page: int = 1,
-        page_size: int = 50,
-        window_hours: int = 168,
-    ) -> dict[str, Any]:
-        items, total = get_proactive_reader().list_semantic_items(
-            page=page,
-            page_size=page_size,
-            window_hours=window_hours,
-        )
-        return {
-            "items": items,
-            "total": total,
-            "page": max(1, page),
-            "page_size": max(1, min(page_size, 200)),
-            "window_hours": max(1, window_hours),
-        }
-
     @app.get("/api/dashboard/proactive/tick_logs")
     def list_proactive_tick_logs(
         session_key: str = "",
@@ -1352,30 +1275,6 @@ def create_dashboard_app(
             "total": len(steps),
             "tick_id": tick_id,
         }
-
-    @app.delete("/api/dashboard/proactive/seen_items/batch")
-    def delete_proactive_seen_items(payload: ProactiveDeletePayload) -> dict[str, Any]:
-        try:
-            deleted_count = get_proactive_reader().delete_seen_items(
-                source_key=str(payload.source_key or "").strip(),
-                item_ids=payload.item_ids,
-            )
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return {"deleted_count": deleted_count}
-
-    @app.delete("/api/dashboard/proactive/rejection_cooldown/batch")
-    def delete_proactive_rejection_cooldown(
-        payload: ProactiveDeletePayload,
-    ) -> dict[str, Any]:
-        try:
-            deleted_count = get_proactive_reader().delete_rejection_cooldown(
-                source_key=str(payload.source_key or "").strip(),
-                item_ids=payload.item_ids,
-            )
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return {"deleted_count": deleted_count}
 
     return app
 

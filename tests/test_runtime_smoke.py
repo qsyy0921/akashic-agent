@@ -15,8 +15,6 @@ from agent.config import (
     ChannelsConfig,
     Config,
     DEFAULT_SOCKET,
-    QQBotChannelConfig,
-    QQBotGroupConfig,
     QQChannelConfig,
     QQGroupConfig,
     TelegramChannelConfig,
@@ -28,6 +26,15 @@ from core.net.http import SharedHttpResources
 
 
 class _FakeDashboardServer:
+    def __init__(self) -> None:
+        self.should_exit = False
+
+    async def serve(self) -> None:
+        while not self.should_exit:
+            await asyncio.sleep(0)
+
+
+class _FakeChatServer:
     def __init__(self) -> None:
         self.should_exit = False
 
@@ -179,6 +186,21 @@ async def test_serve_smoke_loads_config_and_runs_shutdown(monkeypatch, tmp_path)
     monkeypatch.setattr(
         bootstrap_app, "build_dashboard_server", lambda **_: _FakeDashboardServer()
     )
+    monkeypatch.setattr(
+        bootstrap_app, "build_chat_server", lambda **_: _FakeChatServer()
+    )
+
+    class _FakePluginJobRuntime:
+        def __init__(self, **_: object) -> None:
+            pass
+
+        async def run(self) -> None:
+            return None
+
+        def stop(self) -> None:
+            return None
+
+    monkeypatch.setattr(bootstrap_app, "PluginJobRuntime", _FakePluginJobRuntime)
     monkeypatch.setattr(main.Path, "home", lambda: tmp_path)
 
     await main.serve(str(config_path))
@@ -246,10 +268,13 @@ def test_init_workspace_creates_expected_assets(tmp_path):
     assert "multimodal = false" in config_text
     assert "[llm.vl]" in config_text
     assert 'model = "qwen-vl-plus"' in config_text
+    assert "[channels.chat]" in config_text
+    assert "port = 6322" in config_text
+    assert any("http://127.0.0.1:6322" in step for step in summary.next_steps)
     assert (workspace / "sessions.db").exists()
     assert (workspace / "observe").is_dir()
     assert (workspace / "memory" / "consolidation_writes.db").exists()
-    assert (workspace / "memory" / "journal").is_dir()
+    assert not (workspace / "memory" / "journal").exists()
     assert (workspace / "memory" / "memory2.db").exists()
     assert "Proactive Context" in (
         workspace / "PROACTIVE_CONTEXT.md"
@@ -301,7 +326,6 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
     fake_ipc_server = types.ModuleType("infra.channels.ipc_server")
     fake_telegram_channel = types.ModuleType("infra.channels.telegram_channel")
     fake_qq_channel = types.ModuleType("infra.channels.qq_channel")
-    fake_qqbot_channel = types.ModuleType("infra.channels.qqbot_channel")
 
     class _IPCServerChannel:
         def __init__(self, bus, socket, default_session_key: str = ""):
@@ -318,9 +342,17 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
     class _TelegramChannel:
         def __init__(self, **kwargs):
             self.kwargs = kwargs
+            self.name = kwargs.get("channel_name", "telegram")
 
-        async def start(self) -> None:
+        async def start(self, ctx) -> None:
             starts.append("telegram")
+            ctx.push_tool.register_channel(
+                self.name,
+                text=self.send,
+                stream_text=self.send_stream,
+                file=self.send_file,
+                image=self.send_image,
+            )
 
         async def stop(self) -> None:
             starts.append("telegram.stop")
@@ -338,11 +370,19 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
             return None
 
     class _QQChannel:
+        name = "qq"
+
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-        async def start(self) -> None:
+        async def start(self, ctx) -> None:
             starts.append("qq")
+            ctx.push_tool.register_channel(
+                self.name,
+                text=self.send,
+                file=self.send_file,
+                image=self.send_image,
+            )
 
         async def stop(self) -> None:
             starts.append("qq.stop")
@@ -357,11 +397,18 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
             return None
 
     class _QQBotChannel:
+        name = "qqbot"
+
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-        async def start(self) -> None:
+        async def start(self, ctx) -> None:
             starts.append("qqbot")
+            ctx.push_tool.register_channel(
+                self.name,
+                text=self.send_proactive,
+                stream_text=self.send_stream,
+            )
 
         async def stop(self) -> None:
             starts.append("qqbot.stop")
@@ -375,11 +422,9 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
     fake_ipc_server.IPCServerChannel = _IPCServerChannel  # type: ignore[attr-defined]
     fake_telegram_channel.TelegramChannel = _TelegramChannel  # type: ignore[attr-defined]
     fake_qq_channel.QQChannel = _QQChannel  # type: ignore[attr-defined]
-    fake_qqbot_channel.QQBotChannel = _QQBotChannel  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "infra.channels.ipc_server", fake_ipc_server)
     monkeypatch.setitem(sys.modules, "infra.channels.telegram_channel", fake_telegram_channel)
     monkeypatch.setitem(sys.modules, "infra.channels.qq_channel", fake_qq_channel)
-    monkeypatch.setitem(sys.modules, "infra.channels.qqbot_channel", fake_qqbot_channel)
 
     class _PushTool:
         def register_channel(self, name: str, **kwargs) -> None:
@@ -397,12 +442,6 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
                 allow_from=["2"],
                 groups=[QQGroupConfig(group_id="3")],
             ),
-            qqbot=QQBotChannelConfig(
-                app_id="app",
-                client_secret="secret",
-                allow_from=["user-openid"],
-                groups=[QQBotGroupConfig(group_openid="group-openid")],
-            ),
             socket=str(tmp_path / "sock"),
         ),
     )
@@ -410,7 +449,8 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
     event_bus = EventBus()
     try:
         controller = object()
-        ipc, tg, qq, qqbot = await start_channels(
+        plugin_channel = _QQBotChannel(event_bus=event_bus)
+        ipc, host = await start_channels(
             config,
             bus=cast(Any, object()),
             session_manager=cast(Any, object()),
@@ -418,14 +458,14 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
             http_resources=resources,
             event_bus=event_bus,
             interrupt_controller=cast(Any, controller),
+            plugin_channels=[cast(Any, plugin_channel)],
         )
+        await host.start_all()
     finally:
         await resources.aclose()
 
     assert ipc is not None
-    assert tg is not None
-    assert qq is not None
-    assert qqbot is not None
+    tg, qq, qqbot = host.channels
     assert starts == ["ipc", "telegram", "qq", "qqbot"]
     assert registrations == [
         ("telegram", ["file", "image", "stream_text", "text"]),
@@ -436,7 +476,6 @@ async def test_start_channels_wires_telegram_and_qq(monkeypatch, tmp_path):
     assert tg.kwargs["interrupt_controller"] is controller
     assert qq.kwargs["interrupt_controller"] is controller
     assert qqbot.kwargs["event_bus"] is event_bus
-    assert qqbot.kwargs["interrupt_controller"] is controller
 
 
 @pytest.mark.asyncio
@@ -491,7 +530,7 @@ async def test_start_channels_skips_unfilled_optional_channels(monkeypatch, tmp_
     )
     resources = SharedHttpResources()
     try:
-        ipc, tg, qq, qqbot = await start_channels(
+        ipc, host = await start_channels(
             config,
             bus=cast(Any, object()),
             session_manager=cast(Any, object()),
@@ -503,7 +542,5 @@ async def test_start_channels_skips_unfilled_optional_channels(monkeypatch, tmp_
         await resources.aclose()
 
     assert ipc is not None
-    assert tg is None
-    assert qq is None
-    assert qqbot is None
+    assert host.channels == []
     assert starts == ["ipc"]

@@ -5,7 +5,6 @@ import logging
 from typing import TYPE_CHECKING, Any, TypeAlias, cast
 
 from agent.core.passive_support import update_session_runtime_metadata
-from agent.tools.artifacts import extract_tool_artifacts, image_paths_from_artifacts
 from agent.core.response_parser import parse_response
 from agent.lifecycle.phase import (
     PhaseFrame,
@@ -45,7 +44,6 @@ _OUTBOUND_METADATA_PREFIX = "outbound:metadata:"
 _OUTBOUND_MEDIA_PREFIX = "outbound:media:"
 _ASSISTANT_FIXED_FIELDS = {"tools_used", "tool_chain", "reasoning_content"}
 _USER_FIXED_FIELDS = {"media"}
-_CHATGPT_IMAGEGEN_TOOL = "mcp_chatgpt_imagegen__chatgpt_image_generate"
 
 
 class _BuildAfterReasoningCtxModule:
@@ -70,6 +68,7 @@ class _BuildAfterReasoningCtxModule:
             response_metadata=parsed.metadata,
             tools_used=tuple(turn_result.tools_used),
             tool_chain=tuple(tool_chain),
+            media=list(turn_result.media),
             thinking=turn_result.thinking,
             streamed=turn_result.streamed,
             context_retry=dict(turn_result.context_retry),
@@ -101,7 +100,7 @@ class _EmitAfterReasoningCtxModule:
 
 class _PersistUserMessageModule:
     slot = "after_reasoning.persist_user"
-    requires = ("after_reasoning.attach_generated_images", _CTX_SLOT)
+    requires = ("after_reasoning.emit", _CTX_SLOT)
 
     def __init__(self, session_services: SessionServices) -> None:
         self._session_services = session_services
@@ -114,8 +113,7 @@ class _PersistUserMessageModule:
         if raw_session is None:
             raise RuntimeError("AfterReasoning requires TurnState.session")
         session = cast("Session", raw_session)
-        omit_user_turn = bool((msg.metadata or {}).get("omit_user_turn"))
-        if omit_user_turn:
+        if not state.persistence.persist_user:
             return frame
         if self._session_services.presence:
             self._session_services.presence.record_user_message(session.key)
@@ -150,12 +148,19 @@ class _PersistAssistantMessageModule:
             "tools_used": list(ctx.tools_used) if ctx.tools_used else None,
             "tool_chain": list(ctx.tool_chain) if ctx.tool_chain else None,
         }
-        if ctx.media:
-            assistant_kwargs["media"] = list(ctx.media)
+        turn_duration_ms = frame.input.state.extra_metadata.get("turn_duration_ms")
+        if isinstance(turn_duration_ms, int):
+            assistant_kwargs["turn_duration_ms"] = turn_duration_ms
         if ctx.thinking is not None:
             assistant_kwargs["reasoning_content"] = ctx.thinking
         assistant_kwargs.update(_collect_persist_assistant_slots(frame.slots))
-        session.add_message("assistant", ctx.reply, **assistant_kwargs)
+        if frame.input.state.persistence.persist_assistant:
+            session.add_message(
+                "assistant",
+                ctx.reply,
+                media=ctx.media if ctx.media else None,
+                **assistant_kwargs,
+            )
         return frame
 
 
@@ -177,22 +182,6 @@ class _UpdateSessionMetadataModule:
         return frame
 
 
-class _AttachGeneratedImageMediaModule:
-    slot = "after_reasoning.attach_generated_images"
-    requires = ("after_reasoning.emit", _CTX_SLOT)
-    produces = (_CTX_SLOT,)
-
-    async def run(self, frame: AfterReasoningFrame) -> AfterReasoningFrame:
-        ctx = cast(AfterReasoningCtx, frame.slots[_CTX_SLOT])
-        media = list(ctx.media)
-        for path in _extract_generated_image_paths(ctx.tool_chain):
-            if path not in media:
-                media.append(path)
-        if media != ctx.media:
-            ctx.media = media
-        return frame
-
-
 class _AppendMessagesModule:
     slot = "after_reasoning.append_messages"
     requires = ("after_reasoning.update_meta",)
@@ -206,7 +195,11 @@ class _AppendMessagesModule:
         if raw_session is None:
             raise RuntimeError("AfterReasoning requires TurnState.session")
         session = cast("Session", raw_session)
-        persist_count = 1 if bool((state.msg.metadata or {}).get("omit_user_turn")) else 2
+        persist_count = int(state.persistence.persist_user) + int(
+            state.persistence.persist_assistant
+        )
+        if persist_count == 0:
+            return frame
         await self._session_services.session_manager.append_messages(
             session,
             cast(list[dict[str, Any]], session.messages[-persist_count:]),
@@ -256,7 +249,6 @@ def default_after_reasoning_modules(
     builtins: AfterReasoningModules = [
         _BuildAfterReasoningCtxModule(),
         _EmitAfterReasoningCtxModule(bus),
-        _AttachGeneratedImageMediaModule(),
         _PersistUserMessageModule(session_services),
         _PersistAssistantMessageModule(),
         _UpdateSessionMetadataModule(),
@@ -288,33 +280,3 @@ def _collect_persist_user_slots(slots: dict[str, object]) -> dict[str, object]:
 
 def _append_media(target: list[str], exports: dict[str, object]) -> None:
     append_string_exports(target, exports)
-
-
-def _extract_generated_image_paths(tool_chain: tuple[dict[str, Any], ...]) -> list[str]:
-    paths: list[str] = []
-    for group in tool_chain:
-        calls = group.get("calls") if isinstance(group, dict) else None
-        if not isinstance(calls, list):
-            continue
-        for call in calls:
-            if not isinstance(call, dict):
-                continue
-            if call.get("name") != _CHATGPT_IMAGEGEN_TOOL:
-                continue
-            if call.get("status") not in (None, "success"):
-                continue
-            if call.get("auto_dispatched_artifacts") or call.get("auto_dispatched_media"):
-                continue
-            artifacts = call.get("artifacts")
-            if isinstance(artifacts, list):
-                for path in image_paths_from_artifacts(artifacts):
-                    if path not in paths:
-                        paths.append(path)
-                continue
-            result = call.get("result")
-            for path in image_paths_from_artifacts(
-                extract_tool_artifacts(_CHATGPT_IMAGEGEN_TOOL, result)
-            ):
-                if path not in paths:
-                    paths.append(path)
-    return paths

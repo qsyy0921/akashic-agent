@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import importlib
+import logging
 import sys
 import types
 from pathlib import Path
@@ -18,9 +19,10 @@ from bus.events_lifecycle import (
     StreamDeltaReady,
     ToolCallCompleted,
     ToolCallStarted,
-    TurnCommitted,
     TurnStarted,
 )
+from infra.channels.base import AttachmentStore
+from infra.channels.contract import ChannelContext
 
 
 class _Bus:
@@ -39,28 +41,12 @@ class _SessionManager:
     def __init__(self) -> None:
         self.sessions = {}
         self.saved = []
-        self.appended = []
 
     def get_or_create(self, key: str):
-        session = self.sessions.get(key)
-        if session is None:
-            session = SimpleNamespace(key=key, metadata={}, messages=[])
-
-            def _add_message(role, content, media=None, **kwargs):
-                msg = {"role": role, "content": content, **kwargs}
-                if media:
-                    msg["media"] = list(media)
-                session.messages.append(msg)
-
-            session.add_message = _add_message
-            self.sessions[key] = session
-        return session
+        return self.sessions.setdefault(key, SimpleNamespace(key=key, metadata={}))
 
     async def save_async(self, session) -> None:
         self.saved.append(session.key)
-
-    async def append_messages(self, session, messages) -> None:
-        self.appended.append((session.key, list(messages)))
 
     def get_channel_metadata(self, channel: str):
         return []
@@ -1055,71 +1041,6 @@ async def test_qq_channel_paths(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
 
 
 @pytest.mark.asyncio
-async def test_qq_observe_only_records_group_without_inbound(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    mod = _import_qq_channel(monkeypatch)
-    bus = _Bus()
-    session_manager = _SessionManager()
-    event_bus = EventBus()
-    committed = []
-    event_bus.on(TurnCommitted, lambda event: committed.append(event))
-    group_filter = SimpleNamespace(should_process=AsyncMock(return_value=True))
-    channel = mod.QQChannel(
-        "42",
-        bus,
-        session_manager,
-        groups=[],
-        ws_uri="ws://127.0.0.1:3002",
-        observe_only=True,
-        observe_all_groups=True,
-        private_peer_ids=["2"],
-        group_filter=group_filter,
-        http_requester=SimpleNamespace(get=AsyncMock()),
-        event_bus=event_bus,
-    )
-    channel._onebot_call = AsyncMock(return_value={"data": {"user_id": 42}})
-    channel._run_direct_observer = AsyncMock(return_value=None)
-
-    await channel.start()
-    assert bus.outbound == []
-    await channel._handle_onebot_event(
-        {
-            "post_type": "message",
-            "message_type": "group",
-            "group_id": 100,
-            "user_id": 1,
-            "message_id": 88,
-            "time": 1780000000,
-            "raw_message": "quiet observe",
-        }
-    )
-    await event_bus.drain()
-
-    assert bus.inbound == []
-    session = session_manager.sessions["qq:gqq:100"]
-    assert session.metadata["observe_only"] is True
-    assert session.metadata["chat_type"] == "group"
-    assert session.messages[-1]["content"] == "quiet observe"
-    assert session.messages[-1]["observed"] is True
-    assert session.messages[-1]["sender_id"] == "1"
-    assert session.messages[-1]["speaker_id"] == "1"
-    assert session.messages[-1]["group_id"] == "100"
-    assert session.messages[-1]["message_index"] == 0
-    assert session.messages[-1]["source_ref"] == "qq:gqq:100:0"
-    assert session.messages[-1]["onebot_message_id"] == "88"
-    assert session_manager.appended[-1][0] == "qq:gqq:100"
-    assert committed[-1].session_key == "qq:gqq:100"
-    assert committed[-1].extra["memory_scope"] == "group"
-
-    channel._onebot_call.reset_mock()
-    await channel.send("gqq:100", "blocked")
-    channel._onebot_call.assert_not_awaited()
-    await channel.send("2", "peer only")
-    channel._onebot_call.assert_awaited_once()
-
-
-@pytest.mark.asyncio
 async def test_qq_private_trace_sends_forward_then_final_and_clears_state(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -1276,125 +1197,3 @@ async def test_qq_private_trace_skips_empty_trace(monkeypatch: pytest.MonkeyPatc
     assert [item[0] for item in calls] == ["text"]
     assert calls[0] == ("text", 1, "嗯，收到。")
 
-
-@pytest.mark.asyncio
-async def test_qqbot_channel_text_paths(monkeypatch: pytest.MonkeyPatch):
-    sys.modules.pop("infra.channels.qqbot_channel", None)
-    mod = importlib.import_module("infra.channels.qqbot_channel")
-    bus = _Bus()
-    session_manager = _SessionManager()
-    channel = mod.QQBotChannel(
-        app_id="app",
-        client_secret="secret",
-        bus=bus,
-        session_manager=session_manager,
-        allow_from=["user-1"],
-        interrupt_controller=SimpleNamespace(
-            request_interrupt=MagicMock(return_value=SimpleNamespace(message="已中断"))
-        ),
-    )
-    channel._get_access_token = AsyncMock(return_value="token")
-    channel._api_request = AsyncMock(return_value={"id": "m1", "timestamp": "now"})
-
-    assert channel._parse_chat_id("user-1") == ("c2c", "user-1")
-    assert channel._parse_chat_id("qqbot:group:group-1") == ("group", "group-1")
-
-    await channel._handle_c2c({
-        "id": "msg-1",
-        "author": {"user_openid": "user-1"},
-        "content": "你好",
-    })
-    await channel._handle_c2c({
-        "id": "msg-2",
-        "author": {"user_openid": "other"},
-        "content": "不该进来",
-    })
-    await channel._handle_dispatch("GROUP_AT_MESSAGE_CREATE", {
-        "group_openid": "group-1",
-        "author": {"member_openid": "member-1"},
-        "content": "群消息",
-    })
-
-    assert len(bus.inbound) == 1
-    assert bus.inbound[0].chat_id == "c2c:user-1"
-    assert bus.inbound[0].metadata["message_id"] == "msg-1"
-    assert session_manager.saved == []
-
-    await channel.send("c2c:user-1", "pong")
-    send_call = channel._api_request.await_args_list[-1]
-    assert send_call.args[1] == "/v2/users/user-1/messages"
-    assert send_call.args[2]["msg_type"] == 2
-    assert send_call.args[2]["markdown"]["content"] == "pong"
-
-    await channel.send_stream("c2c:user-1", "stream " * 40)
-    stream_calls = [
-        call for call in channel._api_request.await_args_list
-        if call.args[1] == "/v2/users/user-1/stream_messages"
-    ]
-    assert stream_calls
-    assert stream_calls[-1].args[2]["input_state"] == 10
-    assert stream_calls[-1].args[2]["msg_id"] == "msg-1"
-
-    session_key = "qqbot:c2c:user-1"
-    await channel._on_stream_delta(StreamDeltaReady(
-        session_key=session_key,
-        channel="qqbot",
-        chat_id="c2c:user-1",
-        content_delta="临时回复",
-        thinking_delta="正在想",
-    ))
-    await channel._drain_live_tasks()
-    live_calls = [
-        call for call in channel._api_request.await_args_list
-        if call.args[1] == "/v2/users/user-1/stream_messages"
-        and call.args[2]["content_raw"] == "临时回复"
-    ]
-    assert live_calls
-    assert "工具调用" not in live_calls[-1].args[2]["content_raw"]
-    assert "正在想" not in live_calls[-1].args[2]["content_raw"]
-
-    await channel._on_response(OutboundMessage(
-        channel="qqbot",
-        chat_id="c2c:user-1",
-        content="最终回复",
-    ))
-    final_call = channel._api_request.await_args_list[-1]
-    assert final_call.args[1] == "/v2/users/user-1/stream_messages"
-    assert final_call.args[2]["input_state"] == 10
-    assert final_call.args[2]["content_raw"] == "最终回复"
-
-    session_key = "qqbot:c2c:user-1"
-    channel._live_states[session_key] = mod._LiveStreamState(
-        openid="user-1",
-        msg_id="msg-1",
-        msg_seq=1,
-        stream_msg_id="old-stream",
-    )
-    stream_error = httpx.HTTPStatusError(
-        "server error",
-        request=httpx.Request("POST", "https://api.sgroup.qq.com"),
-        response=httpx.Response(500, request=httpx.Request("POST", "https://api.sgroup.qq.com")),
-    )
-    channel._api_request = AsyncMock(side_effect=[
-        stream_error,
-        {"id": "normal-1"},
-    ])
-    await channel._on_response(OutboundMessage(
-        channel="qqbot",
-        chat_id="c2c:user-1",
-        content="流式失败后普通发送",
-    ))
-    assert channel._api_request.await_args_list[-1].args[1] == "/v2/users/user-1/messages"
-    assert session_key not in channel._live_states
-
-    channel._last_c2c_msg_id["user-1"] = "msg-1"
-    channel._api_request = AsyncMock(side_effect=stream_error)
-    assert await channel._send_live_stream(session_key, "c2c:user-1", "预览", terminal=False) is False
-    assert session_key in channel._live_disabled
-    assert await channel._send_live_stream(session_key, "c2c:user-1", "预览2", terminal=False) is False
-    assert channel._api_request.await_count == 1
-    with pytest.raises(ValueError):
-        await channel.send("group:group-1", "group pong")
-    with pytest.raises(ValueError):
-        await channel.send_proactive("group:not-configured", "blocked")
-    await channel.stop()

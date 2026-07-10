@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("memory.markdown")
 
+_EVENT_EXTRACTION_TIMEOUT_S = 300.0
+_RECENT_CONTEXT_TIMEOUT_S = 180.0
+
 
 @dataclass(frozen=True)
 class ConsolidateRequest:
@@ -60,8 +63,6 @@ class MemoryProfileApi(Protocol):
 
     def write_self(self, content: str) -> None: ...
 
-    def read_recent_history(self, *, max_chars: int = 0) -> str: ...
-
     def read_recent_context(self) -> str: ...
 
     def write_recent_context(self, content: str) -> None: ...
@@ -80,7 +81,6 @@ _ALLOWED_PENDING_TAGS = frozenset(
         "health_long_term",
         "requested_memory",
         "correction",
-        "agent_context",
     }
 )
 
@@ -111,6 +111,13 @@ def _parse_consolidation_payload(text: str) -> dict | None:
     return load_json_object_loose(text)
 
 
+def _format_consolidation_error(exc: BaseException) -> str:
+    message = str(exc).strip()
+    if message:
+        return f"{type(exc).__name__}: {message}"
+    return type(exc).__name__
+
+
 @dataclass(frozen=True)
 class _ConsolidationWindow:
     old_messages: list[dict]
@@ -129,6 +136,13 @@ class _ConsolidationDraft:
     scope_channel: str
     scope_chat_id: str
     archive_all: bool = False
+
+
+@dataclass(frozen=True)
+class _ConsolidationFailure:
+    step: str
+    error: str
+    elapsed_ms: int = 0
 
 
 def _select_consolidation_window(
@@ -198,88 +212,15 @@ def _format_conversation_for_consolidation(old_messages: list[dict]) -> str:
             continue
         role = str(message.get("role", "")).upper()
         ts = str(message.get("timestamp", "?"))[:16]
-        meta = _format_conversation_message_meta(message)
-        if meta:
-            lines.append(f"[{ts}] {role} {meta}: {message['content']}")
-        else:
-            lines.append(f"[{ts}] {role}: {message['content']}")
+        lines.append(f"[{ts}] {role}: {message['content']}")
     return "\n".join(lines)
 
 
-def _format_conversation_message_meta(message: dict) -> str:
-    parts: list[str] = []
-    for key in (
-        "group_id",
-        "speaker_id",
-        "sender_id",
-        "message_index",
-        "source_ref",
-        "onebot_message_id",
-    ):
-        value = str(message.get(key, "") or "").strip()
-        if value:
-            parts.append(f"{key}={value}")
-    if not parts:
-        return ""
-    return "(" + " ".join(parts) + ")"
-
-
-def _infer_session_scope(session: object) -> tuple[str, str]:
-    channel = str(getattr(session, "_channel", "") or "").strip()
-    chat_id = str(getattr(session, "_chat_id", "") or "").strip()
-    key = str(getattr(session, "key", "") or "").strip()
-    if (not channel or not chat_id) and ":" in key:
-        maybe_channel, maybe_chat = key.split(":", 1)
-        channel = channel or maybe_channel
-        chat_id = chat_id or maybe_chat
-    return channel, chat_id
-
-
-def _is_group_memory_scope(*, session: object, scope_chat_id: str) -> bool:
-    if str(scope_chat_id or "").startswith("gqq:"):
-        return True
-    metadata = getattr(session, "metadata", {}) or {}
-    if isinstance(metadata, dict):
-        if str(metadata.get("chat_type", "") or "") == "group":
-            return True
-        if str(metadata.get("group_id", "") or "").strip():
-            return True
-    return False
-
-
-def _select_recent_history_entries(history_text: str, *, limit: int = 3) -> list[str]:
-    if not history_text.strip() or limit <= 0:
-        return []
-    chunks = re.split(r"\n\s*\n+", history_text.strip())
-    entries = [chunk.strip() for chunk in chunks if chunk.strip()]
-    return entries[-limit:]
-
-
-def _coerce_history_text(value: object) -> str:
-    if isinstance(value, str):
-        return value
-    return ""
-
-
-_DATE_PREFIX_RE = re.compile(r"^\[(\d{4}-\d{2}-\d{2})")
-
-
-def _append_entries_to_journal(
-    profile_maint: "MarkdownMemoryStore",
-    entries: list[str],
-    source_ref: str,
-) -> None:
-    by_date: dict[str, list[str]] = {}
-    for entry in entries:
-        m = _DATE_PREFIX_RE.match(entry)
-        if not m:
-            continue
-        by_date.setdefault(m.group(1), []).append(entry)
-    for date_str, date_entries in by_date.items():
-        combined = "\n".join(date_entries)
-        profile_maint.append_journal(
-            date_str, combined, source_ref=source_ref, kind=f"journal:{date_str}"
-        )
+def _clip_context_text(text: str, max_chars: int = 16000) -> str:
+    stripped = text.strip()
+    if max_chars <= 0 or len(stripped) <= max_chars:
+        return stripped
+    return stripped[-max_chars:]
 
 
 def _coerce_emotional_weight(value: object) -> int:
@@ -597,6 +538,41 @@ ongoing_threads 严格限制：
             parsed["ongoing_threads"] = ongoing_items[:3]
         return parsed
 
+    async def _call_llm_step(
+        self,
+        *,
+        step: str,
+        provider: "LLMProvider",
+        model: str,
+        messages: list[dict[str, str]],
+        max_tokens: int,
+        timeout_s: float,
+    ) -> tuple[str, int] | _ConsolidationFailure:
+        started_at = time.perf_counter()
+        try:
+            response = await asyncio.wait_for(
+                provider.chat(
+                    messages=messages,
+                    tools=[],
+                    model=model,
+                    max_tokens=max_tokens,
+                    disable_thinking=True,
+                ),
+                timeout=timeout_s,
+            )
+        except Exception as e:
+            elapsed_ms = int((time.perf_counter() - started_at) * 1000)
+            error = _format_consolidation_error(e)
+            logger.error(
+                "Memory consolidation llm step failed: step=%s elapsed_ms=%d error=%s",
+                step,
+                elapsed_ms,
+                error,
+            )
+            return _ConsolidationFailure(step=step, error=error, elapsed_ms=elapsed_ms)
+        elapsed_ms = int((time.perf_counter() - started_at) * 1000)
+        return (response.content or "").strip(), elapsed_ms
+
     async def _build_recent_context_snapshot(
         self,
         *,
@@ -604,7 +580,7 @@ ongoing_threads 严格限制：
         profile_maint,
         window: _ConsolidationWindow | None,
         archive_all: bool,
-    ) -> str:
+    ) -> str | _ConsolidationFailure:
         tail = list(session.messages[-self._keep_count :]) if self._keep_count > 0 else []
         recent_count = min(len(tail), _recent_turn_count(self._keep_count))
         session_messages = list(session.messages)
@@ -631,7 +607,10 @@ ongoing_threads 严格限制：
                 conversation=conversation,
                 recent_turns=recent_turns_for_prompt,
             )
-            response = await self._recent_context_provider.chat(
+            call_result = await self._call_llm_step(
+                step="recent_context",
+                provider=self._recent_context_provider,
+                model=self._recent_context_model,
                 messages=[
                     {
                         "role": "system",
@@ -639,13 +618,25 @@ ongoing_threads 严格限制：
                     },
                     {"role": "user", "content": prompt},
                 ],
-                tools=[],
-                model=self._recent_context_model,
                 max_tokens=512,
-                disable_thinking=True,
+                timeout_s=_RECENT_CONTEXT_TIMEOUT_S,
             )
-            text = (response.content or "").strip()
-            parsed = _parse_consolidation_payload(text) if text else None
+            if isinstance(call_result, _ConsolidationFailure):
+                return call_result
+            text, elapsed_ms = call_result
+            logger.info(
+                "Memory consolidation recent_context raw: elapsed_ms=%d chars=%d preview=%r",
+                elapsed_ms,
+                len(text),
+                text[:300],
+            )
+            if not text:
+                return _ConsolidationFailure(
+                    step="recent_context",
+                    error="empty_response",
+                    elapsed_ms=elapsed_ms,
+                )
+            parsed = _parse_consolidation_payload(text)
             if isinstance(parsed, dict):
                 compression = {
                     key: [
@@ -662,7 +653,11 @@ ongoing_threads 严格限制：
                     )
                 }
             else:
-                compression = self._extract_recent_context_compression(old_recent_context)
+                return _ConsolidationFailure(
+                    step="recent_context",
+                    error="invalid_json",
+                    elapsed_ms=elapsed_ms,
+                )
         elif old_recent_context.strip():
             compression = self._extract_recent_context_compression(old_recent_context)
         return _render_recent_context(
@@ -698,7 +693,7 @@ ongoing_threads 严格限制：
         session,
         archive_all: bool = False,
         force: bool = False,
-    ) -> _ConsolidationDraft | None:
+    ) -> _ConsolidationDraft | _ConsolidationFailure | None:
         profile_maint = self._profile_maint
         # 1. 先决定这次要归档哪一段消息窗口；没有新窗口就直接返回。
         window = _select_consolidation_window(
@@ -746,48 +741,24 @@ ongoing_threads 严格限制：
         if window is None:
             return
 
-        # 2. 把窗口消息格式化成一段对话文本，并准备好 source_ref / 现有长期记忆 / 最近 history。
+        # 2. 把窗口消息格式化成一段对话文本，并准备好 source_ref / 现有长期记忆 / 近期语境。
         source_ref = _build_consolidation_source_ref(window)
         conversation = _format_conversation_for_consolidation(window.old_messages)
         current_memory = await asyncio.to_thread(profile_maint.read_long_term)
-        history_text = ""
-        if hasattr(profile_maint, "read_history"):
-            history_text = _coerce_history_text(
-                await asyncio.to_thread(profile_maint.read_history, 16000)
-            )
-        recent_history_entries = _select_recent_history_entries(
-            history_text,
-            limit=3,
-        )
-        recent_history_block = "\n".join(
-            f"- {entry}" for entry in recent_history_entries
+        recent_context_block = _clip_context_text(
+            await asyncio.to_thread(profile_maint.read_recent_context)
         )
 
-        scope_channel, scope_chat_id = _infer_session_scope(session)
-        is_group_scope = _is_group_memory_scope(
-            session=session,
-            scope_chat_id=scope_chat_id,
-        )
-        group_memory_instructions = ""
-        if is_group_scope:
-            group_memory_instructions = """
-## 群聊静默观察模式（必须遵守）
-当前待处理对话来自群聊观察，不是一对一用户画像。
-- history_entries 只记录群聊/项目事实，不记录个人偏好或用户画像。
-- pending_items 必须返回 []，不要写 identity/preference/requested_memory。
-- 摘要优先提取：任务、负责人、截止时间、决策结论、状态变化、文件/链接、阻塞点。
-- 如果原文 metadata 中有 group_id / speaker_id / sender_id / message_index / source_ref，摘要必须尽量保留这些定位信息。
-- 群聊中某个 speaker 的事实不得升级成当前用户的 personal memory。
-"""
+        scope_channel = getattr(session, "_channel", "")
+        scope_chat_id = getattr(session, "_chat_id", "")
 
         prompt = f"""你是记忆提取代理（Memory Extraction Agent）。从对话中精确提取结构化信息，返回 JSON。
-{group_memory_instructions}
 
 ## 字段说明
 
-### 1. "history_entries" → HISTORY.md（数组，每条对应一个独立主题）
+### 1. "history_entries" → 记忆事件条目（数组，每条对应一个独立主题）
 按主题拆分，每个独立话题写一条对象，格式为 {{"summary":"...", "emotional_weight":0}}。
-summary 仍然要求 1-2 句，以 [YYYY-MM-DD HH:MM] 开头，保留足够细节便于未来 grep 检索。
+summary 仍然要求 1-2 句，以 [YYYY-MM-DD HH:MM] 开头，保留足够细节便于后续向量写入和回源判断。
 不同主题必须拆成独立条目，不得合并。若整段对话只有一个主题，返回只含一条的数组。
 
 history_entries.emotional_weight 规则：
@@ -887,86 +858,88 @@ history_entries.emotional_weight 规则：
 ## 当前用户档案（用于查重）
 {current_memory or "（空）"}
 
-## 最近三次 consolidation event（仅用于主题延续参考）
+## 当前 RECENT_CONTEXT.md（仅用于主题延续参考）
 使用原则（严格遵守）：
-- 这些旧 event 只能帮助你理解“当前窗口大概在延续什么话题”，不能作为人物身份、说话人归属、关系判断或具体事实归属的直接证据。
-- 若旧 event 与当前窗口原文在昵称、身份、关系、事实归属上存在冲突或不一致，必须以当前窗口原文为准。
-- 不要因为旧 event 里出现了某个昵称、人设或关系描述，就在新的 history_entries 中继续沿用这些判断。
-- 对 transcript / 聊天截图 / 转贴聊天场景，旧 event 绝不能用于推断“谁是当前用户、谁是对方、哪句话归谁”。
-{recent_history_block or "（空）"},
+- 这份近期语境只能帮助你理解“当前窗口大概在延续什么话题”，不能作为人物身份、说话人归属、关系判断或具体事实归属的直接证据。
+- 若近期语境与当前窗口原文在昵称、身份、关系、事实归属上存在冲突或不一致，必须以当前窗口原文为准。
+- 不要因为近期语境里出现了某个昵称、人设或关系描述，就在新的 history_entries 中继续沿用这些判断。
+- 对 transcript / 聊天截图 / 转贴聊天场景，近期语境绝不能用于推断“谁是当前用户、谁是对方、哪句话归谁”。
+{recent_context_block or "（空）"}
 
 ## 待处理对话
 {conversation}
 
 只返回合法 JSON，不要 markdown 代码块。"""
 
-        try:
-            # 3. 调主模型把这段旧对话提炼成结构化结果。
-            event_started_at = time.perf_counter()
-            response = await self._provider.chat(
-                messages=[{"role": "user", "content": prompt}],
-                tools=[],
-                model=self._model,
-                max_tokens=1024,
-                disable_thinking=True,
+        # 3. 调主模型把这段旧对话提炼成结构化结果。
+        call_result = await self._call_llm_step(
+            step="event_extract",
+            provider=self._provider,
+            model=self._model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1024,
+            timeout_s=_EVENT_EXTRACTION_TIMEOUT_S,
+        )
+        if isinstance(call_result, _ConsolidationFailure):
+            return call_result
+        text, event_elapsed_ms = call_result
+        logger.info(
+            "Memory consolidation event llm raw: elapsed_ms=%d chars=%d preview=%r",
+            event_elapsed_ms,
+            len(text),
+            text[:300],
+        )
+
+        if not text:
+            logger.warning("Memory consolidation: LLM returned empty response")
+            return _ConsolidationFailure(
+                step="event_extract",
+                error="empty_response",
+                elapsed_ms=event_elapsed_ms,
             )
-            text = (response.content or "").strip()
-            event_elapsed_ms = int((time.perf_counter() - event_started_at) * 1000)
-            logger.info(
-                "Memory consolidation event llm raw: elapsed_ms=%d chars=%d preview=%r",
-                event_elapsed_ms,
-                len(text),
-                text[:300],
+        result = _parse_consolidation_payload(text)
+        if result is None:
+            logger.warning(
+                "Memory consolidation: unexpected response type. Response: %r",
+                text[:200],
+            )
+            return _ConsolidationFailure(
+                step="event_extract",
+                error="invalid_json",
+                elapsed_ms=event_elapsed_ms,
             )
 
-            if not text:
-                logger.warning(
-                    "Memory consolidation: LLM returned empty response, skipping"
-                )
-                return
-            result = _parse_consolidation_payload(text)
-            if result is None:
-                logger.warning(
-                    "Memory consolidation: unexpected response type, skipping. Response: %r",
-                    text[:200],
-                )
-                return
-
-            # 4. 归一化文本产物，并把后续写入所需信息交给 engine。
-            history_entry_payloads = _normalize_history_entries(
-                result.get("history_entries"),
-                result.get("history_entry"),
-            )
-            pending_items = _format_pending_items(result.get("pending_items", []))
-            # 4. 归一化 markdown 产物，向量写入由 engine 订阅提交事件完成。
-            recent_context_text = await self._build_recent_context_snapshot(
-                session=session,
-                profile_maint=profile_maint,
-                window=window,
-                archive_all=archive_all,
-            )
-            return _ConsolidationDraft(
-                window=window,
-                source_ref=source_ref,
-                history_entry_payloads=history_entry_payloads,
-                pending_items=pending_items,
-                conversation=conversation,
-                recent_context_text=recent_context_text,
-                scope_channel=scope_channel,
-                scope_chat_id=scope_chat_id,
-                archive_all=archive_all,
-            )
-        except Exception as e:
-            logger.error("Memory consolidation failed: %s", e)
-            return None
+        # 4. 归一化文本产物，并把后续写入所需信息交给 engine。
+        history_entry_payloads = _normalize_history_entries(
+            result.get("history_entries"),
+            result.get("history_entry"),
+        )
+        pending_items = _format_pending_items(result.get("pending_items", []))
+        # 4. 归一化 markdown 产物，向量写入由 engine 订阅提交事件完成。
+        recent_context_text = await self._build_recent_context_snapshot(
+            session=session,
+            profile_maint=profile_maint,
+            window=window,
+            archive_all=archive_all,
+        )
+        if isinstance(recent_context_text, _ConsolidationFailure):
+            return recent_context_text
+        return _ConsolidationDraft(
+            window=window,
+            source_ref=source_ref,
+            history_entry_payloads=history_entry_payloads,
+            pending_items=pending_items,
+            conversation=conversation,
+            recent_context_text=recent_context_text,
+            scope_channel=scope_channel,
+            scope_chat_id=scope_chat_id,
+            archive_all=archive_all,
+        )
 
 
 
 
 class MarkdownMemoryStore(MemoryStore):
-    def read_recent_history(self, *, max_chars: int = 0) -> str:
-        return self.read_history(max_chars=max_chars)
-
     def backup_long_term(self, backup_name: str = "MEMORY.bak.md") -> None:
         if self.memory_file.exists():
             shutil.copyfile(
@@ -1054,7 +1027,7 @@ class MarkdownMemoryMaintenance:
                     result = await self._consolidate_unlocked(
                         ConsolidateRequest(session=session)
                     )
-                    if result.trace.get("mode") != "skipped" and self._save_session:
+                    if result.trace.get("mode") == "markdown" and self._save_session:
                         await self._save_session(session)
                 else:
                     await self.refresh_recent_turns(
@@ -1117,6 +1090,15 @@ class MarkdownMemoryMaintenance:
         )
         if draft is None:
             return ConsolidateResult(trace={"mode": "skipped"})
+        if isinstance(draft, _ConsolidationFailure):
+            return ConsolidateResult(
+                trace={
+                    "mode": "failed",
+                    "step": draft.step,
+                    "error": draft.error,
+                    "elapsed_ms": draft.elapsed_ms,
+                }
+            )
         await self._commit_markdown_draft(request.session, draft)
         return ConsolidateResult(
             consolidated_count=len(draft.window.old_messages),
@@ -1128,19 +1110,7 @@ class MarkdownMemoryMaintenance:
         session: object,
         draft: "_ConsolidationDraft",
     ) -> None:
-        history_entries = [entry for entry, _ in draft.history_entry_payloads]
-        is_group_scope = _is_group_memory_scope(
-            session=session,
-            scope_chat_id=draft.scope_chat_id,
-        )
-        if history_entries:
-            await asyncio.to_thread(
-                self._store.append_history_once,
-                "\n".join(history_entries),
-                source_ref=draft.source_ref,
-                kind="history_entry",
-            )
-        if draft.pending_items and not is_group_scope:
+        if draft.pending_items:
             appended = await asyncio.to_thread(
                 self._store.append_pending_once,
                 draft.pending_items,
@@ -1152,19 +1122,7 @@ class MarkdownMemoryMaintenance:
                     "Markdown memory: appended %d pending_items",
                     len(draft.pending_items.splitlines()),
                 )
-        elif draft.pending_items and is_group_scope:
-            logger.info(
-                "Markdown memory: dropped pending_items for group scope chat_id=%s",
-                draft.scope_chat_id,
-            )
         self._store.write_recent_context(draft.recent_context_text)
-        if history_entries:
-            await asyncio.to_thread(
-                _append_entries_to_journal,
-                self._store,
-                history_entries,
-                draft.source_ref,
-            )
         if draft.archive_all:
             session.last_consolidated = 0
         else:

@@ -8,13 +8,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
+from unittest.mock import AsyncMock
 
 import pytest
 import numpy as np
 
+from bus.events_lifecycle import TurnCommitted
 from core.memory.engine import MemoryQuery, MemoryQueryIntent, MemoryScope
 from agent.plugins.context import PluginContext, PluginKVStore
-from plugins.akasha.config import AkashaConfig
+from agent.config_models import Config, MemoryConfig, MemoryEmbeddingConfig
+from plugins.akasha.config import AkashaConfig, load_akasha_config, render_akasha_config
 from plugins.akasha.engine import (
     ActivationTrace,
     AkashaCandidate,
@@ -29,6 +32,7 @@ from plugins.akasha.core import (
     activation_edge_updates,
     build_dense_message_index,
     dense_message_candidates,
+    reinforce_boost_from_payload,
 )
 from plugins.akasha.plugin import AkashaPlugin
 from plugins.akasha.replay import AkashaReplayRuntime, ReplayMessage, _turn_messages
@@ -38,10 +42,26 @@ from plugins.akasha.store import (
     EdgeUpdate,
     SourceMessage,
 )
-from scripts.build_akasha_db import _load_embeddings_from_cache
+from scripts.build_akasha_db import _iter_replay_turns, _load_embeddings_from_cache, _skip_message
 
 
 QUERY_TS = datetime.fromtimestamp(1_700_000_000.0, timezone.utc)
+
+
+def test_akasha_config_does_not_expose_dynamic_budget_limits(tmp_path: Path) -> None:
+    (tmp_path / "config.local.toml").write_text(
+        "dense_top_k = 99\nripple_top_k = 99\nactivate_limit = 99\n",
+        encoding="utf-8",
+    )
+
+    config = load_akasha_config(plugin_dir=tmp_path)
+    rendered = render_akasha_config(config)
+
+    assert not hasattr(config, "dense_top_k")
+    assert not hasattr(config, "ripple_top_k")
+    assert not hasattr(config, "activate_limit")
+    assert "top_k" not in rendered
+    assert "activate_limit" not in rendered
 
 
 def _init_sessions_db(path: Path) -> None:
@@ -91,6 +111,65 @@ def _candidate(key: str, score: float) -> AkashaCandidate:
         fan=0,
         score=score,
     )
+
+
+def test_reinforce_boost_payload_uses_exact_tool_chain_call_name() -> None:
+    wrong_chain = [{"calls": [{"name": "not_reinforce_memory"}]}]
+    reinforce_chain = [{"calls": [{"name": "reinforce_memory"}]}]
+
+    assert reinforce_boost_from_payload({}, wrong_chain) == 1.0
+    assert reinforce_boost_from_payload({}, json.dumps(reinforce_chain)) == 3.0
+    assert reinforce_boost_from_payload({"akasha_reinforce": {"boost": "4"}}, []) == 4.0
+
+
+def test_reinforce_memory_tool_description_states_current_turn_contract() -> None:
+    profile = AkashaMemoryEngine.__new__(AkashaMemoryEngine).tool_profile()
+    reinforce = next(spec for spec in profile.tools if spec.name == "reinforce_memory")
+
+    assert "当前轮" in reinforce.description
+    assert "source_ref" in reinforce.description
+    assert "fitbit_health_snapshot" in reinforce.description
+    assert "sleep_report" in reinforce.description
+    assert "fetch_messages(source_ref)" in reinforce.description
+
+
+def test_akasha_engine_passes_embedding_dimension_to_embedder(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    class _Embedder:
+        def __init__(self, **kwargs: object) -> None:
+            captured.update(kwargs)
+
+        async def aclose(self) -> None:
+            return None
+
+    monkeypatch.setattr("plugins.akasha.engine.Embedder", _Embedder)
+
+    engine = AkashaMemoryEngine(
+        config=Config(
+            provider="openai",
+            model="chat-model",
+            api_key="chat-key",
+            system_prompt="system",
+            memory=MemoryConfig(
+                embedding=MemoryEmbeddingConfig(
+                    model="embedding-model",
+                    output_dimensionality=768,
+                )
+            ),
+        ),
+        akasha_config=AkashaConfig(),
+        workspace=tmp_path,
+        http_resources=cast(Any, SimpleNamespace(external_default=object())),
+    )
+    try:
+        assert captured["model"] == "embedding-model"
+        assert captured["output_dimensionality"] == 768
+    finally:
+        engine._store.close()
 
 
 def test_dense_message_candidates_vectorized_preserves_turn_ranking() -> None:
@@ -303,14 +382,104 @@ def test_replay_and_runtime_use_same_directional_stdp_edges(tmp_path: Path) -> N
         engine._edges_meta = {}
         engine._edges_by_src = {}
         engine._fan = {}
+        engine._nodes = {}
         engine._commit_pending_activation(
             "s:2",
-            PendingActivation(query_id="q", seq=2, ts=ts, items=[candidate]),
+            PendingActivation(
+                query_id="q",
+                seq=2,
+                ts=ts,
+                items=[candidate],
+                query_vec=np.array([1.0, 0.0], dtype=np.float32),
+            ),
         )
 
         assert replay_store.load_edges() == pytest.approx(expected)
         assert runtime_store.load_edges() == pytest.approx(expected)
         assert expected[("s:0", "s:2")] > expected[("s:2", "s:0")]
+    finally:
+        replay_store.close()
+        runtime_store.close()
+
+
+def test_replay_and_runtime_reinforce_previous_activation_cluster(tmp_path: Path) -> None:
+    prev = _candidate("s:0", 0.8)
+    current = _candidate("s:2", 0.7)
+    ts = QUERY_TS.timestamp()
+    replay_store = AkashaStore(tmp_path / "replay.db")
+    runtime_store = AkashaStore(tmp_path / "runtime.db")
+    try:
+        with closing(sqlite3.connect(":memory:")) as source_db:
+            replay = AkashaReplayRuntime(
+                store=replay_store,
+                config=AkashaConfig(),
+                source_db_path=tmp_path / "sessions.db",
+                source_cursor=source_db.cursor(),
+                message_embeddings={},
+                message_turn_keys={},
+                reinforce_boosts={"s:4": 3.0},
+            )
+            replay.commit_turn(
+                [ReplayMessage(SourceMessage("m2", "s", 2, "user", "beta", QUERY_TS.isoformat()), [1.0, 0.0])],
+                [prev],
+            )
+            replay.commit_turn(
+                [ReplayMessage(SourceMessage("m4", "s", 4, "user", "gamma", QUERY_TS.isoformat()), [1.0, 0.0])],
+                [current],
+            )
+
+        engine = cast(Any, AkashaMemoryEngine.__new__(AkashaMemoryEngine))
+        engine._store = runtime_store
+        engine._graph_lock = threading.RLock()
+        engine._edges = {}
+        engine._edges_meta = {}
+        engine._edges_by_src = {}
+        engine._fan = {}
+        engine._nodes = {}
+        engine._prev_activation_by_session = {}
+        first_key = runtime_store.upsert_message_node(
+            SourceMessage("m2", "s", 2, "user", "beta", QUERY_TS.isoformat()),
+            [1.0, 0.0],
+        )
+        first_node = runtime_store.get_node(first_key)
+        assert first_node is not None
+        engine._nodes[first_key] = first_node
+        engine._commit_pending_activation(
+            "s:2",
+            PendingActivation(
+                query_id="s:2",
+                seq=2,
+                ts=ts,
+                items=[prev],
+                query_vec=np.array([1.0, 0.0], dtype=np.float32),
+            ),
+            "s",
+        )
+        second_key = runtime_store.upsert_message_node(
+            SourceMessage("m4", "s", 4, "user", "gamma", QUERY_TS.isoformat()),
+            [1.0, 0.0],
+        )
+        second_node = runtime_store.get_node(second_key)
+        assert second_node is not None
+        engine._nodes[second_key] = second_node
+        engine._commit_pending_activation(
+            "s:4",
+            PendingActivation(
+                query_id="s:4",
+                seq=4,
+                ts=ts,
+                items=[current],
+                query_vec=np.array([1.0, 0.0], dtype=np.float32),
+            ),
+            "s",
+            3.0,
+        )
+
+        replay_edges = replay_store.load_edges()
+        runtime_edges = runtime_store.load_edges()
+        assert replay_edges == pytest.approx(runtime_edges)
+        assert ("s:0", "s:4") in replay_edges
+        assert ("s:4", "s:0") in replay_edges
     finally:
         replay_store.close()
         runtime_store.close()
@@ -443,6 +612,52 @@ def test_query_log_content_loader_allows_empty_user_message(tmp_path: Path) -> N
     assert assistant_preview == "assistant..."
 
 
+def test_akasha_rebuild_skips_scheduler_messages() -> None:
+    scheduler_user = SourceMessage(
+        "scheduler:job:0",
+        "scheduler:job",
+        0,
+        "user",
+        "查询北京天气",
+        "2026-01-01T00:00:00+00:00",
+    )
+    normal_user = SourceMessage(
+        "telegram:1:0",
+        "telegram:1",
+        0,
+        "user",
+        "今天聊 Akasha",
+        "2026-01-01T00:00:01+00:00",
+    )
+
+    assert _skip_message(scheduler_user, set()) is True
+    assert _skip_message(normal_user, set()) is False
+    assert list(_iter_replay_turns([scheduler_user, normal_user], set())) == [[normal_user]]
+
+
+@pytest.mark.asyncio
+async def test_runtime_skips_scheduler_turn_even_without_extra_flag(tmp_path: Path) -> None:
+    db_path = tmp_path / "sessions.db"
+    _init_sessions_db(db_path)
+    engine = cast(Any, AkashaMemoryEngine.__new__(AkashaMemoryEngine))
+    engine._session_db_path = db_path
+    engine._embedder = SimpleNamespace(embed_batch=AsyncMock(side_effect=AssertionError("should skip")))
+
+    await engine._on_turn_committed(
+        TurnCommitted(
+            session_key="scheduler:job",
+            channel="telegram",
+            chat_id="1",
+            input_message="查询天气",
+            persisted_user_message="查询天气",
+            assistant_response="天气回复",
+            tools_used=[],
+        )
+    )
+
+    engine._embedder.embed_batch.assert_not_awaited()
+
+
 def test_load_turn_card_uses_full_user_and_short_assistant(tmp_path: Path) -> None:
     db_path = tmp_path / "sessions.db"
     _init_sessions_db(db_path)
@@ -474,8 +689,8 @@ async def test_query_places_overlap_in_dense_and_ripple_only_in_ripple(
     engine._akasha_config = AkashaConfig(assistant_preview_chars=15)
     engine._session_db_path = db_path
     engine._embedder = FakeEmbedder()
-    engine._remember_pending_activation = lambda request, items, **_: None
-    engine._retrieve = lambda query, query_vec, request, *, now_ts: _AkashaRetrieval(
+    engine._remember_pending_activation = lambda *_, **__: None
+    engine._retrieve = lambda query, query_vec, request, *, now_ts, update_state: _AkashaRetrieval(
         dense_items=[
             AkashaCandidate(
                 key="s:0",
@@ -562,11 +777,11 @@ async def test_context_block_sorts_injected_cards_by_time_desc(tmp_path: Path) -
         )
 
     engine = cast(Any, AkashaMemoryEngine.__new__(AkashaMemoryEngine))
-    engine._akasha_config = AkashaConfig(dense_top_k=10, ripple_top_k=10)
+    engine._akasha_config = AkashaConfig()
     engine._session_db_path = db_path
     engine._embedder = FakeEmbedder()
-    engine._remember_pending_activation = lambda request, items, **_: None
-    engine._retrieve = lambda query, query_vec, request, *, now_ts: _AkashaRetrieval(
+    engine._remember_pending_activation = lambda *_, **__: None
+    engine._retrieve = lambda query, query_vec, request, *, now_ts, update_state: _AkashaRetrieval(
         dense_items=[candidate("s:0", 0.9), candidate("s:2", 0.8)],
         ripple_items=[],
         activation_items=[],
@@ -676,11 +891,11 @@ async def test_context_query_uses_akasha_top_k_over_default_query_limit(
         )
 
     engine = cast(Any, AkashaMemoryEngine.__new__(AkashaMemoryEngine))
-    engine._akasha_config = AkashaConfig(dense_top_k=10, ripple_top_k=10, inject_max_chars=20000)
+    engine._akasha_config = AkashaConfig(inject_max_chars=20000)
     engine._session_db_path = db_path
     engine._embedder = FakeEmbedder()
-    engine._remember_pending_activation = lambda request, items, **_: None
-    engine._retrieve = lambda query, query_vec, request, *, now_ts: _AkashaRetrieval(
+    engine._remember_pending_activation = lambda *_, **__: None
+    engine._retrieve = lambda query, query_vec, request, *, now_ts, update_state: _AkashaRetrieval(
         dense_items=[candidate(f"s:{turn * 2}", 1.0 - turn * 0.01) for turn in range(12)],
         ripple_items=[candidate(f"s:{24 + turn * 2}", 0.8 - turn * 0.01) for turn in range(12)],
         activation_items=[],
@@ -729,7 +944,7 @@ def test_compute_candidates_uses_activation_limit_for_stateful_replay(tmp_path: 
         nodes,
         {},
         100,
-        config=AkashaConfig(dense_top_k=30, activate_limit=8),
+        config=AkashaConfig(),
         fan={},
         soft_recall=False,
         return_limit=8,
@@ -775,6 +990,56 @@ def test_query_log_keeps_context_and_answer_for_same_seq(tmp_path: Path) -> None
 
     assert total == 2
     assert {item["intent"] for item in items} == {"context", "answer"}
+
+
+@pytest.mark.asyncio
+async def test_read_only_query_skips_akasha_state_effects(tmp_path: Path) -> None:
+    db_path = tmp_path / "sessions.db"
+    _init_sessions_db(db_path)
+
+    engine = cast(Any, AkashaMemoryEngine.__new__(AkashaMemoryEngine))
+    engine._akasha_config = AkashaConfig()
+    engine._session_db_path = db_path
+    engine._embedder = FakeEmbedder()
+    side_effects: list[str] = []
+    update_state_values: list[bool] = []
+
+    def fake_retrieve(
+        query: str,
+        query_vec: np.ndarray,
+        request: MemoryQuery,
+        *,
+        now_ts: float,
+        update_state: bool,
+    ) -> _AkashaRetrieval:
+        _ = (query, query_vec, request, now_ts)
+        update_state_values.append(update_state)
+        return _AkashaRetrieval(
+            dense_items=[_candidate("s:0", 0.9)],
+            ripple_items=[],
+            activation_items=[_candidate("s:2", 0.8)],
+            trace=ActivationTrace(seed_count=1, pool_count=1),
+            seq=4,
+        )
+
+    engine._retrieve = fake_retrieve
+    engine._remember_pending_activation = lambda *_, **__: side_effects.append("pending")
+    engine._write_query_log = lambda *_, **__: side_effects.append("query_log")
+
+    result = await engine.query(
+        MemoryQuery(
+            text="用户消息",
+            intent="answer",
+            effect="read_only",
+            scope=MemoryScope(session_key="s"),
+            timestamp=QUERY_TS,
+        )
+    )
+
+    assert update_state_values == [False]
+    assert side_effects == []
+    assert result.trace["effect"] == "read_only"
+    assert result.records
 
 
 def test_undo_removes_akasha_turn_state_after_session_delete(tmp_path: Path) -> None:
@@ -880,6 +1145,7 @@ def test_akashalast_command_only_registers_for_akasha_engine(tmp_path: Path) -> 
         tool_registry=None,
         plugin_id="akasha",
         plugin_dir=tmp_path,
+        data_dir=tmp_path / ".data",
         kv_store=PluginKVStore(tmp_path / ".akasha-kv.json"),
         workspace=tmp_path,
         memory_engine=SimpleNamespace(describe=lambda: SimpleNamespace(name="akasha")),
@@ -890,6 +1156,7 @@ def test_akashalast_command_only_registers_for_akasha_engine(tmp_path: Path) -> 
         tool_registry=None,
         plugin_id="akasha",
         plugin_dir=tmp_path,
+        data_dir=tmp_path / ".data",
         kv_store=PluginKVStore(tmp_path / ".default-kv.json"),
         workspace=tmp_path,
         memory_engine=SimpleNamespace(describe=lambda: SimpleNamespace(name="default")),
@@ -964,6 +1231,7 @@ def test_akashalast_renders_latest_query_log(tmp_path: Path) -> None:
         tool_registry=None,
         plugin_id="akasha",
         plugin_dir=tmp_path,
+        data_dir=tmp_path / ".data",
         kv_store=PluginKVStore(tmp_path / ".kv.json"),
         workspace=tmp_path,
         memory_engine=SimpleNamespace(describe=lambda: SimpleNamespace(name="akasha")),
