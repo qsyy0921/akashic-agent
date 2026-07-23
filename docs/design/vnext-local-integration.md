@@ -149,12 +149,14 @@ worktree_writer: E:\agent\author_akashic_vnext
 | F-035 | Windows 私有路径加固只依赖 `icacls` 退出码与 Win32 ACL 读回，不再按当前代码页解码其输出，因此非英文用户名/系统语言不会触发无关的 `UnicodeDecodeError`。 | `core/common/private_path.py:harden_private_path`、`tests/test_private_path.py` |
 | F-036 | 正式候选已由计划任务 `Akashic Agent Runtime3` 托管；Dashboard、Web Chat 和 app-server 分别监听 2236、6322、37071，且 readiness 与三端口属于同一 Gateway 进程。受控终止 Gateway 后，任务在一分钟重启周期内恢复且未出现旧 launcher 或重复 poller。 | `scripts/run-akashic-supervised.ps1`、VNX-07 restart probe |
 | F-037 | 候选启动后加载 `akasha`、`default_memory`、`default_proactive`、`drift_flow`、`proactive_flow`、`terra_imagegen` 六个插件；默认主动生命周期已多次完成无内容 tick，没有伪造推送。 | VNX-07 candidate runtime log 与 plugin doctor |
-| F-038 | 新 Bot 的 `getMe` 身份正确，但约定验收码尚未进入 `sessions.db`；在用户尚未发起私聊时，operator `sendMessage` 返回 `chat_not_found`。因此当前只能证明 Bot API 与 poller 启动，不能声称 Telegram 被动回复或收图 E2E。 | VNX-07 database probe 与脱敏 Telegram operator probe |
+| F-038 | 用户已对新 Bot 发送 `/start` 和约定 nonce；两条输入及两条回复按序进入 `sessions.db`，每条回复的 durable outbox 均为 `sent`、`attempt_count=1` 且只有一个 attempt，Telegram Web 可见两条回复。因此文本 Telegram E2E 已完成，不能据此声称图片 receipt。 | VNX-07 Telegram Web、database 与 outbox 脱敏核对 |
 | F-039 | 公共 Change Gate 要求额外的 private maintainer Gate；当前锁定的 `private_runtime` 子模块没有本地 Git 对象，现有 SSH/GitHub CLI 身份也无仓库访问权。另一旧目录只有无版本脚本且不对应锁定提交，不能作为 Gate 证据。 | `.gitmodules`、`git submodule status`、VNX-08 access probe |
-| F-040 | 当前最终公共验证为 `2377 passed / 186 skipped`、两套 Pyright 0 错误、前端 CI 通过、7/7 公共 Change Gate 通过且 Docker 无残留；高置信 token/private-key 扫描为 0。 | `plans/002-vnext-local-integration.md:VNX-08 execution record` 与最终 Git 外 Gate 报告 |
+| F-040 | 当前最终公共验证为 `2380 passed / 186 skipped`、两套 Pyright 0 错误、前端 CI 通过、7/7 公共 Change Gate 通过且 Docker 无残留；高置信 token/private-key 扫描为 0。 | `plans/002-vnext-local-integration.md:VNX-08 execution record` 与最终 Git 外 Gate 报告 |
 | F-041 | 正式候选已完成 Web Chat 真实被动往返：WebSocket 收到 `turn.started`、`answer.delta` 和 `message.final`，Terra 精确回显随机 nonce；同一会话持久化 user/assistant 消息，durable outbox 与唯一 delivery attempt 均为 `sent`。该证据覆盖 Channel 到可靠投递的完整本地链路，但不能替代 Telegram receipt。 | VNX-07 Web Chat E2E 与 `sessions.db` 脱敏只读核对 |
 | F-042 | 正式候选的 Web Chat 生图 E2E 以一次明确请求完成一次 image tool call，并返回一个通过文件身份、非空与图片签名校验的媒体项；工具账本状态为 `external-side-effect / allow / succeeded`，对应 outbox 和唯一 delivery attempt 均为 `sent`。该证据把剩余风险收敛到 Telegram 媒体传输。 | VNX-07 Web Chat image E2E、`reliability_tool_calls` 与 `reliability_outbox` 脱敏只读核对 |
-| F-043 | Telegram nonce 缺失与 private 子模块访问拒绝已连续三个 Goal turn 重复；服务本身仍为单实例健康状态。按 Goal 协议，VNX-07/VNX-08 应标记 blocked，恢复时只重跑 Telegram receipts 和 private Gate，不重复已完成单元。 | `plans/002-vnext-local-integration.md:External blocker audit` |
+| F-043 | 先前的 Telegram nonce 阻塞已经解除；恢复后的文本 E2E 通过。`private_runtime` 访问拒绝在恢复审计中仍存在，必须在锁定 revision 上取得真实私有 Gate 证据，不能复用旧目录或公共 Gate。 | `plans/002-vnext-local-integration.md:External blocker audit` |
+| F-044 | 第一次 Telegram 生图请求被 V3 正确路由到唯一生图 MCP，但主 Terra Responses 返回原生 `image_generation_call`，绕过了插件 hook、Core ToolPolicy、工具账本和 MCP media bridge；随后控制回复又因没有持久化 `delivery_id` 被 durable port 拒绝。原生调用可能已产生付费副作用，因此不能自动重试。 | 生产日志、`agent/model_runtime/transports/responses.py:OpenAICompatibleResponsesTransport._consume_response`、VNX-07 incident record |
+| F-045 | 生图 MCP 现在可声明“单一高置信路由首步使用命名函数”；Core 只在 active、resolved、high-margin 且恰好一个候选时应用，后续步骤恢复 `auto`，hook/policy/ledger 仍在执行路径上。提交前控制回复改由 durable standalone intent 投递。真实 V3 Gate 已按当前摘要重跑并通过，服务已单实例重启；图片 receipt 仍等待一次新授权。 | `agent/plugins/specs.py`、`agent/plugins/manager.py`、`agent/tools/registry.py`、`agent/core/passive_turn.py`、`tests/test_intent_routing_v3_integration.py`、`tests/test_runtime3_delivery.py` |
 
 ### 4.2 已批准提案
 
@@ -170,10 +172,12 @@ worktree_writer: E:\agent\author_akashic_vnext
 | P-008 | MCP media 使用 `structuredContent.media` 的受约束本地文件合同；Core 验证声明根目录、绝对路径、普通文件、非符号链接、大小、SHA-256 与图片签名后才生成 `ToolResult.media`。 |
 | P-009 | 当前消息中的明确生图请求即为本次付费工具授权；插件 hook 拒绝 proactive/subagent、隐式请求和同 turn 第二次执行。多图只使用单次工具调用的 `n` 参数，不让 LLM 轮询或重复调用。 |
 | P-010 | Intent Routing V3 作为 Core 的有界决策模块：业务工具元数据可插拔，但快照校验、active Gate、可见性合并和授权边界由 Runtime 持有。旧版路由报告只作历史证据，不能解锁当前 active。 |
+| P-011 | 插件 MCP 可选择要求单一高置信路由在首个 reasoner step 使用命名函数；该选择不等于授权，不能绕过 hook、ToolPolicy、approval、预算或 ledger，多工具和后续步骤保持自动选择。 |
+| P-012 | 正常回复继续使用 turn 与 outbox 原子提交；在正常提交前产生的 abort/error 控制回复必须显式写入 standalone durable intent，不能把未持久化 payload 交给 `DurableOutboundPort.dispatch`。 |
 
 ### 4.3 未决问题
 
-- Bot 的 `allow_from` 与主动目标值已原样保留但不写入本文；真实消息往返需要用户先对新 Bot 执行 `/start`，随后用约定 nonce 验证。
+- Bot 的 `allow_from` 与主动目标值已原样保留但不写入本文；文本消息往返已经验证。第一次生图尝试的付费副作用状态未知，下一次图片验收必须由用户重新明确授权且只能发送一次。
 - 公共 Gate 已判定 private maintainer Gate 必需；当前身份无子模块仓库访问权，需所有者授予访问或提供正确仓库地址后运行。
 - 通用 approval/ledger 已在 VNX-06C 落到核心可靠性 schema；聊天内“暂停原 turn、审批后恢复”的交互协议仍未实现，因此需要审批的 Bot 工具当前按 fail-closed 停在真实执行之前。
 
@@ -283,6 +287,8 @@ VNX-03 已通过由候选配置和 `CredentialStore` 组装的真实随机 nonce
 6. pre-tool hook 只允许 passive turn 中当前用户消息的明确生成/绘制图片意图；同一 turn 只消费一次预算，批量重复调用全部拒绝。工具失败后不在同 turn 自动重试。
 7. MCP 子进程从 `AKASHIC_CONFIG_FILE` 和 `AKASHIC_WORKSPACE` 加载同一 Terra runtime，凭据仍由 `CredentialStore` 解析；插件不声明、复制或记录 key、token 或 endpoint 凭据。
 8. Telegram 图片发送异常必须向 MessageBus 抛出，不能记录 warning 后伪装送达；跨文本与媒体的持久化去重/恢复由 VNX-06 的 outbound 合同完成。
+9. 生图 MCP 可声明高置信命名选择。Core 只在当前 active route 为 `resolved/high_margin`、恰好一个 routed tool 且该工具显式声明时，要求首个 reasoner step 返回该函数；后续 step 恢复 `auto`。路由仍不授予执行权限，插件 hook、ToolPolicy、approval、预算和 ledger 必须继续通过。
+10. 主文本 provider 返回原生 `image_generation_call` 不属于被动链路的受信媒体合同，必须失败关闭；Core 不把它转换为图片、不绕过 MCP，也不自动重试可能已计费的调用。
 
 ### 5.5 Intent Routing V3 合同
 
@@ -388,7 +394,7 @@ VNX-03 已通过由候选配置和 `CredentialStore` 组装的真实随机 nonce
 ## 13. 验收标准
 
 - [x] 最新上游 baseline 与旧能力差距均有当前证据。
-- [ ] `@akashic_qsyy0921_bot` 在单一 Supervisor 下接收并回复同账号任意设备的消息。
+- [x] `@akashic_qsyy0921_bot` 在单一 Supervisor 下接收并回复同账号消息，持久化与唯一 delivery attempt 已核对。
 - [x] 主模型明确通过 `terra-responses` 调用 `gpt-5.6-terra`，没有 Chat fallback。
 - [ ] 用户明确请求时，GPT image MCP 只生成请求数量的图片并由 Telegram 正确投递。
 - [x] 意图路由支持上下文、多目标和多工具，离线 Gate 与 active smoke 达标。

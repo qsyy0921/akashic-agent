@@ -34,6 +34,7 @@ class McpServerSpec:
     cwd: str = "."
     call_timeout_seconds: float = 30.0
     media_output_roots: tuple[str, ...] = ()
+    force_tool_choice_on_high_confidence_route: bool = False
 
 
 @dataclass(frozen=True)

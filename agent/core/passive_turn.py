@@ -30,7 +30,7 @@ from agent.tool_runtime import (
 )
 from agent.tools.base import normalize_tool_result
 from agent.tools.registry import begin_turn_search_scope, end_turn_search_scope
-from agent.turns.outbound import OutboundDispatch, OutboundPort
+from agent.turns.outbound import DurableOutboundPort, OutboundDispatch, OutboundPort
 from bus.event_bus import EventBus
 from bus.events import InboundMessage, OutboundMessage, TurnDisposition
 from bus.events_lifecycle import (
@@ -722,17 +722,25 @@ class PassiveTurnPipeline:
         outbound: OutboundMessage,
     ) -> OutboundMessage:
         if state.dispatch_outbound:
-            _ = await self._outbound_port.dispatch(
-                OutboundDispatch(
-                    channel=outbound.channel,
-                    chat_id=outbound.chat_id,
-                    content=outbound.content,
-                    thinking=outbound.thinking,
-                    metadata=outbound.metadata,
-                    media=outbound.media,
-                    session_message_id=outbound.session_message_id,
-                )
+            dispatch = OutboundDispatch(
+                channel=outbound.channel,
+                chat_id=outbound.chat_id,
+                content=outbound.content,
+                thinking=outbound.thinking,
+                metadata=outbound.metadata,
+                media=outbound.media,
+                session_message_id=outbound.session_message_id,
             )
+            if isinstance(self._outbound_port, DurableOutboundPort):
+                _ = await self._outbound_port.submit_standalone(
+                    dispatch,
+                    session_key=state.session_key,
+                    turn_id=current_turn_id.get() or None,
+                    reason_code="passive_control_reply",
+                    lane="passive",
+                )
+            else:
+                _ = await self._outbound_port.dispatch(dispatch)
         return outbound
 
 
@@ -835,6 +843,7 @@ class Reasoner(ABC):
         request_time: datetime | None = None,
         preloaded_tools: set[str] | None = None,
         preloaded_tool_order: list[str] | None = None,
+        required_tool_name: str | None = None,
         preflight_injected: bool = True,
         on_content_delta: Callable[[dict[str, str]], Awaitable[None]] | None = None,
         tool_event_session_key: str = "",
@@ -1113,6 +1122,7 @@ class DefaultReasoner(Reasoner):
         disabled_tools = _disabled_tools_from_msg(msg)
         preloaded: set[str] | None = None
         preloaded_order: list[str] = []
+        required_tool_name: str | None = None
         if self._tool_search_enabled:
             preloaded_order = self._discovery.get_preloaded_ordered(session.key)
             preloaded = set(preloaded_order)
@@ -1176,6 +1186,17 @@ class DefaultReasoner(Reasoner):
                     dict.fromkeys((*routed, *preloaded_order))
                 )
                 preloaded = set(preloaded_order)
+                if (
+                    route_advice.status == "resolved"
+                    and route_advice.decision_band == "high_margin"
+                    and len(routed) == 1
+                ):
+                    routed_meta = self._tools.get_tool_meta(routed[0])
+                    if (
+                        routed_meta is not None
+                        and routed_meta.force_tool_choice_on_high_confidence_route
+                    ):
+                        required_tool_name = routed[0]
         stream_sink = (
             self._stream_sink_factory(msg) if self._stream_sink_factory is not None else None
         )
@@ -1235,6 +1256,7 @@ class DefaultReasoner(Reasoner):
                         request_time=msg.timestamp,
                         preloaded_tools=preloaded,
                         preloaded_tool_order=preloaded_order,
+                        required_tool_name=required_tool_name,
                         preflight_injected=True,
                         on_content_delta=stream_sink,
                         tool_event_session_key=session.key,
@@ -1349,6 +1371,7 @@ class DefaultReasoner(Reasoner):
         request_time: datetime | None = None,
         preloaded_tools: set[str] | None = None,
         preloaded_tool_order: list[str] | None = None,
+        required_tool_name: str | None = None,
         preflight_injected: bool = True,
         on_content_delta: Callable[[dict[str, str]], Awaitable[None]] | None = None,
         tool_event_session_key: str = "",
@@ -1374,6 +1397,11 @@ class DefaultReasoner(Reasoner):
         react_cache_seen = False
         react_usages: list[ModelUsage] = []
         disabled = set(disabled_tools or set())
+        required_name = (required_tool_name or "").strip() or None
+        if required_name is not None and required_name not in (preloaded_tools or set()):
+            raise RuntimeError(
+                "required routed tool must be part of the current-turn preloads"
+            )
         before_step_phase, after_step_phase = self._runtime_step_phases()
         if self._tool_search_enabled:
             always_on = self._tools.get_always_on_names()
@@ -1447,15 +1475,31 @@ class DefaultReasoner(Reasoner):
                 schema_names = self._tools.get_registered_names() - disabled
             elif schema_names is not None:
                 schema_names = [name for name in schema_names if name not in disabled]
+            tool_choice: str | dict[str, Any] = "auto"
+            if iteration == 0 and required_name is not None:
+                if schema_names is not None and required_name not in schema_names:
+                    raise RuntimeError(
+                        "required routed tool is not visible in the first reasoner step"
+                    )
+                tool_choice = {
+                    "type": "function",
+                    "function": {"name": required_name},
+                }
             response = await self._llm.provider.chat(
                 messages=messages,
                 tools=self._tools.get_schemas(names=schema_names),
                 model=self._llm_config.model,
                 max_tokens=self._llm_config.max_tokens,
-                tool_choice="auto",
+                tool_choice=tool_choice,
                 on_content_delta=on_content_delta,
                 cache_namespace=tool_event_session_key,
             )
+            if iteration == 0 and required_name is not None and not any(
+                call.name == required_name for call in response.tool_calls
+            ):
+                raise RuntimeError(
+                    "provider did not return the required high-confidence routed tool"
+                )
             react_usages.append(response.usage or ModelUsage())
             if on_content_delta is not None and response.content:
                 streamed = True

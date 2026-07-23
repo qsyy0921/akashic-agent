@@ -78,6 +78,7 @@ class ToolMeta:
     always_on: bool = False
     preloadable: bool = True
     requires_turn_search: bool = False
+    force_tool_choice_on_high_confidence_route: bool = False
     # 可选：3–10 词短语，补充工具名和描述中没有的别名或口语化表达。
     # 不需要重复名称或描述里已有的词——搜索后端自动索引 name + description。
     search_hint: str | None = None
@@ -283,6 +284,7 @@ class ToolRegistry:
         always_on: bool = False,
         preloadable: bool = True,
         requires_turn_search: bool = False,
+        force_tool_choice_on_high_confidence_route: bool = False,
         search_hint: str | None = None,
         source_type: str = "builtin",
         source_name: str = "",
@@ -312,6 +314,9 @@ class ToolRegistry:
             always_on=always_on,
             preloadable=preloadable,
             requires_turn_search=requires_turn_search,
+            force_tool_choice_on_high_confidence_route=(
+                force_tool_choice_on_high_confidence_route
+            ),
             search_hint=search_hint,
             operation_id=resolved_operation_id,
             summary=resolved_summary,

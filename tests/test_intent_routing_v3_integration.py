@@ -623,11 +623,84 @@ async def test_reasoner_exposes_multiple_routed_tools_and_uses_history_facts() -
         item["function"]["name"] for item in provider.calls[0]["tools"]
     ]
     assert first_tool_names == ["tool_search", "weather_query", "arxiv_search"]
+    assert provider.calls[0]["tool_choice"] == "auto"
     assert len(advisor.requests) == 1
     route_context = advisor.requests[0].context
     assert route_context is not None
     assert route_context.previous_operation_ids == ("weather.query",)
     assert route_context.messages[-1].output_kinds == ("data", "text")
+
+
+@pytest.mark.asyncio
+async def test_high_confidence_opt_in_route_requires_only_the_first_tool_step() -> None:
+    registry = ToolRegistry()
+    registry.register(ToolSearchTool(registry), always_on=True)
+    image_tool = _Tool("image_generate", "生成一张图片")
+    registry.register(
+        image_tool,
+        risk="external-side-effect",
+        operation_id="image.generate",
+        output_kinds=("image", "text"),
+        force_tool_choice_on_high_confidence_route=True,
+    )
+    advisor = _RecordingRouteAdvisor(registry, ("image_generate",))
+    provider = _ReasonerProvider(
+        [
+            LLMResponse(
+                content="",
+                tool_calls=[
+                    ToolCall(
+                        "image-1",
+                        "image_generate",
+                        {
+                            "query": "blue circle",
+                        },
+                    )
+                ],
+            ),
+            LLMResponse(content="done", tool_calls=[]),
+        ]
+    )
+    reasoner = _reasoner(registry, provider, advisor)
+    session = SimpleNamespace(
+        key="cli:image",
+        metadata={},
+        messages=[],
+        last_consolidated=0,
+        get_history=lambda max_messages=40, *, start_index=None: [],
+    )
+    msg = SimpleNamespace(
+        content="生成一张简单的蓝色圆形图",
+        media=[],
+        metadata={},
+        channel="cli",
+        chat_id="image",
+        timestamp=datetime(2026, 7, 23, 12, 0, 30),
+    )
+    snapshot = RuntimeSnapshotCompiler().compile({}, snapshot_revision="image")
+    snapshot.tool_registry = registry.fork()
+    store = RuntimeSnapshotStore()
+    store.install(snapshot)
+    lease = store.lease()
+    snapshot_token = bind_runtime_snapshot(lease)
+    turn_token = current_turn_id.set("turn-image")
+    session_token = current_session_key.set(session.key)
+    try:
+        result = await reasoner.run_turn(msg=msg, session=cast(Any, session))
+    finally:
+        current_session_key.reset(session_token)
+        current_turn_id.reset(turn_token)
+        reset_runtime_snapshot(snapshot_token)
+        await lease.release()
+        await store.close()
+
+    assert result.reply == "done"
+    assert image_tool.calls == [{"query": "blue circle"}]
+    assert provider.calls[0]["tool_choice"] == {
+        "type": "function",
+        "function": {"name": "image_generate"},
+    }
+    assert provider.calls[1]["tool_choice"] == "auto"
 
 
 @pytest.mark.asyncio

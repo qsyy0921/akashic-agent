@@ -150,6 +150,7 @@ def test_image_plugin_declares_one_non_retrying_mcp_tool() -> None:
     assert spec.command[0] == sys.executable
     assert spec.call_timeout_seconds == 320.0
     assert spec.media_output_roots == ("generated_images/terra_imagegen",)
+    assert spec.force_tool_choice_on_high_confidence_route is True
 
 
 @pytest.mark.asyncio

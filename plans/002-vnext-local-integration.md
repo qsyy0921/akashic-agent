@@ -1,9 +1,9 @@
 # 002 · vNext 本地集成实施账本
 
 > Normative SDD: [`../docs/design/vnext-local-integration.md`](../docs/design/vnext-local-integration.md)  
-> Branch: `codex/vnext-20260723`  
+> Branch: `qsyy0921`
 > Worktree: `E:\agent\author_akashic_vnext`  
-> Delivery: local
+> Delivery: local candidate plus authorized `origin/qsyy0921` branch
 
 ## Unit status
 
@@ -18,8 +18,8 @@
 | VNX-04 | DONE | VNX-02, VNX-03 | 生图插件、媒体投递、失败与路径负向测试通过 |
 | VNX-05 | DONE | VNX-01, VNX-02 | 当前 digest Gate、active 启动、多工具、上下文与授权隔离通过 |
 | VNX-06 | DONE | VNX-01, VNX-05 | 可靠投递、工具治理与连续性 Gate 通过 |
-| VNX-07 | BLOCKED | VNX-03, VNX-04, VNX-06 | Candidate cutover、单实例和自动重启已通过；等待用户发起 Telegram 私聊 |
-| VNX-08 | BLOCKED | VNX-07 | 公共验证已通过；等待 private maintainer Gate 仓库访问权 |
+| VNX-07 | BLOCKED | VNX-03, VNX-04, VNX-06 | Telegram 文本 E2E 已通过；图片 receipt 等待一次新的明确付费重试授权 |
+| VNX-08 | BLOCKED | VNX-07 | 当前公共验证已通过；等待 private maintainer Gate 仓库访问权 |
 
 ## VNX-00 · 基线与 SDD
 
@@ -361,6 +361,56 @@ verification:
   - a similar state with non-zero usage remains rejected
   - AnyAction and support regression suite
 rollback: require operators to migrate the pristine file out of band before restoring strict load-only validation
+```
+
+### SDD-CR-VNX-07-004 · 高置信业务工具的命名调用
+
+```yaml
+status: implemented and locally verified; live Telegram image receipt pending fresh authorization
+trigger:
+  - the live Telegram image request routed only to mcp_gpt_image__generate_image with a high-margin V3 decision
+  - the main Terra response returned a native image_generation_call instead of the routed MCP function call
+  - that path bypassed the plugin hook, Core tool policy, tool ledger and constrained MCP media bridge
+change:
+  - let a plugin MCP server declare that its sole high-confidence routed tool requires a named function choice
+  - apply that declaration only to one current-turn active route with status=resolved and decision_band=high_margin
+  - use the named choice only for the first reasoner iteration, then return to automatic multi-tool selection
+  - keep LRU preloads, low-margin routes and undeclared tools on the existing automatic choice
+  - keep hook, policy, approval, execution budget and ledger checks after model selection
+non_goals:
+  - no Core hard-code for the image tool name
+  - no direct delivery of native image_generation_call output from the main text provider
+  - no authorization granted by routing and no automatic retry of paid image generation
+verification:
+  - reasoner regression proves one declared high-margin route uses a named first call and automatic continuation
+  - plugin declaration and MCP generation metadata propagation tests
+  - existing multi-route and current-turn search-authority tests remain unchanged
+  - real V3 evaluation regenerated the current source digest and passed all thresholds with no misses
+  - one separately authorized Telegram image receipt after isolated checks pass
+rollback: remove the declaration and named-choice propagation; do not replace it with native image delivery
+```
+
+### SDD-CR-VNX-07-005 · 提交前控制回复的可靠投递
+
+```yaml
+status: implemented and locally verified
+trigger:
+  - the provider failure produced a user-safe control reply before normal Turn persistence
+  - DurableOutboundPort.dispatch rejected that reply because no delivery_id had been persisted
+  - the outer passive worker later sent an error, but the inner contract failure added a false secondary error
+change:
+  - persist pre-commit control replies through DurableOutboundPort.submit_standalone
+  - bind the standalone intent to the current session and turn with lane=passive and an explicit reason code
+  - retain direct dispatch for non-durable ports and the existing atomic path for normal completed replies
+non_goals:
+  - no implicit enqueue fallback inside DurableOutboundPort.dispatch
+  - no change to normal passive Turn commit ordering
+  - no duplicate error reply and no suppression of delivery failure
+verification:
+  - focused control-outbound test uses the real repository and delivery supervisor and observes one persisted terminal send
+  - existing abort, provider-error and normal after-turn dispatch tests remain green
+  - the production supervisor starts successfully with the corrected durable outbound implementation
+rollback: restore direct control dispatch only together with a different explicit persisted-intent contract
 ```
 
 ## VNX-08 · 最终对账
@@ -859,11 +909,27 @@ restart_probe:
     - Dashboard, Web Chat and app-server returned to listening state
 live_telegram_gate:
   nonce: VNX-E2E-20260723-2006
-  database_matches: 0
-  operator_probe: Telegram returned chat_not_found before a private conversation was started
-  required_user_action: open @akashic_qsyy0921_bot, press Start or send /start, then send the nonce
+  text_result:
+    - the user sent /start and the exact nonce through Telegram Web
+    - sessions.db contains the two user messages and their two assistant replies in order
+    - both assistant outbox intents reached sent with attempt_count=1 and one attempt row each
+    - Telegram Web visibly received both replies
+  image_attempt:
+    - one explicit single-image request entered the active V3 route
+    - the route resolved high-margin to only mcp_gpt_image__generate_image
+    - the main Terra provider returned native image_generation_call before the MCP function path
+    - no governed MCP tool ledger or outbound media was produced
+    - the native provider side effect is unknown, so the request was not automatically retried
+  corrective_changes:
+    - an opted-in plugin MCP tool uses named function choice only on the first step of an exact single high-margin route
+    - subsequent steps and all undeclared, low-margin or multi-tool routes remain automatic
+    - pre-commit control replies persist through the durable standalone outbox path
+    - the V3 quality report was regenerated with the real Terra intent model and local Qwen embedding
+  post_fix_runtime:
+    - Akashic Agent Runtime3 is running with one candidate launcher and one gateway process tree
+    - Dashboard, Web Chat and app-server are listening on their configured ports
+    - Bot identity matches @akashic_qsyy0921_bot, webhook is absent and pending updates are zero
   claims_withheld:
-    - passive Telegram reply receipt
     - GPT image Telegram receipt
 changes_during_cutover:
   - plugin package manifest is synchronized before first plugin discovery/load
@@ -874,28 +940,34 @@ tests_run:
   - plugin package startup/quota/doctor/private-path focused regression: passed, 84 tests
   - PowerShell launcher parser: passed
   - controlled crash/restart smoke: passed
+  - named route, plugin metadata, durable control reply and affected runtime regression: passed, 71 tests
+  - refreshed routing Gate and integration regression: passed, 20 tests
+  - final full pytest: passed, 2380 passed / 186 skipped
+  - production and test Pyright: passed, 0 errors
+  - real V3 evaluation: passed, 25 cases with no failures or misses
 fallbacks_added: []
 remaining_risks:
-  - a Telegram Bot cannot initiate a private conversation; Telegram E2E waits for user /start
-  - final image request must be user-triggered to prove paid-tool authorization and Telegram photo receipt
-next_action: complete the user-triggered text and image Telegram round trips
+  - the first live image attempt may already have triggered a paid native provider side effect
+  - a fresh image request requires separate explicit authorization and must be sent exactly once
+next_action: after fresh authorization, perform one Telegram image request and verify one governed MCP call, one media outbox and one photo receipt
 ```
 
 ## VNX-08 execution record
 
 ```yaml
 unit_id: VNX-08
-status: blocked
+status: blocked on remaining external evidence
 verification_completed:
-  - final full pytest: passed, 2377 passed / 186 skipped
-  - production pyright --level error: passed, 0 errors / 0 warnings
-  - tests pyright --level error: passed, 0 errors / 0 warnings
+  - final full pytest: passed, 2380 passed / 186 skipped
+  - production pyright: passed, 0 errors; existing warnings remain visible
+  - tests pyright: passed, 0 errors; existing warnings remain visible
   - compileall: passed
   - frontend npm run ci:frontend: passed
   - migration append-only against upstream/main: passed
   - Change Gate audit: passed
   - public Change Gate: passed, 7/7 selected scenarios
   - public Gate Docker residual resources: none
+  - current V3 quality Gate: passed, 25 cases with no failures or misses
   - high-confidence token/private-key scan: 0 findings
   - production credential-URL scan: 0 findings; one deliberate rejection fixture under tests
   - git diff --check: passed, line-ending warnings only
@@ -904,30 +976,31 @@ private_gate:
   required_by_public_plan: true
   pinned_revision: 83f3648424864f690ae5c3636b76d3436902cecd
   local_submodule_objects: absent
-  access_probe: current SSH and GitHub CLI identity cannot resolve the private repository
+  access_probe: current SSH BatchMode identity still returns permission denied
   rejected_substitute: an older unversioned local private_runtime directory is not revision evidence
 remaining_verification:
-  - user-triggered Telegram text and image receipts
+  - one freshly authorized user-triggered Telegram image receipt
   - private maintainer Gate or repository access supplied by the owner
-next_action: wait for Telegram user action and private repository access, then run only the remaining receipts and Gate
+next_action: request one paid image retry authorization and private repository access, then run only the remaining receipt and Gate
 ```
 
 ## External blocker audit
 
 ```yaml
-status: blocked
-consecutive_goal_turns: 3
+status: resumed_and_partially_unblocked
+resumed_blocker_audit_turns: 1
 telegram:
   required_evidence:
     - inbound user message for nonce VNX-E2E-20260723-2006
     - matching assistant reply and one sent delivery attempt
     - one explicit image request with one Telegram media receipt
   current_evidence:
-    - nonce matches in sessions.db: 0
-    - Bot API identity, poller startup and single-instance runtime remain healthy
+    - /start and nonce text round trips passed with one delivery attempt per reply
+    - the first image attempt exposed a native-provider bypass before governed MCP execution
+    - the bypass and control-reply reliability defects are fixed and locally verified
+    - the candidate was restarted and remains single-instance healthy
   unblock:
-    - user opens @akashic_qsyy0921_bot and sends /start
-    - user sends VNX-E2E-20260723-2006
+    - user explicitly authorizes exactly one fresh paid image request
 private_gate:
   required_evidence:
     - private maintainer contract Gate at the pinned submodule revision
@@ -940,6 +1013,5 @@ private_gate:
 preserved_state:
   - candidate service remains online under Akashic Agent Runtime3
   - Git worktree, SDD, external credentials and verification reports are retained
-  - no commit, push or pull request was created
-resume_action: rerun Telegram text/image E2E and private Gate without repeating completed units
+resume_action: run exactly one Telegram image E2E after authorization and rerun the pinned private Gate after repository access is granted
 ```

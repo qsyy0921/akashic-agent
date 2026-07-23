@@ -33,6 +33,7 @@ class TerraImageGenerationPlugin(Plugin):
                 },
                 call_timeout_seconds=320.0,
                 media_output_roots=("generated_images/terra_imagegen",),
+                force_tool_choice_on_high_confidence_route=True,
             )
         ]
 

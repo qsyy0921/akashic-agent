@@ -2097,6 +2097,12 @@ class PluginManager:
                     registry.register(
                         tool,
                         risk="external-side-effect",
+                        force_tool_choice_on_high_confidence_route=bool(
+                            server_spec is not None
+                            and server_spec.get(
+                                "force_tool_choice_on_high_confidence_route"
+                            )
+                        ),
                         source_type="mcp",
                         source_name=server.name,
                         output_kinds=output_kinds,
@@ -3045,6 +3051,8 @@ def _resolve_mcp_servers(
             raise RuntimeError(f"插件 MCP call timeout 声明无效: {spec.name}")
         if not isinstance(spec.media_output_roots, tuple):
             raise RuntimeError(f"插件 MCP media roots 声明无效: {spec.name}")
+        if not isinstance(spec.force_tool_choice_on_high_confidence_route, bool):
+            raise RuntimeError(f"插件 MCP route choice 声明无效: {spec.name}")
         media_output_roots: list[str] = []
         seen_media_roots: set[Path] = set()
         for raw_root in spec.media_output_roots:
@@ -3105,6 +3113,9 @@ def _resolve_mcp_servers(
             "call_timeout_seconds": float(timeout),
             "media_output_roots": media_output_roots,
             "media_workspace_root": str(workspace_root),
+            "force_tool_choice_on_high_confidence_route": (
+                spec.force_tool_choice_on_high_confidence_route
+            ),
         }
     return servers
 

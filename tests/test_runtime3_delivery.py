@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from agent.control.context import current_turn_id
 from agent.context import ContextBuilder
 from agent.core.passive_turn import AgentCore, AgentCoreDeps, ContextStore, Reasoner
 from agent.core.runtime_support import TurnRunResult
@@ -293,6 +294,71 @@ async def test_passive_pipeline_commits_before_real_delivery(tmp_path):
         assert len(sent) == 1
         assert sent[0].session_message_id == "telegram:42:1"
     finally:
+        supervisor.stop()
+        await task
+        manager.close()
+
+
+@pytest.mark.asyncio
+async def test_passive_control_reply_is_persisted_before_real_delivery(tmp_path):
+    manager = SessionManager(tmp_path)
+    repository = OutboxRepository(manager.control_store)
+    bus = MessageBus()
+    supervisor = DeliverySupervisor(repository, bus)
+    port = DurableOutboundPort(repository, supervisor)
+    observed: list[tuple[str, str]] = []
+
+    async def channel_send(message: OutboundMessage) -> None:
+        delivery_id = cast(str, message.metadata["delivery_id"])
+        record = repository.get(delivery_id)
+        assert record is not None
+        observed.append((message.content, record.status))
+
+    bus.subscribe_outbound("telegram", channel_send)
+    context = SimpleNamespace(
+        render=MagicMock(
+            return_value=SimpleNamespace(system_prompt="system", messages=[])
+        ),
+        last_debug_breakdown=[],
+    )
+    agent_core = AgentCore(
+        AgentCoreDeps(
+            session=SessionServices(session_manager=manager, presence=None),
+            context_store=cast(
+                ContextStore,
+                SimpleNamespace(
+                    prepare=AsyncMock(return_value=ContextBundle()),
+                ),
+            ),
+            context=cast(ContextBuilder, context),
+            tools=cast(ToolRegistry, SimpleNamespace(set_context=MagicMock())),
+            reasoner=cast(
+                Reasoner,
+                SimpleNamespace(
+                    run_turn=AsyncMock(side_effect=RuntimeError("provider failed"))
+                ),
+            ),
+            outbound_port=port,
+        )
+    )
+    task = asyncio.create_task(supervisor.run())
+    await supervisor.wait_until_ready()
+    turn_token = current_turn_id.set("turn-control")
+    try:
+        result = await agent_core.process(
+            InboundMessage("telegram", "user", "42", "hello"),
+            "telegram:42",
+            dispatch_outbound=True,
+        )
+        assert result.content == "处理消息时出错，请稍后再试。"
+        assert observed == [("处理消息时出错，请稍后再试。", "sending")]
+        sent = repository.list_by_status("sent")
+        assert len(sent) == 1
+        assert sent[0].turn_id == "turn-control"
+        assert sent[0].lane == "passive"
+        assert sent[0].reason_code == "passive_control_reply"
+    finally:
+        current_turn_id.reset(turn_token)
         supervisor.stop()
         await task
         manager.close()

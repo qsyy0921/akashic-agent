@@ -2,16 +2,18 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
 
 from agent.mcp.client import McpCallResult, McpClient, McpToolInfo
 from agent.mcp.tool import McpToolWrapper
-from agent.plugins.manager import _resolve_mcp_servers
+from agent.plugins.manager import PluginManager, _resolve_mcp_servers
 from agent.plugins.specs import McpServerSpec
 from agent.tools.base import ToolResult
 from agent.tools.registry import ToolRegistry
+from bus.event_bus import EventBus
 
 _PNG = b"\x89PNG\r\n\x1a\n" + b"media-bridge"
 
@@ -150,6 +152,7 @@ def test_plugin_mcp_declaration_resolves_bounded_media_root(tmp_path: Path) -> N
                 command=("python", "server.py"),
                 call_timeout_seconds=320,
                 media_output_roots=("generated/image",),
+                force_tool_choice_on_high_confidence_route=True,
             )
         ],
     )["image"]
@@ -159,6 +162,7 @@ def test_plugin_mcp_declaration_resolves_bounded_media_root(tmp_path: Path) -> N
         str((workspace / "generated" / "image").resolve())
     ]
     assert resolved["media_workspace_root"] == str(workspace.resolve())
+    assert resolved["force_tool_choice_on_high_confidence_route"] is True
 
     for invalid in (".", "../outside", str(tmp_path.resolve())):
         with pytest.raises(RuntimeError, match="media root"):
@@ -174,6 +178,75 @@ def test_plugin_mcp_declaration_resolves_bounded_media_root(tmp_path: Path) -> N
                     )
                 ],
             )
+
+    with pytest.raises(RuntimeError, match="route choice"):
+        _resolve_mcp_servers(
+            plugin_root,
+            tmp_path / "data",
+            workspace,
+            [
+                McpServerSpec(
+                    name="bad-choice",
+                    command=("python", "server.py"),
+                    force_tool_choice_on_high_confidence_route=cast(Any, "yes"),
+                )
+            ],
+        )
+
+
+def test_plugin_snapshot_propagates_high_confidence_route_choice(
+    tmp_path: Path,
+) -> None:
+    info = McpToolInfo(
+        name="generate_image",
+        description="image",
+        input_schema={
+            "type": "object",
+            "properties": {"prompt": {"type": "string"}},
+            "required": ["prompt"],
+            "additionalProperties": False,
+        },
+    )
+    wrapper = McpToolWrapper(
+        McpClient("image", ["python", "server.py"]),
+        info,
+        server_name="image",
+    )
+    generation = SimpleNamespace(
+        plugin_id="image",
+        module_path="tests.fake_image_plugin",
+        instance=SimpleNamespace(name="image"),
+        contributions=SimpleNamespace(
+            mcp_servers={
+                "image": {
+                    "force_tool_choice_on_high_confidence_route": True,
+                    "media_output_roots": [],
+                }
+            }
+        ),
+        mcp_catalog=SimpleNamespace(
+            servers={
+                "image": SimpleNamespace(
+                    name="image",
+                    tools=(wrapper,),
+                )
+            }
+        ),
+    )
+    manager = PluginManager(
+        plugin_dirs=[],
+        event_bus=EventBus(),
+        tool_registry=ToolRegistry(),
+        workspace=tmp_path / "workspace",
+        installed_cache_root=tmp_path / "plugins",
+    )
+
+    registry = manager._compile_snapshot_tools(cast(Any, {"image": generation}))
+
+    assert registry is not None
+    meta = registry.get_tool_meta("mcp_image__generate_image")
+    assert meta is not None
+    assert meta.force_tool_choice_on_high_confidence_route is True
 
 
 class _ResultClient:
