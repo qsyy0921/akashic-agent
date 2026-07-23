@@ -53,6 +53,19 @@ class _DummySession:
         return message
 
 
+async def _append_messages_with_outbound(session, messages, draft):
+    for index, message in enumerate(messages):
+        message.setdefault("id", f"{session.key}:{index}")
+    metadata = dict(draft.metadata)
+    user = next((message for message in messages if message["role"] == "user"), None)
+    if user is not None:
+        metadata["persisted_user_message_id"] = user["id"]
+    return SimpleNamespace(
+        metadata=metadata,
+        session_message_id=(messages[-1]["id"] if messages else None),
+    )
+
+
 @pytest.mark.asyncio
 async def test_agent_core_process_runs_prepare_prompt_run_commit_in_order():
     order: list[str] = []
@@ -98,8 +111,11 @@ async def test_agent_core_process_runs_prepare_prompt_run_commit_in_order():
                 SimpleNamespace(
                     session_manager=SimpleNamespace(
                         get_or_create=MagicMock(return_value=session),
-                        peek_next_message_id=MagicMock(return_value="telegram:123:0"),
-                        append_messages=AsyncMock(),
+                            peek_next_message_id=MagicMock(return_value="telegram:123:0"),
+                            append_messages=AsyncMock(),
+                            append_messages_with_outbound=AsyncMock(
+                                side_effect=_append_messages_with_outbound
+                            ),
                     ),
                     presence=None,
                 ),
@@ -156,8 +172,11 @@ async def test_agent_core_process_coerces_empty_reply_before_commit():
                 SimpleNamespace(
                     session_manager=SimpleNamespace(
                         get_or_create=MagicMock(return_value=session),
-                        peek_next_message_id=MagicMock(return_value="cli:1:0"),
-                        append_messages=AsyncMock(),
+                            peek_next_message_id=MagicMock(return_value="cli:1:0"),
+                            append_messages=AsyncMock(),
+                            append_messages_with_outbound=AsyncMock(
+                                side_effect=_append_messages_with_outbound
+                            ),
                     ),
                     presence=None,
                 ),
@@ -236,8 +255,11 @@ async def test_agent_core_before_reasoning_can_patch_context():
                 SimpleNamespace(
                     session_manager=SimpleNamespace(
                         get_or_create=MagicMock(return_value=session),
-                        peek_next_message_id=MagicMock(return_value="telegram:123:0"),
-                        append_messages=AsyncMock(),
+                            peek_next_message_id=MagicMock(return_value="telegram:123:0"),
+                            append_messages=AsyncMock(),
+                            append_messages_with_outbound=AsyncMock(
+                                side_effect=_append_messages_with_outbound
+                            ),
                     ),
                     presence=None,
                 ),
@@ -446,8 +468,11 @@ async def test_reasoner_exception_turn_returns_control_outbound():
                 SimpleNamespace(
                     session_manager=SimpleNamespace(
                         get_or_create=MagicMock(return_value=session),
-                        peek_next_message_id=MagicMock(return_value="telegram:123:0"),
-                        append_messages=AsyncMock(),
+                            peek_next_message_id=MagicMock(return_value="telegram:123:0"),
+                            append_messages=AsyncMock(),
+                            append_messages_with_outbound=AsyncMock(
+                                side_effect=_append_messages_with_outbound
+                            ),
                     ),
                     presence=None,
                 ),
@@ -504,8 +529,11 @@ async def test_after_turn_dispatch_exception_is_not_wrapped_by_control_outbound(
                 SimpleNamespace(
                     session_manager=SimpleNamespace(
                         get_or_create=MagicMock(return_value=session),
-                        peek_next_message_id=MagicMock(return_value="telegram:123:0"),
-                        append_messages=AsyncMock(),
+                            peek_next_message_id=MagicMock(return_value="telegram:123:0"),
+                            append_messages=AsyncMock(),
+                            append_messages_with_outbound=AsyncMock(
+                                side_effect=_append_messages_with_outbound
+                            ),
                     ),
                     presence=None,
                 ),

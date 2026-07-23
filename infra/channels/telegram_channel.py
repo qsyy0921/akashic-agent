@@ -828,10 +828,7 @@ class TelegramChannel:
         _ = self._tool_lines.pop(session_key, None)
         _ = self._active_streams.pop(str(msg.chat_id), None)
         for image in (msg.media or []):
-            try:
-                await self.send_image(str(msg.chat_id), image)
-            except Exception as e:
-                logger.warning(f"[telegram] meme 图片发送失败  chat_id={msg.chat_id}  path={image}  err={e}")
+            await self.send_image(str(msg.chat_id), image)
 
     async def _safe_send_typing(
         self, context: ContextTypes.DEFAULT_TYPE, chat_id: int

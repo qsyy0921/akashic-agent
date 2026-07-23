@@ -9,6 +9,7 @@ import pytest
 from agent.control.models import TurnRequest
 from agent.control.runtime import ConversationRuntime
 from agent.control.service import ControlService
+from bootstrap.workspace_token import ensure_workspace_token
 from infra.control.socket import SocketAppServer
 from session.manager import SessionManager
 
@@ -21,9 +22,10 @@ async def test_exec_remote_error_exits_two_without_traceback(tmp_path: Path) -> 
         return request.input
 
     runtime = ConversationRuntime(sessions.control_store, execute)
+    token = ensure_workspace_token(tmp_path)
     server = SocketAppServer(
         tmp_path / "control.sock",
-        ControlService(runtime, sessions, tmp_path),
+        ControlService(runtime, sessions, tmp_path, workspace_token=token),
     )
     await server.start()
     try:

@@ -60,6 +60,8 @@ Dashboard 插件的前端样式分为两层：主程序提供公共 preset，插
 
 主程序构建 Dashboard 时会生成并加载公共 preset CSS。preset 只包含主程序和已安装插件声明的公共 utility；插件新增的特殊样式仍然应该随插件 CSS 发布。主程序不再把外部插件源码并入自己的 Tailwind bundle，也不维护逐插件 safelist。
 
+构建默认只扫描当前仓库。需要把已安装插件的公共 utility 纳入 preset 时，必须显式设置 `AKASHIC_PLUGIN_HOME` 后再运行构建；构建脚本不会从隐式 HOME 或相邻仓库猜测插件来源。
+
 插件前端修改后的检查顺序：
 
 ```bash

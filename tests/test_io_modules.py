@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+import os
 import stat
 import sys
 from pathlib import Path
@@ -216,7 +217,8 @@ async def test_filesystem_tools_cover_core_paths(monkeypatch: pytest.MonkeyPatch
     result = await writer.execute("b.txt", "\ufeffhello\r\n")
     assert "已写入" in result
     assert b_file.read_bytes() == "\ufeffhello\r\n".encode("utf-8")
-    assert stat.S_IMODE(b_file.stat().st_mode) == 0o751
+    if os.name != "nt":
+        assert stat.S_IMODE(b_file.stat().st_mode) == 0o751
 
     editor = EditFileTool(base)
     assert "未找到 old_text" in await editor.execute("b.txt", "x", "y")
@@ -230,7 +232,8 @@ async def test_filesystem_tools_cover_core_paths(monkeypatch: pytest.MonkeyPatch
     assert "-hello" in result
     assert "+world" in result
     assert b_file.read_bytes() == "\ufeffworld\r\n".encode("utf-8")
-    assert stat.S_IMODE(b_file.stat().st_mode) == 0o751
+    if os.name != "nt":
+        assert stat.S_IMODE(b_file.stat().st_mode) == 0o751
     assert text_file.read_text(encoding="utf-8") == "line1\nline2\nline3\n"
 
     dup = base / "dup.txt"

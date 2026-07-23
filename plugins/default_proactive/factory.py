@@ -75,6 +75,7 @@ class AgentTickFactory:
             schedule_fn=self._deps.schedule_fn,
             event_bus=self._deps.event_bus,
             tool_hooks=self._deps.tool_hooks,
+            tool_governor=self._deps.tool_governor,
         )
 
     def _get_session_key(self) -> str:

@@ -5,10 +5,13 @@ from typing import TYPE_CHECKING, Any
 
 from agent.config_models import Config
 from agent.looping.core import AgentLoop
-from agent.provider import LLMProvider
-from agent.tool_hooks import ToolHook
+from agent.model_runtime.provider_profiles import uses_responses_transport
 from agent.plugins.specs import RegisteredProactiveSource
+from agent.provider import LLMProvider
+from agent.tool_governance import ToolGovernor
+from agent.tool_hooks import ToolHook
 from agent.tools.message_push import MessagePushTool
+from agent.turns.outbound import OutboundPort
 from bus.event_bus import EventBus
 from proactive_v2.loop import ProactiveLoop
 from proactive_v2.memory_optimizer import MemoryOptimizer, MemoryOptimizerLoop
@@ -23,6 +26,8 @@ if TYPE_CHECKING:
 
 
 def _build_proactive_provider(config: Config, provider: LLMProvider) -> LLMProvider:
+    if uses_responses_transport(str(getattr(config, "provider", "") or "")):
+        return provider
     api_key = str(getattr(config, "api_key", "") or "").strip()
     system_prompt = str(getattr(config, "system_prompt", "") or "")
     base_url = getattr(config, "base_url", None)
@@ -59,6 +64,8 @@ def build_proactive_runtime(
     proactive_runtime_factories: list[object] | None = None,
     proactive_sources: list[RegisteredProactiveSource] | None = None,
     runtime_snapshot_store: RuntimeSnapshotStore | None = None,
+    outbound_port: OutboundPort | None = None,
+    tool_governor: ToolGovernor | None = None,
 ) -> tuple[list, ProactiveLoop | None]:
     tasks: list = []
     # 1. 总开关关闭时，主动链路完全不启动。
@@ -96,6 +103,8 @@ def build_proactive_runtime(
         proactive_runtime_factories=proactive_runtime_factories,
         proactive_sources=proactive_sources,
         runtime_snapshot_store=runtime_snapshot_store,
+        outbound_port=outbound_port,
+        tool_governor=tool_governor,
     )
 
     # 4. 主动链路本体以后台任务方式常驻运行。
@@ -121,4 +130,6 @@ def build_memory_optimizer_task(
     )
     interval = config.memory_optimizer_interval_seconds
     print(f"MemoryOptimizerLoop 已启动，间隔={interval}s ({interval / 3600:.1f}h)")
-    return [MemoryOptimizerLoop(mem_optimizer, interval_seconds=interval).run()], mem_optimizer
+    return [
+        MemoryOptimizerLoop(mem_optimizer, interval_seconds=interval).run()
+    ], mem_optimizer

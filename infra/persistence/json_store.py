@@ -18,6 +18,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, TextIO, cast
 
+from core.common.file_lock import acquire_file_lock, release_file_lock
+
 logger = logging.getLogger(__name__)
 _ATOMIC_WRITE_TEMP_ATTEMPTS = 100
 
@@ -161,6 +163,8 @@ def _atomic_write(
 
     # 1. 创建父目录并读取现有目标的权限位
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_dir():
+        raise IsADirectoryError(f"目标路径是目录: {path}")
     try:
         target_mode = stat.S_IMODE(path.stat().st_mode)
     except FileNotFoundError:
@@ -170,7 +174,10 @@ def _atomic_write(
     fd, temporary = _create_atomic_temp(path)
     try:
         if target_mode is not None:
-            os.fchmod(fd, target_mode)
+            if hasattr(os, "fchmod"):
+                os.fchmod(fd, target_mode)
+            else:
+                os.chmod(temporary, target_mode)
         with os.fdopen(fd, "w", encoding="utf-8", newline="") as stream:
             fd = -1
             # 3. 序列化、写入、刷写并同步临时文件
@@ -178,13 +185,21 @@ def _atomic_write(
             stream.flush()
             os.fsync(stream.fileno())
 
-        # 4. 原子替换并同步目录项
-        _ = temporary.replace(path)
-        directory_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        # 4. Windows does not reliably serialize concurrent replacements of
+        # one target, so commit under a per-target kernel lock on every OS.
+        lock_path = path.with_name(f".{path.name}.lock")
+        with lock_path.open("a+", encoding="utf-8") as lock_stream:
+            acquire_file_lock(lock_stream, blocking=True)
+            try:
+                _ = temporary.replace(path)
+            finally:
+                release_file_lock(lock_stream)
+        if os.name != "nt":
+            directory_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
     except BaseException:
         try:
             temporary.unlink(missing_ok=True)

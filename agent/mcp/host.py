@@ -57,6 +57,15 @@ class McpGenerationHost:
                 command=list(spec["command"]),
                 env=dict(spec.get("env") or {}),
                 cwd=str(spec.get("cwd") or "") or None,
+                call_timeout_seconds=float(
+                    spec.get("call_timeout_seconds") or 30.0
+                ),
+                media_output_roots=tuple(
+                    str(item) for item in (spec.get("media_output_roots") or ())
+                ),
+                media_workspace_root=(
+                    str(spec.get("media_workspace_root") or "") or None
+                ),
             )
             scope.defer(f"mcp_client:{server_name}", client.disconnect)
             infos = await client.connect()

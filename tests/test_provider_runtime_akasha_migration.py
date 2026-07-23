@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import tomllib
 from pathlib import Path
 
@@ -74,7 +75,11 @@ def test_legacy_config_maps_roles_and_preserves_secrets(tmp_path: Path) -> None:
     assert llm["runtimes"]["deepseek_main"]["api_key"] == "main-secret"
     assert llm["runtimes"]["openai_fast"]["api_key"] == "fast-secret"
     assert llm["runtimes"]["openai_vl"]["input_modalities"] == ["text", "image"]
-    assert context.config_path.with_name("config.toml").stat().st_mode & 0o777 == 0o600
+    if os.name != "nt":
+        assert (
+            context.config_path.with_name("config.toml").stat().st_mode & 0o777
+            == 0o600
+        )
     assert (context.backup_dir / "config.toml").exists()
     assert _config_assessment(context.config_path).state == "current"
     config = Config.load(context.config_path, workspace=context.workspace)

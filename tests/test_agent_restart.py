@@ -309,22 +309,36 @@ def _spawn_supervisor_child(
     nonce: str,
     frame_count: int,
     exit_code: int = RESTART_EXIT_CODE,
-) -> tuple[subprocess.Popen[bytes], int]:
-    read_fd, write_fd = os.pipe()
+) -> tuple[subprocess.Popen[Any], Any]:
+    commit_reader, commit_env, write_fd = supervisor_module._create_commit_transport()
+    endpoint = commit_env.get("AKASHIC_RESTART_COMMIT_ENDPOINT", "")
     code = """
-import json, os, pathlib, sys, time
+import json, os, pathlib, socket, sys, time
 workspace = pathlib.Path(sys.argv[1])
-boot_id, nonce, write_fd, frame_count, exit_code = sys.argv[2:]
+boot_id, nonce, transport, target, frame_count, exit_code = sys.argv[2:]
 payload = {'bootId': boot_id, 'pid': os.getpid(), 'state': 'ready'}
+if os.name == 'nt':
+    payload['parentPid'] = os.getppid()
 temporary = workspace / f'.runtime-ready.{os.getpid()}.tmp'
 temporary.write_text(json.dumps(payload))
 os.replace(temporary, workspace / '.runtime-ready.json')
 frame = {'type': 'restart_commit', 'bootId': boot_id, 'nonce': nonce, 'requestId': 'restart_test'}
 for _ in range(int(frame_count)):
-    os.write(int(write_fd), (json.dumps(frame) + '\\n').encode())
+    encoded = (json.dumps(frame) + '\\n').encode()
+    if transport == 'tcp':
+        host, raw_port = target.rsplit(':', 1)
+        with socket.create_connection((host, int(raw_port)), timeout=2) as connection:
+            connection.sendall(encoded)
+    else:
+        os.write(int(target), encoded)
 time.sleep(0.05)
 raise SystemExit(int(exit_code))
 """
+    transport = "tcp" if endpoint else "fd"
+    target = endpoint if endpoint else str(write_fd)
+    popen_kwargs: dict[str, Any] = {}
+    if write_fd is not None:
+        popen_kwargs["pass_fds"] = (write_fd,)
     child = subprocess.Popen(
         [
             sys.executable,
@@ -333,14 +347,16 @@ raise SystemExit(int(exit_code))
             str(tmp_path),
             boot_id,
             nonce,
-            str(write_fd),
+            transport,
+            target,
             str(frame_count),
             str(exit_code),
         ],
-        pass_fds=(write_fd,),
+        **popen_kwargs,
     )
-    os.close(write_fd)
-    return child, read_fd
+    if write_fd is not None:
+        os.close(write_fd)
+    return child, commit_reader
 
 
 @pytest.mark.parametrize(
@@ -352,7 +368,7 @@ def test_real_child_exit_75_requires_unique_private_commit(
     frame_count: int,
     expected: bool,
 ) -> None:
-    child, read_fd = _spawn_supervisor_child(
+    child, commit_reader = _spawn_supervisor_child(
         tmp_path,
         boot_id="boot-live",
         nonce="secret-nonce",
@@ -361,7 +377,7 @@ def test_real_child_exit_75_requires_unique_private_commit(
 
     result = _wait_child(
         child,
-        read_fd=read_fd,
+        commit_reader=commit_reader,
         workspace=tmp_path,
         boot_id="boot-live",
         nonce="secret-nonce",
@@ -382,6 +398,7 @@ def test_runtime_readiness_is_boot_and_pid_scoped(tmp_path: Path) -> None:
     assert payload == {
         "bootId": "boot-current",
         "pid": os.getpid(),
+        **({"parentPid": os.getppid()} if os.name == "nt" else {}),
         "state": "ready",
     }
 
@@ -557,8 +574,8 @@ def test_supervisor_exit_code_contract(
         lambda *_args, **_kwargs: child,
     )
 
-    def wait_child(_child: Any, *, read_fd: int, **_kwargs: Any):
-        os.close(read_fd)
+    def wait_child(_child: Any, *, commit_reader: Any, **_kwargs: Any):
+        commit_reader.close()
         return child_result
 
     monkeypatch.setattr(supervisor_module, "_wait_child", wait_child)
@@ -599,11 +616,11 @@ def test_supervisor_without_config_waits_for_settings_request(
     def wait_child(
         _child: Any,
         *,
-        read_fd: int,
+        commit_reader: Any,
         report_settings_generation: int,
         **_kwargs: Any,
     ):
-        os.close(read_fd)
+        commit_reader.close()
         observed.append(report_settings_generation)
         return supervisor_module._ChildResult(0, True, True)
 
@@ -632,8 +649,8 @@ def test_supervisor_stop_between_generations_does_not_spawn_child_two(
 
     monkeypatch.setattr(supervisor_module.subprocess, "Popen", launch)
 
-    def wait_child(_child: Any, *, read_fd: int, **_kwargs: Any):
-        os.close(read_fd)
+    def wait_child(_child: Any, *, commit_reader: Any, **_kwargs: Any):
+        commit_reader.close()
         return supervisor_module._ChildResult(
             RESTART_EXIT_CODE,
             True,
@@ -647,7 +664,12 @@ def test_supervisor_stop_between_generations_does_not_spawn_child_two(
         nonlocal uuid_calls
         uuid_calls += 1
         if uuid_calls == 2:
-            os.kill(os.getpid(), signal.SIGTERM)
+            if sys.platform == "win32":
+                handler = signal.getsignal(signal.SIGTERM)
+                assert callable(handler)
+                handler(signal.SIGTERM, None)
+            else:
+                os.kill(os.getpid(), signal.SIGTERM)
         return SimpleNamespace(hex=f"boot-{uuid_calls}")
 
     monkeypatch.setattr(supervisor_module, "uuid4", next_boot_id)
@@ -659,6 +681,7 @@ def test_supervisor_stop_between_generations_does_not_spawn_child_two(
     assert len(spawns) == 1
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX signal-mask contract")
 def test_supervisor_signal_inside_popen_waits_for_child_ownership(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -690,6 +713,7 @@ def test_supervisor_signal_inside_popen_waits_for_child_ownership(
     assert child.running is False
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX signal-mask contract")
 def test_supervisor_child_does_not_inherit_blocked_stop_signals(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

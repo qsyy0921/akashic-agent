@@ -3,7 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 import logging
 from typing import TYPE_CHECKING, Any, TypeAlias, cast
+from uuid import uuid4
 
+from agent.control.context import current_turn_id
 from agent.core.passive_support import update_session_runtime_metadata
 from agent.core.response_parser import parse_response
 from agent.lifecycle.phase import (
@@ -20,6 +22,7 @@ from agent.lifecycle.types import (
 )
 from bus.event_bus import EventBus
 from bus.events import OutboundMessage
+from session.reliability_records import OutboundIntentDraft
 
 if TYPE_CHECKING:
     from agent.looping.ports import SessionServices
@@ -220,7 +223,7 @@ class _UpdateSessionMetadataModule:
 
 class _AppendMessagesModule:
     slot = "after_reasoning.append_messages"
-    requires = ("after_reasoning.update_meta",)
+    requires = ("after_reasoning.build_outbound", _OUTBOUND_SLOT)
 
     def __init__(self, session_services: SessionServices) -> None:
         self._session_services = session_services
@@ -240,18 +243,48 @@ class _AppendMessagesModule:
             messages.append(
                 cast(dict[str, Any], frame.slots[_PERSISTED_ASSISTANT_SLOT])
             )
-        if not messages:
-            return frame
-        await self._session_services.session_manager.append_messages(
-            session,
-            messages,
-        )
+        outbound = cast(OutboundMessage, frame.slots[_OUTBOUND_SLOT])
+        if state.dispatch_outbound:
+            delivery_id = outbound.metadata.get("delivery_id")
+            if not isinstance(delivery_id, str) or not delivery_id:
+                raise RuntimeError("outbound intent 缺少 delivery_id")
+            turn_id = current_turn_id.get().strip() or None
+            record = await self._session_services.session_manager.append_messages_with_outbound(
+                session,
+                messages,
+                OutboundIntentDraft(
+                    delivery_id=delivery_id,
+                    idempotency_key=(
+                        f"passive:{turn_id}:reply"
+                        if turn_id is not None
+                        else f"passive:{delivery_id}"
+                    ),
+                    turn_id=turn_id,
+                    session_key=state.session_key,
+                    channel=outbound.channel,
+                    chat_id=outbound.chat_id,
+                    content=outbound.content,
+                    thinking=outbound.thinking,
+                    media=tuple(outbound.media),
+                    metadata=dict(outbound.metadata),
+                    lane="passive",
+                    reason_code="passive_reply",
+                    session_message_id=outbound.session_message_id,
+                ),
+            )
+            outbound.metadata = dict(record.metadata)
+            outbound.session_message_id = record.session_message_id
+        elif messages:
+            await self._session_services.session_manager.append_messages(
+                session,
+                messages,
+            )
         return frame
 
 
 class _BuildOutboundMessageModule:
     slot = "after_reasoning.build_outbound"
-    requires = ("after_reasoning.append_messages", _CTX_SLOT)
+    requires = ("after_reasoning.update_meta", _CTX_SLOT)
     produces = (_OUTBOUND_SLOT,)
 
     async def run(self, frame: AfterReasoningFrame) -> AfterReasoningFrame:
@@ -267,12 +300,8 @@ class _BuildOutboundMessageModule:
             raw_client_message_id = persisted_user.get("client_message_id")
             if isinstance(raw_user_message_id, str) and raw_user_message_id:
                 metadata["persisted_user_message_id"] = raw_user_message_id
-            elif ctx.channel == "mobile":
-                raise RuntimeError("本轮 mobile user 消息缺少稳定 ID")
             if isinstance(raw_client_message_id, str) and raw_client_message_id:
                 metadata["client_message_id"] = raw_client_message_id
-            elif ctx.channel == "mobile":
-                raise RuntimeError("本轮 mobile user 消息缺少客户端 ID")
         media = list(ctx.media)
         _append_media(media, collect_prefixed_slots(frame.slots, _OUTBOUND_MEDIA_PREFIX))
         session_message_id: str | None = None
@@ -284,8 +313,16 @@ class _BuildOutboundMessageModule:
             raw_message_id = persisted.get("id")
             if isinstance(raw_message_id, str) and raw_message_id:
                 session_message_id = raw_message_id
-            elif ctx.channel == "mobile":
-                raise RuntimeError("本轮 assistant 消息缺少稳定 ID")
+        delivery_id: str | None = None
+        if frame.input.state.dispatch_outbound:
+            delivery_id = uuid4().hex
+            metadata["delivery_id"] = delivery_id
+            if frame.input.state.persistence.persist_assistant:
+                persisted = cast(
+                    dict[str, object],
+                    frame.slots[_PERSISTED_ASSISTANT_SLOT],
+                )
+                persisted["delivery_id"] = delivery_id
         frame.slots[_OUTBOUND_SLOT] = OutboundMessage(
             channel=ctx.channel,
             chat_id=ctx.chat_id,
@@ -293,6 +330,7 @@ class _BuildOutboundMessageModule:
             thinking=ctx.thinking,
             media=media,
             metadata=metadata,
+            control_turn_id=current_turn_id.get().strip() or None,
             session_message_id=session_message_id,
         )
         return frame
@@ -300,7 +338,7 @@ class _BuildOutboundMessageModule:
 
 class _ReturnAfterReasoningResultModule:
     slot = "after_reasoning.return"
-    requires = ("after_reasoning.build_outbound", _CTX_SLOT, _OUTBOUND_SLOT)
+    requires = ("after_reasoning.append_messages", _CTX_SLOT, _OUTBOUND_SLOT)
 
     async def run(self, frame: AfterReasoningFrame) -> AfterReasoningFrame:
         frame.output = AfterReasoningResult(
@@ -321,8 +359,8 @@ def default_after_reasoning_modules(
         _PersistUserMessageModule(session_services),
         _PersistAssistantMessageModule(),
         _UpdateSessionMetadataModule(),
-        _AppendMessagesModule(session_services),
         _BuildOutboundMessageModule(),
+        _AppendMessagesModule(session_services),
         _ReturnAfterReasoningResultModule(),
     ]
     return cast(

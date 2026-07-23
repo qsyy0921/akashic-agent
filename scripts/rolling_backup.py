@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
 import hashlib
 import json
 import os
@@ -18,6 +17,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
+
+from core.common.file_lock import acquire_file_lock
 
 
 DEFAULT_RETENTION = 14
@@ -224,8 +225,8 @@ def create_snapshot(
     lock_path = destination / ".backup.lock"
     with lock_path.open("a+") as lock:
         try:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as exc:
+            acquire_file_lock(lock, blocking=False)
+        except OSError as exc:
             raise RuntimeError(f"已有备份任务正在运行: {lock_path}") from exc
 
         timestamp = datetime.now().astimezone().strftime("%Y%m%d-%H%M%S")

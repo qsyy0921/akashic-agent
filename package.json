@@ -13,7 +13,8 @@
     "build:watch": "node scripts/build-plugins.mjs --watch",
     "dev": "vite --config frontend/dashboard/vite.config.ts",
     "lint": "eslint \"frontend/dashboard/src/**/*.{ts,tsx}\" \"frontend/chat/src/**/*.{ts,tsx}\" \"plugins/**/*.ts\" \"types/**/*.d.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ci:frontend": "npm run typecheck && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -63,11 +64,15 @@
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "recharts": "^3.8.1",
+    "recharts": "3.8.1",
     "shiki": "^4.3.1",
     "streamdown": "^2.5.0",
     "tailwind-merge": "^2.6.0",
     "type-fest": "^5.8.0",
     "use-stick-to-bottom": "^1.1.6"
+  },
+  "overrides": {
+    "@reduxjs/toolkit": "2.10.1",
+    "immer": "10.2.0"
   }
 }

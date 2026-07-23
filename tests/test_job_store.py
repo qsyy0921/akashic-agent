@@ -1,6 +1,7 @@
 """Tests for JobStore persistence."""
 
 import json
+import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -38,14 +39,16 @@ class TestJobStoreLoadSave:
         path = tmp_path / "jobs.json"
         path.write_text(contents, encoding="utf-8")
 
-        with pytest.raises(ValueError, match=rf"path={path}"):
+        with pytest.raises(ValueError, match=rf"path={re.escape(str(path))}"):
             JobStore(path).load()
 
     def test_load_rejects_non_object_job_with_path_and_index(self, tmp_path):
         path = tmp_path / "jobs.json"
         path.write_text('["invalid-job"]', encoding="utf-8")
 
-        with pytest.raises(ValueError, match=rf"path={path} index=0"):
+        with pytest.raises(
+            ValueError, match=rf"path={re.escape(str(path))} index=0"
+        ):
             JobStore(path).load()
 
     def test_load_rejects_invalid_persisted_timestamp(self, tmp_path):
@@ -58,7 +61,10 @@ class TestJobStoreLoadSave:
             encoding="utf-8",
         )
 
-        with pytest.raises(ValueError, match=rf"path={path} index=0 field=fire_at"):
+        with pytest.raises(
+            ValueError,
+            match=rf"path={re.escape(str(path))} index=0 field=fire_at",
+        ):
             store.load()
 
     def test_load_rejects_invalid_interval_type(self, tmp_path):
@@ -70,7 +76,9 @@ class TestJobStoreLoadSave:
         payload[0]["interval_seconds"] = "60"
         path.write_text(json.dumps(payload), encoding="utf-8")
 
-        with pytest.raises(ValueError, match=rf"path={path} index=0"):
+        with pytest.raises(
+            ValueError, match=rf"path={re.escape(str(path))} index=0"
+        ):
             store.load()
 
     def test_save_rejects_invalid_interval(self, tmp_path):
@@ -91,7 +99,9 @@ class TestJobStoreLoadSave:
         del payload[0]["id"]
         path.write_text(json.dumps(payload), encoding="utf-8")
 
-        with pytest.raises(ValueError, match=rf"path={path} index=0"):
+        with pytest.raises(
+            ValueError, match=rf"path={re.escape(str(path))} index=0"
+        ):
             store.load()
 
     def test_save_and_load_roundtrip(self, tmp_path):

@@ -134,6 +134,14 @@ class QuotaStore:
             self._raise_invalid_field("version", version)
         if type(used) is not int or used < 0:
             self._raise_invalid_field("used", used)
+        if self._is_legacy_pristine_state(raw):
+            return {
+                "version": 1,
+                "window_key": "",
+                "next_reset_at": "",
+                "used": 0,
+                "last_action_at": "",
+            }
         window_key = self._validate_window_key(raw["window_key"])
         next_reset_at = self._validate_time("next_reset_at", raw["next_reset_at"])
         last_action_at = self._validate_time(
@@ -146,6 +154,16 @@ class QuotaStore:
             "used": used,
             "last_action_at": last_action_at,
         }
+
+    @staticmethod
+    def _is_legacy_pristine_state(raw: dict[str, object]) -> bool:
+        return (
+            raw["version"] == 1
+            and raw["used"] == 0
+            and raw["window_key"] == ""
+            and raw["next_reset_at"] == ""
+            and raw["last_action_at"] == ""
+        )
 
     def _validate_window_key(self, value: object) -> str:
         if not isinstance(value, str):

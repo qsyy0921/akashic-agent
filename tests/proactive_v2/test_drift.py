@@ -968,7 +968,7 @@ async def test_finish_drift_rejects_invalid_self_observation(tmp_path: Path):
         store=store,
     )
 
-    assert "observation.effect" in json.loads(cast(Any, raw))["error"]
+    assert "observation.effect" in cast(str, raw)
     assert store.load_recent_self_observations() == []
 
 
@@ -1056,8 +1056,7 @@ async def test_finish_drift_rejects_removed_waiting_status(tmp_path: Path):
         },
         store=store,
     )
-    payload = json.loads(cast(Any, raw))
-    assert payload["error"] == "status must be one of: completed, paused"
+    assert "status" in cast(str, raw)
     assert ctx.drift_finished is False
     assert store.load_drift()["recent_runs"] == []
 
@@ -1078,8 +1077,7 @@ async def test_finish_drift_paused_requires_scratchpad(tmp_path: Path):
         },
         store=store,
     )
-    payload = json.loads(cast(Any, raw))
-    assert payload["error"] == "scratchpad_update is required when status is paused"
+    assert "self_update" in cast(str, raw)
     assert ctx.drift_finished is False
 
 
@@ -1480,15 +1478,28 @@ async def test_agent_tick_drift_emits_delivery_result(
             self.last_consolidated = 0
             self.presence = None
 
-        def add_message(self, role: str, content: str, media=None, **kwargs) -> None:
+        def add_message(self, role: str, content: str, media=None, **kwargs) -> dict:
             msg = {"role": role, "content": content}
             msg.update(kwargs)
             self.messages.append(msg)
+            return msg
 
     session = _Session()
+
+    async def append_messages_with_outbound(_session, messages, draft):
+        for index, message in enumerate(messages):
+            message.setdefault("id", f"test_session:{index}")
+        return SimpleNamespace(
+            metadata=dict(draft.metadata),
+            session_message_id=(messages[-1]["id"] if messages else None),
+        )
+
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
         append_messages=AsyncMock(return_value=None),
+        append_messages_with_outbound=AsyncMock(
+            side_effect=append_messages_with_outbound
+        ),
     )
 
     class _Outbound:

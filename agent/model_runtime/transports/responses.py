@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import uuid
 from typing import Any, cast
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 import openai
@@ -21,6 +23,11 @@ from agent.model_runtime.errors import (
     RateLimitError,
     RetryableTransportError,
     TransportError,
+)
+from agent.model_runtime.provider_profiles import (
+    TERRA_RESPONSES_MODEL,
+    TERRA_RESPONSES_PROVIDER,
+    TERRA_RESPONSES_REASONING_EFFORT,
 )
 from agent.model_runtime.types import (
     LLMResponse,
@@ -71,7 +78,9 @@ class CodexResponsesTransport:
     async def _send_once(
         self, request: ModelRequest, *, force_refresh: bool
     ) -> LLMResponse:
-        headers = await asyncio.to_thread(self.auth.headers, force_refresh=force_refresh)
+        headers = await asyncio.to_thread(
+            self.auth.headers, force_refresh=force_refresh
+        )
         default_headers = {
             "ChatGPT-Account-ID": headers.get("ChatGPT-Account-ID", ""),
             "originator": "codex_cli_rs",
@@ -193,11 +202,15 @@ class CodexResponsesTransport:
                         content.append(suffix)
                         if request.on_delta:
                             await request.on_delta({"content_delta": suffix})
-            elif event_type == "response.reasoning_summary_text.delta" and isinstance(delta, str):
+            elif event_type == "response.reasoning_summary_text.delta" and isinstance(
+                delta, str
+            ):
                 thinking.append(delta)
                 if request.on_delta:
                     await request.on_delta({"thinking_delta": delta})
-            elif event_type == "response.reasoning_text.delta" and isinstance(delta, str):
+            elif event_type == "response.reasoning_text.delta" and isinstance(
+                delta, str
+            ):
                 thinking.append(delta)
                 if request.on_delta:
                     await request.on_delta({"thinking_delta": delta})
@@ -211,7 +224,9 @@ class CodexResponsesTransport:
                         if request.on_delta:
                             await request.on_delta({"thinking_delta": suffix})
             elif event_type == "response.function_call_arguments.delta":
-                item_id = str(_field(event, "item_id") or _field(event, "output_index") or "")
+                item_id = str(
+                    _field(event, "item_id") or _field(event, "output_index") or ""
+                )
                 slot = tool_args.setdefault(item_id, {"arguments": ""})
                 slot["arguments"] += str(delta or "")
             elif event_type == "response.output_item.done":
@@ -233,7 +248,9 @@ class CodexResponsesTransport:
                 break
             elif event_type in {"response.failed", "response.incomplete"}:
                 response = _field(event, "response")
-                error = _field(response, "error") or _field(response, "incomplete_details")
+                error = _field(response, "error") or _field(
+                    response, "incomplete_details"
+                )
                 _raise_stream_error(error)
         if not completed:
             raise RetryableTransportError("Codex Responses 在 completed 事件前断流")
@@ -244,6 +261,217 @@ class CodexResponsesTransport:
             "transport": "responses",
             "model": request.model,
             "items": output_items,
+        }
+        return LLMResponse(
+            content="".join(content).strip() or None,
+            tool_calls=calls,
+            thinking="".join(thinking).strip() or None,
+            provider_fields={"model_state": model_state},
+            cache_prompt_tokens=usage.input_tokens if usage else None,
+            cache_hit_tokens=usage.cached_input_tokens if usage else None,
+            usage=usage,
+        )
+
+
+class OpenAICompatibleResponsesTransport:
+    """严格调用 OpenAI-compatible ``/responses`` 的无状态 transport。"""
+
+    def __init__(
+        self,
+        api_key: str,
+        *,
+        runtime_id: str,
+        base_url: str,
+        provider_name: str = TERRA_RESPONSES_PROVIDER,
+        expected_model: str = TERRA_RESPONSES_MODEL,
+        required_reasoning_effort: str = TERRA_RESPONSES_REASONING_EFFORT,
+        read_timeout_s: float = 120,
+        supports_parallel_tool_calls: bool = True,
+        reasoning_summary: str = "none",
+    ) -> None:
+        credential = api_key.strip()
+        if not credential or re.fullmatch(r"\$\{\w+\}", credential):
+            raise AuthenticationError(f"{provider_name} credential is unavailable")
+        self.api_key = credential
+        self.runtime_id = runtime_id
+        self.base_url = _validate_responses_base_url(base_url)
+        self.provider_name = provider_name
+        self.expected_model = expected_model
+        self.required_reasoning_effort = required_reasoning_effort
+        self.supports_parallel_tool_calls = supports_parallel_tool_calls
+        self.reasoning_summary = reasoning_summary
+        self.network_timeout = httpx.Timeout(
+            connect=30,
+            read=max(0.001, float(read_timeout_s)),
+            write=30,
+            pool=30,
+        )
+
+    async def send(self, request: ModelRequest) -> LLMResponse:
+        payload = self._build_payload(request)
+        client = AsyncOpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+            timeout=self.network_timeout,
+            max_retries=0,
+        )
+        try:
+            response = await client.responses.create(**payload)
+        except openai.APIStatusError as exc:
+            _raise_compatible_status_error(exc, provider_name=self.provider_name)
+        except (openai.APIConnectionError, openai.APITimeoutError) as exc:
+            raise RetryableTransportError(
+                f"{self.provider_name} Responses connection failed"
+            ) from exc
+        finally:
+            await client.close()
+
+        result = self._consume_response(cast(Any, response), request)
+        if request.on_delta is not None:
+            if result.thinking:
+                await request.on_delta({"thinking_delta": result.thinking})
+            if result.content and not result.tool_calls:
+                await request.on_delta({"content_delta": result.content})
+        return result
+
+    def _build_payload(self, request: ModelRequest) -> dict[str, Any]:
+        if request.model != self.expected_model:
+            raise TransportError(
+                f"{self.provider_name} requires model={self.expected_model}"
+            )
+        if request.reasoning_effort != self.required_reasoning_effort:
+            raise TransportError(
+                f"{self.provider_name} requires reasoning_effort="
+                f"{self.required_reasoning_effort}"
+            )
+        if request.extra_body:
+            keys = ", ".join(sorted(request.extra_body))
+            raise TransportError(
+                f"{self.provider_name} does not accept request extra_body keys: {keys}"
+            )
+
+        messages, instructions = _responses_input(
+            request.messages,
+            request.system_prompt,
+            runtime_id=self.runtime_id,
+            model=request.model,
+        )
+        tools = _responses_tools(request.tools)
+        tool_choice = _compatible_tool_choice(request.tool_choice, tools)
+        reasoning: dict[str, str] = {
+            "effort": self.required_reasoning_effort,
+        }
+        if self.reasoning_summary != "none":
+            reasoning["summary"] = self.reasoning_summary
+        payload: dict[str, Any] = {
+            "model": request.model,
+            "instructions": instructions,
+            "input": messages,
+            "reasoning": reasoning,
+            "max_output_tokens": request.max_output_tokens,
+            "store": False,
+            "stream": False,
+            "include": ["reasoning.encrypted_content"],
+        }
+        if tools:
+            payload.update(
+                {
+                    "tools": tools,
+                    "tool_choice": tool_choice,
+                    "parallel_tool_calls": self.supports_parallel_tool_calls,
+                }
+            )
+        elif tool_choice not in {"auto", "none"}:
+            raise TransportError(
+                f"{self.provider_name} cannot require tools when none are declared"
+            )
+        if request.prompt_cache_key:
+            payload["prompt_cache_key"] = request.prompt_cache_key
+        return payload
+
+    def _consume_response(self, response: Any, request: ModelRequest) -> LLMResponse:
+        status = str(_field(response, "status") or "")
+        if status != "completed":
+            error = _field(response, "error") or _field(response, "incomplete_details")
+            _raise_compatible_terminal_error(
+                error,
+                provider_name=self.provider_name,
+                status=status,
+            )
+        response_model = str(_field(response, "model") or "")
+        if response_model != request.model:
+            raise TransportError(
+                f"{self.provider_name} returned unexpected model="
+                f"{response_model or '-'}"
+            )
+
+        content: list[str] = []
+        thinking: list[str] = []
+        calls: list[ToolCall] = []
+        replay_items: list[dict[str, Any]] = []
+        output = _field(response, "output") or []
+        if not isinstance(output, list):
+            raise TransportError(
+                f"{self.provider_name} Responses output must be a list"
+            )
+        for raw_item in output:
+            item = _dump(raw_item)
+            item_type = str(item.get("type") or "")
+            if item_type == "reasoning":
+                replay_items.append(_sanitize_replay_item(item))
+                thinking.extend(_response_item_text(item, "summary"))
+                thinking.extend(_response_item_text(item, "content"))
+                continue
+            if item_type == "function_call":
+                calls.append(
+                    _tool_call(
+                        {
+                            "id": str(item.get("call_id") or item.get("id") or ""),
+                            "name": str(item.get("name") or ""),
+                            "arguments": str(item.get("arguments") or "{}"),
+                        }
+                    )
+                )
+                if not calls[-1].id or not calls[-1].name:
+                    raise TransportError(
+                        f"{self.provider_name} function call is missing id or name"
+                    )
+                continue
+            if item_type == "message":
+                blocks = item.get("content") or []
+                if not isinstance(blocks, list):
+                    raise TransportError(
+                        f"{self.provider_name} message content must be a list"
+                    )
+                for raw_block in blocks:
+                    block = _dump(raw_block)
+                    block_type = str(block.get("type") or "")
+                    if block_type == "output_text":
+                        text = block.get("text")
+                        if isinstance(text, str) and text:
+                            content.append(text)
+                    elif block_type == "refusal":
+                        raise TransportError(
+                            f"{self.provider_name} Responses request was refused"
+                        )
+                    else:
+                        raise TransportError(
+                            f"{self.provider_name} returned unsupported content "
+                            f"block={block_type or '-'}"
+                        )
+                continue
+            raise TransportError(
+                f"{self.provider_name} returned unsupported output "
+                f"item={item_type or '-'}"
+            )
+
+        usage = _parse_usage(_field(response, "usage"))
+        model_state = {
+            "schema_version": 1,
+            "runtime_id": self.runtime_id,
+            "transport": "responses",
+            "model": request.model,
+            "items": replay_items,
         }
         return LLMResponse(
             content="".join(content).strip() or None,
@@ -359,7 +587,9 @@ def _responses_tools(tools: list[dict]) -> list[dict]:
                 "type": "function",
                 "name": function["name"],
                 "description": function.get("description", ""),
-                "parameters": function.get("parameters", {"type": "object", "properties": {}}),
+                "parameters": function.get(
+                    "parameters", {"type": "object", "properties": {}}
+                ),
                 "strict": bool(function.get("strict", False)),
             }
         )
@@ -375,13 +605,133 @@ def _normalize_tool_choice(
             raise TransportError(f"Responses 不支持的 tool_choice: {tool_choice}")
         return tool_choice, tools
     function = tool_choice.get("function")
-    name = function.get("name") if isinstance(function, dict) else tool_choice.get("name")
+    name = (
+        function.get("name") if isinstance(function, dict) else tool_choice.get("name")
+    )
     if tool_choice.get("type") != "function" or not isinstance(name, str) or not name:
         raise TransportError("Responses 命名 tool_choice 结构无效")
     selected = [tool for tool in tools if tool.get("name") == name]
     if not selected:
         raise TransportError(f"Responses 命名 tool_choice 引用了未知工具: {name}")
     return "required", selected
+
+
+def _compatible_tool_choice(
+    tool_choice: str | dict[str, Any], tools: list[dict]
+) -> str | dict[str, str]:
+    """保留标准 Responses 的命名工具选择结构。"""
+    if isinstance(tool_choice, str):
+        if tool_choice not in {"auto", "none", "required"}:
+            raise TransportError(f"Responses 不支持的 tool_choice: {tool_choice}")
+        return tool_choice
+    function = tool_choice.get("function")
+    name = (
+        function.get("name") if isinstance(function, dict) else tool_choice.get("name")
+    )
+    if tool_choice.get("type") != "function" or not isinstance(name, str) or not name:
+        raise TransportError("Responses 命名 tool_choice 结构无效")
+    if not any(tool.get("name") == name for tool in tools):
+        raise TransportError(f"Responses 命名 tool_choice 引用了未知工具: {name}")
+    return {"type": "function", "name": name}
+
+
+def _validate_responses_base_url(base_url: str) -> str:
+    text = base_url.strip()
+    if not text:
+        raise TransportError("Responses base_url is required")
+    parsed = urlsplit(text)
+    try:
+        hostname = parsed.hostname
+        _ = parsed.port
+    except ValueError as exc:
+        raise TransportError("Responses base_url has an invalid port") from exc
+    if (
+        parsed.scheme not in {"http", "https"}
+        or not hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or bool(parsed.query)
+        or bool(parsed.fragment)
+    ):
+        raise TransportError(
+            "Responses base_url must be an absolute HTTP(S) API root without "
+            "credentials, query, or fragment"
+        )
+    if parsed.scheme == "http" and hostname not in {"127.0.0.1", "localhost", "::1"}:
+        raise TransportError("Responses base_url requires HTTPS unless it is loopback")
+    path = parsed.path.rstrip("/")
+    lowered = path.casefold()
+    if any(
+        lowered.endswith(suffix)
+        for suffix in ("/responses", "/chat/completions", "/completions")
+    ):
+        raise TransportError("Responses base_url must be an API root, not a method URL")
+    return urlunsplit((parsed.scheme, parsed.netloc, path, "", ""))
+
+
+def _raise_compatible_status_error(
+    exc: openai.APIStatusError, *, provider_name: str
+) -> None:
+    status = exc.status_code
+    error_text = str(exc).lower()
+    if status in {401, 403}:
+        raise AuthenticationError(
+            f"{provider_name} Responses authentication failed"
+        ) from exc
+    if status == 429:
+        if any(
+            marker in error_text
+            for marker in ("insufficient_quota", "quota exceeded", "billing")
+        ):
+            raise QuotaError(f"{provider_name} quota is unavailable") from exc
+        raise RateLimitError(f"{provider_name} request was rate limited") from exc
+    if status == 400 and any(
+        marker in error_text
+        for marker in ("context_length", "context window", "too many tokens")
+    ):
+        raise ContextWindowError(
+            f"{provider_name} request exceeded the context window"
+        ) from exc
+    if status == 408 or status >= 500:
+        raise RetryableTransportError(
+            f"{provider_name} Responses server failed status={status}"
+        ) from exc
+    raise TransportError(
+        f"{provider_name} Responses request failed status={status}"
+    ) from exc
+
+
+def _raise_compatible_terminal_error(
+    error: Any, *, provider_name: str, status: str
+) -> None:
+    code = str(_field(error, "code") or _field(error, "reason") or "").lower()
+    if code in {"context_length_exceeded", "context_window_exceeded"}:
+        raise ContextWindowError(f"{provider_name} request exceeded the context window")
+    if code in {"insufficient_quota", "usage_not_included"}:
+        raise QuotaError(f"{provider_name} quota is unavailable")
+    if code in {"rate_limit_exceeded", "rate_limit_error"}:
+        raise RateLimitError(f"{provider_name} request was rate limited")
+    if status in {"failed", "incomplete"}:
+        raise TransportError(
+            f"{provider_name} Responses did not complete status={status} "
+            f"code={code or '-'}"
+        )
+    raise TransportError(
+        f"{provider_name} Responses returned invalid status={status or '-'}"
+    )
+
+
+def _response_item_text(item: dict[str, Any], key: str) -> list[str]:
+    values = item.get(key) or []
+    if not isinstance(values, list):
+        raise TransportError(f"Responses reasoning {key} must be a list")
+    result: list[str] = []
+    for raw in values:
+        value = _dump(raw)
+        text = value.get("text")
+        if isinstance(text, str) and text:
+            result.append(text)
+    return result
 
 
 def _responses_lite_input(
@@ -418,7 +768,9 @@ def _strip_image_details(items: list[dict]) -> list[dict]:
 def _sanitize_replay_item(item: dict[str, Any]) -> dict[str, Any]:
     """只保留 reasoning 重放契约允许的字段。"""
     if item.get("type") != "reasoning":
-        raise TransportError(f"Responses continuation 包含不支持的 item: {item.get('type')}")
+        raise TransportError(
+            f"Responses continuation 包含不支持的 item: {item.get('type')}"
+        )
     allowed = {"type", "summary", "content", "encrypted_content"}
     return {key: value for key, value in item.items() if key in allowed}
 
@@ -477,14 +829,20 @@ def _parse_usage(raw: Any) -> ModelUsage | None:
         input_tokens=int(input_tokens) if input_tokens is not None else None,
         cached_input_tokens=_optional_int(_field(input_details, "cached_tokens")),
         output_tokens=int(output_tokens) if output_tokens is not None else None,
-        reasoning_output_tokens=_optional_int(_field(output_details, "reasoning_tokens")),
-        covered_request_count=1 if input_tokens is not None and output_tokens is not None else 0,
+        reasoning_output_tokens=_optional_int(
+            _field(output_details, "reasoning_tokens")
+        ),
+        covered_request_count=(
+            1 if input_tokens is not None and output_tokens is not None else 0
+        ),
         coverage=(
             UsageCoverage.EXACT
             if input_tokens is not None and output_tokens is not None
-            else UsageCoverage.PARTIAL
-            if input_tokens is not None or output_tokens is not None
-            else UsageCoverage.UNAVAILABLE
+            else (
+                UsageCoverage.PARTIAL
+                if input_tokens is not None or output_tokens is not None
+                else UsageCoverage.UNAVAILABLE
+            )
         ),
     )
 

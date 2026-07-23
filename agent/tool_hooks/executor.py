@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any, Awaitable, Callable
+from dataclasses import replace
+from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
 from agent.tool_hooks.base import ToolHook
 from agent.tool_hooks.types import (
@@ -13,6 +14,9 @@ from agent.tool_hooks.types import (
 
 ToolInvoker = Callable[[str, dict[str, Any]], Awaitable[Any]]
 
+if TYPE_CHECKING:
+    from agent.tool_governance import ToolAuthorization, ToolGovernor
+
 
 class HookExecutionError(RuntimeError):
     def __init__(self, hook_name: str, event: str, cause: Exception) -> None:
@@ -23,11 +27,20 @@ class HookExecutionError(RuntimeError):
 
 
 class ToolExecutor:
-    def __init__(self, hooks: Sequence[ToolHook] | None = None) -> None:
+    def __init__(
+        self,
+        hooks: Sequence[ToolHook] | None = None,
+        *,
+        governor: "ToolGovernor | None" = None,
+    ) -> None:
         self._hooks = list(hooks or [])
+        self._governor = governor
 
     def add_hooks(self, hooks: Sequence[ToolHook]) -> None:
         self._hooks.extend(hooks)
+
+    def set_governor(self, governor: "ToolGovernor | None") -> None:
+        self._governor = governor
 
     def _runtime_hooks(self) -> list[ToolHook]:
         from agent.plugins.snapshot import get_current_runtime_snapshot
@@ -80,6 +93,32 @@ class ToolExecutor:
                 post_hook_trace=post_trace,
             )
         final_arguments = dict(current_arguments)
+        authorization: ToolAuthorization | None = None
+        if self._governor is not None:
+            try:
+                authorization = self._governor.authorize(
+                    request,
+                    final_arguments,
+                    upstream_denial=denied_reason,
+                )
+            except Exception as exc:
+                return ToolExecutionResult(
+                    status="error",
+                    output=f"工具授权失败: {exc}",
+                    final_arguments=final_arguments,
+                    extra_messages=extra_messages,
+                    pre_hook_trace=pre_trace,
+                    post_hook_trace=post_trace,
+                )
+            if not authorization.allowed:
+                return ToolExecutionResult(
+                    status="denied",
+                    output=authorization.message,
+                    final_arguments=final_arguments,
+                    extra_messages=extra_messages,
+                    pre_hook_trace=pre_trace,
+                    post_hook_trace=post_trace,
+                )
         if denied_reason:
             return ToolExecutionResult(
                 status="denied",
@@ -94,6 +133,18 @@ class ToolExecutor:
             # 这里才进入真实工具执行；hook 本身不直接替代工具实现。
             output = await invoker(request.tool_name, final_arguments)
         except Exception as exc:
+            if self._governor is not None and authorization is not None:
+                try:
+                    self._governor.complete(authorization, error=exc)
+                except Exception as ledger_exc:
+                    return ToolExecutionResult(
+                        status="error",
+                        output=f"工具结果无法写入可靠性账本: {ledger_exc}",
+                        final_arguments=final_arguments,
+                        extra_messages=extra_messages,
+                        pre_hook_trace=pre_trace,
+                        post_hook_trace=post_trace,
+                    )
             error_text = str(exc)
             try:
                 # 工具自身报错后，允许 post_tool_error 做记录型处理。
@@ -124,6 +175,19 @@ class ToolExecutor:
                 pre_hook_trace=pre_trace,
                 post_hook_trace=post_trace,
             )
+
+        if self._governor is not None and authorization is not None:
+            try:
+                self._governor.complete(authorization, result=output)
+            except Exception as exc:
+                return ToolExecutionResult(
+                    status="error",
+                    output=f"工具结果无法写入可靠性账本: {exc}",
+                    final_arguments=final_arguments,
+                    extra_messages=extra_messages,
+                    pre_hook_trace=pre_trace,
+                    post_hook_trace=post_trace,
+                )
 
         try:
             # post_tool_use 只做观察和补充信息，不回写执行参数。
@@ -160,6 +224,7 @@ class ToolExecutor:
         self,
         request: ToolExecutionRequest,
     ) -> ToolExecutionResult:
+        request = replace(request, is_preflight=True)
         current_arguments = dict(request.arguments)
         extra_messages: list[str] = []
         pre_trace: list[HookTraceItem] = []
@@ -186,6 +251,28 @@ class ToolExecutor:
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
             )
+        if self._governor is not None:
+            try:
+                authorization = self._governor.authorize(
+                    request,
+                    dict(current_arguments),
+                )
+            except Exception as exc:
+                return ToolExecutionResult(
+                    status="error",
+                    output=f"工具授权失败: {exc}",
+                    final_arguments=dict(current_arguments),
+                    extra_messages=extra_messages,
+                    pre_hook_trace=pre_trace,
+                )
+            if not authorization.allowed:
+                return ToolExecutionResult(
+                    status="denied",
+                    output=authorization.message,
+                    final_arguments=dict(current_arguments),
+                    extra_messages=extra_messages,
+                    pre_hook_trace=pre_trace,
+                )
         return ToolExecutionResult(
             status="success",
             output="",

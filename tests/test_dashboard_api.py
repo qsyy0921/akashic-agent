@@ -916,7 +916,7 @@ def test_dashboard_lists_installed_plugin_panels(tmp_path, monkeypatch) -> None:
     manifest_path = home / ".akashic-plugin" / "manifest.toml"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text('[plugins."status_commands@github"]\nenabled = true\n', encoding="utf-8")
-    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("AKASHIC_PLUGIN_HOME", str(home / ".akashic-plugin"))
 
     with TestClient(create_dashboard_app(tmp_path)) as client:
         plugins = client.get("/api/dashboard/plugins").json()
@@ -943,7 +943,7 @@ def test_standalone_dashboard_honors_builtin_plugin_manifest(
         '[plugins.akasha]\nenabled = false\n',
         encoding="utf-8",
     )
-    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("AKASHIC_PLUGIN_HOME", str(home / ".akashic-plugin"))
 
     plugins = _dashboard_plugin_dirs(Path.cwd())
 
@@ -958,7 +958,7 @@ def test_standalone_dashboard_rejects_invalid_manifest(
     manifest_path = home / ".akashic-plugin" / "manifest.toml"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text("invalid = [\n", encoding="utf-8")
-    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("AKASHIC_PLUGIN_HOME", str(home / ".akashic-plugin"))
 
     with pytest.raises(tomllib.TOMLDecodeError):
         _dashboard_plugin_dirs(Path.cwd())
@@ -990,7 +990,7 @@ def test_installed_plugin_dashboard_supports_relative_imports(tmp_path, monkeypa
     manifest_path = home / ".akashic-plugin" / "manifest.toml"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text('[plugins."observe@github"]\nenabled = true\n', encoding="utf-8")
-    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("AKASHIC_PLUGIN_HOME", str(home / ".akashic-plugin"))
 
     with TestClient(create_dashboard_app(tmp_path)) as client:
         response = client.get("/api/dashboard/test-relative-import")

@@ -7,6 +7,8 @@ import threading
 from pathlib import Path
 from typing import Protocol, cast
 
+import pytest
+
 from agent.skills import SkillsLoader
 
 
@@ -99,6 +101,7 @@ def _write_frame(stream: _FrameStream, payload: dict[str, object]) -> None:
     stream.flush()
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="raw_jsonrpc_uds is POSIX-only")
 def test_raw_client_buffers_terminal_arriving_before_turn_response(tmp_path: Path) -> None:
     endpoint = tmp_path / "fake-akashic.sock"
     ready = threading.Event()

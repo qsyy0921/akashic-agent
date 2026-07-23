@@ -7,6 +7,7 @@
 | Plan | Title | Priority | Effort | Depends on | Status |
 |---|---|---|---|---|---|
 | 001 | 以验证门禁完成全插件热重载 | P1 | L | — | DONE |
+| 002 | vNext 本地集成：最新上游、Terra、GPT 生图与路由 | P0 | XL | 001 | IN PROGRESS |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED | REJECTED
 

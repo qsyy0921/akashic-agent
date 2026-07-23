@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 import json
+import os
 from pathlib import Path
 import stat
 from threading import Barrier
@@ -21,19 +22,23 @@ def test_load_json_defaults_only_for_missing_file(tmp_path) -> None:
 
 def test_atomic_save_json_uses_isolated_temp_files(monkeypatch, tmp_path) -> None:
     path = tmp_path / "state.json"
-    replace_barrier = Barrier(2)
-    original_replace = Path.replace
+    create_barrier = Barrier(2)
+    original_create = json_store._create_atomic_temp
+    created: list[Path] = []
 
-    def synchronized_replace(source: Path, target: Path) -> Path:
-        replace_barrier.wait(timeout=5)
-        return original_replace(source, target)
+    def synchronized_create(target: Path) -> tuple[int, Path]:
+        fd, temporary = original_create(target)
+        created.append(temporary)
+        create_barrier.wait(timeout=5)
+        return fd, temporary
 
-    monkeypatch.setattr(Path, "replace", synchronized_replace)
+    monkeypatch.setattr(json_store, "_create_atomic_temp", synchronized_create)
     payloads = ({"writer": "a"}, {"writer": "b"})
     with ThreadPoolExecutor(max_workers=2) as executor:
         list(executor.map(lambda payload: atomic_save_json(path, payload), payloads))
 
     assert json.loads(path.read_text(encoding="utf-8")) in payloads
+    assert len(set(created)) == 2
     assert list(tmp_path.glob("state.json.*.tmp")) == []
 
 
@@ -96,6 +101,8 @@ def test_atomic_save_json_cleans_temp_after_file_fsync_failure(
 def test_atomic_save_json_directory_fsync_failure_keeps_new_target_visible(
     monkeypatch, tmp_path
 ) -> None:
+    if not hasattr(os, "O_DIRECTORY"):
+        pytest.skip("directory fsync is not available on this platform")
     path = tmp_path / "state.json"
     path.write_text('{"version": "old"}', encoding="utf-8")
     calls = 0
@@ -145,7 +152,8 @@ def test_atomic_write_text_preserves_permissions_and_new_file_umask(tmp_path) ->
     atomic_write_text(existing, "\ufeffleft\r\nright\n")
 
     assert existing.read_bytes() == "\ufeffleft\r\nright\n".encode("utf-8")
-    assert stat.S_IMODE(existing.stat().st_mode) == 0o751
+    if os.name != "nt":
+        assert stat.S_IMODE(existing.stat().st_mode) == 0o751
 
     control = tmp_path / "control.txt"
     control.write_text("content", encoding="utf-8")

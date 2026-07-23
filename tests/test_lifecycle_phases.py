@@ -1467,9 +1467,22 @@ async def test_after_reasoning_collects_persist_and_outbound_slots():
         for index, persisted in enumerate(messages):
             persisted["id"] = f"{current.key}:{index}"
 
+    async def append_messages_with_outbound(current, messages, draft):
+        await append_messages(current, messages)
+        metadata = dict(draft.metadata)
+        metadata["persisted_user_message_id"] = messages[0]["id"]
+        metadata["client_message_id"] = messages[0]["client_message_id"]
+        return SimpleNamespace(
+            metadata=metadata,
+            session_message_id=messages[-1]["id"],
+        )
+
     services = SimpleNamespace(
         presence=Mock(),
-        session_manager=SimpleNamespace(append_messages=append_messages),
+        session_manager=SimpleNamespace(
+            append_messages=append_messages,
+            append_messages_with_outbound=append_messages_with_outbound,
+        ),
     )
     turn_result = TurnRunResult(
         reply="reply",

@@ -4,6 +4,7 @@ import json
 import os
 import secrets
 import signal
+import socket
 import subprocess
 import sys
 import threading
@@ -13,6 +14,12 @@ from pathlib import Path
 from types import FrameType
 from typing import IO
 from uuid import uuid4
+
+from core.common.file_lock import (
+    acquire_file_lock,
+    release_file_lock,
+    write_lock_owner,
+)
 
 
 RESTART_EXIT_CODE = 75
@@ -28,27 +35,25 @@ class _SupervisorLock:
         self._stream: IO[str] | None = None
 
     def acquire(self) -> None:
-        import fcntl
-
         self.path.parent.mkdir(parents=True, exist_ok=True)
         stream = self.path.open("a+", encoding="utf-8")
         try:
-            fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            acquire_file_lock(stream, blocking=False)
         except OSError as exc:
             stream.close()
             raise RuntimeError(f"workspace supervisor 已在运行: {self.path}") from exc
-        stream.seek(0)
-        stream.truncate()
-        stream.write(str(os.getpid()))
-        stream.flush()
+        try:
+            write_lock_owner(stream, str(os.getpid()))
+        except Exception:
+            release_file_lock(stream)
+            stream.close()
+            raise
         temporary = self.pid_path.with_name(f".{self.pid_path.name}.{os.getpid()}.tmp")
         temporary.write_text(str(os.getpid()), encoding="utf-8")
         os.replace(temporary, self.pid_path)
         self._stream = stream
 
     def release(self) -> None:
-        import fcntl
-
         stream = self._stream
         self._stream = None
         if stream is None:
@@ -58,7 +63,7 @@ class _SupervisorLock:
                 encoding="utf-8"
             ).strip() == str(os.getpid()):
                 self.pid_path.unlink()
-            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+            release_file_lock(stream)
         finally:
             stream.close()
 
@@ -69,6 +74,81 @@ class _ChildResult:
     ready: bool
     commit_valid: bool
     settings_generation: int = 0
+
+
+class _CommitReader:
+    def read_available(self, buffer: bytearray) -> None:
+        raise NotImplementedError
+
+    def close(self) -> None:
+        raise NotImplementedError
+
+
+class _PipeCommitReader(_CommitReader):
+    def __init__(self, fd: int) -> None:
+        self._fd = fd
+
+    def read_available(self, buffer: bytearray) -> None:
+        _read_available(self._fd, buffer)
+
+    def close(self) -> None:
+        fd = self._fd
+        self._fd = -1
+        if fd >= 0:
+            os.close(fd)
+
+
+class _LoopbackCommitReader(_CommitReader):
+    def __init__(self, listener: socket.socket) -> None:
+        self._listener = listener
+        self._connections: list[socket.socket] = []
+
+    def read_available(self, buffer: bytearray) -> None:
+        while True:
+            try:
+                connection, _ = self._listener.accept()
+            except BlockingIOError:
+                break
+            connection.setblocking(False)
+            self._connections.append(connection)
+        for connection in tuple(self._connections):
+            while True:
+                try:
+                    chunk = connection.recv(4096)
+                except BlockingIOError:
+                    break
+                if not chunk:
+                    connection.close()
+                    self._connections.remove(connection)
+                    break
+                buffer.extend(chunk)
+
+    def close(self) -> None:
+        for connection in self._connections:
+            connection.close()
+        self._connections.clear()
+        self._listener.close()
+
+
+def _create_commit_transport() -> tuple[_CommitReader, dict[str, str], int | None]:
+    if os.name == "nt":
+        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(4)
+        listener.setblocking(False)
+        host, port = listener.getsockname()[:2]
+        return (
+            _LoopbackCommitReader(listener),
+            {"AKASHIC_RESTART_COMMIT_ENDPOINT": f"{host}:{port}"},
+            None,
+        )
+    read_fd, write_fd = os.pipe()
+    os.set_blocking(read_fd, False)
+    return (
+        _PipeCommitReader(read_fd),
+        {"AKASHIC_RESTART_COMMIT_FD": str(write_fd)},
+        write_fd,
+    )
 
 
 class _SettingsRestartBridge:
@@ -172,15 +252,14 @@ def run_supervisor(
                     return 0
             boot_id = uuid4().hex
             nonce = secrets.token_hex(32)
-            read_fd, write_fd = os.pipe()
-            os.set_blocking(read_fd, False)
+            commit_reader, commit_env, write_fd = _create_commit_transport()
             env = os.environ.copy()
             env.update(
                 {
                     "AKASHIC_SUPERVISED": "1",
                     "AKASHIC_BOOT_ID": boot_id,
-                    "AKASHIC_RESTART_COMMIT_FD": str(write_fd),
                     "AKASHIC_RESTART_NONCE": nonce,
+                    **commit_env,
                 }
             )
             argv = [
@@ -194,41 +273,55 @@ def run_supervisor(
             ]
             # 2. 屏蔽 stop handler，直到 Popen 返回且 child 所有权已建立。
             spawn_blocked = False
-            previous_mask = signal.pthread_sigmask(
-                signal.SIG_BLOCK,
-                stop_signals,
-            )
             try:
-                pending_stops = signal.sigpending() & stop_signals
-                if stopping_signal is not None or pending_stops:
-                    spawn_blocked = True
-                else:
-                    def restore_child_signal_mask() -> None:
-                        signal.pthread_sigmask(
-                            signal.SIG_SETMASK,
-                            previous_mask,
-                        )
-
-                    try:
+                if os.name == "nt":
+                    if stopping_signal is not None:
+                        spawn_blocked = True
+                    else:
                         child = subprocess.Popen(
                             argv,
                             cwd=project_root,
                             env=env,
-                            pass_fds=(write_fd,),
-                            # supervisor 单线程；exec 前只恢复继承的 signal mask。
-                            preexec_fn=restore_child_signal_mask,
+                            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
                         )
-                    except BaseException:
-                        os.close(read_fd)
-                        raise
+                else:
+                    assert write_fd is not None
+                    previous_mask = signal.pthread_sigmask(
+                        signal.SIG_BLOCK,
+                        stop_signals,
+                    )
+                    try:
+                        pending_stops = signal.sigpending() & stop_signals
+                        if stopping_signal is not None or pending_stops:
+                            spawn_blocked = True
+                        else:
+                            def restore_child_signal_mask() -> None:
+                                signal.pthread_sigmask(
+                                    signal.SIG_SETMASK,
+                                    previous_mask,
+                                )
+
+                            child = subprocess.Popen(
+                                argv,
+                                cwd=project_root,
+                                env=env,
+                                pass_fds=(write_fd,),
+                                # supervisor 单线程；exec 前只恢复继承的 signal mask。
+                                preexec_fn=restore_child_signal_mask,
+                            )
+                    finally:
+                        _ = signal.pthread_sigmask(
+                            signal.SIG_SETMASK,
+                            previous_mask,
+                        )
+            except BaseException:
+                commit_reader.close()
+                raise
             finally:
-                _ = signal.pthread_sigmask(
-                    signal.SIG_SETMASK,
-                    previous_mask,
-                )
-                os.close(write_fd)
+                if write_fd is not None:
+                    os.close(write_fd)
             if spawn_blocked:
-                os.close(read_fd)
+                commit_reader.close()
                 return 0
 
             # 3. pending signal 恢复时 child 已有唯一 owner，可精确转发并收束。
@@ -240,12 +333,12 @@ def run_supervisor(
                 ):
                     child.send_signal(stopping_signal)
                 child.wait()
-                os.close(read_fd)
+                commit_reader.close()
                 child = None
                 return 0
             result = _wait_child(
                 child,
-                read_fd=read_fd,
+                commit_reader=commit_reader,
                 workspace=workspace,
                 boot_id=boot_id,
                 nonce=nonce,
@@ -286,7 +379,8 @@ def run_supervisor(
 def _wait_child(
     child: subprocess.Popen[bytes],
     *,
-    read_fd: int,
+    read_fd: int | None = None,
+    commit_reader: _CommitReader | None = None,
     workspace: Path,
     boot_id: str,
     nonce: str,
@@ -296,6 +390,12 @@ def _wait_child(
 ) -> _ChildResult:
     """等待 child 退出，同时验证 readiness 与唯一 commit frame。"""
 
+    if (read_fd is None) == (commit_reader is None):
+        raise ValueError("_wait_child requires exactly one commit reader")
+    reader = commit_reader
+    if reader is None:
+        assert read_fd is not None
+        reader = _PipeCommitReader(read_fd)
     settings_bridge = settings_bridge or _SettingsRestartBridge(readiness_timeout_s)
     readiness_path = workspace / ".runtime-ready.json"
     deadline = time.monotonic() + readiness_timeout_s
@@ -304,7 +404,7 @@ def _wait_child(
     buffer = bytearray()
     try:
         while child.poll() is None:
-            _read_available(read_fd, buffer)
+            reader.read_available(buffer)
             if not ready:
                 ready = _matches_readiness(
                     readiness_path,
@@ -331,9 +431,12 @@ def _wait_child(
                 report_settings_generation = 0
             if ready and settings_generation == 0 and settings_bridge.request_event.is_set():
                 settings_generation = settings_bridge.take_request()
-                child.send_signal(signal.SIGUSR2)
+                if os.name == "nt":
+                    child.send_signal(subprocess.CTRL_BREAK_EVENT)
+                else:
+                    child.send_signal(signal.SIGUSR2)
             time.sleep(0.02)
-        _read_available(read_fd, buffer)
+        reader.read_available(buffer)
         if not ready:
             ready = _matches_readiness(
                 readiness_path,
@@ -349,7 +452,7 @@ def _wait_child(
             settings_generation or report_settings_generation,
         )
     finally:
-        os.close(read_fd)
+        reader.close()
 
 
 def _read_available(fd: int, buffer: bytearray) -> None:
@@ -370,7 +473,20 @@ def _matches_readiness(path: Path, *, boot_id: str, pid: int) -> bool:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return False
-    return payload == {"bootId": boot_id, "pid": pid, "state": "ready"}
+    direct = {"bootId": boot_id, "pid": pid, "state": "ready"}
+    if payload == direct:
+        return True
+    if os.name != "nt" or not isinstance(payload, dict):
+        return False
+    runtime_pid = payload.get("pid")
+    return (
+        set(payload) == {"bootId", "pid", "parentPid", "state"}
+        and payload.get("bootId") == boot_id
+        and payload.get("parentPid") == pid
+        and isinstance(runtime_pid, int)
+        and runtime_pid > 0
+        and payload.get("state") == "ready"
+    )
 
 
 def _valid_commit(payload: bytes, *, boot_id: str, nonce: str) -> bool:

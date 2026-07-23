@@ -935,7 +935,9 @@ async def test_app_runtime_start_passes_markdown_store_to_memory_optimizer(
     )
     core = SimpleNamespace(
         loop=SimpleNamespace(run=lambda: "loop-task"),
-        bus=SimpleNamespace(dispatch_outbound=lambda: "bus-task"),
+        bus=SimpleNamespace(
+            disable_ephemeral_outbound=lambda: None,
+        ),
         event_bus=EventBus(),
         tools=MagicMock(),
         push_tool=MagicMock(),
@@ -945,6 +947,9 @@ async def test_app_runtime_start_passes_markdown_store_to_memory_optimizer(
         light_provider=MagicMock(),
         memory_runtime=memory_runtime,
         presence=MagicMock(),
+            outbound_port=MagicMock(),
+            delivery_supervisor=SimpleNamespace(run=lambda: "delivery-task"),
+            tool_governor=MagicMock(),
             peer_process_manager=None,
             peer_poller=None,
             workspace_mcp_watcher_task=None,

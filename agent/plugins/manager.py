@@ -2084,6 +2084,13 @@ class PluginManager:
             if generation.mcp_catalog is None:
                 continue
             for server in generation.mcp_catalog.servers.values():
+                server_spec = generation.contributions.mcp_servers.get(server.name)
+                output_kinds = (
+                    ("image", "text")
+                    if server_spec is not None
+                    and server_spec.get("media_output_roots")
+                    else ("text",)
+                )
                 for tool in server.tools:
                     if registry.has_tool(tool.name):
                         raise RuntimeError(f"MCP 工具名称重复: {tool.name}")
@@ -2092,6 +2099,7 @@ class PluginManager:
                         risk="external-side-effect",
                         source_type="mcp",
                         source_name=server.name,
+                        output_kinds=output_kinds,
                     )
         if workspace_mcp is not None:
             for server in workspace_mcp.catalog.servers.values():
@@ -3015,6 +3023,7 @@ def _resolve_mcp_servers(
 ) -> dict[str, dict[str, Any]]:
     servers: dict[str, dict[str, Any]] = {}
     plugin_root = plugin_dir.resolve(strict=False)
+    workspace_root = workspace.resolve(strict=False)
     for spec in declared:
         if not isinstance(spec, McpServerSpec) or not spec.name or not spec.command:
             raise RuntimeError(f"插件 MCP server 声明无效: {spec!r}")
@@ -3027,6 +3036,45 @@ def _resolve_mcp_servers(
             raise RuntimeError(f"插件 MCP env 声明无效: {spec.name}")
         if spec.name in servers:
             raise RuntimeError(f"插件 MCP server 名称重复: {spec.name}")
+        timeout = spec.call_timeout_seconds
+        if (
+            isinstance(timeout, bool)
+            or not isinstance(timeout, (int, float))
+            or not 0 < float(timeout) <= 600
+        ):
+            raise RuntimeError(f"插件 MCP call timeout 声明无效: {spec.name}")
+        if not isinstance(spec.media_output_roots, tuple):
+            raise RuntimeError(f"插件 MCP media roots 声明无效: {spec.name}")
+        media_output_roots: list[str] = []
+        seen_media_roots: set[Path] = set()
+        for raw_root in spec.media_output_roots:
+            if not isinstance(raw_root, str) or not raw_root.strip():
+                raise RuntimeError(f"插件 MCP media root 声明无效: {spec.name}")
+            relative_root = Path(raw_root.strip())
+            if (
+                relative_root.is_absolute()
+                or bool(relative_root.drive)
+                or relative_root == Path(".")
+                or ".." in relative_root.parts
+            ):
+                raise RuntimeError(
+                    f"插件 MCP media root 必须是 workspace 内相对路径: {spec.name}"
+                )
+            resolved_root = (workspace_root / relative_root).resolve(strict=False)
+            try:
+                _ = resolved_root.relative_to(workspace_root)
+            except ValueError as exc:
+                raise RuntimeError(
+                    f"插件 MCP media root 越界: {spec.name}"
+                ) from exc
+            if resolved_root == workspace_root:
+                raise RuntimeError(
+                    f"插件 MCP media root 不能是 workspace 根目录: {spec.name}"
+                )
+            if resolved_root in seen_media_roots:
+                raise RuntimeError(f"插件 MCP media root 重复: {spec.name}")
+            seen_media_roots.add(resolved_root)
+            media_output_roots.append(str(resolved_root))
         command = [
             _resolve_command_item(plugin_root, item, executable=index == 0)
             for index, item in enumerate(spec.command)
@@ -3050,7 +3098,14 @@ def _resolve_mcp_servers(
                 venv_python = _venv_python(runtime_root / ".venv")
                 if venv_python.exists():
                     command[0] = str(venv_python)
-        servers[spec.name] = {"command": command, "env": env, "cwd": cwd}
+        servers[spec.name] = {
+            "command": command,
+            "env": env,
+            "cwd": cwd,
+            "call_timeout_seconds": float(timeout),
+            "media_output_roots": media_output_roots,
+            "media_workspace_root": str(workspace_root),
+        }
     return servers
 
 
@@ -3191,7 +3246,9 @@ class _PluginToolHook(ToolHook):
             arguments=dict(ctx.current_arguments),
             call_id=ctx.request.call_id,
             source=ctx.request.source,
+            turn_id=ctx.request.turn_id,
             request_text=ctx.request.request_text,
+            is_preflight=ctx.request.is_preflight,
             tool_batch=ctx.request.tool_batch,
             tool_batch_index=ctx.request.tool_batch_index,
         )

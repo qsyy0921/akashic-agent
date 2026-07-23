@@ -9,7 +9,7 @@ from agent.core.runtime_support import LLMServices, ToolDiscoveryState
 from agent.lifecycle.types import AfterStepCtx
 from agent.looping.ports import LLMConfig
 from agent.provider import LLMResponse, ToolCall
-from agent.tools.base import Tool
+from agent.tools.base import Tool, ToolResult
 from agent.tools.registry import ToolRegistry
 from agent.tools.request_user_confirmation import RequestUserConfirmationTool
 from agent.tools.tool_search import ToolSearchTool
@@ -77,6 +77,15 @@ class _InflateTool(Tool):
         return f"payload-{kwargs.get('value', '')}-" + ("x" * 2400)
 
 
+class _MediaTool(Tool):
+    name = "media_tool"
+    description = "media tool"
+    parameters = {"type": "object", "properties": {}, "required": []}
+
+    async def execute(self, **kwargs: Any) -> ToolResult:
+        return ToolResult(text="generated", media=["a.png", "a.png", "b.png"])
+
+
 class _Provider:
     def __init__(self, responses: list[LLMResponse]) -> None:
         self._responses = list(responses)
@@ -140,6 +149,44 @@ def test_default_reasoner_runs_tool_loop_and_returns_reasoner_result():
     assert react_stats["cache_hit_tokens"] == 100
     first_messages = provider.calls[0]["messages"]
     assert not any("未加载工具目录" in str(m.get("content", "")) for m in first_messages)
+
+
+def test_default_reasoner_carries_successful_tool_media_once():
+    provider = _Provider(
+        [
+            LLMResponse(
+                content="",
+                tool_calls=[ToolCall("c1", "media_tool", {})],
+            ),
+            LLMResponse(content="done", tool_calls=[]),
+        ]
+    )
+    tools = ToolRegistry()
+    tools.register(_MediaTool(), always_on=True)
+    reasoner = DefaultReasoner(
+        llm=cast(
+            Any,
+            LLMServices(
+                provider=cast(Any, provider),
+                light_provider=cast(Any, provider),
+            ),
+        ),
+        llm_config=LLMConfig(model="m", max_iterations=4, max_tokens=512),
+        tools=tools,
+        discovery=ToolDiscoveryState(),
+        tool_search_enabled=False,
+        memory_window=40,
+    )
+
+    result = asyncio.run(
+        reasoner.run(
+            [{"role": "user", "content": "generate"}],
+            request_text="帮我画一张图",
+        )
+    )
+
+    assert result.reply == "done"
+    assert result.metadata["media"] == ["a.png", "b.png"]
 
 
 def test_request_confirmation_tool_produces_explicit_runtime_attention():

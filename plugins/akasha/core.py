@@ -153,6 +153,11 @@ def _load_jieba() -> ModuleType:
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
+            category=SyntaxWarning,
+            module=r"^jieba(?:\.|$)",
+        )
+        warnings.filterwarnings(
+            "ignore",
             message=r"^pkg_resources is deprecated as an API\.",
             category=UserWarning,
         )

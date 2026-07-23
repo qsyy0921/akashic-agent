@@ -45,6 +45,16 @@ def _sha256_bytes(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
+def _git_bytes(*arguments: str) -> bytes | None:
+    result = subprocess.run(
+        ["git", *arguments],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
 def _authorized_repairs(base: str) -> dict[str, tuple[str, str]]:
     """读取本 diff 新增的精确 hash 修复声明。"""
 
@@ -68,18 +78,13 @@ def _authorized_repairs(base: str) -> dict[str, tuple[str, str]]:
 
 
 def _matches_repair(base: str, path: str, hashes: tuple[str, str]) -> bool:
-    base_content = subprocess.run(
-        ["git", "show", f"{base}:{path}"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        check=False,
-    )
-    if base_content.returncode != 0:
+    base_content = _git_bytes("show", f"{base}:{path}")
+    head_content = _git_bytes("show", f"HEAD:{path}")
+    if base_content is None or head_content is None:
         return False
-    current = Path(path)
-    return current.is_file() and hashes == (
-        _sha256_bytes(base_content.stdout),
-        _sha256_bytes(current.read_bytes()),
+    return hashes == (
+        _sha256_bytes(base_content),
+        _sha256_bytes(head_content),
     )
 
 

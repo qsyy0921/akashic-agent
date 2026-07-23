@@ -9,8 +9,12 @@ from agent.tool_hooks.base import ToolHook
 from agent.tools.base import Tool
 from agent.tools.registry import ToolRegistry
 import logging
+from typing import TYPE_CHECKING
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from agent.tool_governance import ToolGovernor
 
 
 class SpawnTool(Tool):
@@ -28,6 +32,9 @@ class SpawnTool(Tool):
 
     def add_tool_hooks(self, hooks: list[ToolHook]) -> None:
         self._manager.add_tool_hooks(hooks)
+
+    def set_tool_governor(self, governor: "ToolGovernor | None") -> None:
+        self._manager.set_tool_governor(governor)
 
     async def shutdown(self) -> None:
         await self._manager.shutdown()

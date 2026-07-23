@@ -214,11 +214,12 @@ def test_main_help_does_not_start_runtime() -> None:
     result = subprocess.run(
         [sys.executable, "main.py", "--help"],
         cwd=Path(__file__).parents[1],
-        check=True,
+        check=False,
         capture_output=True,
         text=True,
     )
 
+    assert result.returncode == 0, result.stderr
     assert "用法: python main.py" in result.stdout
     assert "Agent 已启动" not in result.stdout
 
@@ -233,6 +234,7 @@ def test_workspace_selection_prefers_cli_then_env_then_config(
         encoding="utf-8",
     )
     monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
     monkeypatch.delenv("AKASHIC_WORKSPACE", raising=False)
 
     assert main._workspace_from_args([], config_path) == (
@@ -259,6 +261,7 @@ def test_workspace_selection_uses_default_only_for_bootstrap(
 ) -> None:
     config_path = tmp_path / "missing.toml"
     monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
     monkeypatch.delenv("AKASHIC_WORKSPACE", raising=False)
 
     assert main._workspace_from_args(
@@ -403,6 +406,7 @@ async def test_serve_smoke_loads_config_and_runs_shutdown(monkeypatch, tmp_path)
         agent_loop = runtime.loop
         bus = runtime.bus
         scheduler = runtime.scheduler
+        delivery_supervisor = runtime.delivery_supervisor
 
         async def _agent_loop_run():
             return None
@@ -421,6 +425,7 @@ async def test_serve_smoke_loads_config_and_runs_shutdown(monkeypatch, tmp_path)
         )
         bus.dispatch_outbound = _bus_dispatch_outbound  # type: ignore[assignment]
         scheduler.run = _scheduler_run  # type: ignore[assignment]
+        delivery_supervisor.run = _scheduler_run  # type: ignore[assignment]
         observed["scheduler"] = scheduler
         observed["bus"] = bus
         observed["http_resources"] = http_resources

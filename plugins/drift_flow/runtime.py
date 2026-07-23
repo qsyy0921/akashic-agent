@@ -30,6 +30,7 @@ from agent.prompting import (
     build_context_frame_content,
     build_context_frame_message,
 )
+from agent.tool_governance import ToolGovernor
 from agent.tool_hooks import ToolExecutionRequest, ToolExecutor
 from agent.tool_hooks.base import ToolHook
 from bus.events_lifecycle import DriftFinished
@@ -52,6 +53,11 @@ _AFTER_SEND_TOOLS = frozenset({"finish_drift"})
 _TOOL_CONSTRAINT_RETRY_LIMIT = 2
 
 
+def _registry_tool_risk(registry: Any, tool_name: str) -> str:
+    meta = registry.get_tool_meta(tool_name)
+    return meta.risk if meta is not None else "unclassified"
+
+
 # ── Pipeline 依赖容器 ─────────────────────────────────────────────────────
 
 @dataclass
@@ -61,6 +67,7 @@ class DriftTurnPipelineDeps:
     max_steps: int = 20
     step_recorder: StepRecorder | None = None
     tool_hooks: list[ToolHook] = field(default_factory=list)
+    tool_governor: ToolGovernor | None = None
 
 
 # ── 主 Pipeline ─────────────────────────────────────────────────────────
@@ -87,7 +94,10 @@ class DriftTurnPipeline:
         self._tool_deps = deps.tool_deps
         self._max_steps = deps.max_steps
         self.step_recorder = deps.step_recorder
-        self._tool_executor = ToolExecutor(deps.tool_hooks)
+        self._tool_executor = ToolExecutor(
+            deps.tool_hooks,
+            governor=deps.tool_governor,
+        )
 
     # ── 入口 ──────────────────────────────────────────────────────────
 
@@ -294,6 +304,8 @@ class DriftTurnPipeline:
                     arguments=tool_args,
                     source="proactive",
                     session_key=ctx.session_key,
+                    turn_id=ctx.tick_id,
+                    risk=_registry_tool_risk(tools, tool_name),
                 ),
                 tools.execute,
             )
@@ -435,6 +447,8 @@ class DriftTurnPipeline:
                     arguments=tool_args,
                     source="proactive",
                     session_key=ctx.session_key,
+                    turn_id=ctx.tick_id,
+                    risk=_registry_tool_risk(tools, tool_name),
                 ),
                 tools.execute,
             )

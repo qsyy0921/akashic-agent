@@ -258,6 +258,8 @@ class PreToolCtx:
     arguments: dict[str, Any]
     call_id: str = ""
     source: str = ""
+    turn_id: str = ""
     request_text: str = ""
+    is_preflight: bool = False
     tool_batch: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     tool_batch_index: int = 0

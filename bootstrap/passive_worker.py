@@ -8,6 +8,7 @@ from agent.control.errors import RuntimeClosedError, ThreadBusyError
 from agent.control.models import TurnRequest, TurnStatus
 from agent.control.runtime import ConversationRuntime
 from agent.looping.core import AgentLoop
+from agent.turns.outbound import DurableOutboundPort, OutboundDispatch
 from bus.events import InboundMessage, OutboundMessage
 from bus.queue import MessageBus
 
@@ -17,10 +18,17 @@ logger = logging.getLogger(__name__)
 class PassiveMessageWorker:
     """把渠道入站消息转换为 ConversationRuntime turn。"""
 
-    def __init__(self, bus: MessageBus, runtime: ConversationRuntime, legacy_loop: AgentLoop) -> None:
+    def __init__(
+        self,
+        bus: MessageBus,
+        runtime: ConversationRuntime,
+        legacy_loop: AgentLoop,
+        durable_outbound: DurableOutboundPort | None = None,
+    ) -> None:
         self._bus = bus
         self._runtime = runtime
         self._legacy_loop = legacy_loop
+        self._durable_outbound = durable_outbound
         self._running = False
         self._lane_queues: dict[str, asyncio.Queue[InboundMessage | object]] = {}
         self._lane_tasks: dict[str, asyncio.Task[None]] = {}
@@ -96,6 +104,7 @@ class PassiveMessageWorker:
                     "sender": item.sender,
                     "media": list(item.media),
                     "inboundMetadata": dict(item.metadata),
+                    "dispatchOutbound": self._durable_outbound is not None,
                 },
             )
             while True:
@@ -105,12 +114,11 @@ class PassiveMessageWorker:
                 except ThreadBusyError:
                     continue
                 except RuntimeClosedError:
-                    await self._bus.publish_outbound(
-                        OutboundMessage(
-                            channel=item.channel,
-                            chat_id=item.chat_id,
-                            content="服务正在重启，请稍后重发这条消息。",
-                        )
+                    await self._dispatch_error(
+                        item,
+                        content="服务正在重启，请稍后重发这条消息。",
+                        turn_id=None,
+                        reason_code="runtime_closed",
                     )
                     return
                 break
@@ -133,12 +141,16 @@ class PassiveMessageWorker:
                     control_turn_id=handle.id,
                     session_message_id=cast(str | None, data.get("sessionMessageId")),
                 )
+                if self._durable_outbound is not None:
+                    return
             elif result.status is TurnStatus.FAILED:
-                outbound = OutboundMessage(
-                    channel=item.channel,
-                    chat_id=item.chat_id,
+                await self._dispatch_error(
+                    item,
                     content="处理消息时出错，请稍后再试。",
+                    turn_id=handle.id,
+                    reason_code="turn_failed",
                 )
+                return
             else:
                 return
             await self._bus.publish_outbound(outbound)
@@ -150,6 +162,35 @@ class PassiveMessageWorker:
                     self._legacy_loop.session_manager.release_admission(
                         item.session_admission_id
                     )
+
+    async def _dispatch_error(
+        self,
+        item: InboundMessage,
+        *,
+        content: str,
+        turn_id: str | None,
+        reason_code: str,
+    ) -> None:
+        if self._durable_outbound is None:
+            await self._bus.publish_outbound(
+                OutboundMessage(
+                    channel=item.channel,
+                    chat_id=item.chat_id,
+                    content=content,
+                )
+            )
+            return
+        _ = await self._durable_outbound.submit_standalone(
+            OutboundDispatch(
+                channel=item.channel,
+                chat_id=item.chat_id,
+                content=content,
+            ),
+            session_key=item.session_key,
+            turn_id=turn_id,
+            reason_code=reason_code,
+            lane="passive",
+        )
 
     def stop(self) -> None:
         self._running = False

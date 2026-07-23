@@ -82,6 +82,8 @@ if TYPE_CHECKING:
     from agent.core.runtime_support import SessionLike, TurnRunResult
     from agent.looping.ports import LLMConfig, LLMServices, SessionServices
     from agent.retrieval.protocol import MemoryRetrievalPipeline
+    from agent.routing.advisor import TurnRouteAdvisor
+    from agent.tool_governance import ToolGovernor
     from agent.tool_hooks.base import ToolHook
     from agent.tools.registry import ToolRegistry
     from session.manager import SessionManager
@@ -838,6 +840,7 @@ class Reasoner(ABC):
         tool_event_session_key: str = "",
         tool_event_channel: str = "",
         tool_event_chat_id: str = "",
+        request_text: str = "",
         disabled_tools: set[str] | None = None,
     ) -> ReasonerResult:
         """执行多轮 tool loop，并返回本轮结果。"""
@@ -897,6 +900,8 @@ class DefaultReasoner(Reasoner):
         session_manager: "SessionManager | None" = None,
         event_bus: "EventBus | None" = None,
         non_preloadable_names: Callable[[], set[str]] | None = None,
+        route_advisor: "TurnRouteAdvisor | None" = None,
+        tool_governor: "ToolGovernor | None" = None,
     ) -> None:
         self._llm = llm
         self._llm_config = llm_config
@@ -908,6 +913,7 @@ class DefaultReasoner(Reasoner):
         self._session_manager = session_manager
         self._event_bus = event_bus
         self._non_preloadable_names = non_preloadable_names or set
+        self._route_advisor = route_advisor
         self._prompt_render_plugin_modules: list[object] = []
         self._before_step_plugin_modules: list[object] = []
         self._after_step_plugin_modules: list[object] = []
@@ -922,7 +928,7 @@ class DefaultReasoner(Reasoner):
             str,
             Phase[PromptRenderInput, PromptRenderResult, PromptRenderFrame],
         ] | None = None
-        self._tool_executor = ToolExecutor([])
+        self._tool_executor = ToolExecutor([], governor=tool_governor)
         self._stream_sink_factory: Callable[
             [object], Callable[[dict[str, str] | str], Awaitable[None]] | None
         ] | None = None
@@ -1104,6 +1110,7 @@ class DefaultReasoner(Reasoner):
             else get_history_since_consolidated(session, self._memory_window)
         )
         total_history = len(source_history)
+        disabled_tools = _disabled_tools_from_msg(msg)
         preloaded: set[str] | None = None
         preloaded_order: list[str] = []
         if self._tool_search_enabled:
@@ -1113,10 +1120,65 @@ class DefaultReasoner(Reasoner):
                 "[tool_search] LRU preloaded=%s",
                 preloaded_order if preloaded_order else "[]",
             )
+        if self._route_advisor is not None:
+            from agent.routing.advisor import (
+                route_advice_trace_payload,
+                validate_route_advice,
+            )
+            from agent.routing.context import RouteContextBuilder
+            from agent.routing.contracts import RouteRequest
+
+            snapshot = get_current_runtime_snapshot()
+            runtime_snapshot_id = (
+                snapshot.snapshot_id if snapshot is not None else "static-runtime"
+            )
+            routing_history = source_history
+            if (
+                routing_history
+                and routing_history[-1].get("role") == "user"
+                and routing_history[-1].get("content") == msg.content
+            ):
+                routing_history = routing_history[:-1]
+            route_context = RouteContextBuilder().build(
+                history=routing_history,
+                current_content=msg.content,
+                current_media=msg.media or (),
+                message_metadata=getattr(msg, "metadata", {}) or {},
+                session_metadata=session.metadata,
+                descriptor_resolver=self._tools.get_document,
+            )
+            route_advice = await self._route_advisor.advise(
+                RouteRequest(
+                    turn_id=current_turn_id.get()
+                    or "local:"
+                    + hashlib.sha256(
+                        f"{session.key}\0{msg.timestamp.isoformat()}".encode("utf-8")
+                    ).hexdigest()[:16],
+                    capability_snapshot_id=runtime_snapshot_id,
+                    message=msg.content,
+                    disabled_tools=frozenset(disabled_tools),
+                    context=route_context,
+                )
+            )
+            retry_trace["intent_route"] = route_advice_trace_payload(route_advice)
+            logger.info(
+                "intent_route %s",
+                route_advice_trace_payload(route_advice),
+            )
+            if self._route_advisor.mode == "active":
+                routed = validate_route_advice(
+                    route_advice,
+                    registry=self._tools,
+                    runtime_snapshot_id=runtime_snapshot_id,
+                    disabled_tools=disabled_tools,
+                )
+                preloaded_order = list(
+                    dict.fromkeys((*routed, *preloaded_order))
+                )
+                preloaded = set(preloaded_order)
         stream_sink = (
             self._stream_sink_factory(msg) if self._stream_sink_factory is not None else None
         )
-        disabled_tools = _disabled_tools_from_msg(msg)
 
         # 2. 再按 trim plan + history window 顺序逐轮尝试。
         attempts = self._build_attempt_plans(total_history)
@@ -1178,6 +1240,7 @@ class DefaultReasoner(Reasoner):
                         tool_event_session_key=session.key,
                         tool_event_channel=msg.channel,
                         tool_event_chat_id=msg.chat_id,
+                        request_text=msg.content,
                         disabled_tools=disabled_tools,
                     )
                 finally:
@@ -1291,6 +1354,7 @@ class DefaultReasoner(Reasoner):
         tool_event_session_key: str = "",
         tool_event_channel: str = "",
         tool_event_chat_id: str = "",
+        request_text: str = "",
         disabled_tools: set[str] | None = None,
     ) -> ReasonerResult:
         # 1. 初始化消息上下文、本轮工具轨迹。
@@ -1471,6 +1535,8 @@ class DefaultReasoner(Reasoner):
                                 session_key=tool_event_session_key,
                                 channel=tool_event_channel,
                                 chat_id=tool_event_chat_id,
+                                turn_id=current_turn_id.get(),
+                                request_text=request_text,
                                 tool_batch=tool_batch,
                                 tool_batch_index=tool_batch_index,
                             )
@@ -1603,7 +1669,11 @@ class DefaultReasoner(Reasoner):
                             }
                         if name == "message_push":
                             arguments = {**arguments, "_commit_role": "passive"}
-                        return await self._tools.execute(name, arguments)
+                        return await self._tools.execute(
+                            name,
+                            arguments,
+                            raise_errors=True,
+                        )
 
                     _args_preview = support.log_preview(tool_call.arguments, 120)
                     logger.info("[工具执行→] %s  args=%s", tool_call.name, _args_preview)
@@ -1634,6 +1704,8 @@ class DefaultReasoner(Reasoner):
                             session_key=tool_event_session_key,
                             channel=tool_event_channel,
                             chat_id=tool_event_chat_id,
+                            turn_id=current_turn_id.get(),
+                            request_text=request_text,
                             tool_batch=tool_batch,
                             tool_batch_index=tool_batch_index,
                         ),
@@ -1657,6 +1729,14 @@ class DefaultReasoner(Reasoner):
                         if exec_result.status != "success":
                             raise RuntimeError("失败工具不能声明 mobile_attention")
                         mobile_attention = normalized.mobile_attention
+                    if normalized.media:
+                        if exec_result.status != "success":
+                            raise RuntimeError("失败工具不能声明 media")
+                        for raw_path in normalized.media:
+                            if not isinstance(raw_path, str) or not raw_path.strip():
+                                raise RuntimeError("工具返回了无效 media path")
+                            if raw_path not in outbound_media:
+                                outbound_media.append(raw_path)
                     _result_preview = support.log_preview(normalized.preview())
                     _result_len = len(normalized.preview() or "")
                     await self._observe_tool_call_completed(

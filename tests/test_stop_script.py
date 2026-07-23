@@ -6,6 +6,14 @@ import sys
 import time
 from pathlib import Path
 
+import pytest
+
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="stop-runtime.sh and flock are POSIX-only",
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 STOP_SCRIPT = PROJECT_ROOT / "scripts" / "stop-runtime.sh"

@@ -17,6 +17,8 @@ from agent.control.models import (
     TurnUsage,
     parse_rfc3339,
 )
+from session.reliability_records import OutboundIntentDraft, OutboxRecord
+from session.reliability_schema import apply_reliability_migrations
 
 logger = logging.getLogger(__name__)
 
@@ -373,6 +375,7 @@ class SessionStore:
                 """)
             self._ensure_next_seq_values()
             self._ensure_fts()
+            apply_reliability_migrations(self._conn)
             self._conn.commit()
 
     def _ensure_session_columns(self) -> None:
@@ -1401,48 +1404,185 @@ class SessionStore:
     ) -> list[dict[str, Any]]:
         """原子更新 session 元数据并追加新消息。"""
 
-        metadata_payload = json.dumps(metadata, ensure_ascii=False)
-        result_rows: list[dict[str, Any]] = []
-
         # 1. 元数据和消息必须同成同败，避免磁盘留下半个 turn。
         with self._lock:
             with self._conn:
                 self._conn.execute("BEGIN IMMEDIATE")
-                self._conn.execute(
-                    """
-                    INSERT INTO sessions (key, created_at, updated_at, last_consolidated, metadata)
-                    VALUES (?, ?, ?, ?, ?)
-                    ON CONFLICT(key) DO UPDATE SET
-                        updated_at = excluded.updated_at,
-                        last_consolidated = excluded.last_consolidated,
-                        metadata = excluded.metadata
-                    """,
-                    (key, created_at, updated_at, int(last_consolidated), metadata_payload),
+                result_rows = self._persist_session_locked(
+                    key,
+                    created_at=created_at,
+                    updated_at=updated_at,
+                    last_consolidated=last_consolidated,
+                    metadata=metadata,
+                    messages=messages,
                 )
-                if messages:
-                    start_seq = self._next_seq_locked(key)
-                    insert_rows, result_rows = self._prepare_message_batch(
-                        key,
-                        start_seq=start_seq,
-                        messages=messages,
-                    )
-                    self._conn.executemany(
-                        """
-                        INSERT INTO messages (id, session_key, seq, role, content, tool_chain, extra, ts)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        insert_rows,
-                    )
-                    next_seq = start_seq + len(insert_rows)
-                    self._conn.execute(
-                        """
-                        UPDATE sessions
-                        SET next_seq = CASE WHEN next_seq < ? THEN ? ELSE next_seq END
-                        WHERE key = ?
-                        """,
-                        (next_seq, next_seq, key),
-                    )
         return result_rows
+
+    def persist_session_with_outbound(
+        self,
+        key: str,
+        *,
+        created_at: str,
+        updated_at: str,
+        last_consolidated: int,
+        metadata: dict[str, Any],
+        messages: list[dict[str, Any]],
+        outbound: OutboundIntentDraft,
+    ) -> tuple[list[dict[str, Any]], OutboxRecord]:
+        """原子提交 session 消息与唯一 outbound intent。"""
+
+        with self._lock:
+            with self._conn:
+                self._conn.execute("BEGIN IMMEDIATE")
+                result_rows = self._persist_session_locked(
+                    key,
+                    created_at=created_at,
+                    updated_at=updated_at,
+                    last_consolidated=last_consolidated,
+                    metadata=metadata,
+                    messages=messages,
+                )
+                record = self._insert_outbound_locked(outbound, result_rows)
+        return result_rows, record
+
+    def insert_outbound(self, outbound: OutboundIntentDraft) -> OutboxRecord:
+        """提交不附带会话消息的系统错误或控制面 outbound intent。"""
+
+        with self._lock:
+            with self._conn:
+                self._conn.execute("BEGIN IMMEDIATE")
+                return self._insert_outbound_locked(outbound, [])
+
+    def _persist_session_locked(
+        self,
+        key: str,
+        *,
+        created_at: str,
+        updated_at: str,
+        last_consolidated: int,
+        metadata: dict[str, Any],
+        messages: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        metadata_payload = json.dumps(metadata, ensure_ascii=False)
+        self._conn.execute(
+            """
+            INSERT INTO sessions (key, created_at, updated_at, last_consolidated, metadata)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET
+                updated_at = excluded.updated_at,
+                last_consolidated = excluded.last_consolidated,
+                metadata = excluded.metadata
+            """,
+            (key, created_at, updated_at, int(last_consolidated), metadata_payload),
+        )
+        if not messages:
+            return []
+        start_seq = self._next_seq_locked(key)
+        insert_rows, result_rows = self._prepare_message_batch(
+            key,
+            start_seq=start_seq,
+            messages=messages,
+        )
+        self._conn.executemany(
+            """
+            INSERT INTO messages (id, session_key, seq, role, content, tool_chain, extra, ts)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            insert_rows,
+        )
+        next_seq = start_seq + len(insert_rows)
+        self._conn.execute(
+            """
+            UPDATE sessions
+            SET next_seq = CASE WHEN next_seq < ? THEN ? ELSE next_seq END
+            WHERE key = ?
+            """,
+            (next_seq, next_seq, key),
+        )
+        return result_rows
+
+    def _insert_outbound_locked(
+        self,
+        outbound: OutboundIntentDraft,
+        persisted_messages: list[dict[str, Any]],
+    ) -> OutboxRecord:
+        from session.outbox_repository import row_to_outbox_record
+
+        if outbound.session_key != outbound.session_key.strip() or not outbound.session_key:
+            raise ValueError("outbound session_key must be non-empty and trimmed")
+        for name, value in (
+            ("delivery_id", outbound.delivery_id),
+            ("idempotency_key", outbound.idempotency_key),
+            ("channel", outbound.channel),
+            ("chat_id", outbound.chat_id),
+            ("reason_code", outbound.reason_code),
+        ):
+            if not value or value != value.strip():
+                raise ValueError(f"outbound {name} must be non-empty and trimmed")
+        if not outbound.content and not outbound.media:
+            raise ValueError("outbound content or media is required")
+
+        persisted_user = next(
+            (row for row in persisted_messages if row.get("role") == "user"),
+            None,
+        )
+        persisted_assistant = next(
+            (
+                row
+                for row in reversed(persisted_messages)
+                if row.get("role") == "assistant"
+            ),
+            None,
+        )
+        session_message_id = outbound.session_message_id
+        if session_message_id is None and persisted_assistant is not None:
+            session_message_id = str(persisted_assistant["id"])
+        metadata = dict(outbound.metadata)
+        existing_delivery_id = metadata.get("delivery_id")
+        if existing_delivery_id not in (None, outbound.delivery_id):
+            raise ValueError("outbound metadata delivery_id mismatch")
+        metadata["delivery_id"] = outbound.delivery_id
+        if persisted_user is not None:
+            metadata.setdefault("persisted_user_message_id", persisted_user["id"])
+            client_message_id = persisted_user.get("client_message_id")
+            if isinstance(client_message_id, str) and client_message_id:
+                metadata.setdefault("client_message_id", client_message_id)
+
+        now = datetime.now(UTC).isoformat()
+        self._conn.execute(
+            """
+            INSERT INTO reliability_outbox (
+                delivery_id, idempotency_key, turn_id, session_key,
+                session_message_id, channel, chat_id, content, thinking,
+                media_json, metadata_json, lane, reason_code, status,
+                attempt_count, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0, ?, ?)
+            """,
+            (
+                outbound.delivery_id,
+                outbound.idempotency_key,
+                outbound.turn_id,
+                outbound.session_key,
+                session_message_id,
+                outbound.channel,
+                outbound.chat_id,
+                outbound.content,
+                outbound.thinking,
+                json.dumps(list(outbound.media), ensure_ascii=False),
+                json.dumps(metadata, ensure_ascii=False, sort_keys=True),
+                outbound.lane,
+                outbound.reason_code,
+                now,
+                now,
+            ),
+        )
+        row = self._conn.execute(
+            "SELECT * FROM reliability_outbox WHERE delivery_id = ?",
+            (outbound.delivery_id,),
+        ).fetchone()
+        if row is None:
+            raise RuntimeError("outbound insert did not return a record")
+        return row_to_outbox_record(row)
 
     def fetch_session_messages(self, session_key: str) -> list[dict[str, Any]]:
         with self._lock:

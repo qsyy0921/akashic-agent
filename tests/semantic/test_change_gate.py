@@ -35,6 +35,24 @@ def test_catalog_has_no_unmapped_executable_files() -> None:
     }
 
 
+def test_catalog_digest_is_independent_of_checkout_line_endings(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    gate = _gate_module()
+    paths = [tmp_path / name for name in ("impact.toml", "state.toml", "scenarios.toml")]
+    for path in paths:
+        path.write_bytes(b"[contract]\nvalue = 1\n")
+    monkeypatch.setattr(gate, "IMPACT_PATH", paths[0])
+    monkeypatch.setattr(gate, "STATE_PATH", paths[1])
+    monkeypatch.setattr(gate, "SCENARIO_PATH", paths[2])
+    lf_digest = gate.catalog_digest()
+
+    for path in paths:
+        path.write_bytes(b"[contract]\r\nvalue = 1\r\n")
+
+    assert gate.catalog_digest() == lf_digest
+
+
 def test_unknown_executable_file_is_not_silently_accepted() -> None:
     gate = _gate_module()
     catalog = gate.load_catalog()

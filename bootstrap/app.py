@@ -324,6 +324,7 @@ class AppRuntime:
                 self.bus,
                 self.conversation_runtime,
                 self.agent_loop,
+                self.core.outbound_port,
             )
             if self.restart_coordinator is not None:
                 coordinator = self.restart_coordinator
@@ -433,9 +434,10 @@ class AppRuntime:
                     self._swap_plugin_endpoints
                 )
 
+            self.bus.disable_ephemeral_outbound()
             self.tasks = [
                 self.passive_worker.run(),
-                self.bus.dispatch_outbound(),
+                self.core.delivery_supervisor.run(),
                 self.scheduler.run(),
             ]
             if plugin_manager is not None:
@@ -536,6 +538,8 @@ class AppRuntime:
                 runtime_snapshot_store=(
                     plugin_manager.snapshot_store if plugin_manager else None
                 ),
+                outbound_port=self.core.outbound_port,
+                tool_governor=self.core.tool_governor,
             )
             self.tasks.extend(proactive_tasks)
             if self.proactive_loop is not None:

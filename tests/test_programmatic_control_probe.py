@@ -57,6 +57,9 @@ def test_control_gate_prepares_external_static_mount_without_repo_static(
     ) in compose
 
 
+@pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"), reason="Docker control gate requires AF_UNIX"
+)
 def test_socket_client_correlates_response_and_buffers_notifications(
     tmp_path: Path,
 ) -> None:
@@ -102,6 +105,9 @@ def test_socket_client_correlates_response_and_buffers_notifications(
     ]
 
 
+@pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"), reason="Docker control gate requires AF_UNIX"
+)
 def test_wait_socket_rejects_stale_uds_path(tmp_path: Path) -> None:
     endpoint = tmp_path / "stale.sock"
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

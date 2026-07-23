@@ -8,9 +8,16 @@ from typing import Any, cast
 
 from agent.config import Config
 from agent.plugins.base import Plugin
-from agent.plugins.manifest import load_plugin_manifest, plugins_root
+from agent.plugins.manifest import (
+    load_package_manifest,
+    load_plugin_manifest,
+    plugins_root,
+)
+from agent.plugins.packages import discover_plugin_packages
 from agent.plugins.registry import plugin_registry
 from agent.plugins.specs import McpServerSpec
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def run_plugin_doctor(
@@ -24,13 +31,58 @@ def run_plugin_doctor(
     config = Config.load(config_path, workspace=resolved_workspace)
     memory_engine = (config.memory.engine or "").strip() or "default"
     manifest = load_plugin_manifest(plugins_home)
-    selected = [plugin_id] if plugin_id else sorted(manifest)
-    if plugin_id and plugin_id not in manifest:
-        return {"status": "broken", "plugins": [], "error": f"插件不存在: {plugin_id}"}
+    packages = discover_plugin_packages(_PROJECT_ROOT)
+    package_states = load_package_manifest(plugins_home)
+    package_members = {
+        member: package_states.get(package_id, manifest.get(member, False))
+        for package_id, package in packages.items()
+        for member in package.members
+    }
+    package_member_ids = set(package_members)
+    effective = dict(manifest)
+    # Package ownership is authoritative even if a pre-migration manifest still
+    # contains a stale standalone member entry.
+    effective.update(package_members)
+    if plugin_id in packages:
+        selected = list(packages[plugin_id].members)
+        enabled = package_states.get(
+            plugin_id,
+            any(manifest.get(member, False) for member in selected),
+        )
+        selected_states = {member: enabled for member in selected}
+    elif plugin_id:
+        if plugin_id not in effective and plugin_id not in package_members:
+            return {
+                "status": "broken",
+                "plugins": [],
+                "error": f"插件不存在: {plugin_id}",
+            }
+        selected = [plugin_id]
+        selected_states = {
+            plugin_id: (
+                effective[plugin_id]
+                if plugin_id in effective
+                else package_members[plugin_id]
+            )
+        }
+    else:
+        selected_states = {
+            current_id: enabled
+            for current_id, enabled in manifest.items()
+            if current_id not in package_member_ids
+        }
+        selected_states.update(
+            {
+                member: True
+                for member, enabled in package_members.items()
+                if enabled
+            }
+        )
+        selected = sorted(selected_states)
     plugins = [
         _inspect_plugin(
             current_id,
-            manifest[current_id],
+            selected_states[current_id],
             resolved_workspace,
             plugins_home,
             memory_engine=memory_engine,

@@ -1,5 +1,8 @@
 import asyncio
+import hashlib
+import json
 import logging
+import re
 from collections.abc import Iterable, Set as AbstractSet
 from contextvars import ContextVar, Token
 from copy import deepcopy
@@ -78,6 +81,11 @@ class ToolMeta:
     # 可选：3–10 词短语，补充工具名和描述中没有的别名或口语化表达。
     # 不需要重复名称或描述里已有的词——搜索后端自动索引 name + description。
     search_hint: str | None = None
+    operation_id: str = ""
+    summary: str = ""
+    parameter_terms: tuple[str, ...] = ()
+    examples: tuple[str, ...] = ()
+    output_kinds: tuple[str, ...] = ("text",)
 
 
 # ── ToolDocument ──────────────────────────────────────────────────────────────
@@ -98,6 +106,12 @@ class ToolDocument:
     search_hint: str | None
     source_type: str  # "builtin" | "mcp"
     source_name: str  # mcp server 名，builtin 为空字符串
+    operation_id: str
+    summary: str
+    parameter_terms: tuple[str, ...]
+    examples: tuple[str, ...]
+    output_kinds: tuple[str, ...]
+    schema_digest: str
 
     @classmethod
     def from_tool_and_meta(
@@ -107,6 +121,7 @@ class ToolDocument:
         source_type: str = "builtin",
         source_name: str = "",
     ) -> "ToolDocument":
+        schema = tool.to_schema()
         return cls(
             name=tool.name,
             description=tool.description,
@@ -115,6 +130,19 @@ class ToolDocument:
             search_hint=meta.search_hint,
             source_type=source_type,
             source_name=source_name,
+            operation_id=meta.operation_id,
+            summary=meta.summary,
+            parameter_terms=meta.parameter_terms,
+            examples=meta.examples,
+            output_kinds=meta.output_kinds,
+            schema_digest="sha256:" + hashlib.sha256(
+                json.dumps(
+                    schema,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest(),
         )
 
 
@@ -258,7 +286,26 @@ class ToolRegistry:
         search_hint: str | None = None,
         source_type: str = "builtin",
         source_name: str = "",
+        operation_id: str | None = None,
+        summary: str | None = None,
+        parameter_terms: tuple[str, ...] | None = None,
+        examples: tuple[str, ...] = (),
+        output_kinds: tuple[str, ...] = ("text",),
     ) -> None:
+        resolved_operation_id = operation_id or _default_operation_id(tool.name)
+        resolved_summary = (summary or tool.description).strip()[:512]
+        resolved_parameter_terms = (
+            parameter_terms
+            if parameter_terms is not None
+            else _derive_parameter_terms(tool)
+        )
+        _validate_discovery_metadata(
+            operation_id=resolved_operation_id,
+            summary=resolved_summary,
+            parameter_terms=resolved_parameter_terms,
+            examples=examples,
+            output_kinds=output_kinds,
+        )
         self._tools[tool.name] = tool
         meta = ToolMeta(
             risk=risk,
@@ -266,6 +313,11 @@ class ToolRegistry:
             preloadable=preloadable,
             requires_turn_search=requires_turn_search,
             search_hint=search_hint,
+            operation_id=resolved_operation_id,
+            summary=resolved_summary,
+            parameter_terms=resolved_parameter_terms,
+            examples=examples,
+            output_kinds=output_kinds,
         )
         self._metadata[tool.name] = meta
         doc = ToolDocument.from_tool_and_meta(
@@ -293,6 +345,15 @@ class ToolRegistry:
         if view is not self:
             return view.get_tool(name)
         return self._tools.get(name)
+
+    def get_tool_meta(self, name: str) -> ToolMeta | None:
+        """返回工具治理元数据的副本，调用方不能修改 registry 内部状态。"""
+
+        view = self._runtime_view()
+        if view is not self:
+            return view.get_tool_meta(name)
+        meta = self._metadata.get(name)
+        return deepcopy(meta) if meta is not None else None
 
     def get_registered_names(self) -> set[str]:
         """返回当前已注册工具名集合。"""
@@ -445,19 +506,23 @@ class ToolRegistry:
                 if raise_errors:
                     raise RuntimeError(message)
                 return message
-            validation_arguments = dict(arguments)
-            if not _tool_defines_parameter(tool, _PROGRESS_DESCRIPTION_FIELD):
-                validation_arguments.pop(_PROGRESS_DESCRIPTION_FIELD, None)
-            validation_errors = tool.validate_params(validation_arguments)
-            if validation_errors:
-                message = "; ".join(validation_errors)
-                if raise_errors:
-                    raise ValueError(message)
-                return f"工具参数无效: {message}"
+        validation_arguments = dict(arguments)
+        if not _tool_defines_parameter(tool, _PROGRESS_DESCRIPTION_FIELD):
+            validation_arguments.pop(_PROGRESS_DESCRIPTION_FIELD, None)
+        validation_errors = tool.validate_params(validation_arguments)
+        if validation_errors:
+            message = "; ".join(validation_errors)
+            if raise_errors:
+                raise ValueError(message)
+            return f"工具参数无效: {message}"
         try:
             # 将会话上下文（channel、chat_id）作为低优先级默认值合并进 kwargs，
             # 工具可按需读取，不感知此机制的工具会直接忽略多余的 key。
-            merged: dict[str, Any] = {**self._context, **arguments}
+            merged: dict[str, Any] = (
+                {**self._context, **arguments}
+                if tool.accepts_context
+                else dict(arguments)
+            )
             if not _tool_defines_parameter(tool, _PROGRESS_DESCRIPTION_FIELD):
                 merged.pop(_PROGRESS_DESCRIPTION_FIELD, None)
             return await tool.execute_with_timeout(
@@ -540,3 +605,80 @@ class ToolRegistry:
                 excluded_names=excluded,
             ),
         )
+
+
+_OPERATION_ID = re.compile(r"^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+$")
+_OUTPUT_KINDS = frozenset({"text", "image", "file", "data", "mixed"})
+
+
+def _default_operation_id(tool_name: str) -> str:
+    slug = re.sub(r"[^a-z0-9_-]+", "_", tool_name.casefold()).strip("_")
+    if not slug:
+        slug = "unnamed"
+    if not slug[0].isalpha():
+        slug = f"op_{slug}"
+    return f"tool.{slug}"
+
+
+def _derive_parameter_terms(tool: Tool) -> tuple[str, ...]:
+    properties = (tool.parameters or {}).get("properties")
+    if not isinstance(properties, dict):
+        return ()
+    terms: list[str] = []
+    for raw_name, raw_schema in properties.items():
+        name = _bounded_discovery_term(raw_name, 80)
+        if name and name not in terms:
+            terms.append(name)
+        if isinstance(raw_schema, dict):
+            description = _bounded_discovery_term(
+                raw_schema.get("description") or "",
+                80,
+            )
+            if description and description not in terms:
+                terms.append(description)
+        if len(terms) >= 32:
+            break
+    return tuple(terms)
+
+
+def _bounded_discovery_term(value: object, maximum: int) -> str:
+    return " ".join(str(value).split())[:maximum].rstrip()
+
+
+def _validate_discovery_metadata(
+    *,
+    operation_id: str,
+    summary: str,
+    parameter_terms: tuple[str, ...],
+    examples: tuple[str, ...],
+    output_kinds: tuple[str, ...],
+) -> None:
+    if not _OPERATION_ID.fullmatch(operation_id):
+        raise ValueError(f"invalid tool operation_id: {operation_id!r}")
+    if not summary or len(summary) > 512:
+        raise ValueError("tool discovery summary must contain 1..512 characters")
+    for label, values, maximum, item_maximum in (
+        ("parameter_terms", parameter_terms, 32, 80),
+        ("examples", examples, 8, 160),
+    ):
+        if (
+            not isinstance(values, tuple)
+            or len(values) > maximum
+            or len(values) != len(set(values))
+            or any(
+                not isinstance(item, str)
+                or not item.strip()
+                or item != item.strip()
+                or len(item) > item_maximum
+                for item in values
+            )
+        ):
+            raise ValueError(f"tool discovery {label} is invalid")
+    if (
+        not isinstance(output_kinds, tuple)
+        or not output_kinds
+        or len(output_kinds) > 5
+        or len(output_kinds) != len(set(output_kinds))
+        or any(item not in _OUTPUT_KINDS for item in output_kinds)
+    ):
+        raise ValueError("tool discovery output_kinds is invalid")

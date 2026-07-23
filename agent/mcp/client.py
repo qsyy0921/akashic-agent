@@ -1,9 +1,12 @@
 """McpClient: 管理单个 MCP server 的 stdio 子进程连接和 JSON-RPC 通信。"""
 
 import asyncio
+import hashlib
 import json
 import logging
 import os
+import re
+import stat
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +28,14 @@ _STRUCTURED_CONTENT_PROTOCOL_VERSIONS = frozenset(
 _MCP_CONTENT_BLOCK_TYPES = frozenset(
     {"text", "image", "resource"}
 )
+_MCP_MEDIA_FIELDS = frozenset(
+    {"kind", "path", "mime_type", "sha256", "size_bytes"}
+)
+_MCP_MEDIA_MIME_TYPES = frozenset(
+    {"image/png", "image/jpeg", "image/webp"}
+)
+_MAX_MEDIA_ITEMS = 4
+_MAX_MEDIA_FILE_BYTES = 10 * 1024 * 1024
 
 
 @dataclass
@@ -32,6 +43,12 @@ class McpToolInfo:
     name: str
     description: str
     input_schema: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class McpCallResult:
+    text: str
+    media: tuple[str, ...] = ()
 
 
 class McpToolExecutionError(RuntimeError):
@@ -47,6 +64,28 @@ def _infer_cwd(command: list[str]) -> str | None:
     return None
 
 
+def _is_relative_to(path: Path, root: Path) -> bool:
+    try:
+        _ = path.relative_to(root)
+    except ValueError:
+        return False
+    return True
+
+
+def _same_file_identity(left: os.stat_result, right: os.stat_result) -> bool:
+    return (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino)
+
+
+def _matches_image_signature(mime_type: str, header: bytes) -> bool:
+    if mime_type == "image/png":
+        return header.startswith(b"\x89PNG\r\n\x1a\n")
+    if mime_type == "image/jpeg":
+        return header.startswith(b"\xff\xd8\xff")
+    if mime_type == "image/webp":
+        return header.startswith(b"RIFF") and header[8:12] == b"WEBP"
+    return False
+
+
 class McpClient:
     """启动并管理一个 stdio MCP server 子进程，处理 JSON-RPC 通信。"""
 
@@ -56,12 +95,32 @@ class McpClient:
         command: list[str],
         env: dict[str, str] | None = None,
         cwd: str | None = None,
+        *,
+        call_timeout_seconds: float = _RECV_TIMEOUT,
+        media_output_roots: tuple[str, ...] = (),
+        media_workspace_root: str | None = None,
     ) -> None:
+        if (
+            isinstance(call_timeout_seconds, bool)
+            or not 0 < float(call_timeout_seconds) <= 600
+        ):
+            raise ValueError("MCP call_timeout_seconds 必须在 (0, 600] 内")
         self.name = name
         self.command = command
         self.env = env or {}
         # cwd 未指定时从 command 中推断，避免子进程继承 agent 工作目录
         self.cwd = cwd or _infer_cwd(command)
+        self.call_timeout_seconds = float(call_timeout_seconds)
+        self._media_output_roots = tuple(Path(item) for item in media_output_roots)
+        self._media_workspace_root = (
+            Path(media_workspace_root) if media_workspace_root else None
+        )
+        if self._media_output_roots and self._media_workspace_root is None:
+            raise ValueError("MCP media_output_roots 需要 media_workspace_root")
+        if self._media_workspace_root is not None and not self._media_workspace_root.is_absolute():
+            raise ValueError("MCP media_workspace_root 必须是绝对路径")
+        if any(not root.is_absolute() for root in self._media_output_roots):
+            raise ValueError("MCP media_output_roots 必须是绝对路径")
         self._process: asyncio.subprocess.Process | None = None
         self._next_id = 1
         self._call_lock = asyncio.Lock()
@@ -190,6 +249,16 @@ class McpClient:
         timeout: float | None = None,
     ) -> str:
         """调用远端工具，返回结果字符串。"""
+        return (await self.call_result(tool_name, arguments, timeout=timeout)).text
+
+    async def call_result(
+        self,
+        tool_name: str,
+        arguments: dict[str, Any],
+        *,
+        timeout: float | None = None,
+    ) -> McpCallResult:
+        """调用远端工具，返回经过校验的文本与本地媒体路径。"""
         async with self._call_lock:
             call_id = self._new_id()
             await self._send(
@@ -203,7 +272,9 @@ class McpClient:
             resp = await self._recv(
                 expected_id=call_id,
                 stage=f"tools/call:{tool_name}",
-                timeout=timeout,
+                timeout=(
+                    self.call_timeout_seconds if timeout is None else timeout
+                ),
             )
 
         if "error" in resp:
@@ -245,6 +316,7 @@ class McpClient:
                 )
             )
 
+        media: tuple[str, ...] = ()
         if "structuredContent" in result:
             if self._protocol_version not in _STRUCTURED_CONTENT_PROTOCOL_VERSIONS:
                 raise RuntimeError(
@@ -258,6 +330,10 @@ class McpClient:
                     f"MCP server {self.name!r} tools/call:{tool_name} 返回了无效 "
                     "structuredContent（需要 object）"
                 )
+            media = self._parse_structured_media(
+                cast(dict[str, object], structured_content),
+                tool_name=tool_name,
+            )
 
         is_error = result.get("isError", False)
         if not isinstance(is_error, bool):
@@ -271,7 +347,161 @@ class McpClient:
                 f"MCP server {self.name!r} tools/call:{tool_name} 执行失败: "
                 f"{output or '服务端未返回错误内容'}"
             )
-        return output
+        return McpCallResult(text=output, media=media)
+
+    def _parse_structured_media(
+        self,
+        structured_content: dict[str, object],
+        *,
+        tool_name: str,
+    ) -> tuple[str, ...]:
+        raw_media = structured_content.get("media")
+        if raw_media is None:
+            return ()
+        if not isinstance(raw_media, list):
+            raise RuntimeError(
+                f"MCP server {self.name!r} tools/call:{tool_name} 返回了无效 "
+                "structuredContent.media（需要 array）"
+            )
+        if len(raw_media) > _MAX_MEDIA_ITEMS:
+            raise RuntimeError(
+                f"MCP server {self.name!r} tools/call:{tool_name} 返回媒体过多"
+            )
+        if raw_media and not self._media_output_roots:
+            raise RuntimeError(
+                f"MCP server {self.name!r} tools/call:{tool_name} 未声明 media root"
+            )
+        allowed_roots = self._validated_media_roots(tool_name)
+        paths: list[str] = []
+        seen: set[Path] = set()
+        for index, raw_item in enumerate(cast(list[object], raw_media)):
+            path = self._validate_media_item(
+                raw_item,
+                tool_name=tool_name,
+                index=index,
+                allowed_roots=allowed_roots,
+            )
+            if path in seen:
+                raise RuntimeError(
+                    f"MCP server {self.name!r} tools/call:{tool_name} 返回重复媒体路径"
+                )
+            seen.add(path)
+            paths.append(str(path))
+        return tuple(paths)
+
+    def _validated_media_roots(self, tool_name: str) -> tuple[Path, ...]:
+        if not self._media_output_roots:
+            return ()
+        workspace = self._media_workspace_root
+        assert workspace is not None
+        try:
+            workspace_resolved = workspace.resolve(strict=True)
+        except OSError as exc:
+            raise RuntimeError(
+                f"MCP server {self.name!r} tools/call:{tool_name} workspace 不可用"
+            ) from exc
+        if not workspace_resolved.is_dir():
+            raise RuntimeError(
+                f"MCP server {self.name!r} tools/call:{tool_name} workspace 不是目录"
+            )
+        roots: list[Path] = []
+        for root in self._media_output_roots:
+            try:
+                if root.is_symlink():
+                    raise RuntimeError("media root 不能是符号链接")
+                resolved = root.resolve(strict=True)
+                _ = resolved.relative_to(workspace_resolved)
+            except (OSError, ValueError, RuntimeError) as exc:
+                raise RuntimeError(
+                    f"MCP server {self.name!r} tools/call:{tool_name} media root 不安全"
+                ) from exc
+            if not resolved.is_dir() or resolved == workspace_resolved:
+                raise RuntimeError(
+                    f"MCP server {self.name!r} tools/call:{tool_name} media root 无效"
+                )
+            roots.append(resolved)
+        return tuple(roots)
+
+    def _validate_media_item(
+        self,
+        raw_item: object,
+        *,
+        tool_name: str,
+        index: int,
+        allowed_roots: tuple[Path, ...],
+    ) -> Path:
+        prefix = (
+            f"MCP server {self.name!r} tools/call:{tool_name} "
+            f"structuredContent.media[{index}]"
+        )
+        if not isinstance(raw_item, dict):
+            raise RuntimeError(f"{prefix} 不是 object")
+        item = cast(dict[str, object], raw_item)
+        if frozenset(item) != _MCP_MEDIA_FIELDS:
+            raise RuntimeError(f"{prefix} 字段无效")
+        if item.get("kind") != "image":
+            raise RuntimeError(f"{prefix}.kind 只支持 image")
+        raw_path = item.get("path")
+        mime_type = item.get("mime_type")
+        expected_hash = item.get("sha256")
+        expected_size = item.get("size_bytes")
+        if not isinstance(raw_path, str) or not raw_path:
+            raise RuntimeError(f"{prefix}.path 无效")
+        if mime_type not in _MCP_MEDIA_MIME_TYPES:
+            raise RuntimeError(f"{prefix}.mime_type 无效")
+        if (
+            not isinstance(expected_hash, str)
+            or re.fullmatch(r"[0-9a-f]{64}", expected_hash) is None
+        ):
+            raise RuntimeError(f"{prefix}.sha256 无效")
+        if (
+            isinstance(expected_size, bool)
+            or not isinstance(expected_size, int)
+            or not 0 < expected_size <= _MAX_MEDIA_FILE_BYTES
+        ):
+            raise RuntimeError(f"{prefix}.size_bytes 无效")
+        candidate = Path(raw_path)
+        if not candidate.is_absolute():
+            raise RuntimeError(f"{prefix}.path 必须是绝对路径")
+        try:
+            before = candidate.lstat()
+            if stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode):
+                raise RuntimeError("媒体必须是普通文件且不能是符号链接")
+            resolved = candidate.resolve(strict=True)
+            if not any(_is_relative_to(resolved, root) for root in allowed_roots):
+                raise RuntimeError("媒体路径不在声明目录内")
+            digest = hashlib.sha256()
+            total = 0
+            header = b""
+            with candidate.open("rb") as stream:
+                opened = os.fstat(stream.fileno())
+                if not _same_file_identity(before, opened):
+                    raise RuntimeError("媒体文件在校验期间发生替换")
+                while chunk := stream.read(1024 * 1024):
+                    if not header:
+                        header = chunk[:16]
+                    total += len(chunk)
+                    if total > _MAX_MEDIA_FILE_BYTES:
+                        raise RuntimeError("媒体文件超过大小限制")
+                    digest.update(chunk)
+                finished = os.fstat(stream.fileno())
+            after = candidate.lstat()
+            if (
+                not _same_file_identity(before, finished)
+                or not _same_file_identity(before, after)
+                or before.st_size != finished.st_size
+                or finished.st_size != total
+            ):
+                raise RuntimeError("媒体文件在校验期间发生变化")
+        except OSError as exc:
+            raise RuntimeError(f"{prefix}.path 不可读取") from exc
+        if total != expected_size:
+            raise RuntimeError(f"{prefix}.size_bytes 与文件不一致")
+        if digest.hexdigest() != expected_hash:
+            raise RuntimeError(f"{prefix}.sha256 与文件不一致")
+        if not _matches_image_signature(cast(str, mime_type), header):
+            raise RuntimeError(f"{prefix}.mime_type 与文件签名不一致")
+        return resolved
 
     def _render_content_block(
         self,

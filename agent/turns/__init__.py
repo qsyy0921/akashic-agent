@@ -1,5 +1,6 @@
 from agent.turns.outbound import (
     BusOutboundPort,
+    DurableOutboundPort,
     OutboundDispatch,
     OutboundPort,
     PushToolOutboundPort,
@@ -9,6 +10,7 @@ from agent.turns.result import TurnOutbound, TurnResult, TurnSideEffect, TurnTra
 
 __all__ = [
     "BusOutboundPort",
+    "DurableOutboundPort",
     "OutboundDispatch",
     "OutboundPort",
     "PushToolOutboundPort",

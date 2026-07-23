@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -43,12 +44,12 @@ def _server(root: Path, tool: str) -> Path:
 
 def _declare(root: Path, name: str, server: Path, *, watch: str = "") -> Path:
     root.mkdir(parents=True, exist_ok=True)
-    watch_line = f'watch_paths = ["{watch}"]\n' if watch else ""
+    watch_line = f"watch_paths = [{json.dumps(watch)}]\n" if watch else ""
     path = root / f"{name}.toml"
     path.write_text(
         "schema_version = 1\n"
-        f'name = "{name}"\n'
-        f'command = ["{sys.executable}", "{server}"]\n'
+        f"name = {json.dumps(name)}\n"
+        f"command = [{json.dumps(sys.executable)}, {json.dumps(str(server))}]\n"
         f"{watch_line}",
         encoding="utf-8",
     )
@@ -428,6 +429,11 @@ async def test_core_stop_cancels_blocked_real_candidate_before_publish(
         workspace_mcp_watcher_task=watcher_task,
         memory_runtime=object(),  # type: ignore[arg-type]
         presence=object(),  # type: ignore[arg-type]
+        outbox_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        delivery_supervisor=SimpleNamespace(),  # type: ignore[arg-type]
+        outbound_port=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_ledger_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_governor=SimpleNamespace(),  # type: ignore[arg-type]
         peer_process_manager=None,
         peer_poller=None,
         plugin_manager=manager,

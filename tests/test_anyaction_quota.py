@@ -38,6 +38,34 @@ def test_quota_store_preserves_valid_version_one_state(tmp_path) -> None:
     assert store._state == _valid_state()
 
 
+def test_quota_store_migrates_legacy_pristine_state_on_snapshot(tmp_path) -> None:
+    path = tmp_path / "quota.json"
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "window_key": "",
+                "next_reset_at": "",
+                "used": 0,
+                "last_action_at": "",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    snapshot = QuotaStore(path).snapshot(
+        now_utc=datetime(2025, 6, 1, 12, tzinfo=timezone.utc),
+        reset_hour=8,
+        timezone_name="UTC",
+    )
+    persisted = json.loads(path.read_text(encoding="utf-8"))
+
+    assert snapshot.window_key == "2025-06-01@08@UTC"
+    assert snapshot.used == 0
+    assert persisted["window_key"] == snapshot.window_key
+    assert persisted["next_reset_at"] == "2025-06-02T08:00:00+00:00"
+
+
 @pytest.mark.parametrize(
     "payload, field",
     [
@@ -46,6 +74,16 @@ def test_quota_store_preserves_valid_version_one_state(tmp_path) -> None:
         ({**_valid_state(), "version": "1"}, "field=version"),
         ({**_valid_state(), "used": -1}, "field=used"),
         ({**_valid_state(), "window_key": "bad"}, "field=window_key"),
+        (
+            {
+                "version": 1,
+                "window_key": "",
+                "next_reset_at": "",
+                "used": 1,
+                "last_action_at": "",
+            },
+            "field=window_key",
+        ),
         ({**_valid_state(), "next_reset_at": "bad"}, "field=next_reset_at"),
         ({**_valid_state(), "last_action_at": "2025-06-01"}, "field=last_action_at"),
     ],

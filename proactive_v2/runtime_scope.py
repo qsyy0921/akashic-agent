@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from agent.plugins.specs import RegisteredProactiveSource
+from agent.tool_governance import ToolGovernor
 from agent.tool_hooks import ToolHook
 from agent.tools.registry import ToolRegistry
 from agent.turns.orchestrator import TurnOrchestrator
@@ -32,4 +33,5 @@ class ProactiveRuntimeScope:
     turn_orchestrator: TurnOrchestrator | None = None
     event_bus: EventBus | None = None
     tool_hooks: list[ToolHook] = field(default_factory=list)
+    tool_governor: ToolGovernor | None = None
     schedule_fn: Callable[[float | None], int] | None = None

@@ -9,6 +9,7 @@ from typing import Any, Literal, cast
 class ToolResult:
     text: str = ""
     content_blocks: list[dict[str, Any]] = field(default_factory=list)
+    media: list[str] = field(default_factory=list)
     mobile_attention: Literal["confirmation"] | None = None
 
     def preview(self) -> str:
@@ -16,6 +17,8 @@ class ToolResult:
             return self.text
         if self.content_blocks:
             return f"[多模态结果 {len(self.content_blocks)} blocks]"
+        if self.media:
+            return f"[媒体结果 {len(self.media)} files]"
         return ""
 
 
@@ -31,6 +34,7 @@ class Tool(ABC):
     name: str
     description: str
     parameters: dict[str, Any]
+    accepts_context: bool = True
 
     # JSON Schema 类型 → Python 类型映射
     _TYPE_MAP = {

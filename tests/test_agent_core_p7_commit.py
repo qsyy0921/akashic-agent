@@ -45,14 +45,34 @@ class _DummySession:
         return msg
 
 
+async def _append_with_outbound(session, messages, draft, order=None):
+    if order is not None:
+        order.append("persist")
+    for index, message in enumerate(messages):
+        message.setdefault("id", f"{session.key}:{index}")
+    metadata = dict(draft.metadata)
+    user = next((message for message in messages if message["role"] == "user"), None)
+    if user is not None:
+        metadata["persisted_user_message_id"] = user["id"]
+    return SimpleNamespace(
+        metadata=metadata,
+        session_message_id=(messages[-1]["id"] if messages else None),
+    )
+
+
 @pytest.mark.asyncio
 async def test_context_store_commit_persists_commits_and_dispatches():
     order: list[str] = []
     session = _DummySession("telegram:123")
     presence = SimpleNamespace(record_user_message=MagicMock(side_effect=lambda _key: None))
+
+    async def persist_outbound(current, messages, draft):
+        return await _append_with_outbound(current, messages, draft, order)
+
     session_manager = SimpleNamespace(
         get_or_create=MagicMock(return_value=session),
         append_messages=AsyncMock(side_effect=lambda *_args, **_kwargs: order.append("persist")),
+        append_messages_with_outbound=AsyncMock(side_effect=persist_outbound),
     )
     outbound = SimpleNamespace(dispatch=AsyncMock(side_effect=lambda *_args, **_kwargs: order.append("dispatch") or True))
     event_bus = EventBus()
@@ -138,7 +158,7 @@ async def test_context_store_commit_persists_commits_and_dispatches():
     assert out.metadata["streamed_reply"] is True
     assert order == ["persist", "committed", "dispatch"]
     presence.record_user_message.assert_called_once_with("telegram:123")
-    session_manager.append_messages.assert_awaited_once()
+    session_manager.append_messages_with_outbound.assert_awaited_once()
     assert session.messages[-1]["content"] == "整理好了"
     assert session.messages[-1]["reasoning_content"] == "思考"
     assert session.messages[-1].get("cited_memory_ids", []) == []

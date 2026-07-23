@@ -71,14 +71,16 @@ def test_source_names_must_not_escape_snapshot_root(tmp_path: Path) -> None:
 
 def test_load_config_defines_paths_and_backup_kinds(tmp_path: Path) -> None:
     config = tmp_path / "backup.toml"
+    destination = (tmp_path / "backups").as_posix()
+    source = (tmp_path / "notes.md").as_posix()
     config.write_text(
-        f'''destination = "{tmp_path / "backups"}"
+        f'''destination = "{destination}"
 retention = 3
 
 [[sources]]
 name = "notes.md"
 kind = "file"
-path = "{tmp_path / "notes.md"}"
+path = "{source}"
 ''',
         encoding="utf-8",
     )

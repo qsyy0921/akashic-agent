@@ -18,6 +18,16 @@ def _git(repo: Path, *arguments: str) -> str:
     return result.stdout.strip()
 
 
+def _git_bytes(repo: Path, *arguments: str) -> bytes:
+    result = subprocess.run(
+        ["git", "-C", str(repo), *arguments],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+    return result.stdout
+
+
 def _repository(tmp_path: Path) -> tuple[Path, str]:
     repo = tmp_path / "repo"
     bundle = repo / "migrations" / "existing"
@@ -83,9 +93,11 @@ def test_exact_hash_repair_can_change_existing_bundle(
 ) -> None:
     repo, base = _repository(tmp_path)
     migration = repo / "migrations" / "existing" / "migration.py"
-    before = hashlib.sha256(migration.read_bytes()).hexdigest()
+    relative = "migrations/existing/migration.py"
+    before = hashlib.sha256(_git_bytes(repo, "show", f"{base}:{relative}")).hexdigest()
     migration.write_text("print('repaired')\n", encoding="utf-8")
-    after = hashlib.sha256(migration.read_bytes()).hexdigest()
+    _ = _git(repo, "add", relative)
+    after = hashlib.sha256(_git_bytes(repo, "show", f":{relative}")).hexdigest()
     repairs = repo / "migrations" / "repairs"
     repairs.mkdir()
     (repairs / "existing-config-only.toml").write_text(
@@ -108,7 +120,8 @@ def test_repair_hash_mismatch_is_rejected(
 ) -> None:
     repo, base = _repository(tmp_path)
     migration = repo / "migrations" / "existing" / "migration.py"
-    before = hashlib.sha256(migration.read_bytes()).hexdigest()
+    relative = "migrations/existing/migration.py"
+    before = hashlib.sha256(_git_bytes(repo, "show", f"{base}:{relative}")).hexdigest()
     migration.write_text("print('unreviewed')\n", encoding="utf-8")
     repairs = repo / "migrations" / "repairs"
     repairs.mkdir()

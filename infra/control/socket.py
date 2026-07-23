@@ -4,7 +4,7 @@ import asyncio
 import ipaddress
 import logging
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from agent.control.service import ControlService
 from infra.control.connection import NdjsonConnection
@@ -27,6 +27,11 @@ class SocketAppServer:
     ) -> None:
         raw_endpoint = str(endpoint)
         self._tcp_address = _parse_loopback_tcp(raw_endpoint)
+        if os.name == "nt" and self._tcp_address is None:
+            # asyncio exposes no Unix-domain server on Windows. Direct Path
+            # callers use an ephemeral loopback listener, matching config.py's
+            # stable loopback transport for normal Windows runtime startup.
+            self._tcp_address = ("127.0.0.1", 0)
         self.endpoint: str | Path = raw_endpoint if self._tcp_address else Path(raw_endpoint)
         self._service = service
         self._slots = asyncio.Semaphore(max_connections)
@@ -110,7 +115,12 @@ class SocketAppServer:
 
 
 def _parse_loopback_tcp(endpoint: str) -> tuple[str, int] | None:
-    if endpoint.startswith("/") or endpoint.count(":") != 1:
+    windows_path = PureWindowsPath(endpoint)
+    if (
+        endpoint.startswith(("/", "\\"))
+        or (bool(windows_path.drive) and bool(windows_path.root))
+        or endpoint.count(":") != 1
+    ):
         return None
     host, raw_port = endpoint.rsplit(":", 1)
     try:

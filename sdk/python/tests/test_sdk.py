@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,12 @@ from session.manager import SessionManager
 from akashic_sdk import Akashic, AsyncAkashic
 
 
+def _server_endpoint(tmp_path: Path, name: str) -> str | Path:
+    if os.name == "nt":
+        return "127.0.0.1:0"
+    return tmp_path / name
+
+
 @pytest.mark.asyncio
 async def test_async_sdk_runs_against_real_socket_router(tmp_path: Path) -> None:
     sessions = SessionManager(tmp_path)
@@ -22,7 +29,10 @@ async def test_async_sdk_runs_against_real_socket_router(tmp_path: Path) -> None
         return f"sdk:{request.input}"
 
     runtime = ConversationRuntime(sessions.control_store, execute)
-    server = SocketAppServer(tmp_path / "control.sock", ControlService(runtime, sessions, tmp_path))
+    server = SocketAppServer(
+        _server_endpoint(tmp_path, "control.sock"),
+        ControlService(runtime, sessions, tmp_path),
+    )
     await server.start()
     try:
         async with await AsyncAkashic.connect(str(server.endpoint)) as client:
@@ -72,7 +82,7 @@ async def test_sdk_result_leaves_no_duplicate_terminal_in_turn_queue(
 
     runtime = ConversationRuntime(sessions.control_store, execute)
     server = SocketAppServer(
-        tmp_path / f"sdk-{terminal_mode}.sock",
+        _server_endpoint(tmp_path, f"sdk-{terminal_mode}.sock"),
         ControlService(runtime, sessions, tmp_path),
     )
     await server.start()
@@ -108,7 +118,10 @@ async def test_sync_sdk_has_turn_handle_and_thread_management_parity(tmp_path: P
         return f"sync:{request.input}"
 
     runtime = ConversationRuntime(sessions.control_store, execute)
-    server = SocketAppServer(tmp_path / "sync-control.sock", ControlService(runtime, sessions, tmp_path))
+    server = SocketAppServer(
+        _server_endpoint(tmp_path, "sync-control.sock"),
+        ControlService(runtime, sessions, tmp_path),
+    )
     await server.start()
 
     def exercise() -> None:

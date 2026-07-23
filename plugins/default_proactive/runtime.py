@@ -24,8 +24,9 @@ import random as _random_module
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
+from agent.tool_governance import ToolGovernor
 from agent.tool_hooks import ToolExecutor, ToolHook
 from agent.turns.orchestrator import TurnOrchestrator
 from agent.turns.result import TurnOutbound, TurnResult, TurnTrace
@@ -126,6 +127,7 @@ class ProactiveFlowDeps:
     schedule_fn: Callable[[float | None], int] | None = None
     event_bus: EventBus | None = None
     tool_hooks: list[ToolHook] | None = None
+    tool_governor: ToolGovernor | None = None
 
 
 # ── 主 Pipeline ─────────────────────────────────────────────────────────
@@ -166,7 +168,10 @@ class ProactiveFlowRuntime:
         self._drift_pipeline = deps.drift_pipeline
         self._schedule_fn = deps.schedule_fn
         self._event_bus = deps.event_bus
-        self._tool_executor = ToolExecutor(deps.tool_hooks or [])
+        self._tool_executor = ToolExecutor(
+            deps.tool_hooks or [],
+            governor=deps.tool_governor,
+        )
         self._proactive_slots: dict[str, Any] = {}
         self._proactive_prompt_sections: list[str] = []
         self._proactive_effect_logs: list[dict[str, Any]] = []
@@ -181,7 +186,7 @@ class ProactiveFlowRuntime:
         )
         self._prompt_builder = ProactivePromptBuilder(
             cfg=self._cfg,
-            memory=self._tool_deps.memory,
+            memory=cast(Any, self._tool_deps.memory),
             workspace_context_fn=self._workspace_context_fn,
         )
         self._resolver = ProactiveResolver(

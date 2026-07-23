@@ -11,6 +11,12 @@ from typing import IO, Literal, cast
 from uuid import uuid4
 
 from bootstrap.workspace_lock import WorkspaceInstanceLock
+from core.common.file_lock import (
+    acquire_file_lock,
+    read_lock_owner,
+    release_file_lock,
+    write_lock_owner,
+)
 
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -47,28 +53,21 @@ class _MigrationLock:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         stream = self.path.open("a+", encoding="utf-8")
         try:
-            if os.name == "nt":
-                import msvcrt
-
-                stream.seek(0)
-                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
-            else:
-                import fcntl
-
-                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            acquire_file_lock(stream, blocking=False)
         except OSError as exc:
-            stream.seek(0)
-            owner = stream.read().strip() or "unknown"
+            owner = read_lock_owner(stream)
             stream.close()
             raise RuntimeError(
                 f"配置迁移已由其他进程执行: {self.path} owner={owner}"
             ) from exc
 
         # 2. 持锁后再刷新诊断 owner。
-        stream.seek(0)
-        stream.truncate()
-        stream.write(str(os.getpid()))
-        stream.flush()
+        try:
+            write_lock_owner(stream, str(os.getpid()))
+        except Exception:
+            release_file_lock(stream)
+            stream.close()
+            raise
         self._stream = stream
         return self
 
@@ -78,15 +77,7 @@ class _MigrationLock:
         if stream is None:
             return
         try:
-            if os.name == "nt":
-                import msvcrt
-
-                stream.seek(0)
-                msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
-            else:
-                import fcntl
-
-                fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+            release_file_lock(stream)
         finally:
             stream.close()
 

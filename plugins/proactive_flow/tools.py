@@ -26,6 +26,24 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _VALID_SKIP_REASONS = frozenset(["no_content", "user_busy", "already_sent_similar", "other"])
+_TOOL_RISKS: dict[str, str] = {
+    "get_alert_events": "read-only",
+    "get_content_events": "read-only",
+    "get_context_data": "read-only",
+    "recall_memory": "read-only",
+    "get_content": "read-only",
+    "web_fetch": "read-only",
+    "web_search": "read-only",
+    "get_recent_chat": "read-only",
+    "message_push": "external-side-effect",
+    "mark_interesting": "write",
+    "mark_not_interesting": "write",
+    "finish_turn": "write",
+}
+
+
+def proactive_tool_risk(name: str) -> str:
+    return _TOOL_RISKS.get(name, "unclassified")
 
 
 # ── 依赖容器 ──────────────────────────────────────────────────────────────

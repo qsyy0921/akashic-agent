@@ -306,6 +306,8 @@ class AgentLoop:
             session_manager=self.session_manager,
             event_bus=self._event_bus,
             non_preloadable_names=deps.tools.get_non_preloadable_names,
+            route_advisor=deps.route_advisor,
+            tool_governor=deps.tool_governor,
         )
 
         # 3. 最后串 passive prepare / execute / commit 主链。
@@ -326,7 +328,7 @@ class AgentLoop:
                 tools=deps.tools,
                 reasoner=self._reasoner,
                 event_bus=self._event_bus,
-                outbound_port=BusOutboundPort(self.bus),
+                outbound_port=deps.outbound_port or BusOutboundPort(self.bus),
                 history_window=config.memory.keep_count,
                 memory_consolidator=self,
             )
@@ -750,6 +752,7 @@ class AgentLoop:
         skip_post_memory: bool = False,
         skip_memory_retrieval: bool = False,
         stream_events: bool = False,
+        dispatch_outbound: bool = False,
         disabled_tools: list[str] | None = None,
         sender: str = "user",
         media: list[str] | None = None,
@@ -765,6 +768,7 @@ class AgentLoop:
             skip_post_memory=skip_post_memory,
             skip_memory_retrieval=skip_memory_retrieval,
             stream_events=stream_events,
+            dispatch_outbound=dispatch_outbound,
             disabled_tools=disabled_tools,
             sender=sender,
             media=media,
@@ -783,6 +787,7 @@ class AgentLoop:
         skip_post_memory: bool = False,
         skip_memory_retrieval: bool = False,
         stream_events: bool = False,
+        dispatch_outbound: bool = False,
         disabled_tools: list[str] | None = None,
         sender: str = "user",
         media: list[str] | None = None,
@@ -816,7 +821,7 @@ class AgentLoop:
             msg,
             session_key=session_key,
             busy_session_key=busy_session_key,
-            dispatch_outbound=False,
+            dispatch_outbound=dispatch_outbound,
         )
         return response
 

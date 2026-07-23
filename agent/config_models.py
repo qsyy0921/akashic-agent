@@ -3,8 +3,18 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from proactive_v2.config import ProactiveConfig
+
+if TYPE_CHECKING:
+    from agent.routing.config import IntentRoutingConfig
+
+
+def _default_intent_routing_config() -> "IntentRoutingConfig":
+    from agent.routing.config import IntentRoutingConfig
+
+    return IntentRoutingConfig()
 
 
 @dataclass
@@ -155,6 +165,7 @@ class ModelRuntimeConfig:
             provider=self.provider,
             model=self.model,
             input_modalities=self.input_modalities,
+            reasoning_effort=self.reasoning_effort,
         )
         if not 0 < self.effective_context_percent <= 1:
             raise ValueError(
@@ -197,6 +208,9 @@ class Config:
     vl_api_key: str = ""
     vl_base_url: str = ""
     tool_search_enabled: bool = False
+    intent_routing: "IntentRoutingConfig" = field(
+        default_factory=_default_intent_routing_config
+    )
     spawn_enabled: bool = True
     dev_mode: bool = False
     peer_agents: list[PeerAgentConfig] = field(default_factory=list)

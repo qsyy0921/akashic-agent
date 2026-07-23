@@ -75,6 +75,78 @@ def test_plugin_doctor_finds_builtin_plugin(tmp_path: Path) -> None:
     assert report["status"] == "healthy"
 
 
+def test_plugin_doctor_expands_enabled_builtin_package(tmp_path: Path) -> None:
+    plugins_home = tmp_path / ".akashic-plugin"
+    plugins_home.mkdir(parents=True)
+    (plugins_home / "manifest.toml").write_text(
+        '[plugins]\n\n[packages."default-proactive"]\nenabled = true\n',
+        encoding="utf-8",
+    )
+
+    report = run_plugin_doctor(
+        plugin_id="default_proactive",
+        config_path=str(_init_config(tmp_path)),
+        plugins_home=plugins_home,
+        workspace=tmp_path / "workspace",
+    )
+
+    assert report["status"] == "healthy"
+    assert [item["plugin_id"] for item in report["plugins"]] == [
+        "default_proactive"
+    ]
+
+
+def test_plugin_doctor_package_state_overrides_stale_member_entry(
+    tmp_path: Path,
+) -> None:
+    plugins_home = tmp_path / ".akashic-plugin"
+    plugins_home.mkdir(parents=True)
+    (plugins_home / "manifest.toml").write_text(
+        "\n".join(
+            [
+                "[plugins]",
+                "",
+                '[plugins."default_proactive"]',
+                "enabled = true",
+                "",
+                "[packages]",
+                "",
+                '[packages."default-proactive"]',
+                "enabled = false",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    report = run_plugin_doctor(
+        plugin_id="default_proactive",
+        config_path=str(_init_config(tmp_path)),
+        plugins_home=plugins_home,
+        workspace=tmp_path / "workspace",
+    )
+
+    assert report["status"] == "degraded"
+    assert [item["plugin_id"] for item in report["plugins"]] == [
+        "default_proactive"
+    ]
+    assert report["plugins"][0]["checks"][0] == {
+        "name": "policy",
+        "status": "warn",
+        "detail": "enabled=false",
+    }
+
+    overview = run_plugin_doctor(
+        config_path=str(_init_config(tmp_path)),
+        plugins_home=plugins_home,
+        workspace=tmp_path / "workspace",
+    )
+
+    assert "default_proactive" not in {
+        item["plugin_id"] for item in overview["plugins"]
+    }
+
+
 def test_plugin_doctor_skips_inactive_default_memory_drift_links(
     tmp_path: Path,
 ) -> None:

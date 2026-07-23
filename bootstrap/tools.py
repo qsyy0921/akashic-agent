@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 from agent.config_models import Config
+from agent.delivery.supervisor import DeliverySupervisor
 from agent.plugins.manifest import plugins_root
 from agent.context import ContextBuilder
 from agent.peer_agent.process_manager import PeerProcessManager
@@ -35,8 +36,10 @@ from agent.mcp.watcher import WorkspaceMcpWatcher
 from agent.provider import LLMProvider
 from agent.retrieval.default_pipeline import DefaultMemoryRetrievalPipeline
 from agent.scheduler import SchedulerService
+from agent.tool_governance import ToolGovernor
 from agent.tools.message_push import MessagePushTool
 from agent.tools.registry import ToolRegistry
+from agent.turns.outbound import DurableOutboundPort
 from bootstrap.toolsets.meta import build_readonly_tools
 from bootstrap.toolsets.peer import build_peer_agent_resources
 from bootstrap.toolsets.protocol import ToolsetDeps
@@ -59,6 +62,8 @@ from core.memory.runtime import MemoryRuntime
 from core.net.http import SharedHttpResources
 from proactive_v2.presence import PresenceStore
 from session.manager import Session, SessionManager
+from session.outbox_repository import OutboxRepository
+from session.tool_ledger_repository import ToolLedgerRepository
 
 
 async def _noop_async() -> None:
@@ -82,6 +87,11 @@ class CoreRuntime:
     workspace_mcp_watcher_task: asyncio.Task[None] | None
     memory_runtime: MemoryRuntime
     presence: PresenceStore
+    outbox_repository: OutboxRepository
+    delivery_supervisor: DeliverySupervisor
+    outbound_port: DurableOutboundPort
+    tool_ledger_repository: ToolLedgerRepository
+    tool_governor: ToolGovernor
     peer_process_manager: PeerProcessManager | None
     peer_poller: PeerAgentPoller | None
     agent_provider: LLMProvider | None = None
@@ -114,8 +124,12 @@ class CoreRuntime:
         # 2. workspace MCP 必须先原子发布，插件同名声明随后 fail-loud
         await self.workspace_mcp_watcher.reconcile()
 
-        # 3. 加载插件后同步 skill，再绑定工具 hook。
+        # 3. 先迁移清单中的插件包，再加载插件、同步 skill 和绑定工具 hook。
         if self.plugin_manager is not None:
+            sync_manifest = getattr(self.plugin_manager, "sync_manifest", None)
+            if callable(sync_manifest):
+                manifest_path = sync_manifest()
+                logger.info("插件清单已同步: %s", manifest_path)
             await self.plugin_manager.load_all()
             self.plugin_manager.assert_no_workspace_mcp_plugin_conflicts()
             if self.workspace is not None:
@@ -134,10 +148,6 @@ class CoreRuntime:
                     link_result.removed,
                     link_result.skipped,
                 )
-            sync_manifest = getattr(self.plugin_manager, "sync_manifest", None)
-            if callable(sync_manifest):
-                manifest_path = sync_manifest()
-                logger.info("插件清单已同步: %s", manifest_path)
             logger.info("插件加载完成: %d 个", self.plugin_manager.loaded_count)
             if self.plugin_manager.tool_hooks:
                 self.loop.add_tool_hooks(self.plugin_manager.tool_hooks)
@@ -438,6 +448,9 @@ def _build_loop_deps(
     processing_state: ProcessingState,
     event_bus: EventBus,
     memory_runtime: MemoryRuntime,
+    route_advisor: object | None = None,
+    outbound_port: DurableOutboundPort | None = None,
+    tool_governor: ToolGovernor | None = None,
 ) -> AgentLoopDeps:
     """将已构造的 runtime 资源装配成 AgentLoop 依赖。"""
 
@@ -485,6 +498,131 @@ def _build_loop_deps(
         llm_services=llm_services,
         memory_services=memory_services,
         session_services=session_services,
+        route_advisor=cast(Any, route_advisor),
+        outbound_port=outbound_port,
+        tool_governor=tool_governor,
+    )
+
+
+def build_intent_route_advisor(
+    *,
+    config: Config,
+    tools: ToolRegistry,
+    provider: LLMProvider,
+    application_root: Path | None = None,
+) -> object | None:
+    routing = config.intent_routing
+    if routing.mode == "off":
+        return None
+    if routing.mode == "active" and not config.tool_search_enabled:
+        raise ValueError("active intent routing requires agent.tools.search_enabled")
+
+    from agent.routing.advisor_v3 import (
+        INTENT_ROUTER_V3_VERSION,
+        IntentV3TurnRouteAdvisor,
+        UnavailableV3ShadowRouteAdvisor,
+        V3_DERIVED_QUERY_MAX_CHARACTERS,
+        V3_LLM_VIEW_WEIGHT,
+        V3_LOW_MARGIN,
+        V3_ORIGINAL_DENSE_WEIGHT,
+        V3_ORIGINAL_LEXICAL_WEIGHT,
+        V3_RRF_K,
+    )
+    from agent.routing.config import resolve_intent_routing_path
+    from agent.routing.dense import (
+        DenseRouteRetriever,
+        DenseRoutingError,
+        build_dense_encoder,
+    )
+    from agent.routing.gate_v3 import (
+        V3QualityGateError,
+        build_v3_runtime_configuration,
+        verify_v3_quality_gate,
+    )
+    from agent.routing.hybrid import HybridRouteRetriever
+    from agent.routing.intent_view import (
+        INTENT_VIEW_PROMPT_VERSION,
+        IntentViewAnalyzer,
+        LLMIntentViewProvider,
+        intent_view_prompt_digest,
+    )
+    from agent.routing.lexical import MetadataLexicalRouteRetriever
+
+    root = (application_root or Path(__file__).resolve().parents[1]).resolve()
+    runtime_configuration = build_v3_runtime_configuration(
+        dense_min_similarity=routing.dense_min_similarity,
+        inner_rrf_k=V3_RRF_K,
+        outer_rrf_k=V3_RRF_K,
+        original_lexical_weight=V3_ORIGINAL_LEXICAL_WEIGHT,
+        original_dense_weight=V3_ORIGINAL_DENSE_WEIGHT,
+        llm_view_weight=V3_LLM_VIEW_WEIGHT,
+        derived_query_max_characters=V3_DERIVED_QUERY_MAX_CHARACTERS,
+        dense_threads=0,
+        low_margin=V3_LOW_MARGIN,
+        intent_max_tokens=routing.intent_max_tokens,
+        intent_timeout_seconds=routing.intent_timeout_seconds,
+        embedding_backend="openai_compatible",
+        embedding_dimension=routing.embedding_dimension,
+        embedding_batch_size=routing.embedding_batch_size,
+        embedding_timeout_seconds=routing.embedding_timeout_seconds,
+    )
+    gate_evidence = None
+    if routing.mode == "active":
+        gate_evidence = verify_v3_quality_gate(
+            resolve_intent_routing_path(root, routing.gate_report_path),
+            application_root=root,
+            dataset_path=resolve_intent_routing_path(root, routing.dataset_path),
+            catalog_path=resolve_intent_routing_path(root, routing.catalog_path),
+            expected_router_version=INTENT_ROUTER_V3_VERSION,
+            expected_retrieval_model_id=routing.embedding_model,
+            expected_intent_model_id=config.agent_model or config.model,
+            expected_prompt_version=INTENT_VIEW_PROMPT_VERSION,
+            expected_prompt_digest=intent_view_prompt_digest(),
+            expected_configuration=runtime_configuration,
+        )
+    try:
+        encoder = build_dense_encoder(
+            backend="openai_compatible",
+            model_id=routing.embedding_model,
+            dimension=routing.embedding_dimension,
+            cache_dir=root / "runtime" / "models" / "intent-routing",
+            threads=None,
+            base_url=routing.embedding_base_url,
+            api_key=routing.embedding_api_key,
+            batch_size=routing.embedding_batch_size,
+            timeout_seconds=routing.embedding_timeout_seconds,
+        )
+        encoder.ensure_ready()
+    except (DenseRoutingError, V3QualityGateError) as exc:
+        if routing.mode == "active":
+            raise
+        logger.error("intent_routing_unavailable reason=%s", type(exc).__name__)
+        return UnavailableV3ShadowRouteAdvisor(
+            reason_code="dense_unavailable"
+        )
+    retriever = HybridRouteRetriever(
+        MetadataLexicalRouteRetriever(),
+        DenseRouteRetriever(
+            encoder,
+            minimum_similarity=routing.dense_min_similarity,
+        ),
+        rrf_k=V3_RRF_K,
+    )
+    analyzer = IntentViewAnalyzer(
+        LLMIntentViewProvider(
+            provider,
+            model=config.agent_model or config.model,
+            max_tokens=routing.intent_max_tokens,
+            timeout_seconds=routing.intent_timeout_seconds,
+        )
+    )
+    return IntentV3TurnRouteAdvisor(
+        tools,
+        retriever,
+        analyzer,
+        mode=routing.mode,
+        intent_model_id=config.agent_model or config.model,
+        gate_evidence=gate_evidence,
     )
 
 
@@ -541,7 +679,30 @@ def build_core_runtime(
             restart_coordinator=restart_coordinator,
         )
     )
+    route_advisor = build_intent_route_advisor(
+        config=config,
+        tools=tools,
+        provider=loop_provider,
+    )
     presence = PresenceStore(session_manager._store)
+    outbox_repository = OutboxRepository(session_manager.control_store)
+    delivery_supervisor = DeliverySupervisor(outbox_repository, bus)
+    outbound_port = DurableOutboundPort(outbox_repository, delivery_supervisor)
+    tool_ledger_repository = ToolLedgerRepository(session_manager.control_store)
+
+    def _resolve_tool_risk(name: str) -> str | None:
+        meta = tools.get_tool_meta(name)
+        return meta.risk if meta is not None else None
+
+    tool_governor = ToolGovernor(
+        tool_ledger_repository,
+        risk_resolver=_resolve_tool_risk,
+    )
+    from agent.tools.spawn import SpawnTool
+
+    spawn_tool = tools.get_tool("spawn")
+    if isinstance(spawn_tool, SpawnTool):
+        spawn_tool.set_tool_governor(tool_governor)
     processing_state = ProcessingState()
     loop_deps = _build_loop_deps(
         config=config,
@@ -555,6 +716,9 @@ def build_core_runtime(
         processing_state=processing_state,
         event_bus=event_bus,
         memory_runtime=memory_runtime,
+        route_advisor=route_advisor,
+        outbound_port=outbound_port,
+        tool_governor=tool_governor,
     )
     loop = AgentLoop(
         loop_deps,
@@ -652,6 +816,11 @@ def build_core_runtime(
         workspace_mcp_watcher_task=None,
         memory_runtime=memory_runtime,
         presence=presence,
+        outbox_repository=outbox_repository,
+        delivery_supervisor=delivery_supervisor,
+        outbound_port=outbound_port,
+        tool_ledger_repository=tool_ledger_repository,
+        tool_governor=tool_governor,
         peer_process_manager=peer_pm,
         peer_poller=peer_poller,
         plugin_manager=plugin_manager,

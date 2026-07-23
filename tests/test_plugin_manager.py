@@ -1157,6 +1157,7 @@ async def test_active_plugins_excludes_inactive_memory_plugin(
         for generation in active_generations
         for root in generation.contributions.drift_skill_roots
     )
+    await mgr.terminate_all()
 
 
 @pytest.mark.asyncio
@@ -1911,6 +1912,10 @@ async def test_core_runtime_start_wires_plugin_tool_hooks_to_loop_and_spawn():
             startup_order.append("plugins")
             self.loaded_count = 1
 
+        def sync_manifest(self) -> Path:
+            startup_order.append("manifest")
+            return Path("manifest.toml")
+
         def assert_no_workspace_mcp_plugin_conflicts(self) -> None:
             return None
 
@@ -2012,6 +2017,11 @@ async def test_core_runtime_start_wires_plugin_tool_hooks_to_loop_and_spawn():
         workspace_mcp_watcher_task=None,
         memory_runtime=SimpleNamespace(),  # type: ignore[arg-type]
         presence=SimpleNamespace(),  # type: ignore[arg-type]
+        outbox_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        delivery_supervisor=SimpleNamespace(),  # type: ignore[arg-type]
+        outbound_port=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_ledger_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_governor=SimpleNamespace(),  # type: ignore[arg-type]
         peer_process_manager=None,
         peer_poller=None,
         plugin_manager=plugin_manager,  # type: ignore[arg-type]
@@ -2019,7 +2029,7 @@ async def test_core_runtime_start_wires_plugin_tool_hooks_to_loop_and_spawn():
 
     await runtime.start()
 
-    assert startup_order == ["mcp", "plugins"]
+    assert startup_order == ["mcp", "manifest", "plugins"]
     assert plugin_manager.loaded_count == 1
     assert loop.received_before_turn is None
     assert loop.received_before_reasoning is None
@@ -2063,6 +2073,11 @@ async def test_core_runtime_stop_closes_session_manager(tmp_path: Path):
         workspace_mcp_watcher_task=None,
         memory_runtime=SimpleNamespace(),  # type: ignore[arg-type]
         presence=SimpleNamespace(),  # type: ignore[arg-type]
+        outbox_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        delivery_supervisor=SimpleNamespace(),  # type: ignore[arg-type]
+        outbound_port=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_ledger_repository=SimpleNamespace(),  # type: ignore[arg-type]
+        tool_governor=SimpleNamespace(),  # type: ignore[arg-type]
         peer_process_manager=None,
         peer_poller=None,
         plugin_manager=None,

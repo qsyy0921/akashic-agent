@@ -9,20 +9,18 @@ const isWindows = process.platform === "win32";
 const localEsbuild = join(
   projectRoot,
   "node_modules",
-  ".bin",
-  isWindows ? "esbuild.cmd" : "esbuild",
+  "esbuild",
+  "bin",
+  "esbuild",
 );
 
 const watchMode = process.argv.includes("--watch");
 
 function resolveEsbuildCommand() {
   if (existsSync(localEsbuild)) {
-    return [localEsbuild];
+    return [process.execPath, localEsbuild];
   }
-  if (isWindows) {
-    return ["cmd.exe", "/d", "/s", "/c", "npx", "--yes", "esbuild"];
-  }
-  return ["npx", "--yes", "esbuild"];
+  throw new Error(`找不到本地 esbuild CLI: ${localEsbuild}`);
 }
 
 function listPluginPanels() {

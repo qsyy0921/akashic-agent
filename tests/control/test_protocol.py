@@ -11,7 +11,7 @@ from agent.control.models import TurnRequest
 from agent.control.protocol.router import ConnectionRouter
 from agent.control.runtime import ConversationRuntime
 from agent.control.service import ControlService
-from infra.control.socket import SocketAppServer
+from infra.control.socket import SocketAppServer, is_tcp_endpoint
 from session.manager import SessionManager
 
 
@@ -103,7 +103,12 @@ async def test_raw_ndjson_connection_emits_exactly_one_terminal(
         ControlService(runtime, sessions, tmp_path),
     )
     await server.start()
-    reader, writer = await asyncio.open_unix_connection(str(server.endpoint))
+    endpoint = str(server.endpoint)
+    if is_tcp_endpoint(endpoint):
+        host, raw_port = endpoint.rsplit(":", 1)
+        reader, writer = await asyncio.open_connection(host, int(raw_port))
+    else:
+        reader, writer = await asyncio.open_unix_connection(endpoint)
     frames: list[dict[str, Any]] = []
     next_id = 0
 

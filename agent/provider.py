@@ -25,7 +25,15 @@ from agent.model_runtime.auth.codex import CodexAuthDriver
 from agent.model_runtime.auth.store import CredentialStore
 from agent.model_runtime.context_policy import build_runtime_context_budget
 from agent.model_runtime.errors import ContextWindowError
-from agent.model_runtime.transports.responses import CodexResponsesTransport
+from agent.model_runtime.provider_profiles import (
+    TERRA_RESPONSES_MODEL,
+    TERRA_RESPONSES_REASONING_EFFORT,
+    uses_responses_transport,
+)
+from agent.model_runtime.transports.responses import (
+    CodexResponsesTransport,
+    OpenAICompatibleResponsesTransport,
+)
 from agent.model_runtime.types import (
     LLMResponse,
     ModelBackend,
@@ -585,10 +593,13 @@ class ChatCompletionsRuntime:
 
     @staticmethod
     def _is_network_timeout(err: Exception) -> bool:
-        return isinstance(
-            err,
-            (TimeoutError, httpx.TimeoutException),
-        ) or type(err).__name__ == "APITimeoutError"
+        return (
+            isinstance(
+                err,
+                (TimeoutError, httpx.TimeoutException),
+            )
+            or type(err).__name__ == "APITimeoutError"
+        )
 
 
 class LLMProvider:
@@ -607,7 +618,9 @@ class LLMProvider:
     ) -> LLMProvider:
         """从已校验配置构建 provider，不向调用层暴露后端参数。"""
         body = dict(extra_body or {})
-        if runtime.reasoning_effort and not force_disable_thinking:
+        if runtime.reasoning_effort and (
+            not force_disable_thinking or uses_responses_transport(runtime.provider)
+        ):
             body.setdefault("reasoning_effort", runtime.reasoning_effort)
         return cls(
             api_key=runtime.api_key,
@@ -648,7 +661,16 @@ class LLMProvider:
     ) -> None:
         self._system = system_prompt
         self._runtime_id = runtime_id
+        self._requires_reasoning = uses_responses_transport(provider_name)
         self._extra_body = dict(extra_body or {})
+        if self._requires_reasoning:
+            unsupported = set(self._extra_body) - {"reasoning_effort"}
+            if unsupported:
+                keys = ", ".join(sorted(unsupported))
+                raise ValueError(
+                    f"provider {provider_name} received incompatible runtime "
+                    f"options: {keys}"
+                )
         self._context_window = int(context_window)
         self._effective_context_percent = float(effective_context_percent)
         self._force_disable_thinking = force_disable_thinking
@@ -665,6 +687,22 @@ class LLMProvider:
                 base_url=base_url or "https://chatgpt.com/backend-api/codex",
                 read_timeout_s=read_timeout_s,
                 use_responses_lite=use_responses_lite,
+                supports_parallel_tool_calls=supports_parallel_tool_calls,
+                reasoning_summary=reasoning_summary,
+            )
+        elif uses_responses_transport(provider_name):
+            if use_responses_lite:
+                raise ValueError(
+                    f"provider {provider_name} does not support Responses Lite"
+                )
+            self._backend = OpenAICompatibleResponsesTransport(
+                api_key,
+                runtime_id=runtime_id,
+                base_url=base_url or "",
+                provider_name=provider_name,
+                expected_model=TERRA_RESPONSES_MODEL,
+                required_reasoning_effort=TERRA_RESPONSES_REASONING_EFFORT,
+                read_timeout_s=read_timeout_s,
                 supports_parallel_tool_calls=supports_parallel_tool_calls,
                 reasoning_summary=reasoning_summary,
             )
@@ -695,6 +733,10 @@ class LLMProvider:
         self._enforce_context_budget(messages, tools, max_tokens)
         merged_extra = {**self._extra_body, **(extra_body or {})}
         effort = merged_extra.get("reasoning_effort")
+        disable_for_request = self._force_disable_thinking or disable_thinking
+        reasoning_effort = str(effort or "") or None
+        if disable_for_request and not self._requires_reasoning:
+            reasoning_effort = None
         request = ModelRequest(
             messages=messages,
             tools=tools,
@@ -702,11 +744,7 @@ class LLMProvider:
             max_output_tokens=max_tokens,
             system_prompt=self._system,
             tool_choice=tool_choice,
-            reasoning_effort=(
-                None
-                if self._force_disable_thinking or disable_thinking
-                else str(effort or "") or None
-            ),
+            reasoning_effort=reasoning_effort,
             prompt_cache_key=(
                 _stable_prompt_cache_key(self._runtime_id, model, cache_namespace)
                 if cache_namespace
@@ -714,7 +752,9 @@ class LLMProvider:
             ),
             on_delta=on_content_delta,
             extra_body=dict(extra_body or {}),
-            disable_thinking=self._force_disable_thinking or disable_thinking,
+            disable_thinking=(
+                False if self._requires_reasoning else disable_for_request
+            ),
         )
         try:
             return await self._backend.send(request)
@@ -860,13 +900,17 @@ def _extract_model_usage(usage: Any) -> ModelUsage | None:
         cached_input_tokens=cached_tokens,
         output_tokens=completion_tokens,
         reasoning_output_tokens=reasoning_tokens,
-        covered_request_count=1 if prompt_tokens is not None and completion_tokens is not None else 0,
+        covered_request_count=(
+            1 if prompt_tokens is not None and completion_tokens is not None else 0
+        ),
         coverage=(
             UsageCoverage.EXACT
             if prompt_tokens is not None and completion_tokens is not None
-            else UsageCoverage.PARTIAL
-            if prompt_tokens is not None or completion_tokens is not None
-            else UsageCoverage.UNAVAILABLE
+            else (
+                UsageCoverage.PARTIAL
+                if prompt_tokens is not None or completion_tokens is not None
+                else UsageCoverage.UNAVAILABLE
+            )
         ),
     )
 

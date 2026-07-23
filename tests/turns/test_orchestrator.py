@@ -19,7 +19,7 @@ class _DummySession:
         self.metadata: dict[str, object] = {}
         self.last_consolidated = 0
 
-    def add_message(self, role: str, content: str, media=None, **kwargs) -> None:
+    def add_message(self, role: str, content: str, media=None, **kwargs) -> dict[str, object]:
         msg: dict[str, object] = {
             "role": role,
             "content": content,
@@ -28,6 +28,22 @@ class _DummySession:
             msg["media"] = list(media)
         msg.update(kwargs)
         self.messages.append(msg)
+        return msg
+
+
+def _persist_outbound_mock(order: list[str] | None = None) -> AsyncMock:
+    async def persist(_session, messages, draft):
+        if order is not None:
+            order.append("persist")
+        for index, message in enumerate(messages):
+            message.setdefault("id", f"telegram:123:{index}")
+        assistant_id = messages[-1]["id"] if messages else None
+        return SimpleNamespace(
+            metadata=dict(draft.metadata),
+            session_message_id=assistant_id,
+        )
+
+    return AsyncMock(side_effect=persist)
 
 
 @pytest.mark.asyncio
@@ -95,7 +111,7 @@ async def test_orchestrator_proactive_reply_persists_dispatches_and_runs_success
     presence = SimpleNamespace(record_proactive_sent=lambda _key: order.append("presence"))
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
-        append_messages=AsyncMock(side_effect=lambda *_args, **_kwargs: order.append("persist")),
+        append_messages_with_outbound=_persist_outbound_mock(order),
     )
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(
@@ -130,15 +146,15 @@ async def test_orchestrator_proactive_reply_persists_dispatches_and_runs_success
     assert session.messages[0]["proactive"] is True
     assert session.messages[0]["content"] == "hello"
     assert session.messages[0]["delivery_id"] == dispatched_delivery_ids[0]
-    assert order == ["side_effect", "dispatch", "persist", "presence", "success_effect"]
+    assert order == ["side_effect", "persist", "dispatch", "presence", "success_effect"]
 
 
 @pytest.mark.asyncio
-async def test_orchestrator_failed_dispatch_does_not_persist_proactive_message():
+async def test_orchestrator_failed_dispatch_keeps_durable_proactive_message():
     session = _DummySession("telegram:123")
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
-        append_messages=AsyncMock(return_value=None),
+        append_messages_with_outbound=_persist_outbound_mock(),
     )
     outbound = SimpleNamespace(dispatch=AsyncMock(return_value=False))
     orchestrator = TurnOrchestrator(
@@ -162,8 +178,8 @@ async def test_orchestrator_failed_dispatch_does_not_persist_proactive_message()
     )
 
     assert sent is False
-    assert session.messages == []
-    session_manager.append_messages.assert_not_awaited()
+    assert session.messages[0]["content"] == "not delivered"
+    session_manager.append_messages_with_outbound.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -208,13 +224,11 @@ async def test_push_outbound_port_forwards_internal_metadata():
 
 
 @pytest.mark.asyncio
-async def test_orchestrator_logs_dispatch_error_and_runs_failure_effect(
-    caplog: pytest.LogCaptureFixture,
-):
+async def test_orchestrator_propagates_invariant_dispatch_error_after_commit():
     session = _DummySession("telegram:123")
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
-        append_messages=AsyncMock(return_value=None),
+        append_messages_with_outbound=_persist_outbound_mock(),
     )
     outbound = SimpleNamespace(
         dispatch=AsyncMock(side_effect=RuntimeError("channel disconnected"))
@@ -235,8 +249,8 @@ async def test_orchestrator_logs_dispatch_error_and_runs_failure_effect(
         )
     )
 
-    with caplog.at_level("ERROR", logger="agent.turn_orchestrator"):
-        sent = await orchestrator.handle_proactive_turn(
+    with pytest.raises(RuntimeError, match="channel disconnected"):
+        await orchestrator.handle_proactive_turn(
             result=TurnResult(
                 decision="reply",
                 outbound=TurnOutbound(
@@ -250,11 +264,9 @@ async def test_orchestrator_logs_dispatch_error_and_runs_failure_effect(
             chat_id="123",
         )
 
-    assert sent is False
-    assert failures == ["failed"]
-    assert session.messages == []
-    session_manager.append_messages.assert_not_awaited()
-    assert "channel disconnected" in caplog.text
+    assert failures == []
+    assert session.messages[0]["content"] == "not delivered"
+    session_manager.append_messages_with_outbound.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -269,7 +281,7 @@ async def test_orchestrator_proactive_reply_dispatches_media():
 
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
-        append_messages=AsyncMock(return_value=None),
+        append_messages_with_outbound=_persist_outbound_mock(),
     )
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(

@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from agent.plugins.snapshot import RuntimeSnapshotLease
+    from agent.tool_governance import ToolGovernor
 
 _RESULT_MAX_CHARS = 12_000
 _SYNC_RESULT_MAX_CHARS = 100_000
@@ -86,6 +87,9 @@ class SubagentManager:
 
     def add_tool_hooks(self, hooks: list[ToolHook]) -> None:
         object.__setattr__(self._runtime, "tool_hooks", list(hooks))
+
+    def set_tool_governor(self, governor: "ToolGovernor | None") -> None:
+        object.__setattr__(self._runtime, "tool_governor", governor)
 
     def _spawn_jobs_dir(self) -> Path:
         root = self._workspace / "subagent-runs"

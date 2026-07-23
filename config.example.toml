@@ -27,6 +27,21 @@ effective_context_percent = 0.9
 max_output_tokens = 8192
 input_modalities = ["text"]
 
+# OpenAI-compatible Responses 反代示例。启用时把 llm.main 改为
+# "terra_main"，并在 CredentialStore 中配置 terra_default；不要把密钥写进本文件。
+# [llm.runtimes.terra_main]
+# provider = "terra-responses"
+# model = "gpt-5.6-terra"
+# auth = "terra_default"
+# base_url = "https://proxy.example.invalid/v1"
+# reasoning_effort = "high"
+# context_window = 272000
+# effective_context_percent = 0.9
+# max_output_tokens = 8192
+# input_modalities = ["text", "image"]
+# supports_parallel_tool_calls = true
+# reasoning_summary = "auto"
+
 [llm.runtimes.qwen_fast]
 # 轻量模型，用于 memory gate / query rewrite / HyDE。
 provider = "qwen"
@@ -64,6 +79,18 @@ dev_mode = false
 
 [agent.tools]
 search_enabled = true
+
+[agent.intent_routing]
+# off: disabled; shadow: observe only; active: preload candidates after exact Gate.
+mode = "off"
+gate_report_path = "eval/intent_routing/v3-gate-report.json"
+dataset_path = "eval/intent_routing/v3_dataset.zh.jsonl"
+catalog_path = "eval/intent_routing/catalog.zh.json"
+intent_max_tokens = 2000
+intent_timeout_seconds = 30.0
+embedding_batch_size = 8
+embedding_timeout_seconds = 30.0
+dense_min_similarity = 0.56
 
 # Web Chatbox 默认跟主进程一起启动，只监听本机。
 [channels.chat]
@@ -104,7 +131,9 @@ keyset_manifest = "data/mobile/keys/current.json"
 # =============================================================================
 
 [channels.telegram]
-# BotFather 给的 bot token，格式：123456789:AAF...
+# 推荐：配置后填写 CredentialStore 中 driver=telegram_bot 的条目 ID。
+auth = ""
+# 兼容旧配置：也可直接填写或使用环境变量占位符；不能与 auth 同时配置。
 token = ""
 # 你的 Telegram 用户名（不带 @），只有白名单用户才能使用 bot。
 allow_from = ["your_username"]

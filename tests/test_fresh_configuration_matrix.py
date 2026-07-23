@@ -208,11 +208,11 @@ async def test_fresh_init_runtime_start_stop_matrix(
     )
     task = asyncio.create_task(runtime.run())
     try:
-        for _ in range(100):
-            if runtime._started or task.done():
-                break
-            await asyncio.sleep(0)
+        async def wait_until_started_or_done() -> None:
+            while not runtime._started and not task.done():
+                await asyncio.sleep(0.01)
 
+        await asyncio.wait_for(wait_until_started_or_done(), timeout=15)
         if task.done():
             await task
         assert runtime._started

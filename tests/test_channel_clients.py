@@ -707,6 +707,31 @@ async def test_telegram_channel_paths(monkeypatch: pytest.MonkeyPatch, tmp_path:
     channel._on_polling_error(mod.TelegramError("warn"))
     await channel.stop()
 
+
+@pytest.mark.asyncio
+async def test_telegram_response_propagates_media_send_failure(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    mod = _import_telegram_channel(monkeypatch)
+    channel = mod.TelegramChannel(
+        "token",
+        _Bus(),
+        _SessionManager(tmp_path),
+        allow_from=["1"],
+    )
+    channel.send_image = AsyncMock(side_effect=RuntimeError("send failed"))
+
+    with pytest.raises(RuntimeError, match="send failed"):
+        await channel._on_response(
+            OutboundMessage(
+                channel="telegram",
+                chat_id="123",
+                content="",
+                media=[str(tmp_path / "image.png")],
+            )
+        )
+
     merged, meta = mod._build_inbound_text_with_reply("hi", None)
     assert (merged, meta) == ("hi", {})
     merged, meta = mod._build_inbound_text_with_reply(

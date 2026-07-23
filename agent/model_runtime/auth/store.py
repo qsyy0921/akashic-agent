@@ -9,9 +9,13 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterator
 
-import fcntl
-
 from agent.model_runtime.errors import AuthenticationError
+from core.common.file_lock import acquire_file_lock, release_file_lock
+from core.common.private_path import (
+    PrivatePathError,
+    harden_private_path,
+    validate_private_path,
+)
 
 
 @dataclass(frozen=True)
@@ -28,8 +32,17 @@ class CredentialStore:
     """安全地读取和原子更新用户凭据。"""
 
     def __init__(self, path: Path | None = None) -> None:
-        self.path = path or Path.home() / ".akashic" / "auth.json"
+        self.path = path if path is not None else self._default_path()
         self.lock_path = self.path.with_suffix(".lock")
+
+    @staticmethod
+    def _default_path() -> Path:
+        configured = os.environ.get("AKASHIC_AUTH_FILE")
+        if configured is None:
+            return Path.home() / ".akashic" / "auth.json"
+        if not configured.strip():
+            raise AuthenticationError("AKASHIC_AUTH_FILE 不能为空")
+        return Path(configured).expanduser().resolve(strict=False)
 
     def get(self, credential_id: str) -> Credential:
         data = self._read_document()
@@ -45,6 +58,14 @@ class CredentialStore:
         credential = self.get(credential_id)
         if credential.driver != "api_key" or not credential.access_token:
             raise AuthenticationError(f"凭据 {credential_id} 不是有效 API key")
+        return credential.access_token
+
+    def telegram_token(self, credential_id: str) -> str:
+        credential = self.get(credential_id)
+        if credential.driver != "telegram_bot" or not credential.access_token:
+            raise AuthenticationError(
+                f"凭据 {credential_id} 不是有效 Telegram Bot token"
+            )
         return credential.access_token
 
     def put(self, credential_id: str, credential: Credential) -> None:
@@ -81,13 +102,25 @@ class CredentialStore:
     def locked(self) -> Iterator[None]:
         """持有跨进程独占锁，供刷新网络请求和持久化共同使用。"""
         self.path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-        os.chmod(self.path.parent, 0o700)
-        lock_file = self.lock_path.open("a+", encoding="utf-8")
-        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
         try:
-            yield
+            harden_private_path(self.path.parent, directory=True)
+        except PrivatePathError as exc:
+            raise AuthenticationError("凭据目录 ACL 加固失败") from exc
+        lock_file = self.lock_path.open("a+", encoding="utf-8")
+        try:
+            try:
+                harden_private_path(self.lock_path, directory=False)
+            except PrivatePathError as exc:
+                raise AuthenticationError("凭据锁文件 ACL 加固失败") from exc
+            try:
+                acquire_file_lock(lock_file, blocking=True)
+            except OSError as exc:
+                raise AuthenticationError(f"凭据锁获取失败: {self.lock_path}") from exc
+            try:
+                yield
+            finally:
+                release_file_lock(lock_file)
         finally:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
             lock_file.close()
 
     def _read_document(self) -> dict:
@@ -117,17 +150,18 @@ class CredentialStore:
                 os.fsync(handle.fileno())
             os.chmod(temp_name, 0o600)
             if self.path.exists():
-                shutil.copy2(self.path, self.path.with_name("auth.json.before-write.bak"))
+                backup = self.path.with_name("auth.json.before-write.bak")
+                shutil.copy2(self.path, backup)
+                harden_private_path(backup, directory=False)
             os.replace(temp_name, self.path)
-            os.chmod(self.path, 0o600)
+            harden_private_path(self.path, directory=False)
         finally:
             if os.path.exists(temp_name):
                 os.unlink(temp_name)
 
     def _validate_permissions(self) -> None:
-        parent_mode = self.path.parent.stat().st_mode & 0o777
-        file_mode = self.path.stat().st_mode & 0o777
-        if parent_mode & 0o077:
-            raise AuthenticationError("auth.json 父目录权限过宽，必须为 0700")
-        if file_mode & 0o077:
-            raise AuthenticationError("auth.json 权限过宽，必须为 0600")
+        try:
+            validate_private_path(self.path.parent, directory=True)
+            validate_private_path(self.path, directory=False)
+        except PrivatePathError as exc:
+            raise AuthenticationError("auth.json 权限或 ACL 过宽") from exc

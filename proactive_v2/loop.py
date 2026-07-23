@@ -24,10 +24,11 @@ from agent.looping.ports import SessionServices
 from agent.core.proactive_kernel import ProactiveKernel
 from agent.provider import LLMProvider
 from agent.plugins.specs import RegisteredProactiveSource
+from agent.tool_governance import ToolGovernor
 from agent.tool_hooks import ToolHook
 from agent.tools.message_push import MessagePushTool
 from agent.tools.registry import ToolRegistry
-from agent.turns.outbound import PushToolOutboundPort
+from agent.turns.outbound import OutboundPort, PushToolOutboundPort
 from agent.turns.orchestrator import TurnOrchestrator, TurnOrchestratorDeps
 from bus.event_bus import EventBus
 from core.common.strategy_trace import build_strategy_trace_envelope
@@ -82,10 +83,13 @@ class ProactiveLoop:
         proactive_sources: list[RegisteredProactiveSource] | None = None,
         runtime_snapshot_store: RuntimeSnapshotStore | None = None,
         state_store_owned: bool = False,
+        outbound_port: OutboundPort | None = None,
+        tool_governor: ToolGovernor | None = None,
     ) -> None:
         self._sessions = session_manager
         self._provider = provider
         self._push = push_tool
+        self._outbound_port = outbound_port
         self._cfg = config
         self._model = config.model or model
         self._max_tokens = max_tokens
@@ -99,6 +103,7 @@ class ProactiveLoop:
         self._shared_tools = shared_tools
         self._event_bus = event_bus
         self._tool_hooks = tool_hooks or []
+        self._tool_governor = tool_governor
         self._plugin_proactive_modules = proactive_modules or []
         self._plugin_proactive_lifecycles = proactive_lifecycles or []
         self._plugin_proactive_module_factories = proactive_module_factories or []
@@ -136,7 +141,7 @@ class ProactiveLoop:
                     session_manager=self._sessions,
                     presence=self._presence,
                 ),
-                outbound=PushToolOutboundPort(self._push),
+                outbound=self._outbound_port or PushToolOutboundPort(self._push),
             )
         )
 
@@ -168,6 +173,7 @@ class ProactiveLoop:
             mcp_gateway=self._mcp_gateway,
             proactive_sources=self._plugin_proactive_sources,
             tool_hooks=self._tool_hooks,
+            tool_governor=self._tool_governor,
             schedule_fn=self._scheduler.next_interval,
         )
 

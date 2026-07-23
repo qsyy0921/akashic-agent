@@ -9,7 +9,12 @@ from core.common.diagnostic_log import diagnostic_line
 from proactive_v2.config import ProactiveConfig
 from plugins.default_proactive.context import AgentTickContext
 from plugins.default_proactive.gateway import GatewayResult
-from plugins.proactive_flow.tools import TOOL_SCHEMAS, ToolDeps, dispatch
+from plugins.proactive_flow.tools import (
+    TOOL_SCHEMAS,
+    ToolDeps,
+    dispatch,
+    proactive_tool_risk,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +159,8 @@ class ProactiveJudge:
                 arguments=tool_args,
                 source="proactive",
                 session_key=self._session_key,
+                turn_id=ctx.tick_id,
+                risk=proactive_tool_risk(tool_name),
             ),
             lambda name, args: dispatch(name, args, ctx, self._tool_deps),
         )

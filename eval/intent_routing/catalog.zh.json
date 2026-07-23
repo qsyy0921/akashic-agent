@@ -1,0 +1,284 @@
+{
+  "schema_version": "1",
+  "tools": [
+    {
+      "tool_name": "weather_query",
+      "description": "查询指定城市和日期的天气预报、温度、降雨概率与空气质量，只读取公开气象数据。",
+      "search_hint": "天气 预报 温度 降雨 下雨 空气质量 气温",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {"type": "string", "description": "城市或地点"},
+          "date": {"type": "string", "description": "查询日期"}
+        },
+        "required": ["location"]
+      },
+      "operation_id": "weather.query",
+      "summary": "查询城市天气预报、气温、降雨和空气质量。",
+      "parameter_terms": ["城市", "地点", "日期", "温度", "降雨", "空气质量"],
+      "examples": ["明天杭州会下雨吗", "北京今天空气质量怎么样", "查上海明天气温"],
+      "output_kinds": ["data", "text"],
+      "source_type": "plugin",
+      "source_name": "eval.weather",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "image_generate_cloud",
+      "description": "根据文字提示从零生成一张新图片，适合风景、人物、产品概念图和插画，不用于查看已有图片。",
+      "search_hint": "生成图片 生图 画一张 创作图片 从零生成",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {"type": "string", "description": "图片文字描述"}
+        },
+        "required": ["prompt"]
+      },
+      "operation_id": "image.generate",
+      "summary": "依据文字描述从零生成新图片。",
+      "parameter_terms": ["提示词", "画面描述", "风格", "尺寸"],
+      "examples": ["画一张西湖紫色晚霞图", "生成海边日落图片", "创作雪山插画"],
+      "output_kinds": ["image"],
+      "source_type": "mcp",
+      "source_name": "eval.image-cloud",
+      "risk": "external-side-effect",
+      "always_on": false
+    },
+    {
+      "tool_name": "image_generate_local",
+      "description": "使用本地模型按文字描述生成新图片，是 image.generate 操作的本地提供者，不分析现有图片。",
+      "search_hint": "本地生图 生成图片 文字画图",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {"type": "string", "description": "图片文字描述"}
+        },
+        "required": ["prompt"]
+      },
+      "operation_id": "image.generate",
+      "summary": "使用本地模型依据文字描述生成新图片。",
+      "parameter_terms": ["提示词", "画面描述", "风格"],
+      "examples": ["本地生成一张外滩夜景", "画一张产品概念图"],
+      "output_kinds": ["image"],
+      "source_type": "plugin",
+      "source_name": "eval.image-local",
+      "risk": "external-side-effect",
+      "always_on": false
+    },
+    {
+      "tool_name": "image_inspect",
+      "description": "读取并识别用户已经提供的图片内容，描述画面、对象和文字，不创建新图片。",
+      "search_hint": "查看图片 识别图片 分析现有图片 图片里有什么",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "image_path": {"type": "string", "description": "已有图片路径"}
+        },
+        "required": ["image_path"]
+      },
+      "operation_id": "image.inspect",
+      "summary": "查看并分析已有图片中的对象、场景和文字。",
+      "parameter_terms": ["图片路径", "现有图片", "识别目标"],
+      "examples": ["描述这张图片里有什么", "识别截图上的文字"],
+      "output_kinds": ["text", "data"],
+      "source_type": "core",
+      "source_name": "eval.vision",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "image_edit",
+      "description": "根据编辑要求修改一张已经存在的图片，例如移除对象、换颜色或扩图，不从零生成。",
+      "search_hint": "修改图片 编辑图片 移除图片对象 换颜色 扩图",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "image_path": {"type": "string", "description": "待编辑图片路径"},
+          "instruction": {"type": "string", "description": "编辑要求"}
+        },
+        "required": ["image_path", "instruction"]
+      },
+      "operation_id": "image.edit",
+      "summary": "按要求编辑或变换已有图片。",
+      "parameter_terms": ["图片路径", "编辑要求", "遮罩", "颜色"],
+      "examples": ["把这张照片背景换成白色", "移除图片中的路人"],
+      "output_kinds": ["image"],
+      "source_type": "plugin",
+      "source_name": "eval.image-edit",
+      "risk": "external-side-effect",
+      "always_on": false
+    },
+    {
+      "tool_name": "web_search",
+      "description": "联网搜索最新新闻、网页、商品价格、官方文档、财报和地点信息，返回可追溯来源。",
+      "search_hint": "联网搜索 网上查 最新消息 新闻 价格 官方文档 财报 地点",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "搜索关键词"}
+        },
+        "required": ["query"]
+      },
+      "operation_id": "web.search",
+      "summary": "联网搜索并检索最新网页、新闻、价格、财报和官方资料。",
+      "parameter_terms": ["搜索词", "时间范围", "站点", "最新信息"],
+      "examples": ["搜索人工智能最新新闻", "网上查显示器现在的价格", "找公司最新财报"],
+      "output_kinds": ["text", "data"],
+      "source_type": "mcp",
+      "source_name": "eval.web",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "schedule_create",
+      "description": "在指定时间创建提醒或定时任务，可设置一次性提醒和条件满足后的后续提醒。",
+      "search_hint": "创建提醒 定时提醒 稍后提醒 几点提醒 周六提醒",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "time": {"type": "string", "description": "触发时间"},
+          "message": {"type": "string", "description": "提醒内容"}
+        },
+        "required": ["time", "message"]
+      },
+      "operation_id": "schedule.create",
+      "summary": "创建指定时间触发的一次性提醒任务。",
+      "parameter_terms": ["触发时间", "提醒内容", "日期", "时区"],
+      "examples": ["明早八点提醒我交周报", "十分钟后提醒我关火", "周六提醒我参加活动"],
+      "output_kinds": ["data", "text"],
+      "source_type": "core",
+      "source_name": "eval.schedule",
+      "risk": "external-side-effect",
+      "always_on": false
+    },
+    {
+      "tool_name": "file_read",
+      "description": "只读打开并返回本地文件内容，适合 README、配置、需求文档和文本文件，不修改文件。",
+      "search_hint": "读取文件 查看文件 打开文件 只读 README 配置文件",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string", "description": "待读取文件路径"}
+        },
+        "required": ["path"]
+      },
+      "operation_id": "file.read",
+      "summary": "只读打开并查看本地文件内容。",
+      "parameter_terms": ["文件路径", "编码", "起始行", "只读"],
+      "examples": ["读一下项目 README", "看看 notes.txt 内容不要修改", "读取配置文件"],
+      "output_kinds": ["text"],
+      "source_type": "core",
+      "source_name": "eval.files",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "file_write",
+      "description": "把指定内容写入、保存或创建本地文件，会修改文件系统，不用于只读查看。",
+      "search_hint": "写入文件 保存文件 创建文件 修改文件",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string", "description": "目标文件路径"},
+          "content": {"type": "string", "description": "写入内容"}
+        },
+        "required": ["path", "content"]
+      },
+      "operation_id": "file.write",
+      "summary": "创建文件或把内容写入现有文件。",
+      "parameter_terms": ["文件路径", "写入内容", "覆盖", "追加"],
+      "examples": ["把文字保存到 notes.txt", "把摘要写进 summary.md"],
+      "output_kinds": ["text", "file"],
+      "source_type": "core",
+      "source_name": "eval.files",
+      "risk": "read-write",
+      "always_on": false
+    },
+    {
+      "tool_name": "file_list",
+      "description": "列出目录中的文件和子目录名称，不读取文件正文，也不修改任何文件。",
+      "search_hint": "列出目录 查看目录 文件列表 有哪些文件",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string", "description": "目录路径"}
+        },
+        "required": ["path"]
+      },
+      "operation_id": "file.list",
+      "summary": "列出指定目录下的文件和子目录。",
+      "parameter_terms": ["目录路径", "文件名", "递归"],
+      "examples": ["这个目录下有哪些文件", "列出项目根目录"],
+      "output_kinds": ["data", "text"],
+      "source_type": "core",
+      "source_name": "eval.files",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "memory_recall",
+      "description": "从用户长期记忆和历史对话中召回之前提到的偏好、决定、型号或方案，不联网搜索。",
+      "search_hint": "回忆 之前说过 上次提到 历史对话 长期记忆 偏好",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "要回忆的信息"}
+        },
+        "required": ["query"]
+      },
+      "operation_id": "memory.recall",
+      "summary": "召回用户长期记忆和历史对话中的既有信息。",
+      "parameter_terms": ["记忆查询", "历史对话", "用户偏好", "过去决定"],
+      "examples": ["我上次说想买什么键盘", "回忆之前定下的数据库方案", "找过去提到的显示器型号"],
+      "output_kinds": ["text", "data"],
+      "source_type": "core",
+      "source_name": "eval.memory",
+      "risk": "read-only",
+      "always_on": false
+    },
+    {
+      "tool_name": "message_send",
+      "description": "向指定联系人或聊天发送一条外部消息，会产生真实通信副作用，不用于创建本地提醒。",
+      "search_hint": "发送消息 发给联系人 通知对方 聊天消息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "recipient": {"type": "string", "description": "接收人"},
+          "message": {"type": "string", "description": "消息正文"}
+        },
+        "required": ["recipient", "message"]
+      },
+      "operation_id": "message.send",
+      "summary": "向联系人或聊天发送外部消息。",
+      "parameter_terms": ["接收人", "消息正文", "聊天通道"],
+      "examples": ["给小王发消息说我晚到", "通知群里会议取消"],
+      "output_kinds": ["text", "data"],
+      "source_type": "plugin",
+      "source_name": "eval.messaging",
+      "risk": "external-side-effect",
+      "always_on": false
+    },
+    {
+      "tool_name": "spawn",
+      "description": "把有界多步任务交给独立 subagent 运行，完成后主 agent 根据结果回复用户。",
+      "search_hint": "subagent 多步任务 后台任务 独立执行",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task": {"type": "string", "description": "交给 subagent 的完整任务描述"},
+          "run_in_background": {"type": "boolean", "description": "是否使用后台运行模式"}
+        },
+        "required": ["task"]
+      },
+      "operation_id": "tool.spawn",
+      "summary": "把有界多步任务交给独立 subagent 运行，完成后主 agent 根据结果回复用户。",
+      "parameter_terms": ["任务描述", "运行模式", "后台任务"],
+      "examples": [],
+      "output_kinds": ["text"],
+      "source_type": "core",
+      "source_name": "eval.spawn",
+      "risk": "read-write",
+      "always_on": false
+    }
+  ]
+}

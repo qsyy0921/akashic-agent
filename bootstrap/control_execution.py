@@ -94,6 +94,9 @@ async def execute_control_turn(
     delta_subscription = event_bus.on(StreamDeltaReady, collect_delta)
     try:
         try:
+            raw_dispatch_outbound = request.metadata.get("dispatchOutbound", False)
+            if not isinstance(raw_dispatch_outbound, bool):
+                raise ValueError("control metadata dispatchOutbound 必须是布尔值")
             outbound = await loop.process_direct_message(
                 request.input,
                 session_key=request.thread_id,
@@ -104,6 +107,7 @@ async def execute_control_turn(
                 metadata=_inbound_metadata(request.metadata.get("inboundMetadata")),
                 turn_id=turn_id,
                 stream_events=True,
+                dispatch_outbound=raw_dispatch_outbound,
             )
         except (openai.RateLimitError, RateLimitError) as exc:
             raise ControlExecutionError("provider_rate_limited", str(exc), retryable=True) from exc

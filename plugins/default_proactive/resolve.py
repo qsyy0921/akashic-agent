@@ -189,7 +189,7 @@ class ProactiveResolver:
         cfg: ProactiveConfig,
         session_key: str,
         state_store: Any,
-        deduper: MessageDeduper,
+        deduper: MessageDeduper | None,
         recent_proactive_fn: Callable[[], list[RecentProactiveMessage]] | None,
         ack_fn: Any,
         alert_ack_fn: Any,

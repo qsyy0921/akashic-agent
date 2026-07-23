@@ -177,6 +177,33 @@ def test_registry_get_schemas_preserves_explicit_name_order() -> None:
     ]
 
 
+def test_registry_bounds_derived_multiline_parameter_terms() -> None:
+    registry = ToolRegistry()
+    registry.register(
+        _StubTool(
+            "long_schema",
+            "tool with long schema metadata",
+            params={
+                "type": "object",
+                "properties": {
+                    "task": {
+                        "type": "string",
+                        "description": "first line\n" + ("very long detail " * 20),
+                    }
+                },
+            },
+        )
+    )
+
+    document = registry.get_document("long_schema")
+
+    assert document is not None
+    assert document.parameter_terms[0] == "task"
+    assert all(len(item) <= 80 for item in document.parameter_terms)
+    assert all(item == item.strip() for item in document.parameter_terms)
+    assert all("\n" not in item for item in document.parameter_terms)
+
+
 @pytest.mark.asyncio
 async def test_registry_strips_progress_description_before_execute() -> None:
     reg = ToolRegistry()

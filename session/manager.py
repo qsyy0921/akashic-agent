@@ -14,6 +14,7 @@ from agent.prompting import (
     build_context_frame_content,
     build_context_frame_message,
 )
+from session.reliability_records import OutboundIntentDraft, OutboxRecord
 from session.store import SessionStore
 
 _TOOL_RESULT_CHAR_BUDGET = 10000
@@ -450,27 +451,7 @@ class SessionManager:
             if last_consolidated is None
             else int(last_consolidated)
         )
-        pending_messages: list[dict[str, object]] = []
-        pending_payloads: list[dict[str, object]] = []
-
-        # 1. 准备尚未持久化的消息，不提前修改内存中的稳定 id。
-        for msg in messages:
-            if msg.get("id"):
-                continue
-            ts = str(msg.get("timestamp") or datetime.now(UTC).isoformat())
-            content = msg.get("content", "")
-            if not isinstance(content, str):
-                content = json.dumps(content, ensure_ascii=False)
-            pending_messages.append(msg)
-            pending_payloads.append(
-                {
-                    "role": str(msg.get("role") or "assistant"),
-                    "content": content,
-                    "timestamp": ts,
-                    "tool_chain": msg.get("tool_chain"),
-                    "extra": self._extract_extra(msg),
-                }
-            )
+        pending_messages, pending_payloads = self._prepare_pending_messages(messages)
 
         # 2. session 元数据和消息在同一事务中提交。
         rows = self._store.persist_session(
@@ -491,6 +472,72 @@ class SessionManager:
 
         session.updated_at = updated_at
         return len(rows)
+
+    def _persist_session_with_outbound(
+        self,
+        session: Session,
+        messages: list[dict[str, object]],
+        outbound: OutboundIntentDraft,
+        *,
+        updated_at: datetime,
+    ) -> OutboxRecord:
+        pending_messages, pending_payloads = self._prepare_pending_messages(messages)
+        try:
+            rows, record = self._store.persist_session_with_outbound(
+                session.key,
+                created_at=session.created_at.isoformat(),
+                updated_at=updated_at.isoformat(),
+                last_consolidated=session.last_consolidated,
+                metadata=session.metadata,
+                messages=pending_payloads,
+                outbound=outbound,
+            )
+        except BaseException:
+            self._remove_unpersisted_messages(session, pending_messages)
+            raise
+        for msg, row in zip(pending_messages, rows):
+            msg.update(row)
+        for msg in messages:
+            if "timestamp" not in msg:
+                msg["timestamp"] = datetime.now(UTC).isoformat()
+        session.updated_at = updated_at
+        return record
+
+    def _prepare_pending_messages(
+        self,
+        messages: list[dict[str, object]],
+    ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+        pending_messages: list[dict[str, object]] = []
+        pending_payloads: list[dict[str, object]] = []
+        for msg in messages:
+            if msg.get("id"):
+                continue
+            ts = str(msg.get("timestamp") or datetime.now(UTC).isoformat())
+            content = msg.get("content", "")
+            if not isinstance(content, str):
+                content = json.dumps(content, ensure_ascii=False)
+            pending_messages.append(msg)
+            pending_payloads.append(
+                {
+                    "role": str(msg.get("role") or "assistant"),
+                    "content": content,
+                    "timestamp": ts,
+                    "tool_chain": msg.get("tool_chain"),
+                    "extra": self._extract_extra(msg),
+                }
+            )
+        return pending_messages, pending_payloads
+
+    def _remove_unpersisted_messages(
+        self,
+        session: Session,
+        pending_messages: list[dict[str, object]],
+    ) -> None:
+        pending_ids = {id(message) for message in pending_messages if not message.get("id")}
+        if pending_ids:
+            session.messages[:] = [
+                message for message in session.messages if id(message) not in pending_ids
+            ]
 
     def save(self, session: Session) -> None:
         _ = self._persist_session(
@@ -516,6 +563,26 @@ class SessionManager:
             # 1. 原子追加消息并刷新 session 元数据。
             _ = self._persist_session(session, msgs_copy, updated_at=updated_at)
             self._cache[session.key] = session
+
+    async def append_messages_with_outbound(
+        self,
+        session: Session,
+        messages: list[dict[str, object]],
+        outbound: OutboundIntentDraft,
+    ) -> OutboxRecord:
+        """原子提交本轮消息和 outbound intent，并返回持久化真相。"""
+
+        updated_at = datetime.now(UTC)
+        msgs_copy = list(messages)
+        async with self._lock(session.key):
+            record = self._persist_session_with_outbound(
+                session,
+                msgs_copy,
+                outbound,
+                updated_at=updated_at,
+            )
+            self._cache[session.key] = session
+            return record
 
     async def trim_history_async(
         self,

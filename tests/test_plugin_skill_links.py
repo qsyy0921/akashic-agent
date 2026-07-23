@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import subprocess
 import sys
@@ -119,7 +120,7 @@ def test_plugin_skill_linker_removes_broken_plugin_link(tmp_path: Path) -> None:
     plugin_root = tmp_path / "plugins"
     skills_dir = workspace / "skills"
     skills_dir.mkdir(parents=True)
-    link = skills_dir / "gone:bar"
+    link = skills_dir / ("gone--bar" if os.name == "nt" else "gone:bar")
     link.symlink_to(plugin_root / "gone" / "skills" / "bar", target_is_directory=True)
 
     result = PluginSkillLinker(
@@ -234,7 +235,8 @@ def test_aka_plugin_skill_sync_removes_old_prefixed_link(tmp_path: Path) -> None
         "body\n",
         encoding="utf-8",
     )
-    old_link = workspace / "skills" / "feed@lab:feed-manage"
+    old_name = "feed@lab--feed-manage" if os.name == "nt" else "feed@lab:feed-manage"
+    old_link = workspace / "skills" / old_name
     old_link.parent.mkdir(parents=True)
     old_link.symlink_to(skill_dir, target_is_directory=True)
     plugin = ActivePluginInfo(

@@ -11,6 +11,10 @@ logger = logging.getLogger(__name__)
 _T = TypeVar("_T")
 
 
+class NoOutboundSubscriberError(RuntimeError):
+    pass
+
+
 @dataclass
 class _ChatLaneState:
     condition: asyncio.Condition
@@ -188,6 +192,7 @@ class MessageBus:
         ] = {}
         self._chat_lane = chat_lane or ChatLane()
         self._running = False
+        self._ephemeral_outbound_enabled = True
         self._delivery_observer: (
             Callable[[OutboundMessage, bool], Awaitable[None]] | None
         ) = None
@@ -216,8 +221,17 @@ class MessageBus:
 
     async def publish_outbound(self, msg: OutboundMessage) -> None:
         """将 Agent 输出交给对应渠道发送。"""
+        if not self._ephemeral_outbound_enabled:
+            raise RuntimeError(
+                "ephemeral outbound is disabled; persist an outbox intent instead"
+            )
         await self._chat_lane.mark_passive_send_pending(msg.channel, msg.chat_id)
         await self._outbound.put(msg)
+
+    def disable_ephemeral_outbound(self) -> None:
+        if self._running or not self._outbound.empty():
+            raise RuntimeError("cannot disable an active ephemeral outbound queue")
+        self._ephemeral_outbound_enabled = False
 
     def subscribe_outbound(
         self,
@@ -244,57 +258,73 @@ class MessageBus:
             del self._subscribers[channel]
 
     async def dispatch_outbound(self) -> None:
-        """后台任务：将出站消息分发给对应 channel 的订阅者。
-
-        发送失败时退避 2s 重试一次；仍失败则向用户发送降级错误通知，不静默丢弃。
-        """
+        """兼容旧调用的内存队列 worker；每条消息只尝试一次。"""
+        if not self._ephemeral_outbound_enabled:
+            raise RuntimeError("ephemeral outbound is disabled")
         self._running = True
         while self._running:
             try:
                 msg = await asyncio.wait_for(self._outbound.get(), timeout=1.0)
-                delivered = await self._chat_lane.run_passive(
-                    msg.channel,
-                    msg.chat_id,
-                    lambda: self._send_outbound(msg),
-                )
-                if self._delivery_observer is not None:
-                    await self._delivery_observer(msg, delivered)
+                try:
+                    await self.deliver_outbound_once(
+                        msg,
+                        lane="passive",
+                        passive_pending_already=True,
+                    )
+                except Exception:
+                    logger.exception(
+                        "ephemeral outbound delivery failed channel=%s chat_id=%s",
+                        msg.channel,
+                        msg.chat_id,
+                    )
             except asyncio.TimeoutError:
                 continue
 
-    async def _send_outbound(self, msg: OutboundMessage) -> bool:
-        """发送原始消息，并区分原消息与降级文案的结果。"""
+    async def deliver_outbound_once(
+        self,
+        msg: OutboundMessage,
+        *,
+        lane: str,
+        passive_pending_already: bool = False,
+    ) -> None:
+        """Invoke channel callbacks once and preserve ambiguous failure truth."""
 
+        async def _send() -> None:
+            await self._send_outbound_once(msg)
+
+        try:
+            if lane == "passive":
+                if not passive_pending_already:
+                    await self._chat_lane.mark_passive_send_pending(
+                        msg.channel,
+                        msg.chat_id,
+                    )
+                await self._chat_lane.run_passive(msg.channel, msg.chat_id, _send)
+            elif lane in {"proactive", "system"}:
+                await self._chat_lane.run_non_passive(msg.channel, msg.chat_id, _send)
+            else:
+                raise ValueError(f"unsupported delivery lane: {lane!r}")
+        except BaseException:
+            if self._delivery_observer is not None:
+                await self._delivery_observer(msg, False)
+            raise
+        if self._delivery_observer is not None:
+            await self._delivery_observer(msg, True)
+
+    async def _send_outbound_once(self, msg: OutboundMessage) -> None:
         callbacks = tuple(self._subscribers.get(msg.channel, []))
-        delivered = bool(callbacks)
+        if not callbacks:
+            raise NoOutboundSubscriberError(
+                f"outbound channel is not registered: {msg.channel}"
+            )
         for cb in callbacks:
-            try:
-                await cb(msg)
-            except Exception as first_err:
-                logger.warning(
-                    f"分发消息到 {msg.channel} 首次失败，2s 后重试: {first_err}"
-                )
-                await asyncio.sleep(2)
-                try:
-                    await cb(msg)
-                except Exception as second_err:
-                    delivered = False
-                    logger.error(
-                        f"分发消息到 {msg.channel} 重试仍失败，发送降级通知: {second_err}"
-                    )
-                    fallback = OutboundMessage(
-                        channel=msg.channel,
-                        chat_id=msg.chat_id,
-                        content="（消息发送失败，请稍后重试）",
-                    )
-                    try:
-                        await cb(fallback)
-                    except Exception:
-                        logger.error(
-                            f"降级通知也失败，消息彻底丢失  channel={msg.channel} "
-                            f"chat_id={msg.chat_id}"
-                        )
-        return delivered
+            await cb(msg)
+
+    async def _send_outbound(self, msg: OutboundMessage) -> bool:
+        """Compatibility wrapper for tests and legacy callers."""
+
+        await self._send_outbound_once(msg)
+        return True
 
     def stop(self) -> None:
         self._running = False

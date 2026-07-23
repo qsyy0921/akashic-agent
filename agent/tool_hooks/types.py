@@ -18,7 +18,11 @@ class ToolExecutionRequest:
     session_key: str = ""
     channel: str = ""
     chat_id: str = ""
+    turn_id: str = ""
     request_text: str = ""
+    risk: str = ""
+    snapshot_id: str = ""
+    is_preflight: bool = False
     tool_batch: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     tool_batch_index: int = 0
 

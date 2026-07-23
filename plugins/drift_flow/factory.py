@@ -114,5 +114,6 @@ def build_drift_pipeline(
             ),
             max_steps=scope.cfg.drift_max_steps,
             tool_hooks=scope.tool_hooks,
+            tool_governor=scope.tool_governor,
         )
     )

@@ -24,6 +24,7 @@ from bootstrap.wiring import (
     resolve_memory_toolset_provider,
     resolve_toolset_provider,
 )
+from infra.control.socket import is_tcp_endpoint
 from bus.event_bus import EventBus
 from session.store import SessionStore
 
@@ -298,7 +299,10 @@ def test_config_load_reads_memory_window_and_app_server(tmp_path: Path):
     cfg = Config.load(cfg_path, workspace=tmp_path)
 
     assert cfg.memory_window == 20
-    assert cfg.app_server.listen == "/tmp/dev-akashic.sock"
+    if sys.platform == "win32":
+        assert is_tcp_endpoint(cfg.app_server.listen)
+    else:
+        assert cfg.app_server.listen == "/tmp/dev-akashic.sock"
 
 
 def test_config_load_reads_agent_dev_mode(tmp_path: Path):

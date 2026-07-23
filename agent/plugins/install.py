@@ -4,6 +4,7 @@ import importlib.util
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -211,6 +212,8 @@ def _clone_git_source(
     if sparse_paths:
         _ = _run_git(
             [
+                "-c",
+                "core.symlinks=true",
                 "clone",
                 "--filter=blob:none",
                 "--no-checkout",
@@ -219,6 +222,7 @@ def _clone_git_source(
                 str(destination),
             ]
         )
+        _ = _run_git(["config", "core.symlinks", "true"], cwd=destination)
         _ = _run_git(
             ["sparse-checkout", "set", "--", *sparse_paths],
             cwd=destination,
@@ -229,7 +233,10 @@ def _clone_git_source(
             cwd=destination,
         )
         return
-    _ = _run_git(["clone", "--", source, str(destination)])
+    _ = _run_git(
+        ["-c", "core.symlinks=true", "clone", "--", source, str(destination)]
+    )
+    _ = _run_git(["config", "core.symlinks", "true"], cwd=destination)
     if ref_name:
         checkout_ref = _resolve_git_ref(ref_name, destination)
         _ = _run_git(["checkout", "--detach", checkout_ref], cwd=destination)
@@ -353,7 +360,19 @@ def _remove_path(path: Path) -> None:
         path.unlink()
         return
     if path.is_dir():
-        shutil.rmtree(path)
+        shutil.rmtree(path, onexc=_retry_windows_readonly_delete)
+
+
+def _retry_windows_readonly_delete(
+    function: Callable[[str], object], raw_path: str, error: BaseException
+) -> None:
+    if os.name != "nt" or not isinstance(error, PermissionError):
+        raise error
+    target = Path(raw_path)
+    if not target.is_file():
+        raise error
+    target.chmod(stat.S_IREAD | stat.S_IWRITE)
+    _ = function(raw_path)
 
 
 def _ensure_directory(path: Path) -> None:

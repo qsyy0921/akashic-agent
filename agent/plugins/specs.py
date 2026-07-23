@@ -32,6 +32,8 @@ class McpServerSpec:
     command: tuple[str, ...]
     env: dict[str, str] = field(default_factory=dict)
     cwd: str = "."
+    call_timeout_seconds: float = 30.0
+    media_output_roots: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

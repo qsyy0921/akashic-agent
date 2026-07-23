@@ -1,0 +1,101 @@
+{
+  "schema_version": "3",
+  "generated_by": "eval/intent_routing/run_v3_eval.py",
+  "generated_at": "2026-07-23T19:36:42+08:00",
+  "router": {
+    "version": "intent-routing-v3-llm-hybrid-1",
+    "digest": "sha256:f8e8b0d6907afd83b89c8c5aaba923c55a33c070d8cc4f22508551c308d1eb72"
+  },
+  "models": {
+    "retrieval_model_id": "qwen3-embedding:4b",
+    "intent_model_id": "gpt-5.6-terra",
+    "digest": "sha256:49ca902be77a123f66d13644edbbd5371a58361ca0e891f8c775de1af95ae747"
+  },
+  "prompt": {
+    "version": "intent-view-v3-8",
+    "digest": "sha256:9515ca4007d1c3a263191a9f6ecd1122e4f2ed50f2d4d5b6ae939f8175885354"
+  },
+  "dataset": {
+    "path": "eval/intent_routing/v3_dataset.zh.jsonl",
+    "sha256": "sha256:ceb89377afe91b9bc491cbeadf5f491ccc210c7e736644abb8f110e3b77719cf",
+    "case_count": 25,
+    "goal_count": 27
+  },
+  "catalog": {
+    "path": "eval/intent_routing/catalog.zh.json",
+    "sha256": "sha256:865634c38d9b2ffbfa77dbb509017de10e0cf0a97331e24db0e8cb4df90a782a",
+    "tool_count": 13
+  },
+  "configuration": {
+    "values": {
+      "candidate_top_k": 3,
+      "channel_weights": {
+        "original_dense": 1.0,
+        "original_lexical": 1.0,
+        "llm_view": 2.0
+      },
+      "context_limits": {
+        "characters": 6000,
+        "messages": 8
+      },
+      "dense_min_similarity": 0.56,
+      "dense_threads": 0,
+      "embedding_backend": "openai_compatible",
+      "embedding_batch_size": 8,
+      "embedding_dimension": 1024,
+      "embedding_timeout_seconds": 30.0,
+      "derived_query_max_characters": 96,
+      "inner_rrf_k": 60,
+      "intent_max_tokens": 2000,
+      "intent_timeout_seconds": 30.0,
+      "low_margin": 0.0,
+      "max_candidates_per_goal": 3,
+      "max_goals": 4,
+      "max_hypothetical_capabilities_per_goal": 3,
+      "max_preloads": 5,
+      "outer_rrf_k": 60,
+      "provider_selection_policy": "snapshot-health-stable-name-v1",
+      "retrieval_top_k": 8
+    },
+    "digest": "sha256:798b64c3c45d635b89acc03edecd7e173358b88572856b8b8e8917e5dc793b68"
+  },
+  "metrics": {
+    "operation_recall_at_1": 1.0,
+    "operation_recall_at_3": 1.0,
+    "complete_operation_set_recall": 1.0,
+    "complete_operation_set_exact_match": 0.904762,
+    "no_tool_precision": 1.0,
+    "no_tool_recall": 1.0,
+    "context_resolution_accuracy": 1.0,
+    "equivalent_operation_set_correctness": 1.0,
+    "required_clarification_recall": 1.0,
+    "unnecessary_clarification_rate": 0.0,
+    "end_to_end_visibility_rate": 1.0,
+    "intent_view_success_rate": 1.0,
+    "status_accuracy": 1.0,
+    "cold_start_latency_ms": 3880.142,
+    "local_warm_latency_p95_ms": 606.194,
+    "external_llm_latency_p95_ms": 23171.963
+  },
+  "thresholds": {
+    "minimum": {
+      "operation_recall_at_3": 0.95,
+      "operation_recall_at_1": 0.9,
+      "complete_operation_set_recall": 0.9,
+      "no_tool_precision": 0.95,
+      "no_tool_recall": 0.95,
+      "context_resolution_accuracy": 0.9,
+      "equivalent_operation_set_correctness": 1.0,
+      "required_clarification_recall": 0.9,
+      "end_to_end_visibility_rate": 1.0,
+      "intent_view_success_rate": 1.0
+    },
+    "maximum": {
+      "unnecessary_clarification_rate": 0.1,
+      "local_warm_latency_p95_ms": 3000.0
+    }
+  },
+  "passed": true,
+  "failures": [],
+  "artifact_digest": "sha256:7b99abd22751f0e8d6c85ad9845b268c2109cd1a58acef766613a84fc1b3d4d6"
+}

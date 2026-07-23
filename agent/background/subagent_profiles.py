@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from agent.provider import LLMProvider
 from agent.subagent import SubAgent
@@ -22,6 +22,14 @@ PROFILE_RESEARCH = "research"
 PROFILE_SCRIPTING = "scripting"
 PROFILE_GENERAL = "general"
 
+if TYPE_CHECKING:
+    from agent.tool_governance import ToolGovernor
+
+_READ_ONLY_TOOL_NAMES = frozenset(
+    {"read_file", "list_dir", "web_fetch", "web_search", "read_image_vision"}
+)
+_WRITE_TOOL_NAMES = frozenset({"write_file", "edit_file", "shell"})
+
 
 @dataclass(frozen=True)
 class SubagentRuntime:
@@ -29,6 +37,7 @@ class SubagentRuntime:
     model: str
     max_tokens: int
     tool_hooks: list[ToolHook] = field(default_factory=list)
+    tool_governor: "ToolGovernor | None" = None
 
 
 @dataclass
@@ -37,6 +46,7 @@ class SubagentSpec:
     system_prompt: str = ""
     max_iterations: int = 30
     mandatory_exit_tools: Sequence[str] = field(default_factory=tuple)
+    tool_risks: dict[str, str] = field(default_factory=dict)
 
     def build(self, runtime: SubagentRuntime) -> SubAgent:
         agent = SubAgent(
@@ -47,6 +57,8 @@ class SubagentSpec:
             max_iterations=self.max_iterations,
             max_tokens=runtime.max_tokens,
             mandatory_exit_tools=self.mandatory_exit_tools,
+            tool_risks=self.tool_risks,
+            tool_governor=runtime.tool_governor,
         )
         if runtime.tool_hooks:
             agent.add_tool_hooks(runtime.tool_hooks)
@@ -71,6 +83,7 @@ def build_research_spec(
     )
     return SubagentSpec(
         tools=tools,
+        tool_risks=_resolve_tool_risks(tools),
         system_prompt=system_prompt,
         max_iterations=max_iterations,
     )
@@ -98,6 +111,7 @@ def build_scripting_spec(
     ]
     return SubagentSpec(
         tools=tools,
+        tool_risks=_resolve_tool_risks(tools),
         system_prompt=system_prompt,
         max_iterations=max_iterations,
     )
@@ -128,6 +142,7 @@ def build_general_spec(
     ]
     return SubagentSpec(
         tools=tools,
+        tool_risks=_resolve_tool_risks(tools),
         system_prompt=system_prompt,
         max_iterations=max_iterations,
     )
@@ -138,6 +153,18 @@ _PROFILE_BUILDERS = {
     PROFILE_SCRIPTING: build_scripting_spec,
     PROFILE_GENERAL: build_general_spec,
 }
+
+
+def _resolve_tool_risks(tools: list[Tool]) -> dict[str, str]:
+    risks: dict[str, str] = {}
+    for tool in tools:
+        if tool.name in _READ_ONLY_TOOL_NAMES:
+            risks[tool.name] = "read-only"
+        elif tool.name in _WRITE_TOOL_NAMES:
+            risks[tool.name] = "write"
+        else:
+            raise RuntimeError(f"subagent tool lacks an explicit risk: {tool.name}")
+    return risks
 
 
 def build_spawn_spec(

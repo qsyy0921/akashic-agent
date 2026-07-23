@@ -369,12 +369,19 @@ async def run_exec(args: list[str], config_path: str, workspace: Path) -> int:
         return 1
 
 
+def _bind_runtime_config_path(config_path: str) -> str:
+    resolved = Path(config_path).expanduser().resolve(strict=False)
+    os.environ["AKASHIC_CONFIG_FILE"] = str(resolved)
+    return str(resolved)
+
+
 async def inspect_modules(config_path: str, workspace: Path) -> None:
     import logging
     from bootstrap.cleanup import run_cleanup_steps
     from bootstrap.tools import build_core_runtime
 
     logging.getLogger().setLevel(logging.WARNING)
+    config_path = _bind_runtime_config_path(config_path)
     config = Config.load(config_path, workspace=workspace)
     http_resources = SharedHttpResources()
     runtime = build_core_runtime(
@@ -393,6 +400,7 @@ async def inspect_modules(config_path: str, workspace: Path) -> None:
 
 
 async def serve(config_path: str, workspace: Path) -> int:
+    config_path = _bind_runtime_config_path(config_path)
     config = Config.load(config_path, workspace=workspace)
     commit_channel = SupervisorCommitChannel.from_environment()
     restart_coordinator = (
@@ -418,6 +426,12 @@ async def serve(config_path: str, workspace: Path) -> int:
     loop = asyncio.get_running_loop()
     stop_event = asyncio.Event()
     settings_restart_event = asyncio.Event()
+    settings_signal = (
+        signal.SIGBREAK
+        if os.name == "nt"
+        else getattr(signal, "SIGUSR2", None)
+    )
+    settings_signal_on_loop = False
     watched_signals = (signal.SIGINT, signal.SIGTERM)
     signal_handlers_registered = False
     for sig in watched_signals:
@@ -430,8 +444,17 @@ async def serve(config_path: str, workspace: Path) -> int:
                 sig,
                 lambda _sig, _frame: loop.call_soon_threadsafe(stop_event.set),
             )
-    if commit_channel is not None and hasattr(signal, "SIGUSR2"):
-        loop.add_signal_handler(signal.SIGUSR2, settings_restart_event.set)
+    if commit_channel is not None and settings_signal is not None:
+        try:
+            loop.add_signal_handler(settings_signal, settings_restart_event.set)
+            settings_signal_on_loop = True
+        except NotImplementedError:
+            _ = signal.signal(
+                settings_signal,
+                lambda _sig, _frame: loop.call_soon_threadsafe(
+                    settings_restart_event.set
+                ),
+            )
 
     async def commit_settings_restart() -> None:
         await settings_restart_event.wait()
@@ -453,7 +476,7 @@ async def serve(config_path: str, workspace: Path) -> int:
     )
     settings_restart_task = (
         asyncio.create_task(commit_settings_restart(), name="settings_restart")
-        if commit_channel is not None and hasattr(signal, "SIGUSR2")
+        if commit_channel is not None and settings_signal is not None
         else None
     )
     try:
@@ -485,8 +508,8 @@ async def serve(config_path: str, workspace: Path) -> int:
         if signal_handlers_registered:
             for sig in watched_signals:
                 _ = loop.remove_signal_handler(sig)
-        if commit_channel is not None and hasattr(signal, "SIGUSR2"):
-            _ = loop.remove_signal_handler(signal.SIGUSR2)
+        if settings_signal_on_loop and settings_signal is not None:
+            _ = loop.remove_signal_handler(settings_signal)
         _ = stop_task.cancel()
         with suppress(asyncio.CancelledError):
             await stop_task

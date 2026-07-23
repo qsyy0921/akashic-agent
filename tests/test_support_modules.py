@@ -1058,14 +1058,15 @@ async def test_message_bus_covers_flows(
     bus.subscribe_outbound("telegram", callback)
     task = asyncio.create_task(bus.dispatch_outbound())
     await bus.publish_outbound(OutboundMessage("telegram", "1", "payload"))
-    for _ in range(300):
-        if sent:
+    for _ in range(100):
+        if attempts["count"]:
             break
         await asyncio.sleep(0.01)
     bus.stop()
     task.cancel()
     with pytest.raises(asyncio.CancelledError):
         await task
-    assert sent == ["payload"]
+    assert sent == []
+    assert attempts["count"] == 1
     assert bus.inbound_size == 0
     assert bus.outbound_size == 0

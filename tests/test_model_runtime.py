@@ -20,6 +20,7 @@ from agent.model_runtime.context_policy import (
     recommended_context_settings,
 )
 from agent.model_runtime.errors import (
+    AuthenticationError,
     ContextWindowError,
     QuotaError,
     RateLimitError,
@@ -177,11 +178,30 @@ def test_credential_store_is_atomic_private_and_fail_loud(tmp_path: Path) -> Non
 
     store.put("codex_default", credential)
     assert store.get("codex_default") == credential
-    assert os.stat(path).st_mode & 0o777 == 0o600
+    if os.name != "nt":
+        assert os.stat(path).st_mode & 0o777 == 0o600
 
     path.write_text("{broken", encoding="utf-8")
     with pytest.raises(Exception, match="JSON 损坏"):
         store.get("codex_default")
+
+
+def test_default_credential_store_honors_explicit_auth_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    expected = tmp_path / "isolated" / "auth.json"
+    monkeypatch.setenv("AKASHIC_AUTH_FILE", str(expected))
+
+    assert CredentialStore().path == expected.resolve()
+
+
+def test_default_credential_store_rejects_blank_auth_file(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("AKASHIC_AUTH_FILE", "   ")
+
+    with pytest.raises(AuthenticationError, match="AKASHIC_AUTH_FILE 不能为空"):
+        CredentialStore()
 
 
 def test_codex_token_and_catalog_metadata_are_resolved_once() -> None:

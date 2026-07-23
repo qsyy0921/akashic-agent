@@ -303,13 +303,26 @@ def _make_loop(
 ) -> AgentLoop:
     tools = ToolRegistry()
     tools.register(_NoopTool())
+    session_manager = MagicMock()
+
+    async def append_messages_with_outbound(_session, messages, draft):
+        for index, message in enumerate(messages):
+            message.setdefault("id", f"cli:1:{index}")
+        return SimpleNamespace(
+            metadata=dict(draft.metadata),
+            session_message_id=(messages[-1]["id"] if messages else None),
+        )
+
+    session_manager.append_messages_with_outbound = AsyncMock(
+        side_effect=append_messages_with_outbound
+    )
     return AgentLoop(
         AgentLoopDeps(
             bus=MessageBus(),
             provider=cast(Any, _Provider()),
             light_provider=cast(Any, _Provider()),
             tools=tools,
-            session_manager=MagicMock(),
+            session_manager=session_manager,
             workspace=tmp_path,
             memory_services=MemoryServices(engine=cast(Any, _FakeMemoryEngine())),
             retrieval_pipeline=retrieval_pipeline,

@@ -10,6 +10,9 @@ if TYPE_CHECKING:
     from agent.core.runner import CoreRunner
     from agent.core.runtime_support import ToolDiscoveryState
     from agent.provider import LLMProvider
+    from agent.routing.advisor import TurnRouteAdvisor
+    from agent.tool_governance import ToolGovernor
+    from agent.turns.outbound import OutboundPort
     from agent.retrieval.protocol import MemoryRetrievalPipeline
     from agent.tools.registry import ToolRegistry
     from bus.event_bus import EventBus
@@ -85,8 +88,11 @@ class AgentLoopDeps:
     memory_services: MemoryServices | None = None
     session_services: SessionServices | None = None
     tool_discovery: "ToolDiscoveryState | None" = None
+    route_advisor: "TurnRouteAdvisor | None" = None
     reasoner: "Reasoner | None" = None
     core_runner: "CoreRunner | None" = None
+    outbound_port: "OutboundPort | None" = None
+    tool_governor: "ToolGovernor | None" = None
 
 @dataclass
 class AgentLoopConfig:

@@ -5,6 +5,8 @@ import json
 import os
 from pathlib import Path
 
+import pytest
+
 from docker.debug.programmatic_control_probe import _prepare_host_sandbox
 from docker.debug.restart_probe import (
     _copied_source_digests,
@@ -82,6 +84,7 @@ def test_sandbox_digest_uses_same_source_manifest(tmp_path: Path) -> None:
     assert missing == []
 
 
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="requires Linux procfs")
 def test_process_identity_rejects_reused_pid_counterexample() -> None:
     identity = _process_identity(os.getpid())
 
@@ -91,6 +94,7 @@ def test_process_identity_rejects_reused_pid_counterexample() -> None:
     )
 
 
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="requires Linux procfs")
 def test_process_metrics_include_rss_and_high_water_mark() -> None:
     metrics = _process_metrics(os.getpid())
 

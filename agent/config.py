@@ -36,6 +36,7 @@ from proactive_v2.config_loader import ProactiveConfigError, load_proactive_conf
 from agent.model_runtime.auth.store import CredentialStore
 from agent.model_runtime.context_policy import recommended_context_settings
 from agent.model_runtime.provider_profiles import get_provider_profile
+from agent.routing.config import load_intent_routing_config
 
 _PRESETS: dict[str, str] = {
     "qwen": "https://dashscope.aliyuncs.com/compatible-mode/v1",
@@ -127,6 +128,16 @@ def load_config(
         )
     proactive = _load_proactive_config(data)
     memory = _load_memory_config(data, workspace_path)
+    intent_routing = load_intent_routing_config(
+        _as_dict(
+            agent_cfg.get("intent_routing"),
+            field="agent.intent_routing",
+        ),
+        embedding_model=memory.embedding.model,
+        embedding_base_url=memory.embedding.base_url,
+        embedding_api_key=memory.embedding.api_key,
+        embedding_dimension=memory.embedding.output_dimensionality,
+    )
     peer_agents = _load_peer_agents_config(data)
     wiring = _load_wiring_config(data)
 
@@ -156,9 +167,7 @@ def load_config(
             agent_cfg.get("max_iterations", data.get("max_iterations", 10))
         ),
         memory_window=_load_memory_window(data, agent_context, llm_main),
-        base_url=_model_base_url(
-            provider, llm_main.get("base_url")
-        ),
+        base_url=_model_base_url(provider, llm_main.get("base_url")),
         extra_body=_load_extra_body(data, llm_main),
         channels=channels,
         app_server=app_server,
@@ -183,23 +192,20 @@ def load_config(
             inline_value=str(llm_fast.get("api_key") or ""),
             workspace=workspace_path,
         ),
-        light_base_url=str(
-            llm_fast.get("base_url") or ""
-        ),
+        light_base_url=str(llm_fast.get("base_url") or ""),
         agent_model=str(llm_agent.get("model") or ""),
         agent_api_key=_load_api_key(
             auth_id=str(llm_agent.get("auth") or ""),
             inline_value=str(llm_agent.get("api_key") or ""),
             workspace=workspace_path,
         ),
-        agent_base_url=str(
-            llm_agent.get("base_url") or ""
-        ),
+        agent_base_url=str(llm_agent.get("base_url") or ""),
         memory=memory,
         tool_search_enabled=_as_bool(
             agent_tools.get("search_enabled", data.get("tool_search_enabled", False)),
             field="agent.tools.search_enabled",
         ),
+        intent_routing=intent_routing,
         spawn_enabled=_as_bool(
             agent_tools.get("spawn_enabled", data.get("spawn_enabled", True)),
             field="agent.tools.spawn_enabled",
@@ -228,7 +234,9 @@ def load_config(
         auth_id=str(llm_main.get("auth") or ""),
         context_window=int(llm_main.get("context_window") or 0),
         reasoning_effort=str(llm_main.get("reasoning_effort") or ""),
-        input_modalities=tuple(str(item) for item in llm_main.get("input_modalities", ["text"])),
+        input_modalities=tuple(
+            str(item) for item in llm_main.get("input_modalities", ["text"])
+        ),
         effective_context_percent=float(llm_main.get("effective_context_percent", 0.9)),
         use_responses_lite=_as_bool(
             llm_main.get("use_responses_lite", False),
@@ -258,12 +266,19 @@ def _load_channels_config(data: dict, workspace: Path) -> ChannelsConfig:
     telegram = None
     tg = _as_dict(channels_data.get("telegram"), field="channels.telegram")
     if tg:
-        token = _normalize_optional_config_text(
-            _resolve(str(tg.get("token", "")), workspace)
+        auth_id = str(tg.get("auth") or "").strip()
+        inline_token = str(tg.get("token", "")).strip()
+        if auth_id and inline_token:
+            raise ValueError("channels.telegram.auth 与 token 不能同时配置")
+        token = (
+            CredentialStore().telegram_token(auth_id)
+            if auth_id
+            else _normalize_optional_config_text(_resolve(inline_token, workspace))
         )
-        if _as_bool(
-            tg.get("enabled", True), field="channels.telegram.enabled"
-        ) and token:
+        if (
+            _as_bool(tg.get("enabled", True), field="channels.telegram.enabled")
+            and token
+        ):
             telegram = TelegramChannelConfig(
                 token=token,
                 allow_from=[
@@ -276,17 +291,15 @@ def _load_channels_config(data: dict, workspace: Path) -> ChannelsConfig:
     qq_data = _as_dict(channels_data.get("qq"), field="channels.qq")
     if qq_data:
         bot_uin = _normalize_optional_config_text(str(qq_data.get("bot_uin", "")))
-        if _as_bool(
-            qq_data.get("enabled", True), field="channels.qq.enabled"
-        ) and bot_uin:
+        if (
+            _as_bool(qq_data.get("enabled", True), field="channels.qq.enabled")
+            and bot_uin
+        ):
             groups = [
                 QQGroupConfig(
-                    group_id=str(
-                        g["group_id"] if "group_id" in g else g["groupId"]
-                    ),
+                    group_id=str(g["group_id"] if "group_id" in g else g["groupId"]),
                     allow_from=[
-                        str(u)
-                        for u in g.get("allow_from", g.get("allowFrom", []))
+                        str(u) for u in g.get("allow_from", g.get("allowFrom", []))
                     ],
                     require_at=_as_bool(
                         g.get("require_at", g.get("requireAt", True)),
@@ -309,13 +322,11 @@ def _load_channels_config(data: dict, workspace: Path) -> ChannelsConfig:
 
     if "socket" in channels_data or "cli" in channels_data:
         raise ValueError(
-            "旧 channels.socket/channels.cli 配置已删除；请改用 [app_server] listen = \"\""
+            '旧 channels.socket/channels.cli 配置已删除；请改用 [app_server] listen = ""'
         )
     chat_data = _as_dict(channels_data.get("chat"), field="channels.chat")
     chat = WebChatConfig(
-        enabled=_as_bool(
-            chat_data.get("enabled", True), field="channels.chat.enabled"
-        ),
+        enabled=_as_bool(chat_data.get("enabled", True), field="channels.chat.enabled"),
         host=str(chat_data.get("host", "127.0.0.1") or "127.0.0.1"),
         port=int(chat_data.get("port", 6322)),
         channel_name=str(chat_data.get("channel_name", "web") or "web"),
@@ -340,7 +351,12 @@ def _load_app_server_config(data: dict) -> AppServerConfig:
         outbound_queue_size=int(raw.get("outbound_queue_size", 512)),
         max_message_bytes=int(raw.get("max_message_bytes", 2 * 1024 * 1024)),
     )
-    for name in ("max_connections", "ingress_queue_size", "outbound_queue_size", "max_message_bytes"):
+    for name in (
+        "max_connections",
+        "ingress_queue_size",
+        "outbound_queue_size",
+        "max_message_bytes",
+    ):
         if getattr(config, name) <= 0:
             raise ValueError(f"app_server.{name} 必须大于 0")
     return config
@@ -555,8 +571,12 @@ def _load_llm_runtimes(
     for runtime_id, raw in runtimes.items():
         item = _as_dict(raw, field=f"llm.runtimes.{runtime_id}")
         modalities = item.get("input_modalities", ["text"])
-        if not isinstance(modalities, list) or not all(isinstance(v, str) for v in modalities):
-            raise ValueError(f"llm.runtimes.{runtime_id}.input_modalities 必须是字符串数组")
+        if not isinstance(modalities, list) or not all(
+            isinstance(v, str) for v in modalities
+        ):
+            raise ValueError(
+                f"llm.runtimes.{runtime_id}.input_modalities 必须是字符串数组"
+            )
         provider = str(item.get("provider") or "").lower()
         auth_id = str(item.get("auth") or "")
         parsed[runtime_id] = ModelRuntimeConfig(
@@ -617,15 +637,15 @@ def _load_memory_window(data: dict, agent_context: dict, llm_main: dict) -> int:
 def _load_multimodal(llm_main: dict) -> bool:
     modalities = llm_main.get("input_modalities")
     if modalities is not None:
-        if not isinstance(modalities, list) or not all(isinstance(v, str) for v in modalities):
+        if not isinstance(modalities, list) or not all(
+            isinstance(v, str) for v in modalities
+        ):
             raise ValueError("llm.main.input_modalities 必须是字符串数组")
         return "image" in modalities
     return False
 
 
-def _load_role_runtime(
-    llm: dict, role: str, main_runtime_id: str
-) -> tuple[str, dict]:
+def _load_role_runtime(llm: dict, role: str, main_runtime_id: str) -> tuple[str, dict]:
     value = llm.get(role)
     if value is None:
         return "", {}

@@ -36,6 +36,8 @@ from docker.debug.programmatic_control_probe import (
 
 
 SERVER_SOURCE = r'''from __future__ import annotations
+import ctypes
+from ctypes import wintypes
 import json
 import os
 from pathlib import Path
@@ -45,7 +47,36 @@ log = Path(os.environ["LIFECYCLE_LOG"])
 version = os.environ["VERSION"]
 instance = os.environ["INSTANCE"]
 pid = os.getpid()
-starttime = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8").rsplit(")", 1)[1].split()[19]
+
+def process_starttime(process_id: int) -> str:
+    if os.name != "nt":
+        return Path(f"/proc/{process_id}/stat").read_text(encoding="utf-8").rsplit(")", 1)[1].split()[19]
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.GetProcessTimes.argtypes = [wintypes.HANDLE, *([ctypes.POINTER(wintypes.FILETIME)] * 4)]
+    kernel32.GetProcessTimes.restype = wintypes.BOOL
+    kernel32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    handle = kernel32.OpenProcess(0x1000, False, process_id)
+    if not handle:
+        raise OSError(ctypes.get_last_error(), "OpenProcess failed")
+    creation = wintypes.FILETIME()
+    exit_time = wintypes.FILETIME()
+    kernel = wintypes.FILETIME()
+    user = wintypes.FILETIME()
+    try:
+        exit_code = wintypes.DWORD()
+        if not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)) or exit_code.value != 259:
+            raise ProcessLookupError(process_id)
+        if not kernel32.GetProcessTimes(handle, ctypes.byref(creation), ctypes.byref(exit_time), ctypes.byref(kernel), ctypes.byref(user)):
+            raise OSError(ctypes.get_last_error(), "GetProcessTimes failed")
+    finally:
+        kernel32.CloseHandle(handle)
+    return str((creation.dwHighDateTime << 32) | creation.dwLowDateTime)
+
+starttime = process_starttime(pid)
 marker = Path(os.environ["MARKER_PATH"]).read_text(encoding="utf-8").strip()
 
 def record(event: str) -> None:
@@ -124,18 +155,18 @@ def _write_declaration(
     watch_path: str = "",
 ) -> Path:
     declarations.mkdir(parents=True, exist_ok=True)
-    watch = f'watch_paths = ["{watch_path}"]\n' if watch_path else ""
+    watch = f"watch_paths = [{json.dumps(watch_path)}]\n" if watch_path else ""
     path = declarations / f"{name}.toml"
     path.write_text(
         "schema_version = 1\n"
-        f'name = "{name}"\n'
-        f'command = ["{sys.executable}", "{server}"]\n'
+        f"name = {json.dumps(name)}\n"
+        f"command = [{json.dumps(sys.executable)}, {json.dumps(str(server))}]\n"
         f"{watch}"
         "[env]\n"
-        f'VERSION = "{version}"\n'
-        f'INSTANCE = "{name}"\n'
-        f'LIFECYCLE_LOG = "{lifecycle}"\n'
-        f'MARKER_PATH = "{server.parent / "watch.txt"}"\n',
+        f"VERSION = {json.dumps(version)}\n"
+        f"INSTANCE = {json.dumps(name)}\n"
+        f"LIFECYCLE_LOG = {json.dumps(str(lifecycle))}\n"
+        f"MARKER_PATH = {json.dumps(str(server.parent / 'watch.txt'))}\n",
         encoding="utf-8",
     )
     return path
@@ -152,12 +183,55 @@ def _lifecycle(path: Path) -> list[dict[str, Any]]:
 
 
 def _pid_starttime(pid: int) -> str | None:
-    stat = Path(f"/proc/{pid}/stat")
-    try:
-        content = stat.read_text(encoding="utf-8")
-    except FileNotFoundError:
+    if os.name != "nt":
+        stat = Path(f"/proc/{pid}/stat")
+        try:
+            content = stat.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return None
+        return content.rsplit(")", 1)[1].split()[19]
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.GetProcessTimes.argtypes = [
+        wintypes.HANDLE,
+        *([ctypes.POINTER(wintypes.FILETIME)] * 4),
+    ]
+    kernel32.GetProcessTimes.restype = wintypes.BOOL
+    kernel32.GetExitCodeProcess.argtypes = [
+        wintypes.HANDLE,
+        ctypes.POINTER(wintypes.DWORD),
+    ]
+    kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    handle = kernel32.OpenProcess(0x1000, False, pid)
+    if not handle:
         return None
-    return content.rsplit(")", 1)[1].split()[19]
+    creation = wintypes.FILETIME()
+    exit_time = wintypes.FILETIME()
+    kernel = wintypes.FILETIME()
+    user = wintypes.FILETIME()
+    try:
+        exit_code = wintypes.DWORD()
+        if (
+            not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
+            or exit_code.value != 259
+        ):
+            return None
+        if not kernel32.GetProcessTimes(
+            handle,
+            ctypes.byref(creation),
+            ctypes.byref(exit_time),
+            ctypes.byref(kernel),
+            ctypes.byref(user),
+        ):
+            return None
+    finally:
+        _ = kernel32.CloseHandle(handle)
+    return str((creation.dwHighDateTime << 32) | creation.dwLowDateTime)
 
 
 def _running_pids(
@@ -720,11 +794,13 @@ def _compose_command(repo: Path, project: str) -> list[str]:
 
 
 def _compose_environment(sandbox: Path) -> dict[str, str]:
+    uid = str(os.getuid()) if hasattr(os, "getuid") else os.environ.get("UID", "1000")
+    gid = str(os.getgid()) if hasattr(os, "getgid") else os.environ.get("GID", "1000")
     env = {
         **os.environ,
         "AKASHIC_CONTROL_SANDBOX": str(sandbox),
-        "UID": str(os.getuid()),
-        "GID": str(os.getgid()),
+        "UID": uid,
+        "GID": gid,
     }
     env.pop("AKASHIC_EXTRA_PLUGIN_DIRS", None)
     return env
@@ -912,7 +988,12 @@ def _run_host(report_root: Path | None) -> int:
 def _container_isolation() -> dict[str, object]:
     docker_gate = os.environ.get("AKASHIC_WORKSPACE_MCP_DOCKER_GATE") == "1"
     extra_present = "AKASHIC_EXTRA_PLUGIN_DIRS" in os.environ
-    mountinfo = Path("/proc/self/mountinfo").read_text(encoding="utf-8")
+    mountinfo_path = Path("/proc/self/mountinfo")
+    mountinfo = (
+        mountinfo_path.read_text(encoding="utf-8")
+        if mountinfo_path.is_file()
+        else ""
+    )
     host_cache_mounts = [
         line
         for line in mountinfo.splitlines()

@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+import agent.plugins.service_host as service_host_module
 from agent.plugins.service_host import PluginServiceHost
 
 
@@ -128,13 +129,13 @@ async def test_managed_service_rejects_occupied_readiness_endpoint(
 
 
 @pytest.mark.asyncio
-async def test_managed_service_stop_finishes_when_cancelled(tmp_path: Path) -> None:
+async def test_managed_service_stop_finishes_when_cancelled(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     service = tmp_path / "slow_stop.py"
     _ = service.write_text(
-        "import os, signal, time\n"
+        "import os\n"
         "from http.server import BaseHTTPRequestHandler, HTTPServer\n"
-        "def stop(*args): time.sleep(0.2); raise SystemExit(0)\n"
-        "signal.signal(signal.SIGTERM, stop)\n"
         "class Handler(BaseHTTPRequestHandler):\n"
         "    def do_GET(self): self.send_response(200); self.end_headers()\n"
         "    def log_message(self, *args): pass\n"
@@ -146,6 +147,12 @@ async def test_managed_service_stop_finishes_when_cancelled(tmp_path: Path) -> N
     host = PluginServiceHost()
     host.bind_plugin_services({"slow": services})  # type: ignore[arg-type]
     await host.start_all()
+    loop = asyncio.get_running_loop()
+
+    def delayed_terminate(process: asyncio.subprocess.Process, _sig: object) -> None:
+        _ = loop.call_later(0.2, process.terminate)
+
+    monkeypatch.setattr(service_host_module, "_signal_process", delayed_terminate)
     stopping = asyncio.create_task(host.stop_all())
     await asyncio.sleep(0.05)
     stopping.cancel()

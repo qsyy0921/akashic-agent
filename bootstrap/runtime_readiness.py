@@ -24,6 +24,8 @@ class RuntimeReadiness:
             "pid": self.pid,
             "state": "ready",
         }
+        if os.name == "nt":
+            payload["parentPid"] = os.getppid()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         temporary = self.path.with_name(
             f".{self.path.name}.{self.pid}.{self.boot_id}.tmp"

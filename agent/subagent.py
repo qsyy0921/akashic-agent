@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
 from agent.provider import LLMProvider
 from agent.tool_hooks import ToolExecutionRequest, ToolExecutor
@@ -16,6 +16,9 @@ from agent.tool_hooks.types import ToolExecutionResult
 from agent.tools.base import Tool, normalize_tool_result
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from agent.tool_governance import ToolGovernor
 
 _REFLECT_PROMPT = (
     "根据上述工具结果，决定下一步操作。\n"
@@ -104,6 +107,8 @@ class SubAgent:
         max_iterations: int = 30,
         max_tokens: int = 8192,
         mandatory_exit_tools: Sequence[str] = (),
+        tool_risks: dict[str, str] | None = None,
+        tool_governor: "ToolGovernor | None" = None,
     ) -> None:
         self._provider = provider
         self._model = model
@@ -118,7 +123,8 @@ class SubAgent:
         prepared = prepare_toolset(tools)
         self._tool_map: dict[str, Tool] = prepared.tool_map
         self._tool_schemas: list[dict[str, Any]] = prepared.schemas
-        self._tool_executor = ToolExecutor([])
+        self._tool_risks = dict(tool_risks or {})
+        self._tool_executor = ToolExecutor([], governor=tool_governor)
 
     def add_tool_hooks(self, hooks: list[ToolHook]) -> None:
         self._tool_executor.add_hooks(hooks)
@@ -390,6 +396,8 @@ class SubAgent:
                 arguments=arguments,
                 source="subagent",
                 session_key=session_key,
+                turn_id=session_key,
+                risk=self._tool_risks.get(tool_name, ""),
                 tool_batch=tool_batch,
                 tool_batch_index=tool_batch_index,
             ),

@@ -31,7 +31,8 @@ RUN python -m venv /opt/venv \
     && python -m pip install mcp
 
 COPY docker/debug/entrypoint.sh /usr/local/bin/akashic-debug
-RUN chmod +x /usr/local/bin/akashic-debug
+RUN sed -i 's/\r$//' /usr/local/bin/akashic-debug \
+    && chmod +x /usr/local/bin/akashic-debug
 
 ENTRYPOINT ["akashic-debug"]
 CMD ["run"]

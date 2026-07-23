@@ -150,7 +150,7 @@ class _FakeSession:
     def get_history(self, max_messages: int = 500) -> list[dict[str, object]]:
         return self.messages[-max_messages:]
 
-    def add_message(self, role: str, content: str, media=None, **kwargs) -> None:
+    def add_message(self, role: str, content: str, media=None, **kwargs) -> dict[str, object]:
         msg: dict[str, object] = {
             "role": role,
             "content": content,
@@ -160,6 +160,7 @@ class _FakeSession:
             msg["media"] = list(media)
         msg.update(kwargs)
         self.messages.append(msg)
+        return msg
 
 
 # ── FakeLLM ──────────────────────────────────────────────────────────────
@@ -258,9 +259,21 @@ def make_proactive_pipeline(
         rng = FakeRng(value=0.0)  # 默认打开 context_fallback，避免空候选直接早退
 
     session = _FakeSession(session_key)
+
+    async def append_messages_with_outbound(_session, messages, draft):
+        for index, message in enumerate(messages):
+            message.setdefault("id", f"{session_key}:{index}")
+        return SimpleNamespace(
+            metadata=dict(draft.metadata),
+            session_message_id=(messages[-1]["id"] if messages else None),
+        )
+
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,
         append_messages=AsyncMock(return_value=None),
+        append_messages_with_outbound=AsyncMock(
+            side_effect=append_messages_with_outbound
+        ),
     )
     session_svc = SessionServices(
         session_manager=cast(Any, session_manager),

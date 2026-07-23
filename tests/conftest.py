@@ -9,6 +9,16 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+
+@pytest.fixture(autouse=True)
+def isolate_default_credential_store(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Never let tests using CredentialStore() touch the real user profile."""
+    monkeypatch.setenv(
+        "AKASHIC_AUTH_FILE", str(tmp_path / ".akashic" / "auth.json")
+    )
+
 # Provide lightweight telegram stubs so optional messaging deps do not block
 # unrelated test collection.
 if "telegram" not in sys.modules:

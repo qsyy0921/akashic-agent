@@ -12,7 +12,7 @@ from agent.control.models import TurnRequest
 from agent.control.runtime import ConversationRuntime
 from agent.control.service import ControlService
 from bootstrap.workspace_token import ensure_workspace_token
-from infra.control.socket import SocketAppServer
+from infra.control.socket import SocketAppServer, is_tcp_endpoint
 from session.manager import SessionManager
 
 
@@ -49,3 +49,8 @@ def test_tcp_rejects_non_loopback_and_token_is_private(tmp_path: Path) -> None:
     _ = ensure_workspace_token(tmp_path)
     if os.name != "nt":
         assert stat.S_IMODE((tmp_path / ".app-server-token").stat().st_mode) == 0o600
+
+
+def test_windows_drive_path_is_not_parsed_as_tcp() -> None:
+    assert is_tcp_endpoint(r"C:\akashic\control.sock") is False
+    assert is_tcp_endpoint("C:/akashic/control.sock") is False

@@ -238,13 +238,10 @@ def _is_safe_name(name: str) -> bool:
 
 def _readlink_target(link: Path) -> Path | None:
     try:
-        raw = link.readlink()
-    except OSError as e:
+        return link.resolve(strict=False)
+    except (OSError, RuntimeError) as e:
         logger.warning("读取软链接失败 (%s): %s", link, e)
         return None
-    if raw.is_absolute():
-        return raw.resolve(strict=False)
-    return (link.parent / raw).resolve(strict=False)
 
 
 def _same_path(left: Path, right: Path) -> bool:

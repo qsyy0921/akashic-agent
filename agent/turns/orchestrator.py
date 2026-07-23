@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from agent.turns.outbound import OutboundDispatch, OutboundPort
 from agent.turns.result import TurnResult, TurnSideEffect
+from session.reliability_records import OutboundIntentDraft
 
 if TYPE_CHECKING:
     from agent.core.runtime_support import SessionLike
@@ -45,35 +46,46 @@ class TurnOrchestrator:
         content = result.outbound.content
         media = list(result.outbound.media or [])
         delivery_id = uuid4().hex
-        sent = False
-        try:
-            # 2. 先执行发送前 side_effects，再真正 dispatch 到 outbound。
-            await self._run_effects(result.side_effects)
-            sent = await self._outbound.dispatch(
-                OutboundDispatch(
-                    channel=channel,
-                    chat_id=chat_id,
-                    content=content,
-                    metadata={"delivery_id": delivery_id},
-                    media=media,
-                )
-            )
-        except Exception as e:
-            logger.exception("proactive outbound dispatch failed: %s", e)
-
-        # 3. 只有用户真正收到后，才把 proactive 消息写入可见会话历史。
-        if sent:
-            session = self._session.session_manager.get_or_create(session_key)
-            self._persist_proactive_session(
-                session=session,
-                content=content,
-                media=media,
-                result=result,
+        # 2. 先写可恢复的会话消息和 outbound intent，再允许外部发送。
+        await self._run_effects(result.side_effects)
+        session = self._session.session_manager.get_or_create(session_key)
+        message = self._persist_proactive_session(
+            session=session,
+            content=content,
+            media=media,
+            result=result,
+            delivery_id=delivery_id,
+        )
+        record = await self._session.session_manager.append_messages_with_outbound(
+            session,
+            [message],
+            OutboundIntentDraft(
                 delivery_id=delivery_id,
+                idempotency_key=f"proactive:{delivery_id}",
+                turn_id=None,
+                session_key=session_key,
+                channel=channel,
+                chat_id=chat_id,
+                content=content,
+                media=tuple(media),
+                metadata={"delivery_id": delivery_id},
+                lane="proactive",
+                reason_code="proactive_reply",
+            ),
+        )
+        sent = await self._outbound.dispatch(
+            OutboundDispatch(
+                channel=channel,
+                chat_id=chat_id,
+                content=content,
+                metadata=dict(record.metadata),
+                media=media,
+                session_message_id=record.session_message_id,
             )
-            await self._session.session_manager.append_messages(
-                session, session.messages[-1:]
-            )
+        )
+
+        # 3. Delivery truth 决定 presence 与后置副作用，消息历史保留 delivery_id 供对账。
+        if sent:
             if self._session.presence:
                 self._session.presence.record_proactive_sent(session_key)
             await self._run_effects(result.success_side_effects)
@@ -100,7 +112,7 @@ class TurnOrchestrator:
         media: list[str],
         result: TurnResult,
         delivery_id: str,
-    ) -> None:
+    ) -> dict[str, object]:
         source_refs = []
         state_summary_tag = "none"
         if result.trace is not None and isinstance(result.trace.extra, dict):
@@ -108,7 +120,7 @@ class TurnOrchestrator:
             if isinstance(raw_refs, list):
                 source_refs = [ref for ref in raw_refs if isinstance(ref, dict)]
             state_summary_tag = str(result.trace.extra.get("state_summary_tag", "none"))
-        _ = session.add_message(
+        return session.add_message(
             "assistant",
             content,
             media=media if media else None,

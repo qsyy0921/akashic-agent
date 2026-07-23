@@ -36,6 +36,7 @@ paths = [
   "agent/policies/history_route.py",
   "agent/prompting/**",
   "agent/retrieval/**",
+  "agent/routing/**",
 ]
 depends_on = ["session_persistence"]
 scenarios = ["context_history_nondestructive"]
@@ -187,6 +188,7 @@ priority = "p1"
 requirements = ["OBJ-003", "RUN-001", "ERR-001"]
 paths = [
   "agent/background/**",
+  "agent/delivery/**",
   "agent/config.py",
   "agent/config_models.py",
   "agent/context.py",
@@ -201,6 +203,7 @@ paths = [
   "agent/skills.py",
   "agent/subagent.py",
   "agent/supervisor.py",
+  "agent/tool_governance.py",
   "agent/tool_bundles.py",
   "agent/tool_runtime.py",
   "agent/tools/**",
@@ -268,6 +271,7 @@ paths = [
   "docker/**",
   "docs/templates/**",
   "package.json",
+  "package-lock.json",
   "pytest.ini",
   "pyproject.toml",
   "pyrightconfig*.json",
