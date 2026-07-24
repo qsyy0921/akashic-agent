@@ -1562,6 +1562,43 @@ async def test_after_reasoning_persists_mobile_canonical_ids(tmp_path: Path):
 
 
 @pytest.mark.asyncio
+async def test_after_reasoning_projects_id_when_outbound_dispatch_is_deferred(
+    tmp_path: Path,
+):
+    manager = SessionManager(tmp_path / "workspace")
+    session = manager.get_or_create("mobile:observe-seam")
+    state = TurnState(
+        msg=InboundMessage(
+            channel="mobile",
+            sender="device:observe-seam",
+            chat_id="observe-seam",
+            content="hello",
+        ),
+        session_key=session.key,
+        dispatch_outbound=False,
+        session=session,
+    )
+    phase = Phase(
+        default_after_reasoning_modules(
+            EventBus(),
+            cast(Any, SimpleNamespace(presence=None, session_manager=manager)),
+        ),
+        frame_factory=AfterReasoningFrame,
+    )
+
+    result = await phase.run(
+        AfterReasoningInput(
+            state=state,
+            turn_result=TurnRunResult(reply="reply"),
+        )
+    )
+    persisted_assistant_id = session.messages[1]["id"]
+    manager.close()
+
+    assert result.outbound.session_message_id == persisted_assistant_id
+
+
+@pytest.mark.asyncio
 async def test_after_reasoning_persists_clean_mobile_reply_projection(tmp_path: Path):
     manager = SessionManager(tmp_path / "workspace")
     session = manager.get_or_create("mobile:00000000-0000-0000-0000-000000000001")

@@ -279,6 +279,14 @@ class _AppendMessagesModule:
                 session,
                 messages,
             )
+            if state.persistence.persist_assistant:
+                persisted_assistant = cast(
+                    dict[str, object],
+                    frame.slots[_PERSISTED_ASSISTANT_SLOT],
+                )
+                raw_message_id = persisted_assistant.get("id")
+                if isinstance(raw_message_id, str) and raw_message_id:
+                    outbound.session_message_id = raw_message_id
         return frame
 
 
