@@ -19,7 +19,10 @@ param(
     [string]$LogRoot = "",
 
     [ValidateRange(1, 600)]
-    [int]$DependencyTimeoutSeconds = 120
+    [int]$DependencyTimeoutSeconds = 120,
+
+    [ValidateRange(15, 300)]
+    [int]$ReadinessTimeoutSeconds = 60
 )
 
 Set-StrictMode -Version Latest
@@ -28,6 +31,10 @@ $ErrorActionPreference = "Stop"
 $env:PYTHONUTF8 = "1"
 $env:PYTHONIOENCODING = "utf-8"
 $env:PYTHONUNBUFFERED = "1"
+$env:AKASHIC_READINESS_TIMEOUT_S = [string]$ReadinessTimeoutSeconds
+$utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $utf8NoBom
+$OutputEncoding = $utf8NoBom
 
 $runtimeRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $python = Join-Path $runtimeRoot ".venv\Scripts\python.exe"
@@ -62,6 +69,15 @@ function Write-SupervisorEvent {
 
     $line = "{0} {1}" -f (Get-Date -Format "yyyy-MM-ddTHH:mm:ssK"), $Message
     Add-Content -LiteralPath $supervisorLog -Value $line -Encoding UTF8
+}
+
+function ConvertTo-CmdQuotedPath {
+    param([Parameter(Mandatory = $true)][string]$Value)
+
+    if ($Value.Contains('"') -or $Value.Contains('%')) {
+        throw "Runtime path cannot be represented safely for raw log redirection"
+    }
+    return '"{0}"' -f $Value
 }
 
 function Wait-LoopbackPort {
@@ -100,25 +116,35 @@ try {
     $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
     $stdoutLog = Join-Path $LogRoot "akashic-$stamp.out.log"
     $stderrLog = Join-Path $LogRoot "akashic-$stamp.err.log"
-    Write-SupervisorEvent "starting candidate runtime"
+    Write-SupervisorEvent "starting candidate supervisor"
 
-    $process = Start-Process `
-        -FilePath $python `
-        -ArgumentList @(
-            "main.py",
-            "--config", "`"$resolvedConfig`"",
-            "--workspace", "`"$Workspace`""
-        ) `
-        -WorkingDirectory $runtimeRoot `
-        -WindowStyle Hidden `
-        -RedirectStandardOutput $stdoutLog `
-        -RedirectStandardError $stderrLog `
-        -Wait `
-        -PassThru
-
+    $commandLine = "{0} {1} supervise --config {2} --workspace {3} 1>>{4} 2>>{5}" -f (
+        ConvertTo-CmdQuotedPath $python
+    ), (
+        ConvertTo-CmdQuotedPath (Join-Path $runtimeRoot "main.py")
+    ), (
+        ConvertTo-CmdQuotedPath $resolvedConfig
+    ), (
+        ConvertTo-CmdQuotedPath $Workspace
+    ), (
+        ConvertTo-CmdQuotedPath $stdoutLog
+    ), (
+        ConvertTo-CmdQuotedPath $stderrLog
+    )
+    $runtimeExitCode = 1
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        # cmd owns only raw file-handle redirection. PowerShell synchronously owns
+        # cmd, so Task Scheduler still owns the full supervisor lifetime.
+        $ErrorActionPreference = "Continue"
+        & $env:ComSpec /d /s /c $commandLine
+        $runtimeExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
     Write-SupervisorEvent (
-        "candidate runtime exited pid={0} code={1}" -f
-            $process.Id, $process.ExitCode
+        "candidate supervisor exited code={0}" -f $runtimeExitCode
     )
 }
 catch {
@@ -128,6 +154,6 @@ catch {
     )
 }
 
-# Any completed launcher run is unexpected. The Scheduled Task owns bounded
-# restart cadence and MultipleInstances=IgnoreNew prevents duplicate pollers.
+# Any completed supervisor run is unexpected. The Scheduled Task owns bounded
+# restart cadence; the synchronous child keeps IgnoreNew effective.
 exit 1

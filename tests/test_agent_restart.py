@@ -871,3 +871,19 @@ async def test_ndjson_disconnect_fails_delivery_receipt() -> None:
         await send_task
     with pytest.raises(ConnectionError, match="disconnected"):
         await writer_task
+
+
+def test_windows_task_wrapper_synchronously_owns_supervisor() -> None:
+    script = (
+        Path(__file__).parents[1] / "scripts" / "run-akashic-supervised.ps1"
+    ).read_text(encoding="utf-8")
+
+    assert "Start-Process" not in script
+    assert " supervise --config " in script
+    assert "& $env:ComSpec /d /s /c $commandLine" in script
+    assert "1>>{4} 2>>{5}" in script
+    assert "$runtimeExitCode = $LASTEXITCODE" in script
+    assert '$ErrorActionPreference = "Continue"' in script
+    assert "$env:AKASHIC_READINESS_TIMEOUT_S = [string]$ReadinessTimeoutSeconds" in script
+    assert "[Console]::OutputEncoding = $utf8NoBom" in script
+    assert "$OutputEncoding = $utf8NoBom" in script
