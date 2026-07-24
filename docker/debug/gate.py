@@ -384,7 +384,8 @@ def catalog_digest() -> str:
     digest = hashlib.sha256()
     for path in (IMPACT_PATH, STATE_PATH, SCENARIO_PATH):
         digest.update(path.name.encode("utf-8"))
-        digest.update(path.read_bytes())
+        normalized = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+        digest.update(normalized.encode("utf-8"))
     return digest.hexdigest()
 
 
@@ -905,11 +906,17 @@ def _compose_command(project: str, *args: str) -> list[str]:
 
 def _compose_env(sandbox: Path) -> dict[str, str]:
     env = dict(os.environ)
+    if os.name == "nt":
+        uid = env.get("UID", "1000")
+        gid = env.get("GID", "1000")
+    else:
+        uid = str(os.getuid())
+        gid = str(os.getgid())
     env.update(
         {
             "AKASHIC_CHANGE_GATE_SANDBOX": str(sandbox),
-            "UID": str(os.getuid()),
-            "GID": str(os.getgid()),
+            "UID": uid,
+            "GID": gid,
         }
     )
     return env
