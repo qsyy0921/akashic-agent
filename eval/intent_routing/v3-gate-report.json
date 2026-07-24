@@ -1,10 +1,10 @@
 {
   "schema_version": "3",
   "generated_by": "eval/intent_routing/run_v3_eval.py",
-  "generated_at": "2026-07-24T00:17:37+08:00",
+  "generated_at": "2026-07-24T22:22:30+08:00",
   "router": {
     "version": "intent-routing-v3-llm-hybrid-1",
-    "digest": "sha256:a14cd9dad236d9fa09373f9ab2df18830e9f87fb0b8921dbf8d9e1a174fd7003"
+    "digest": "sha256:1e6d2f8b44c9d7410b4ed017bb7682e39938ccefb980dc428a2411b04b094486"
   },
   "models": {
     "retrieval_model_id": "qwen3-embedding:4b",
@@ -73,9 +73,9 @@
     "end_to_end_visibility_rate": 1.0,
     "intent_view_success_rate": 1.0,
     "status_accuracy": 1.0,
-    "cold_start_latency_ms": 4162.747,
-    "local_warm_latency_p95_ms": 986.131,
-    "external_llm_latency_p95_ms": 20346.637
+    "cold_start_latency_ms": 4251.32,
+    "local_warm_latency_p95_ms": 1020.76,
+    "external_llm_latency_p95_ms": 12984.425
   },
   "thresholds": {
     "minimum": {
@@ -97,5 +97,5 @@
   },
   "passed": true,
   "failures": [],
-  "artifact_digest": "sha256:515d87906321a0772e0db89413bed6efa790d68dced4b2bb6daa905c88549161"
+  "artifact_digest": "sha256:d87db55a95d6fb45d382308b07ad0388559878091b569902792286d38c4213fb"
 }

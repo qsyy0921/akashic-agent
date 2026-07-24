@@ -1072,6 +1072,35 @@ daynight_provider:
   fixed_behavior: test fixture writes config to workspace/plugin-data instead of legacy .akashic-plugin/data
   verification: all 3 provider tests passed
   rejected_fix: core compatibility fallback to the legacy data directory
+upstream_sync:
+  upstream_revision: 480348f27b9b10488d6d6bad192bf2f0fee29358
+  merge_revision: eea82892eb97ef935d028197b94e389ea7be5dff
+  conflicts:
+    - agent/config.py
+    - agent/subagent.py
+    - docs/INDEX.md
+    - session/manager.py
+  resolution: preserve vNext tool governance, atomic outbox persistence and vNext documentation entry while adopting upstream dead-wrapper removals
+  verification:
+    - conflict-related regression: passed, 186 tests / 2 skipped
+    - full pytest with warnings as errors: passed, 2364 passed / 187 skipped
+    - production Pyright: passed, 0 errors
+    - tests Pyright: passed, 0 errors
+    - frontend typecheck and build: passed
+    - compileall, diff check and high-confidence secret scan: passed
+intent_v3_refresh:
+  reason: upstream changes modified a router source digest and the runtime correctly rejected stale evidence
+  report: eval/intent_routing/v3-gate-report.json
+  cases: 25
+  goals: 27
+  tools: 13
+  result: passed
+  failures: 0
+  misses: 0
+  runtime_verification:
+    - readiness published
+    - Dashboard and Web Chat roots returned HTTP 200
+    - next scheduled trigger advanced while supervisor start count stayed unchanged
 remaining_verification:
   - full 20-provider formal G2 pinned to the clean core and owner provider revisions
   - one freshly authorized user-triggered Telegram image receipt

@@ -15,7 +15,7 @@
 
 ## P0 · 私有跨仓库 Gate
 
-- 用包含 deferred-dispatch assistant message ID 修复 `a8efcd4` 的干净 core revision 生成 public plan，并重跑 20-provider 正式 G2。
+- 用已合并最新上游、且包含 deferred-dispatch assistant message ID 修复 `a8efcd4` 的干净 core revision `eea8289` 生成 public plan，并重跑 20-provider 正式 G2。
 - DayNight 上游 `de7b202` 的测试仍把配置写入旧 `.akashic-plugin/data`；当前选定的 owner revision `qsyy0921/daynight_gate@4fd6643` 已只修正为 `workspace/plugin-data` 并通过 3 项测试。正式 Gate 必须固定该 revision，禁止在 core 增加旧目录 fallback。
 - 正式 G2 全绿后更新主仓 private Gate revision/组合证据；外部状态只允许 `passed`、`failed` 或 `not_affected`，不受信任 PR 不接触 provider 清单、凭据或私有报告。
 
