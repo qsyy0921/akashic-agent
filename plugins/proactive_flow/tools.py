@@ -1,5 +1,5 @@
 """
-proactive_v2/tools.py — Tool schemas + execute dispatcher
+proactive_v2/tools.py — Tool schemas + dispatch dispatcher
 
 数据层已由 DataGateway 预取，agent 只需：
   recall_memory  — 检索偏好记忆（HyDE 正/负假设）
@@ -212,13 +212,6 @@ TOOL_SCHEMAS: list[dict] = [
             ]}),
 ]
 
-TERMINAL_TOOL_SCHEMAS: list[dict] = [
-    schema
-    for schema in TOOL_SCHEMAS
-    if schema.get("function", {}).get("name") in {"finish_turn"}
-]
-
-
 # ── 工具实现 ──────────────────────────────────────────────────────────────
 
 async def _recall_memory(ctx: AgentTickContext, args: dict, *, memory) -> str:
@@ -407,40 +400,6 @@ def _parse_evidence(ctx: AgentTickContext, evidence_raw: object) -> list[str]:
     return evidence
 
 
-def _finish_reply(ctx: AgentTickContext, args: dict) -> str:
-    content = normalize_outbound_text(str(args.get("content", "") or ""))
-    if not content.strip():
-        raise ValueError("finish_reply requires non-empty content")
-    evidence = _parse_evidence(ctx, args.get("evidence", []))
-    ctx.final_message = content
-    ctx.cited_item_ids = evidence
-    ctx.terminal_action = "reply"
-    for key in evidence:
-        ctx.interesting_item_ids.add(key)
-        ctx.discarded_item_ids.discard(key)
-    return json.dumps({"ok": True}, ensure_ascii=False)
-
-
-def _finish_skip(ctx: AgentTickContext, args: dict) -> str:
-    content = str(args.get("content", "") or "")
-    if content.strip():
-        raise ValueError("finish_skip does not accept content")
-    note = str(args.get("note", "") or "")
-    reason = str(args.get("reason", "other") or "other")
-    if reason not in _VALID_SKIP_REASONS:
-        raise ValueError(
-            f"invalid skip reason: {reason!r}. must be one of {sorted(_VALID_SKIP_REASONS)}"
-        )
-    evidence = _parse_evidence(ctx, args.get("evidence", []))
-    if evidence:
-        raise ValueError("finish_skip does not accept evidence")
-    ctx.skip_reason = reason
-    ctx.skip_note = note
-    ctx.terminal_action = "skip"
-    ctx.cited_item_ids = []
-    return json.dumps({"ok": True}, ensure_ascii=False)
-
-
 def _finish_turn(ctx: AgentTickContext, args: dict) -> str:
     decision = str(args.get("decision", "") or "").strip()
     note = str(args.get("note", "") or "")
@@ -486,7 +445,7 @@ def _message_push(ctx: AgentTickContext, args: dict) -> str:
     return json.dumps({"ok": True}, ensure_ascii=False)
 
 
-# ── execute 分发 ──────────────────────────────────────────────────────────
+# ── 工具分发 ──────────────────────────────────────────────────────────────
 
 async def dispatch(tool_name: str, args: dict, ctx: AgentTickContext, deps: ToolDeps) -> str:
     if tool_name == "get_alert_events":
@@ -526,8 +485,3 @@ async def dispatch(tool_name: str, args: dict, ctx: AgentTickContext, deps: Tool
         return _finish_turn(ctx, args)
 
     raise ValueError(f"unknown tool: {tool_name!r}")
-
-
-async def execute(tool_name: str, args: dict, ctx: AgentTickContext, deps: ToolDeps) -> str:
-    ctx.steps_taken += 1
-    return await dispatch(tool_name, args, ctx, deps)

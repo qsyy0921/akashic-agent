@@ -41,7 +41,6 @@ from plugins.akasha.core import (
     activation_edge_updates as _activation_edge_updates,
     local_residual as _local_residual,
     activation_updates as _activation_updates,
-    compute_candidates as _core_compute_candidates,
     compute_candidates_from_snapshot as _core_compute_candidates_from_snapshot,
     dense_message_candidates as _dense_message_candidates,
     edges_by_src as _edges_by_src,
@@ -716,7 +715,7 @@ class AkashaMemoryEngine:
         # 3. 用真实 current_key 建边，并记录激活诊断。
         #    reinforce 标记 = 本轮调用了 reinforce_memory 工具(记在 tool_chain)或 extra 回填；
         #    与离线重建(build._load_reinforce_boosts)读同一来源，live 与重放一致。
-        reinforce_boost = _reinforce_boost_for_turn(
+        reinforce_boost = _reinforce_boost_from_payload(
             event.extra,
             event.tool_chain_raw,
         )
@@ -825,12 +824,6 @@ class AkashaMemoryEngine:
             self._message_turn_keys = message_turn_keys
             self._message_timestamps = message_timestamps
             self._message_index = message_index
-
-    # 取查询使用的内存图快照。
-    def _graph_snapshot(self) -> AkashaActivationSnapshot:
-        self._ensure_graph_cache()
-        with self._graph_lock:
-            return self._graph_snapshot_locked()
 
     def _ensure_graph_cache(self) -> None:
         """初始化延迟加载的内存图缓存。"""
@@ -1073,7 +1066,7 @@ class AkashaMemoryEngine:
             if cached and cached in existing_keys:
                 affected.add(cached)
                 continue
-            parsed = _parse_message_id(message_id)
+            parsed = _parse_turn_key(message_id)
             if parsed is None:
                 continue
             session_key, seq = parsed
@@ -1250,13 +1243,6 @@ class _AkashaRetrieval:
     budget: RecallBudget = RecallBudget(10, 10, 8, 0.0, 0, 0.0)
 
 
-def _reinforce_boost_for_turn(
-    event_extra: dict[str, object] | None,
-    tool_chain: list[dict[str, object]],
-) -> float:
-    return _reinforce_boost_from_payload(event_extra, tool_chain)
-
-
 def _core_config(config: AkashaConfig) -> CoreConfig:
     return CoreConfig(
         dense_seed_threshold=config.dense_seed_threshold,
@@ -1266,39 +1252,6 @@ def _core_config(config: AkashaConfig) -> CoreConfig:
         nearby_dense_threshold=config.nearby_dense_threshold,
         soft_recall_threshold=config.soft_recall_threshold,
         soft_recall_direct_floor=config.soft_recall_direct_floor,
-    )
-
-
-def _compute_candidates(
-    query: str,
-    query_vec: np.ndarray,
-    nodes: dict[str, AkashaNode],
-    edges: dict[tuple[str, str], float],
-    now_ts: float,
-    *,
-    config: AkashaConfig,
-    fan: dict[str, int],
-    source_cursor: sqlite3.Cursor | None = None,
-    edges_by_src: dict[str, dict[str, float]] | None = None,
-    edges_meta: dict[tuple[str, str], float] | None = None,
-    soft_recall: bool = False,
-    return_limit: int | None = None,
-    graph_seed_keys: list[str] | None = None,
-) -> tuple[list[AkashaCandidate], list[AkashaCandidate], ActivationTrace]:
-    return _core_compute_candidates(
-        query,
-        query_vec,
-        nodes,
-        edges,
-        now_ts,
-        config=_core_config(config),
-        fan=fan,
-        source_cursor=source_cursor,
-        edges_by_src=edges_by_src,
-        edges_meta=edges_meta,
-        soft_recall=soft_recall,
-        return_limit=return_limit,
-        graph_seed_keys=graph_seed_keys,
     )
 
 
@@ -1521,10 +1474,6 @@ def _load_turn_card(
         lane=lane,
         signals=signals,
     )
-
-
-def _parse_message_id(message_id: str) -> tuple[str, int] | None:
-    return _parse_turn_key(message_id)
 
 
 def _possible_turn_keys(

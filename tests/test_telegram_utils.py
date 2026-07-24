@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Any, cast
 from types import SimpleNamespace
 
@@ -37,6 +38,174 @@ class BotStub:
 
     async def send_photo(self, **kwargs):
         self.photo_calls += 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("channel", ["live", "preview"])
+async def test_html_send_helper_falls_back_and_returns_message(channel, caplog):
+    bot = BotStub()
+    calls = []
+    expected = SimpleNamespace(message_id=9)
+
+    async def send_message(**kwargs):
+        calls.append(kwargs)
+        if kwargs.get("parse_mode") == "HTML":
+            raise RuntimeError("can't parse entities")
+        return expected
+
+    bot.send_message = send_message
+
+    with caplog.at_level(logging.WARNING, logger=telegram_utils_module.logger.name):
+        result = await telegram_utils_module._send_html_message(
+            cast(Any, bot),
+            123,
+            "<b>hello</b>",
+            "hello",
+            channel=channel,
+        )
+
+    assert result is expected
+    assert (
+        f"[telegram] {channel} HTML 解析失败，降级纯文本: can't parse entities"
+        in caplog.text
+    )
+    assert calls == [
+        {"chat_id": 123, "text": "<b>hello</b>", "parse_mode": "HTML"},
+        {"chat_id": 123, "text": "hello"},
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("channel", ["live", "preview"])
+async def test_html_send_helper_propagates_non_parse_error(channel):
+    bot = BotStub()
+    calls = []
+
+    async def send_message(**kwargs):
+        calls.append(kwargs)
+        raise RuntimeError("transport failed")
+
+    bot.send_message = send_message
+
+    with pytest.raises(RuntimeError, match="transport failed"):
+        await telegram_utils_module._send_html_message(
+            cast(Any, bot),
+            123,
+            "<b>hello</b>",
+            "hello",
+            channel=channel,
+        )
+
+    assert calls == [{"chat_id": 123, "text": "<b>hello</b>", "parse_mode": "HTML"}]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("channel", "expected_result"),
+    [("live", True), ("preview", None)],
+)
+async def test_html_edit_helper_falls_back_with_channel_result(
+    channel, expected_result, caplog
+):
+    bot = BotStub()
+    calls = []
+
+    async def edit_message_text(**kwargs):
+        calls.append(kwargs)
+        if kwargs.get("parse_mode") == "HTML":
+            raise RuntimeError("can't parse entities")
+
+    bot.edit_message_text = edit_message_text
+
+    with caplog.at_level(logging.WARNING, logger=telegram_utils_module.logger.name):
+        result = await telegram_utils_module._edit_html_message(
+            cast(Any, bot),
+            123,
+            9,
+            "<b>hello</b>",
+            "hello",
+            channel=channel,
+        )
+
+    assert result is expected_result
+    assert calls == [
+        {
+            "chat_id": 123,
+            "message_id": 9,
+            "text": "<b>hello</b>",
+            "parse_mode": "HTML",
+        },
+        {"chat_id": 123, "message_id": 9, "text": "hello"},
+    ]
+    assert f"[telegram] {channel} edit HTML 解析失败" in caplog.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("channel", ["live", "preview"])
+async def test_html_edit_helper_propagates_non_parse_error(channel):
+    bot = BotStub()
+    calls = []
+
+    async def edit_message_text(**kwargs):
+        calls.append(kwargs)
+        raise RuntimeError("transport failed")
+
+    bot.edit_message_text = edit_message_text
+
+    with pytest.raises(RuntimeError, match="transport failed"):
+        await telegram_utils_module._edit_html_message(
+            cast(Any, bot),
+            123,
+            9,
+            "<b>hello</b>",
+            "hello",
+            channel=channel,
+        )
+
+    assert calls == [
+        {
+            "chat_id": 123,
+            "message_id": 9,
+            "text": "<b>hello</b>",
+            "parse_mode": "HTML",
+        }
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("channel", "expected_result"),
+    [("live", True), ("preview", None)],
+)
+async def test_html_edit_helper_skips_not_modified_without_plain_retry(
+    channel, expected_result, caplog
+):
+    bot = BotStub()
+    bot.edit_message_text = AsyncMock(
+        side_effect=telegram_utils_module.BadRequest("Message is NOT modified")
+    )
+
+    with caplog.at_level(logging.DEBUG, logger=telegram_utils_module.logger.name):
+        result = await telegram_utils_module._edit_html_message(
+            cast(Any, bot),
+            123,
+            9,
+            "<b>hello</b>",
+            "hello",
+            channel=channel,
+        )
+
+    assert result is expected_result
+    bot.edit_message_text.assert_awaited_once_with(
+        chat_id=123,
+        message_id=9,
+        text="<b>hello</b>",
+        parse_mode="HTML",
+    )
+    if channel == "preview":
+        assert "[telegram] preview edit skipped" in caplog.text
+    else:
+        assert "edit skipped" not in caplog.text
 
 
 @pytest.mark.asyncio
@@ -102,6 +271,48 @@ async def test_outbound_limiter_typing_does_not_delay_send(monkeypatch):
     await limiter.run(123, kind="send", label="send", action=AsyncMock(return_value=True))
 
     sleep_mock.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_lock_maps_allocate_only_for_missing_keys(monkeypatch):
+    original_lock = telegram_utils_module.asyncio.Lock
+    constructions = 0
+
+    def counting_lock():
+        nonlocal constructions
+        constructions += 1
+        return original_lock()
+
+    limiter = TelegramOutboundLimiter(
+        send_interval_s=0.0,
+        typing_interval_s=0.0,
+        global_interval_s=0.0,
+    )
+    existing_chat_lock = original_lock()
+    existing_typing_lock = original_lock()
+    limiter._chat_locks[123] = existing_chat_lock
+    limiter._typing_locks[123] = existing_typing_lock
+    queue = TelegramLiveEditQueue(min_interval_s=0.0)
+    existing_queue_lock = original_lock()
+    queue._locks[123] = existing_queue_lock
+
+    monkeypatch.setattr(telegram_utils_module.asyncio, "Lock", counting_lock)
+    await limiter.run(123, kind="send", label="send", action=AsyncMock(return_value=True))
+    await limiter.run(123, kind="typing", label="typing", action=AsyncMock(return_value=True))
+    await queue.reserve(123, label="existing")
+    await queue.run(123, label="existing", action=AsyncMock(return_value=True))
+
+    assert constructions == 0
+
+    await limiter.run(456, kind="send", label="send", action=AsyncMock(return_value=True))
+    await limiter.run(456, kind="typing", label="typing", action=AsyncMock(return_value=True))
+    await queue.reserve(456, label="missing")
+    await queue.run(789, label="missing", action=AsyncMock(return_value=True))
+
+    assert constructions == 4
+    assert limiter._chat_locks[123] is existing_chat_lock
+    assert limiter._typing_locks[123] is existing_typing_lock
+    assert queue._locks[123] is existing_queue_lock
 
 
 @pytest.mark.asyncio

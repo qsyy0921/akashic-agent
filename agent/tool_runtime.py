@@ -1,28 +1,10 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from collections.abc import Sequence
 from typing import Any, cast
 
 from agent.tools.base import Tool, ToolResult, normalize_tool_result
-
-_TOOL_LOOP_EXCLUDED = frozenset({"task_output", "task_stop"})
-
-
-@dataclass(frozen=True)
-class PreparedToolset:
-    tools: list[Tool]
-    schemas: list[dict[str, Any]]
-    tool_map: dict[str, Tool]
-
-
-def prepare_toolset(tools: list[Tool]) -> PreparedToolset:
-    return PreparedToolset(
-        tools=list(tools),
-        schemas=build_tool_schemas(tools),
-        tool_map=build_tool_map(tools),
-    )
 
 
 def build_tool_schemas(tools: list[Tool]) -> list[dict[str, Any]]:
@@ -41,16 +23,6 @@ def build_tool_schemas(tools: list[Tool]) -> list[dict[str, Any]]:
 
 def build_tool_map(tools: list[Tool]) -> dict[str, Tool]:
     return {tool.name: tool for tool in tools}
-
-
-def tool_call_signature(tool_calls: list[Any]) -> str:
-    parts: list[str] = []
-    for tool_call in tool_calls:
-        if tool_call.name in _TOOL_LOOP_EXCLUDED:
-            continue
-        args = json.dumps(tool_call.arguments, ensure_ascii=False, sort_keys=True)
-        parts.append(f"{tool_call.name}:{args}")
-    return "|".join(parts)
 
 
 def tool_call_batch_snapshot(tool_calls: Sequence[Any]) -> tuple[dict[str, Any], ...]:
