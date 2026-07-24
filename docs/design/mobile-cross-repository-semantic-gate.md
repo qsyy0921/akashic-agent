@@ -250,6 +250,8 @@ SessionManager 分配并持久化 assistant message ID
 
 G2 不能只 import Observe 或调用一个伪造 reader。它必须用当前 core lifecycle 产生真实 committed turn，等待 TraceWriter 落库，再通过插件公开的 mobile RPC 读取。随后运行“清空稳定 message ID”的 mutant，确认 SQLite 或 mobile query 断言失败。
 
+**F（2026-07-24 候选 revision）：** 统一 G2 首次运行发现 `dispatch_outbound=false` 时，`AfterReasoning` 在 `append_messages` 分配数据库 ID 前构造 `OutboundMessage`，持久化完成后没有把 assistant ID 投影回出站对象，导致 Observe seam 得到 `None`。候选 revision `a8efcd4` 在 `_AppendMessagesModule` 完成追加后读取同一 persisted assistant row 的 ID；核心 lifecycle 32 项、全量 2382 项测试和 Observe 隔离场景均通过。该 revision 由完整 G2 绑定前，不能写成 canonical 组合通过。
+
 Observe 属于独立插件仓库，所以报告同时绑定 core consumer SHA、Observe remote ref、resolved SHA、安装产物 digest 和 mobile query 场景。插件未安装的公共贡献者可以运行 G1；required G2 由持有插件访问条件的环境返回明确的 `passed`、`failed` 或 `not_affected`。
 
 ## 5. Docker、Mobile Lab 与 Pixel 7 的证据层级
@@ -427,6 +429,8 @@ Deliver
 ## 10. 当前实施边界
 
 **F：** 公开 Gate 已有 diff 选择、一次性 Docker sandbox 和报告入口。private companion `cac9582e41de45446374a85d06311f33dc4bad0e` 已为当前 catalog 的 20/20 provider 固定完整远端 branch ref，并把每个 `repository/requestedRef/resolvedCommit` 纳入计划摘要；它只接受 public plan 的 `planned`/`not_affected` 终态，并在 `unmappedChanges` 或 `touchedBaselineGaps` 非空时 fail-loud。只有 Feed/Observe 已有固定 SHA 安装和独立语义 scenario，它们仍是 G2 pilot，不等于统一 controller 或完整 required check。Mobile Lab 的隔离实现只存在于上文固定的 PR #129 revision，不是当前 main 事实。
+
+**F（2026-07-24 维护者实现）：** 用户自有 private Gate 仓库在 `ece14f1` 已实现统一 controller、20-provider catalog、冻结 remote SHA、无网络/只读源码/独立 tmpfs 容器、正式安装发现、语义与原生测试、Node 合同以及 `passed`/`failed`/`not_affected` 聚合。首个完整组合运行得到 15 passed / 5 failed 且残留资源为 0；随后 Computer Use Linux、Fitbit、Observe 与 proactive_feedback 的 Gate 环境或 core 缺陷已分别本地复验通过。DayNight owner revision `qsyy0921/daynight_gate@4fd6643` 只修正测试夹具的数据目录并通过 3 项测试；20-provider 正式全绿报告仍待同一 public plan 复验，因此不能删除 `NOW.md` 的 G2 项。
 
 **F（本次跨仓库审计）：** Gate 开跑前解析并冻结的插件身份如下。`change_source_pr_head` 只说明变更从哪里进入 canonical branch，不能代替 `requested_ref` 当时解析出的 `resolved_sha`。
 

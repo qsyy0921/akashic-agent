@@ -1015,3 +1015,65 @@ preserved_state:
   - Git worktree, SDD, external credentials and verification reports are retained
 resume_action: run exactly one Telegram image E2E after authorization and rerun the pinned private Gate after repository access is granted
 ```
+
+## VNX-08 continuation record · 2026-07-24
+
+```yaml
+unit_id: VNX-08
+status: in_progress
+private_gate:
+  repository: qsyy0921/akashic-private-contract-gate
+  remote_commit: ece14f1
+  local_checks:
+    - pytest: passed, 19 tests
+    - Ruff and Ruff format: passed
+    - Pyright: passed, 0 errors
+    - compileall, diff check and high-confidence secret scan: passed
+  latest_complete_aggregate:
+    result: failed
+    providers_passed: 15
+    providers_failed: 5
+    cleanup_residuals: 0
+  repaired_and_reverified_scenarios:
+    - Computer Use Linux formal install, semantic contracts and native tests: passed
+    - Fitbit Python and Node contracts: passed
+    - Observe formal install, semantic contracts, native tests and Node contracts: passed against the local core candidate
+    - proactive_feedback formal install, semantic contracts, native tests and Node contracts: passed
+core_candidate:
+  revision: a8efcd4
+  write_set:
+    - agent/lifecycle/phases/after_reasoning.py
+    - tests/test_lifecycle_phases.py
+  behavior: after append_messages completes for dispatch_outbound=false, project the persisted assistant message ID back to OutboundMessage
+  verification:
+    - lifecycle phase regression: passed, 32 tests
+    - full pytest with warnings as errors: passed, 2382 passed / 186 skipped
+    - production Pyright: passed, 0 errors
+    - tests Pyright: passed, 0 errors
+supervisor_candidate:
+  status: verified
+  revision: 058a7e3
+  observed_failure: the Scheduled Task host exits while an orphaned Python supervisor remains, so the one-minute restart policy repeatedly launches lock-rejected candidates
+  readiness_evidence: cold startup of six plugins exceeded the core 15-second default and correctly returned supervisor exit 70
+  write_set:
+    - scripts/run-akashic-supervised.ps1
+    - tests/test_agent_restart.py
+  intended_behavior: the PowerShell task process synchronously owns main.py supervise for its full lifetime; raw UTF-8 logs remain readable; IgnoreNew prevents another task instance; Windows startup uses one bounded 60-second readiness budget
+  verification:
+    - PowerShell parser: passed
+    - supervisor launcher contract: passed
+    - controlled cutover: new boot published ready with one supervisor and one Gateway
+    - one-minute repetition observation: trigger advanced while supervisor start count stayed unchanged
+    - current runtime log: strict UTF-8 with readable Chinese and no mojibake marker
+    - Dashboard and Web Chat roots: HTTP 200
+daynight_provider:
+  upstream_revision: de7b202bb7919ab99e6a23e8c4579a59afde3841
+  owner_revision: qsyy0921/daynight_gate@4fd664315b51e47f7129836ef7f785e76fa2198f
+  fixed_behavior: test fixture writes config to workspace/plugin-data instead of legacy .akashic-plugin/data
+  verification: all 3 provider tests passed
+  rejected_fix: core compatibility fallback to the legacy data directory
+remaining_verification:
+  - full 20-provider formal G2 pinned to the clean core and owner provider revisions
+  - one freshly authorized user-triggered Telegram image receipt
+fallbacks_added: []
+```
