@@ -1,6 +1,6 @@
 ---
 unit: provider-contract-forward-port
-status: proposed
+status: verified
 depends_on: plugin-runtime-api-v2-integration, agent-closed-loop-v1
 ---
 
@@ -23,7 +23,8 @@ ChannelMessage 投递合同，以及 MCP 候选只读工具和 managed-service �
 - `upstream/main@90cf9f96` 的 `McpServerSpec.candidate_read_only_tools` 与
   `ManagedServiceSpec.validation_port_env` 声明。
 - `agent.delivery.DeliverySupervisor` 和 session outbox 仍是可靠投递真相源。
-- 私有 Gate 报告 `20260820T042646Z-b98196bf` 冻结了 20 个 Provider revision。
+- 私有 Gate 报告 `20260820T052128Z-9ea05fe2` 冻结并通过了 20 个 Provider
+  revision。
 
 ## Invariants
 
@@ -83,6 +84,18 @@ cancelled 都返回失败 receipt。无效 MCP 或 service 声明在安装或 ge
 - `agent/plugins/manager.py:_resolve_mcp_servers,_resolve_managed_services`
 - `agent/plugins/context.py:PluginContext.create_task`
 - `tests/test_provider_contract_forward_port.py`
+
+## Verification evidence
+
+- Core commit: `b2b8f18c54fc3ad1bae0d945542155364e6d4005`。
+- 完整测试：2455 passed，190 skipped。
+- Ruff：通过；Pyright：0 errors。
+- V3 路由报告：
+  `H:/AkashicTestReports/author_akashic_closed_loop/docker-debug-reports/intent-routing/v3-provider-contract-20260820-125956.json`，Gate passed。
+- 公开 Change Gate：
+  `H:/AkashicTestReports/author_akashic_closed_loop/docker-debug-reports/change-gate/20260820-130805-d0199a75`，7 个场景通过。
+- 私有 Contract Gate：
+  `H:/AkashicTestReports/akashic-private-contract-gate/reports/20260820T052128Z-9ea05fe2`，20/20 Provider 通过且无残留容器。
 
 ## Open questions
 

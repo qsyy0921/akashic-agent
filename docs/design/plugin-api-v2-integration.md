@@ -1,6 +1,6 @@
 ---
 unit: plugin-runtime-api-v2-integration
-status: proposed
+status: verified
 depends_on: PLG-003, PLG-004, PLG-009, agent-closed-loop-v1
 ---
 
@@ -111,6 +111,14 @@ reload journal 暴露 generation、source revision、snapshot 和 phase。公开
 - `tests/test_plugin_hot_reload.py`
 - `tests/test_plugin_reload_journal.py`
 - `docker/debug/plugin_api_v2_gate.py`
+
+## Verification evidence
+
+- API v2 commit: `241bc4e52ab4b041b293506d9dbee2fc6fbb97dd`。
+- Provider 合同前向移植 commit：
+  `b2b8f18c54fc3ad1bae0d945542155364e6d4005`。
+- 完整测试、静态检查、公开 Gate 和 20-provider 私有 Gate 均已通过；精确报告路径见
+  `provider-contract-forward-port.md`。
 
 ## Open questions
 
