@@ -688,15 +688,12 @@ class TestToolSearchTool:
         assert "tip" in data
         assert "风险等级不符" in data["tip"]
 
-    def test_allowed_risk_schema_distinguishes_discovery_from_authorization(self):
-        """模型不能把搜索风险过滤器误当成工具调用授权。"""
+    def test_allowed_risk_is_not_exposed_to_the_model(self):
+        """模型侧发现与执行授权分层，风险过滤只保留为内部 API。"""
         tool = ToolSearchTool(_make_registry())
 
-        description = tool.parameters["properties"]["allowed_risk"]["description"]
-
-        assert "不是工具调用授权" in description
-        assert "通常不要填写" in description
-        assert "external-side-effect=生图、发消息、上传" in description
+        assert "allowed_risk" not in tool.parameters["properties"]
+        assert "工具发现不承担调用授权" in tool.description
         assert "独立策略审批" in tool.description
 
     def test_select_excludes_already_visible(self):
