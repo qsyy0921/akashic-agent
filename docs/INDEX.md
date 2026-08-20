@@ -195,6 +195,7 @@ docs/
 │   ├── memory-publication-gate.md
 │   ├── offline-evolution-candidates.md
 │   ├── persistence-state-map.md
+│   ├── plugin-api-v2-integration.md
 │   ├── tool-graph-v1.md
 │   ├── trajectory-evaluation.md
 │   ├── wake-recent-delivery-context.md

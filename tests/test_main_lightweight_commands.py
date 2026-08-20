@@ -23,6 +23,7 @@ def test_setup_main_does_not_import_agent_runtime(tmp_path: Path) -> None:
             str(tmp_path / "workspace"),
         ],
         capture_output=True,
+        encoding="utf-8",
         text=True,
         check=False,
     )
@@ -50,6 +51,7 @@ def test_init_marks_fresh_installation_at_current_head(tmp_path: Path) -> None:
         cwd=_PROJECT_ROOT,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        encoding="utf-8",
         text=True,
         check=False,
     )

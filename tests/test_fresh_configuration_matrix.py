@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -168,6 +169,7 @@ async def test_fresh_init_core_configuration_matrix(
 async def test_fresh_init_runtime_start_stop_matrix(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    unused_tcp_port_factory: Callable[[], int],
     memory_name: str,
     memory_enabled: bool,
     memory_engine: str,
@@ -186,6 +188,14 @@ async def test_fresh_init_runtime_start_stop_matrix(
         proactive_lifecycle=proactive_lifecycle,
         proactive_package=package,
     )
+    text = config_path.read_text(encoding="utf-8")
+    text = _set_toml_value(
+        text,
+        "app_server",
+        "listen",
+        f'"127.0.0.1:{unused_tcp_port_factory()}"',
+    )
+    config_path.write_text(text, encoding="utf-8")
     monkeypatch.setattr(
         bootstrap_app,
         "build_dashboard_server",

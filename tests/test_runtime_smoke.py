@@ -243,6 +243,7 @@ def test_main_help_does_not_start_runtime() -> None:
         cwd=Path(__file__).parents[1],
         check=False,
         capture_output=True,
+        encoding="utf-8",
         text=True,
     )
 

@@ -26,6 +26,15 @@ from uuid import uuid4
 _DEFAULT_WORKSPACE = "~/.akashic/workspace"
 
 
+def _configure_stdio_utf8() -> None:
+    """Keep CLI output decodable across Windows system code pages."""
+
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 def _supervisor_readiness_timeout() -> float:
     return float(os.environ.get("AKASHIC_READINESS_TIMEOUT_S", "15"))
 
@@ -107,6 +116,10 @@ def _run_lightweight_setup_command() -> bool:
     except RuntimeError as exc:
         raise SystemExit(f"启动迁移失败: {exc}") from exc
     return True
+
+
+if __name__ == "__main__":
+    _configure_stdio_utf8()
 
 
 if __name__ == "__main__" and _run_lightweight_setup_command():
