@@ -2083,6 +2083,10 @@ class PluginManager:
                     search_hint=md.tool_search_hint,
                     source_type="plugin",
                     source_name=plugin_name,
+                    operation_id=md.tool_operation_id,
+                    consumes=md.tool_consumes,
+                    produces=md.tool_produces,
+                    requires_operations=md.tool_requires_operations,
                 )
             if generation.mcp_catalog is None:
                 continue
@@ -2613,6 +2617,10 @@ class PluginManager:
                 search_hint=md.tool_search_hint,
                 source_type="plugin",
                 source_name=plugin_name,
+                operation_id=md.tool_operation_id,
+                consumes=md.tool_consumes,
+                produces=md.tool_produces,
+                requires_operations=md.tool_requires_operations,
             )
             logger.info("插件工具已注册: %s (来自 %s)", tool_name, plugin_name)
 

@@ -18,6 +18,11 @@ if TYPE_CHECKING:
 
 from agent.memory import DEFAULT_SELF_MD
 from agent.provider import LLMProvider
+from core.memory.publication import (
+    MemoryPublicationGate,
+    ensure_memory_has_no_secrets,
+    memory_content_digest,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +73,7 @@ _MERGE_PROMPT = """\
 tag 含义（与 consolidation 阶段一致）：
 - identity：基础信息、稳定背景、长期技术方向、经历、长期设备、长期维护项目
 - preference：稳定偏好、禁忌、审美、游戏口味、价值取向
-- key_info：允许长期保存的 key / token / id / 账号信息
+- key_info：允许长期保存的非敏感账号标识；不得保存 key、token、password 或其他凭据
 - health_long_term：长期健康状态的一阶事实，不展开动态指标
 - requested_memory：用户明确要求长期记住的关键内容；允许比普通事实更连贯、更完整
 - correction：对已有 MEMORY.md 内容的显式修正
@@ -134,6 +139,7 @@ tag 含义（与 consolidation 阶段一致）：
 - correction 要直接反映到最终内容中，不要保留"旧值 → 新值"痕迹
 - 不要生成 agent 执行规则、SOP、工具调用规范
 - 不要保留短期状态、时效性事件
+- 不得输出 key、token、password、private key 或其他认证凭据
 - 普通事实保持简洁；requested_memory 允许保留更完整的连贯描述
 
 ## agent_context 特殊规则
@@ -282,6 +288,7 @@ class MemoryOptimizer:
         self._model = model
         self._max_tokens = max_tokens
         self._lock = asyncio.Lock()
+        self._publication_gate = MemoryPublicationGate()
 
     # 各步骤之间的间隔（秒），避免短时间内连续请求触发 limit_burst_rate
     _STEP_DELAY_SECONDS: int = 15
@@ -302,6 +309,8 @@ class MemoryOptimizer:
 
         # 1. 冻结本轮 pending 并读取当前长期记忆
         pending = self._memory.snapshot_pending()
+        transaction_id = self._memory.pending_publication_id()
+        memory_written = False
         # 2. MEMORY 阶段完成明确提交或回滚后才离开事务
         try:
             current_memory = self._memory.read_long_term().strip()
@@ -310,31 +319,81 @@ class MemoryOptimizer:
                 logger.info("[memory_optimizer] 记忆和 pending 均为空，跳过优化")
                 return
 
-            merged_memory = await self._merge_memory(current_memory, pending)
+            publication_pending = pending
+            if transaction_id is not None:
+                decision = self._publication_gate.evaluate(
+                    pending=pending,
+                    current_memory=current_memory,
+                )
+                self._memory.append_publication_audit(
+                    {
+                        "event": "evaluated",
+                        "transaction_id": transaction_id,
+                        **decision.audit_payload(),
+                    }
+                )
+                publication_pending = decision.accepted_markdown
+                if not publication_pending:
+                    self._memory.commit_pending_snapshot()
+                    self._memory.append_publication_audit(
+                        {
+                            "event": "resolved_without_publication",
+                            "transaction_id": transaction_id,
+                            "pending_digest": decision.pending_digest,
+                        }
+                    )
+                    logger.info(
+                        "[memory_optimizer] pending 候选均被发布 Gate 处理，未调用模型"
+                    )
+                    return
+
+            merged_memory = await self._merge_memory(
+                current_memory,
+                publication_pending,
+            )
             if merged_memory:
                 _validate_memory_output(merged_memory)
+                ensure_memory_has_no_secrets(merged_memory)
+                if transaction_id is not None:
+                    self._memory.prepare_pending_publication(merged_memory)
                 if current_memory:
                     self._memory.backup_long_term()
                 self._memory.write_long_term(merged_memory)
+                memory_written = True
                 logger.info(
                     "[memory_optimizer] 记忆已合并 before=%d after=%d chars",
                     len(current_memory),
                     len(merged_memory),
                 )
-                self._memory.commit_pending_snapshot()
-                logger.info("[memory_optimizer] PENDING 已归档，snapshot 已提交")
+                if transaction_id is not None:
+                    self._memory.confirm_pending_publication()
+                    self._memory.commit_pending_snapshot()
+                    self._memory.append_publication_audit(
+                        {
+                            "event": "published",
+                            "transaction_id": transaction_id,
+                            "memory_digest": memory_content_digest(merged_memory),
+                        }
+                    )
+                    logger.info("[memory_optimizer] PENDING 已发布，snapshot 已提交")
             else:
                 self._memory.rollback_pending_snapshot()
                 logger.warning(
                     "[memory_optimizer] 合并返回空，保留原有内容，snapshot 已回滚"
                 )
+                return
         except BaseException:
-            self._memory.rollback_pending_snapshot()
+            if (
+                transaction_id is not None
+                and not memory_written
+                and not self._memory.pending_publication_matches_memory()
+            ):
+                self._memory.rollback_pending_snapshot()
             raise
 
         # 3. 使用同一批 pending 更新自我认知
         await asyncio.sleep(self._STEP_DELAY_SECONDS)
-        await self._update_self(pending)
+        await self._update_self(publication_pending)
 
     async def _merge_memory(self, memory: str, pending: str) -> str:
         today = datetime.now().strftime("%Y-%m-%d")

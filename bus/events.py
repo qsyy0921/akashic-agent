@@ -5,7 +5,10 @@ from datetime import datetime
 from enum import StrEnum
 from typing import TYPE_CHECKING, Any
 
+from bus.contracts import EventEnvelope
+
 if TYPE_CHECKING:
+    from agent.background.state import AsyncTaskState
     from agent.policies.delegation import SpawnDecision
     from bus.internal_events import SpawnCompletionEvent
 
@@ -75,6 +78,20 @@ class SpawnCompletionItem:
     event: "SpawnCompletionEvent"
     decision: "SpawnDecision | None" = None
     timestamp: datetime = field(default_factory=datetime.now)
+    task_state: "AsyncTaskState | None" = None
+    envelope: "EventEnvelope[SpawnCompletionEvent] | None" = None
+
+    def __post_init__(self) -> None:
+        if self.envelope is None:
+            return
+        if self.envelope.payload is not self.event:
+            raise ValueError("spawn completion envelope payload mismatch")
+        if self.envelope.subject_kind != "agent.task":
+            raise ValueError("spawn completion envelope subject kind mismatch")
+        if self.envelope.subject_id != self.event.job_id:
+            raise ValueError("spawn completion envelope subject id mismatch")
+        if self.task_state is None or self.task_state.task_id != self.event.job_id:
+            raise ValueError("spawn completion task state mismatch")
 
     @property
     def session_key(self) -> str:

@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import Any, cast
 
 import pytest
@@ -109,6 +110,18 @@ async def test_subagent_manager_announces_completion_to_origin_session(tmp_path)
     assert item.event.exit_reason == "forced_summary"
     assert item.decision is not None
     assert item.decision.meta.reason_code == "context_isolation_needed"
+    assert item.task_state is not None
+    assert item.task_state.status == "failed"
+    assert item.task_state.error_code == "background.incomplete"
+    assert item.envelope is not None
+    assert item.envelope.payload is item.event
+    assert item.envelope.subject_id == item.event.job_id
+
+    state_path = next((tmp_path / "subagent-runs").glob("*/task-state.json"))
+    persisted_state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert persisted_state["status"] == "failed"
+    assert "research this" not in state_path.read_text(encoding="utf-8")
+    assert "已完成检索" not in state_path.read_text(encoding="utf-8")
 
     trace_path = tmp_path / "memory" / "spawn_trace.jsonl"
     lines = [
@@ -162,8 +175,138 @@ async def test_subagent_manager_lists_and_cancels_running_job(tmp_path):
     assert isinstance(item, SpawnCompletionItem)
     assert item.event.status == "cancelled"
     assert item.event.exit_reason == "cancelled"
+    assert item.task_state is not None
+    assert item.task_state.status == "cancelled"
+    assert item.envelope is not None
+    assert item.envelope.payload is item.event
+    state_path = next((tmp_path / "subagent-runs").glob("*/task-state.json"))
+    persisted_state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert persisted_state["status"] == "cancelled"
     await asyncio.sleep(0)
     assert manager.get_running_count() == 0
+
+
+@pytest.mark.asyncio
+async def test_subagent_manager_persists_success_terminal_state(tmp_path):
+    bus = MessageBus()
+    manager = SubagentManager(
+        provider=cast(Any, _Provider()),
+        workspace=tmp_path,
+        bus=bus,
+        model="m",
+        max_tokens=256,
+        fetch_requester=object(),  # type: ignore[arg-type]
+    )
+
+    class _SuccessfulSubAgent:
+        last_exit_reason = "completed"
+
+        async def run(self, task: str) -> str:
+            assert task == "finish task"
+            return "done"
+
+    manager._build_subagent = (
+        lambda *, task_dir, profile="research": _SuccessfulSubAgent()
+    )  # type: ignore[assignment]
+
+    await manager.spawn(
+        task="finish task",
+        label="finish",
+        origin_channel="telegram",
+        origin_chat_id="42",
+    )
+    item = await asyncio.wait_for(bus.consume_inbound(), timeout=0.2)
+
+    assert isinstance(item, SpawnCompletionItem)
+    assert item.task_state is not None
+    assert item.task_state.status == "succeeded"
+    assert item.task_state.error_code is None
+    state_path = next((tmp_path / "subagent-runs").glob("*/task-state.json"))
+    persisted_state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert persisted_state["status"] == "succeeded"
+    assert persisted_state["started_at"] is not None
+    assert persisted_state["finished_at"] is not None
+
+
+@pytest.mark.asyncio
+async def test_subagent_manager_shutdown_publishes_one_cancelled_terminal_state(tmp_path):
+    bus = MessageBus()
+    manager = SubagentManager(
+        provider=cast(Any, _Provider()),
+        workspace=tmp_path,
+        bus=bus,
+        model="m",
+        max_tokens=256,
+        fetch_requester=object(),  # type: ignore[arg-type]
+    )
+    started = asyncio.Event()
+
+    class _WaitingSubAgent:
+        last_exit_reason = "running"
+
+        async def run(self, task: str) -> str:
+            started.set()
+            await asyncio.Future()
+            return "never"
+
+    manager._build_subagent = (
+        lambda *, task_dir, profile="research": _WaitingSubAgent()
+    )  # type: ignore[assignment]
+    await manager.spawn(
+        task="long task",
+        label="long",
+        origin_channel="telegram",
+        origin_chat_id="42",
+    )
+    await asyncio.wait_for(started.wait(), timeout=0.2)
+
+    await manager.shutdown()
+
+    item = await asyncio.wait_for(bus.consume_inbound(), timeout=0.2)
+    assert isinstance(item, SpawnCompletionItem)
+    assert item.event.status == "cancelled"
+    assert item.task_state is not None
+    assert item.task_state.status == "cancelled"
+    assert bus._inbound.empty()
+    state_path = next((tmp_path / "subagent-runs").glob("*/task-state.json"))
+    assert json.loads(state_path.read_text(encoding="utf-8"))["status"] == "cancelled"
+
+
+@pytest.mark.asyncio
+async def test_subagent_manager_does_not_leak_task_when_running_state_write_fails(
+    tmp_path,
+    monkeypatch,
+):
+    bus = MessageBus()
+    manager = SubagentManager(
+        provider=cast(Any, _Provider()),
+        workspace=tmp_path,
+        bus=bus,
+        model="m",
+        max_tokens=256,
+        fetch_requester=object(),  # type: ignore[arg-type]
+    )
+    original_write = manager._write_task_state
+
+    def _fail_running_state(task_dir, state):
+        if state.status == "running":
+            raise OSError("disk unavailable")
+        original_write(task_dir, state)
+
+    monkeypatch.setattr(manager, "_write_task_state", _fail_running_state)
+
+    with pytest.raises(OSError, match="disk unavailable"):
+        await manager.spawn(
+            task="work",
+            label="job",
+            origin_channel="telegram",
+            origin_chat_id="42",
+        )
+
+    await asyncio.sleep(0)
+    assert manager.get_running_count() == 0
+    assert manager.list_running_jobs() == []
+    assert bus._inbound.empty()
 
 
 @pytest.mark.asyncio

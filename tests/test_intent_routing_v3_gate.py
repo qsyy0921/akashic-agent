@@ -13,6 +13,8 @@ from agent.routing.gate_v3 import (
     build_v3_quality_gate_report,
     build_v3_runtime_configuration,
     canonical_digest,
+    file_sha256,
+    v3_router_digest,
     verify_v3_quality_gate,
 )
 
@@ -290,3 +292,26 @@ def test_v3_gate_never_verifies_a_below_threshold_report(tmp_path: Path) -> None
     assert report["passed"] is False
     with pytest.raises(V3QualityGateError, match="did not pass"):
         _verify(report_path, root, dataset, catalog)
+
+
+def test_checked_in_v3_gate_report_matches_current_sources() -> None:
+    root = Path(__file__).resolve().parents[1]
+    report_path = root / "eval/intent_routing/v3-gate-report.json"
+    report = cast(
+        dict[str, object],
+        json.loads(report_path.read_text(encoding="utf-8")),
+    )
+    router = cast(dict[str, object], report["router"])
+    dataset = cast(dict[str, object], report["dataset"])
+    catalog = cast(dict[str, object], report["catalog"])
+
+    assert report["passed"] is True
+    assert report["failures"] == []
+    assert router["digest"] == v3_router_digest(root)
+    assert dataset["sha256"] == file_sha256(
+        root / "eval/intent_routing/v3_dataset.zh.jsonl"
+    )
+    assert catalog["sha256"] == file_sha256(
+        root / "eval/intent_routing/catalog.zh.json"
+    )
+    assert report["artifact_digest"] == canonical_digest(report)

@@ -6,6 +6,7 @@ from typing import Any
 from agent.tool_hooks.base import ToolHook
 from agent.tool_hooks.executor import ToolExecutor
 from agent.tool_hooks.types import HookContext, HookOutcome, ToolExecutionRequest
+from agent.reliability.failures import FailureClass, RecoveryAction
 
 
 class _SpyHook(ToolHook):
@@ -65,6 +66,8 @@ def test_tool_executor_pre_hook_can_update_arguments() -> None:
     assert result.final_arguments == {"x": 2}
     assert result.output == {"tool": "dummy", "arguments": {"x": 2}}
     assert hook.calls[0].request.arguments == {"x": 1}
+    assert result.failure is None
+    assert result.recovery is None
 
 
 def test_tool_executor_denied_is_not_error() -> None:
@@ -89,6 +92,10 @@ def test_tool_executor_denied_is_not_error() -> None:
 
     assert result.status == "denied"
     assert result.output == "blocked"
+    assert result.failure is not None
+    assert result.failure.failure_class is FailureClass.PERMISSION_DENIED
+    assert result.recovery is not None
+    assert result.recovery.action is RecoveryAction.ABORT
 
 
 def test_tool_executor_post_hook_only_adds_extra_message() -> None:
@@ -142,6 +149,35 @@ def test_tool_executor_post_error_hook_cannot_swallow_error() -> None:
     assert result.status == "error"
     assert result.output == "工具执行出错: boom"
     assert result.extra_messages == ["logged"]
+    assert result.failure is not None
+    assert result.failure.failure_class is FailureClass.TOOL_EXECUTION
+    assert result.recovery is not None
+    assert result.recovery.action is RecoveryAction.ABORT
+
+
+def test_tool_executor_timeout_has_one_bounded_retry_decision() -> None:
+    executor = ToolExecutor()
+
+    async def _timeout(_tool_name: str, _arguments: dict[str, Any]) -> Any:
+        raise TimeoutError("remote timeout")
+
+    result = asyncio.run(
+        executor.execute(
+            ToolExecutionRequest(
+                call_id="c1",
+                tool_name="remote",
+                arguments={},
+                source="passive",
+            ),
+            _timeout,
+        )
+    )
+
+    assert result.status == "error"
+    assert result.failure is not None
+    assert result.failure.failure_class is FailureClass.TIMEOUT
+    assert result.recovery is not None
+    assert result.recovery.action is RecoveryAction.RETRY_SAME_PATH
 
 
 def test_tool_executor_hook_exception_becomes_controlled_error() -> None:

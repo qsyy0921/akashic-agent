@@ -1261,6 +1261,11 @@ async def test_tool_registration():
 
     registered = set(tools._tools.keys())
     assert "get_weather" in registered
+    meta = tools.get_tool_meta("get_weather")
+    assert meta is not None
+    assert meta.operation_id == "weather.query"
+    assert meta.consumes == ("city",)
+    assert meta.produces == ("weather_forecast",)
 
 
 @pytest.mark.asyncio

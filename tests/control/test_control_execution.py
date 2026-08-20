@@ -7,12 +7,49 @@ from typing import Any, cast
 import pytest
 
 from agent.control.models import TurnItemKind, TurnRequest
+from agent.control.errors import ControlExecutionError
 from agent.control.runtime import ConversationRuntime
+from agent.model_runtime.errors import RateLimitError
+from agent.reliability.failures import FailureClass, RecoveryAction
 from bootstrap.control_execution import execute_control_turn
 from bus.event_bus import EventBus
 from bus.events import OutboundMessage, TurnDisposition
 from bus.events_lifecycle import ToolCallCompleted, ToolCallStarted, TurnCommitted
 from session.store import SessionStore
+
+
+@pytest.mark.asyncio
+async def test_provider_failure_uses_core_recovery_contract() -> None:
+    bus = EventBus()
+
+    class _Loop:
+        async def process_direct_message(
+            self,
+            _content: str,
+            **_kwargs: object,
+        ) -> OutboundMessage:
+            raise RateLimitError("provider detail")
+
+    request = TurnRequest(
+        "programmatic:failure",
+        "hello",
+        {
+            "turnId": "turn-failure",
+            "_controlItemEvent": lambda _method, _item: None,
+        },
+    )
+
+    with pytest.raises(ControlExecutionError) as captured:
+        await execute_control_turn(cast(Any, _Loop()), bus, request)
+
+    error = captured.value
+    assert error.error_type == "provider_rate_limited"
+    assert error.retryable is True
+    assert error.failure is not None
+    assert error.failure.failure_class is FailureClass.RATE_LIMIT
+    assert error.recovery is not None
+    assert error.recovery.action is RecoveryAction.RETRY_SAME_PATH
+    await bus.aclose()
 
 
 @pytest.mark.asyncio

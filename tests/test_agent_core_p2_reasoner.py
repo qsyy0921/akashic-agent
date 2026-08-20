@@ -6,7 +6,7 @@ from typing import Any, cast
 
 from agent.core.passive_turn import DefaultReasoner, get_history_since_consolidated
 from agent.core.runtime_support import LLMServices, ToolDiscoveryState
-from agent.lifecycle.types import AfterStepCtx
+from agent.lifecycle.types import AfterStepCtx, BeforeStepCtx
 from agent.looping.ports import LLMConfig
 from agent.provider import LLMResponse, ToolCall
 from agent.tools.base import Tool, ToolResult
@@ -145,10 +145,88 @@ def test_default_reasoner_runs_tool_loop_and_returns_reasoner_result():
     assert react_stats["iteration_count"] == 2
     assert react_stats["turn_input_sum_tokens"] >= react_stats["turn_input_peak_tokens"]
     assert react_stats["final_call_input_tokens"] == react_stats["turn_input_peak_tokens"]
+    assert react_stats["turn_status_enabled"] is False
     assert react_stats["cache_prompt_tokens"] == 220
     assert react_stats["cache_hit_tokens"] == 100
     first_messages = provider.calls[0]["messages"]
     assert not any("未加载工具目录" in str(m.get("content", "")) for m in first_messages)
+    assert not any("## agent_status" in str(m.get("content", "")) for m in first_messages)
+
+
+def test_default_reasoner_injects_request_local_core_status_each_step():
+    provider = _Provider(
+        [
+            LLMResponse(
+                content="",
+                tool_calls=[ToolCall("c1", "dummy", {"secret": "do-not-copy"})],
+            ),
+            LLMResponse(content="final", tool_calls=[]),
+        ]
+    )
+    tools = ToolRegistry()
+    tools.register(_DummyTool(), always_on=True)
+    bus = EventBus()
+
+    async def append_step_hint(ctx: BeforeStepCtx) -> BeforeStepCtx:
+        ctx.extra_hints.append("request-local-hint")
+        return ctx
+
+    bus.on(BeforeStepCtx, append_step_hint)
+    reasoner = DefaultReasoner(
+        llm=cast(
+            Any,
+            LLMServices(
+                provider=cast(Any, provider),
+                light_provider=cast(Any, provider),
+            ),
+        ),
+        llm_config=LLMConfig(
+            model="m",
+            max_iterations=4,
+            max_tokens=512,
+            turn_status_enabled=True,
+        ),
+        tools=tools,
+        discovery=ToolDiscoveryState(),
+        tool_search_enabled=False,
+        memory_window=40,
+        event_bus=bus,
+    )
+    messages = [{"role": "user", "content": "hi"}]
+
+    result = asyncio.run(reasoner.run(messages))
+
+    assert result.reply == "final"
+    assert result.metadata["react_stats"]["turn_status_enabled"] is True
+    status_by_call: list[list[str]] = []
+    for call in provider.calls:
+        status_by_call.append(
+            [
+                str(message.get("content", ""))
+                for message in call["messages"]
+                if "## agent_status" in str(message.get("content", ""))
+            ]
+        )
+    assert [len(items) for items in status_by_call] == [1, 1]
+    assert all(
+        sum(
+            "## plugin_hints" in str(message.get("content", ""))
+            for message in call["messages"]
+        )
+        == 1
+        for call in provider.calls
+    )
+    assert "迭代：1/4，本轮后剩余 3" in status_by_call[0][0]
+    assert "工具执行：0 次" in status_by_call[0][0]
+    assert "迭代：2/4，本轮后剩余 2" in status_by_call[1][0]
+    assert "工具执行：1 次" in status_by_call[1][0]
+    assert "最近工具结果：dummy [success]" in status_by_call[1][0]
+    assert "do-not-copy" not in status_by_call[1][0]
+    assert not any(
+        "## agent_status" in str(message.get("content", ""))
+        or "## plugin_hints" in str(message.get("content", ""))
+        for message in messages
+    )
 
 
 def test_default_reasoner_carries_successful_tool_media_once():

@@ -8,6 +8,11 @@ from agent.background.runtime import (
     AgentBackgroundStatus,
 )
 from agent.background.subagent_manager import SubagentManager
+from agent.background.state import (
+    AsyncTaskState,
+    AsyncTaskStatus,
+    AsyncTaskTransitionError,
+)
 from agent.background.subagent_profiles import (
     SubagentRuntime,
     SubagentSpec,
@@ -22,6 +27,9 @@ __all__ = [
     "AgentBackgroundJobSpec",
     "AgentBackgroundPersistenceMode",
     "AgentBackgroundStatus",
+    "AsyncTaskState",
+    "AsyncTaskStatus",
+    "AsyncTaskTransitionError",
     "SubagentManager",
     "SubagentRuntime",
     "SubagentSpec",

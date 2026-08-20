@@ -34,6 +34,7 @@ class LLMConfig:
     max_iterations: int = 10
     max_tokens: int = 8192
     tool_search_enabled: bool = False
+    turn_status_enabled: bool = False
     multimodal: bool = True
     vl_available: bool = False
 

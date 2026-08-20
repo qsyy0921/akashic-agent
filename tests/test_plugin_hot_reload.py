@@ -3879,6 +3879,7 @@ async def test_subagent_shutdown_releases_unstarted_snapshot_lease() -> None:
     manager = object.__new__(SubagentManager)
     manager._running_tasks = {}
     manager._running_jobs = {}
+    manager._task_states = {}
     manager._cancel_announced = set()
     manager._snapshot_release_tasks = set()
     async def wait_forever() -> None:
@@ -3887,7 +3888,9 @@ async def test_subagent_shutdown_releases_unstarted_snapshot_lease() -> None:
     task = asyncio.create_task(wait_forever())
     manager._running_tasks["job"] = task
     task.add_done_callback(
-        lambda _: manager._finish_background_job("job", snapshot_lease)
+        lambda completed: manager._finish_background_job(
+            "job", snapshot_lease, completed
+        )
     )
 
     await manager.shutdown()
