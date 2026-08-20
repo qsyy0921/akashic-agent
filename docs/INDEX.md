@@ -188,7 +188,17 @@ docs/
 ├── design/
 │   ├── mobile-cross-repository-semantic-gate.md
 │   ├── project-workbook-and-semantic-safety.md
+│   ├── agent-closed-loop-v1.md
+│   ├── event-envelope-async-task.md
+│   ├── failure-recovery-policy.md
+│   ├── intent-view-fusion-v3.md
+│   ├── memory-publication-gate.md
+│   ├── offline-evolution-candidates.md
 │   ├── persistence-state-map.md
+│   ├── provider-contract-forward-port.md
+│   ├── plugin-api-v2-integration.md
+│   ├── tool-graph-v1.md
+│   ├── trajectory-evaluation.md
 │   ├── wake-recent-delivery-context.md
 │   └── vnext-local-integration.md
 ├── spark/

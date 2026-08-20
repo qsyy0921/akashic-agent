@@ -380,10 +380,24 @@ class SubAgent:
     ):
         tool = self._tool_map.get(tool_name)
         if tool is None:
+            from agent.reliability.failures import (
+                FailureClass,
+                FailureDomain,
+                RecoveryPolicy,
+                failure_for_condition,
+            )
+
+            failure = failure_for_condition(
+                domain=FailureDomain.TOOL,
+                failure_class=FailureClass.INVALID_INPUT,
+                code="unknown_tool",
+            )
             return ToolExecutionResult(
                 status="error",
                 output=f"未知工具: {tool_name}",
                 final_arguments=dict(arguments),
+                failure=failure,
+                recovery=RecoveryPolicy().decide(failure),
             )
 
         async def _invoke(name: str, kwargs: dict[str, Any]):

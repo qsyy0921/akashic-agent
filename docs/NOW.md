@@ -13,12 +13,6 @@
 - 建立受保护路径 policy：`semantic_delta: none` 的普通实现改动不能同时修改 P0 oracle、mutant 或 coverage baseline 来获得全绿。
 - 建立轻量 `change-intent` 校验，检查实际 diff、允许路径、受保护状态和副作用是否超出声明。
 
-## P0 · 私有跨仓库 Gate
-
-- 干净 core revision `00c1355` 已在受保护契约基线 `efd7e66` 上通过公共 Gate 7/7；正式 20-provider G2 为 19/20，且没有残留容器、网络或卷。
-- 唯一失败是 DayNight 官方 revision `de7b202` 的测试仍把配置写入旧 `.akashic-plugin/data`。个人 Fork `qsyy0921/daynight_gate@4fd6643` 的单行测试修复已通过 3 项测试，但正式 Gate 的 owner trust 只接受 `akashic-plugins`，不能直接替换成个人仓库，也不能在 core 增加旧目录 fallback。
-- DayNight 官方 PR `akashic-plugins/daynight_gate#1` 已提交且无冲突；维护者合入后冻结新的官方 revision 并重跑正式 G2。全绿后更新最终组合证据。外部状态只允许 `passed`、`failed` 或 `not_affected`，不受信任 PR 不接触 provider 清单、凭据或私有报告。
-
 ## P1 · 工作流扩展
 
 - 把 `projectneed.md` 中其他 P0 不变量逐步迁入可执行契约，优先处理 MEM-001、MEM-002、OUT-001、PLG-001、PLG-004、WSP-001 和 BAK-001。

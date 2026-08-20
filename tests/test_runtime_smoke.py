@@ -8,6 +8,8 @@ from typing import cast, Any
 
 import pytest
 
+from bus.events import ChannelMessage, DeliveryReceipt, DeliveryStatus
+
 import main
 from bootstrap import app as bootstrap_app
 from bootstrap import init_workspace as workspace_init
@@ -243,6 +245,7 @@ def test_main_help_does_not_start_runtime() -> None:
         cwd=Path(__file__).parents[1],
         check=False,
         capture_output=True,
+        encoding="utf-8",
         text=True,
     )
 
@@ -956,11 +959,11 @@ async def test_start_channels_wires_telegram_qq_and_plugin(
             starts.append("telegram")
             ctx.push_tool.register_channel(
                 self.name,
-                text=self.send,
-                stream_text=self.send_stream,
-                file=self.send_file,
-                image=self.send_image,
+                deliver=self.deliver,
             )
+
+        async def deliver(self, _message: ChannelMessage) -> DeliveryReceipt:
+            return DeliveryReceipt(DeliveryStatus.SUCCESS)
 
         async def stop(self) -> None:
             starts.append("telegram.stop")
@@ -987,10 +990,11 @@ async def test_start_channels_wires_telegram_qq_and_plugin(
             starts.append("qq")
             ctx.push_tool.register_channel(
                 self.name,
-                text=self.send,
-                file=self.send_file,
-                image=self.send_image,
+                deliver=self.deliver,
             )
+
+        async def deliver(self, _message: ChannelMessage) -> DeliveryReceipt:
+            return DeliveryReceipt(DeliveryStatus.SUCCESS)
 
         async def stop(self) -> None:
             starts.append("qq.stop")
@@ -1011,7 +1015,10 @@ async def test_start_channels_wires_telegram_qq_and_plugin(
             starts.append("plugin")
             attachment_roots.append(ctx.attachment_store.root)
             mobile_catalogs.append(ctx.mobile_bot_commands)
-            ctx.push_tool.register_channel(self.name, text=self.send)
+            ctx.push_tool.register_channel(self.name, deliver=self.deliver)
+
+        async def deliver(self, _message: ChannelMessage) -> DeliveryReceipt:
+            return DeliveryReceipt(DeliveryStatus.SUCCESS)
 
         async def stop(self) -> None:
             starts.append("plugin.stop")
@@ -1063,9 +1070,9 @@ async def test_start_channels_wires_telegram_qq_and_plugin(
         telegram, qq, plugin = host.channels
         assert starts == ["telegram", "qq", "plugin"]
         assert registrations == [
-            ("telegram", ["file", "image", "stream_text", "text"]),
-            ("qq", ["file", "image", "text"]),
-            ("plugin", ["text"]),
+            ("telegram", ["deliver"]),
+            ("qq", ["deliver"]),
+            ("plugin", ["deliver"]),
         ]
         assert telegram.kwargs["event_bus"] is event_bus
         assert telegram.kwargs["interrupt_controller"] is controller

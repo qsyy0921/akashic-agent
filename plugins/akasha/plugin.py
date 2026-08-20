@@ -43,6 +43,8 @@ class AkashaLastCommandModule:
 
 
 class AkashaPlugin(Plugin):
+    api_version = 2
+
     @classmethod
     def dashboard_module(cls) -> str | None:
         return "dashboard.py"

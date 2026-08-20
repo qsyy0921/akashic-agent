@@ -22,6 +22,7 @@ from agent.prompting import DEFAULT_CONTEXT_TRIM_PLANS, is_context_frame
 from agent.model_runtime.types import ModelUsage
 from agent.model_runtime.usage import aggregate_usage
 from agent.provider import ContentSafetyError, ContextLengthError
+from agent.planning import TaskPlan, build_task_plan
 from agent.retrieval.protocol import RetrievalRequest, RetrievalResult
 from agent.tool_hooks import ToolExecutionRequest, ToolExecutionResult, ToolExecutor
 from agent.tool_runtime import (
@@ -33,7 +34,13 @@ from agent.tools.base import normalize_tool_result
 from agent.tools.registry import begin_turn_search_scope, end_turn_search_scope
 from agent.turns.outbound import DurableOutboundPort, OutboundDispatch, OutboundPort
 from bus.event_bus import EventBus
-from bus.events import InboundMessage, OutboundMessage, TurnDisposition
+from bus.events import (
+    DeliveryReceipt,
+    DeliveryStatus,
+    InboundMessage,
+    OutboundMessage,
+    TurnDisposition,
+)
 from bus.events_lifecycle import (
     ToolCallCompleted,
     ToolCallStarted,
@@ -164,8 +171,11 @@ def _disabled_tools_from_msg(msg: object) -> set[str]:
 
 
 class _NoopOutboundPort:
-    async def dispatch(self, outbound: OutboundDispatch) -> bool:
-        return False
+    async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
+        return DeliveryReceipt(
+            DeliveryStatus.FAILED,
+            detail="未配置出站投递端口",
+        )
 
 
 @dataclass
@@ -1128,6 +1138,7 @@ class DefaultReasoner(Reasoner):
         preloaded: set[str] | None = None
         preloaded_order: list[str] = []
         required_tool_name: str | None = None
+        task_plan: TaskPlan | None = None
         if self._tool_search_enabled:
             preloaded_order = self._discovery.get_preloaded_ordered(session.key)
             preloaded = set(preloaded_order)
@@ -1191,10 +1202,36 @@ class DefaultReasoner(Reasoner):
                     dict.fromkeys((*routed, *preloaded_order))
                 )
                 preloaded = set(preloaded_order)
+                task_plan = build_task_plan(
+                    route_advice,
+                    registry=self._tools,
+                    disabled_tools=disabled_tools,
+                )
+                retry_trace["task_plan"] = task_plan.to_trace_payload()
+                if task_plan.ready:
+                    preloaded_order = list(
+                        dict.fromkeys((*task_plan.tool_names, *preloaded_order))
+                    )
+                    preloaded = set(preloaded_order)
+                elif task_plan.status != "no_plan":
+                    logger.warning(
+                        "task_plan rejected status=%s reason=%s unresolved=%s",
+                        task_plan.status,
+                        task_plan.reason_code,
+                        task_plan.unresolved_operations,
+                    )
+                    return TurnRunResult(
+                        reply=(
+                            "当前工具依赖无法形成安全的执行计划，"
+                            "请补充目标或调整可用工具后重试。"
+                        ),
+                        context_retry=retry_trace,
+                    )
                 if (
                     route_advice.status == "resolved"
                     and route_advice.decision_band == "high_margin"
                     and len(routed) == 1
+                    and (task_plan is None or len(task_plan.steps) == 1)
                 ):
                     routed_meta = self._tools.get_tool_meta(routed[0])
                     if (
@@ -1269,6 +1306,7 @@ class DefaultReasoner(Reasoner):
                         tool_event_chat_id=msg.chat_id,
                         request_text=msg.content,
                         disabled_tools=disabled_tools,
+                        task_plan=task_plan,
                     )
                 finally:
                     end_turn_search_scope(search_scope)
@@ -1384,6 +1422,7 @@ class DefaultReasoner(Reasoner):
         tool_event_chat_id: str = "",
         request_text: str = "",
         disabled_tools: set[str] | None = None,
+        task_plan: TaskPlan | None = None,
     ) -> ReasonerResult:
         # 1. 初始化消息上下文、本轮工具轨迹。
         messages = initial_messages
@@ -1402,6 +1441,8 @@ class DefaultReasoner(Reasoner):
         react_cache_seen = False
         react_usages: list[ModelUsage] = []
         disabled = set(disabled_tools or set())
+        successful_plan_tools: set[str] = set()
+        completed_operation_ids: set[str] = set()
         required_name = (required_tool_name or "").strip() or None
         if required_name is not None and required_name not in (preloaded_tools or set()):
             raise RuntimeError(
@@ -1434,9 +1475,10 @@ class DefaultReasoner(Reasoner):
             ):
                 break
             # 3. 状态帧启用时，逐步提示只进入本次 provider 请求，避免写入会话轨迹。
+            has_request_local_plan = task_plan is not None and task_plan.ready
             step_messages = (
                 list(messages)
-                if self._llm_config.turn_status_enabled
+                if self._llm_config.turn_status_enabled or has_request_local_plan
                 else messages
             )
             # 3a. BeforeStep 模块链：token 估算、BeforeStep 事件、提示注入。
@@ -1488,10 +1530,17 @@ class DefaultReasoner(Reasoner):
                         status_frame.render(),
                     )
                 )
+            if task_plan is not None and task_plan.ready:
+                step_messages.append(
+                    support.build_context_hint_message(
+                        "task_plan",
+                        task_plan.render(),
+                    )
+                )
             # 4a. 调用 LLM，带上当前可见工具 schema。
             request_tokens = (
                 support.estimate_messages_tokens(step_messages)
-                if self._llm_config.turn_status_enabled
+                if self._llm_config.turn_status_enabled or has_request_local_plan
                 else step_ctx.input_tokens_estimate
             )
             react_input_samples.append(request_tokens)
@@ -1735,6 +1784,75 @@ class DefaultReasoner(Reasoner):
                         )
                         continue
 
+                    plan_step = (
+                        task_plan.step_for_tool(tool_call.name)
+                        if task_plan is not None and task_plan.ready
+                        else None
+                    )
+                    meta = self._tools.get_tool_meta(tool_call.name)
+                    missing_tools = (
+                        tuple(
+                            name
+                            for name in plan_step.depends_on
+                            if name not in successful_plan_tools
+                        )
+                        if plan_step is not None
+                        else ()
+                    )
+                    missing_operations = (
+                        tuple(
+                            operation_id
+                            for operation_id in meta.requires_operations
+                            if operation_id not in completed_operation_ids
+                        )
+                        if meta is not None
+                        else ()
+                    )
+                    if missing_tools or missing_operations:
+                        await self._observe_tool_call_started(
+                            session_key=tool_event_session_key,
+                            channel=tool_event_channel,
+                            chat_id=tool_event_chat_id,
+                            iteration=iteration + 1,
+                            call_id=tool_call.id,
+                            tool_name=tool_call.name,
+                            arguments=tool_call.arguments,
+                        )
+                        prerequisites = [*missing_tools, *missing_operations]
+                        result = (
+                            f"工具 '{tool_call.name}' 的前置步骤尚未成功："
+                            f"{', '.join(prerequisites)}。请先完成前置步骤后再调用。"
+                        )
+                        append_tool_result(
+                            messages,
+                            tool_call_id=tool_call.id,
+                            content=result,
+                            tool_name=tool_call.name,
+                        )
+                        await self._observe_tool_call_completed(
+                            session_key=tool_event_session_key,
+                            channel=tool_event_channel,
+                            chat_id=tool_event_chat_id,
+                            iteration=iteration + 1,
+                            call_id=tool_call.id,
+                            tool_name=tool_call.name,
+                            arguments=tool_call.arguments,
+                            final_arguments=tool_call.arguments,
+                            status="blocked",
+                            result_preview=support.log_preview(result),
+                        )
+                        iter_calls.append(
+                            {
+                                "call_id": tool_call.id,
+                                "name": tool_call.name,
+                                "status": "blocked",
+                                "arguments": tool_call.arguments,
+                                "result": result,
+                                "missing_dependencies": prerequisites,
+                            }
+                        )
+                        continue
+
                     # 6.2 通过统一执行器跑 pre/post hooks + 真实工具。
                     async def _execute_tool(
                         name: str,
@@ -1792,6 +1910,10 @@ class DefaultReasoner(Reasoner):
                     )
                     if exec_result.status == "success":
                         tools_used.append(tool_call.name)
+                        if plan_step is not None:
+                            successful_plan_tools.add(tool_call.name)
+                        if meta is not None:
+                            completed_operation_ids.add(meta.operation_id)
                     result = exec_result.output
                     await self._bus.fanout(AfterToolResultCtx(
                         session_key=tool_event_session_key,

@@ -1,10 +1,10 @@
 {
   "schema_version": "3",
   "generated_by": "eval/intent_routing/run_v3_eval.py",
-  "generated_at": "2026-08-20T01:12:21+08:00",
+  "generated_at": "2026-08-20T13:02:30+08:00",
   "router": {
     "version": "intent-routing-v3-llm-hybrid-1",
-    "digest": "sha256:9ada5f7a084e2319bc828845491e63bbc4aad97023c0288bc3bd26accc85672a"
+    "digest": "sha256:0e4e01cda0ede9f9b3a1c8c13dcfaaa3b9e588a265aa203d1197f6ff9229ff86"
   },
   "models": {
     "retrieval_model_id": "qwen3-embedding:4b",
@@ -17,13 +17,13 @@
   },
   "dataset": {
     "path": "eval/intent_routing/v3_dataset.zh.jsonl",
-    "sha256": "sha256:ceb89377afe91b9bc491cbeadf5f491ccc210c7e736644abb8f110e3b77719cf",
+    "sha256": "sha256:744391d2f0c98a83a891ae373de947515c2a2d5b32598b1b829f63cfc54bed5f",
     "case_count": 25,
     "goal_count": 27
   },
   "catalog": {
     "path": "eval/intent_routing/catalog.zh.json",
-    "sha256": "sha256:865634c38d9b2ffbfa77dbb509017de10e0cf0a97331e24db0e8cb4df90a782a",
+    "sha256": "sha256:0afdef660e485402568e36daea9e145153294b4311e4972bc71ab3f6634b596c",
     "tool_count": 13
   },
   "configuration": {
@@ -72,10 +72,10 @@
     "unnecessary_clarification_rate": 0.047619,
     "end_to_end_visibility_rate": 1.0,
     "intent_view_success_rate": 1.0,
-    "status_accuracy": 0.96,
-    "cold_start_latency_ms": 2205.462,
-    "local_warm_latency_p95_ms": 283.257,
-    "external_llm_latency_p95_ms": 10644.495
+    "status_accuracy": 1.0,
+    "cold_start_latency_ms": 21688.411,
+    "local_warm_latency_p95_ms": 410.437,
+    "external_llm_latency_p95_ms": 13712.383
   },
   "thresholds": {
     "minimum": {
@@ -97,5 +97,5 @@
   },
   "passed": true,
   "failures": [],
-  "artifact_digest": "sha256:1f6da59dab200b6fc0f10faa82d84715b7fdc7ddb1b91623fd693ebb9b9f5616"
+  "artifact_digest": "sha256:34cf5200c3364d36d98ad9f1e4065251a073477de3e49074b27c7333aee5d0f2"
 }

@@ -5,7 +5,10 @@ from datetime import datetime
 from enum import StrEnum
 from typing import TYPE_CHECKING, Any
 
+from bus.contracts import EventEnvelope
+
 if TYPE_CHECKING:
+    from agent.background.state import AsyncTaskState
     from agent.policies.delegation import SpawnDecision
     from bus.internal_events import SpawnCompletionEvent
 
@@ -14,6 +17,55 @@ class TurnDisposition(StrEnum):
     """标识无需进入完整提交阶段的合法 turn 结果。"""
 
     SHORT_CIRCUITED = "short_circuited"
+
+
+class DeliveryStatus(StrEnum):
+    """表示一次完整逻辑消息的渠道提交终态。"""
+
+    SUCCESS = "success"
+    PARTIAL = "partial"
+    FAILED = "failed"
+
+
+class AttachmentKind(StrEnum):
+    FILE = "file"
+    IMAGE = "image"
+
+
+@dataclass(frozen=True, slots=True)
+class ChannelAttachment:
+    """渠道边界中带明确类型的单个附件。"""
+
+    kind: AttachmentKind
+    source: str
+    filename: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ChannelMessage:
+    """提交给渠道 adapter 的完整逻辑消息。"""
+
+    channel: str
+    chat_id: str
+    content: str
+    attachments: tuple[ChannelAttachment, ...] = ()
+    thinking: str | None = None
+    metadata: dict[str, object] = field(default_factory=dict[str, object])
+    session_message_id: str | None = None
+    control_turn_id: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class DeliveryReceipt:
+    """记录渠道对完整逻辑消息的结构化提交结果。"""
+
+    status: DeliveryStatus
+    canonical_media: tuple[str, ...] = ()
+    detail: str | None = None
+
+    @property
+    def succeeded(self) -> bool:
+        return self.status is DeliveryStatus.SUCCESS
 
 
 @dataclass
@@ -66,6 +118,27 @@ class OutboundMessage:
     )
 
 
+def channel_message_from_outbound(
+    message: OutboundMessage,
+    *,
+    media_kind: AttachmentKind = AttachmentKind.IMAGE,
+) -> ChannelMessage:
+    """把已提交 Turn 的字符串媒体投影转换为渠道边界类型。"""
+
+    return ChannelMessage(
+        channel=message.channel,
+        chat_id=message.chat_id,
+        content=message.content,
+        attachments=tuple(
+            ChannelAttachment(media_kind, source) for source in message.media
+        ),
+        thinking=message.thinking,
+        metadata=dict(message.metadata),
+        session_message_id=message.session_message_id,
+        control_turn_id=message.control_turn_id,
+    )
+
+
 @dataclass
 class SpawnCompletionItem:
     """Typed internal work item，替代 metadata 编解码。"""
@@ -75,6 +148,20 @@ class SpawnCompletionItem:
     event: "SpawnCompletionEvent"
     decision: "SpawnDecision | None" = None
     timestamp: datetime = field(default_factory=datetime.now)
+    task_state: "AsyncTaskState | None" = None
+    envelope: "EventEnvelope[SpawnCompletionEvent] | None" = None
+
+    def __post_init__(self) -> None:
+        if self.envelope is None:
+            return
+        if self.envelope.payload is not self.event:
+            raise ValueError("spawn completion envelope payload mismatch")
+        if self.envelope.subject_kind != "agent.task":
+            raise ValueError("spawn completion envelope subject kind mismatch")
+        if self.envelope.subject_id != self.event.job_id:
+            raise ValueError("spawn completion envelope subject id mismatch")
+        if self.task_state is None or self.task_state.task_id != self.event.job_id:
+            raise ValueError("spawn completion task state mismatch")
 
     @property
     def session_key(self) -> str:

@@ -10,6 +10,7 @@ from agent.looping.ports import SessionServices
 from agent.turns.orchestrator import TurnOrchestrator, TurnOrchestratorDeps
 from agent.turns.outbound import OutboundDispatch, PushToolOutboundPort
 from agent.turns.result import TurnOutbound, TurnResult, TurnTrace
+from bus.events import DeliveryReceipt, DeliveryStatus
 
 
 class _DummySession:
@@ -55,9 +56,9 @@ async def test_orchestrator_skip_runs_side_effects_without_dispatch():
             order.append("side_effect")
 
     class _Outbound:
-        async def dispatch(self, outbound: OutboundDispatch) -> bool:
+        async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
             order.append("dispatch")
-            return True
+            return DeliveryReceipt(DeliveryStatus.SUCCESS)
 
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(
@@ -99,14 +100,14 @@ async def test_orchestrator_proactive_reply_persists_dispatches_and_runs_success
             order.append(self._name)
 
     class _Outbound:
-        async def dispatch(self, outbound: OutboundDispatch) -> bool:
+        async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
             order.append("dispatch")
             assert outbound.content == "hello"
             delivery_id = outbound.metadata["delivery_id"]
             assert isinstance(delivery_id, str)
             assert len(delivery_id) == 32
             dispatched_delivery_ids.append(delivery_id)
-            return True
+            return DeliveryReceipt(DeliveryStatus.SUCCESS)
 
     presence = SimpleNamespace(record_proactive_sent=lambda _key: order.append("presence"))
     session_manager = SimpleNamespace(
@@ -156,7 +157,9 @@ async def test_orchestrator_failed_dispatch_keeps_durable_proactive_message():
         get_or_create=lambda _key: session,
         append_messages_with_outbound=_persist_outbound_mock(),
     )
-    outbound = SimpleNamespace(dispatch=AsyncMock(return_value=False))
+    outbound = SimpleNamespace(
+        dispatch=AsyncMock(return_value=DeliveryReceipt(DeliveryStatus.FAILED))
+    )
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(
             session=SessionServices(
@@ -185,7 +188,7 @@ async def test_orchestrator_failed_dispatch_keeps_durable_proactive_message():
 @pytest.mark.asyncio
 async def test_push_outbound_port_propagates_unexpected_tool_error():
     push_tool = SimpleNamespace(
-        execute=AsyncMock(side_effect=RuntimeError("channel disconnected"))
+        dispatch=AsyncMock(side_effect=RuntimeError("channel disconnected"))
     )
     port = PushToolOutboundPort(push_tool)
 
@@ -201,7 +204,11 @@ async def test_push_outbound_port_propagates_unexpected_tool_error():
 
 @pytest.mark.asyncio
 async def test_push_outbound_port_forwards_internal_metadata():
-    push_tool = SimpleNamespace(execute=AsyncMock(return_value="文本已发送"))
+    push_tool = SimpleNamespace(
+        dispatch=AsyncMock(
+            return_value=DeliveryReceipt(DeliveryStatus.SUCCESS)
+        )
+    )
     port = PushToolOutboundPort(push_tool)
 
     sent = await port.dispatch(
@@ -213,14 +220,12 @@ async def test_push_outbound_port_forwards_internal_metadata():
         )
     )
 
-    assert sent is True
-    push_tool.execute.assert_awaited_once_with(
-        channel="mobile",
-        chat_id="123",
-        message="hello",
-        image=None,
-        _outbound_metadata={"delivery_id": "delivery-1"},
-    )
+    assert sent.status is DeliveryStatus.SUCCESS
+    pushed = push_tool.dispatch.await_args.args[0]
+    assert pushed.channel == "mobile"
+    assert pushed.chat_id == "123"
+    assert pushed.content == "hello"
+    assert pushed.metadata == {"delivery_id": "delivery-1"}
 
 
 @pytest.mark.asyncio
@@ -275,9 +280,12 @@ async def test_orchestrator_proactive_reply_dispatches_media():
     dispatched: list[OutboundDispatch] = []
 
     class _Outbound:
-        async def dispatch(self, outbound: OutboundDispatch) -> bool:
+        async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
             dispatched.append(outbound)
-            return True
+            return DeliveryReceipt(
+                DeliveryStatus.SUCCESS,
+                canonical_media=("/stable/meme.png",),
+            )
 
     session_manager = SimpleNamespace(
         get_or_create=lambda _key: session,

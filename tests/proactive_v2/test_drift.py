@@ -22,6 +22,7 @@ from agent.tools.registry import ToolRegistry
 from agent.looping.ports import SessionServices
 from agent.turns.orchestrator import TurnOrchestrator, TurnOrchestratorDeps
 from agent.turns.outbound import OutboundDispatch
+from bus.events import DeliveryReceipt, DeliveryStatus
 from plugins.default_proactive.context import AgentTickContext
 from plugins.drift_flow.runtime import DriftTurnPipeline, DriftTurnPipelineDeps
 from plugins.drift_flow.state import DriftStateStore
@@ -1220,7 +1221,6 @@ async def test_drift_pipeline_restricts_tools_after_staging_message(tmp_path: Pa
     )
     ctx = AgentTickContext(now_utc=datetime.now(timezone.utc), session_key="s")
     await pipeline.run(ctx, cast(Any, llm))
-    second_names = {schema["function"]["name"] for schema in llm.calls[1][0:1]} if False else None
     assert llm.calls
     # FakeLLM 不记录 schemas，这里用行为结果兜底：send 后仍正常 finish。
     assert ctx.drift_finished is True
@@ -1503,8 +1503,11 @@ async def test_agent_tick_drift_emits_delivery_result(
     )
 
     class _Outbound:
-        async def dispatch(self, outbound: OutboundDispatch) -> bool:
-            return await sender(outbound.content)
+        async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
+            sent = await sender(outbound.content)
+            return DeliveryReceipt(
+                DeliveryStatus.SUCCESS if sent else DeliveryStatus.FAILED
+            )
 
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(

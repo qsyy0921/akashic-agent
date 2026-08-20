@@ -18,6 +18,7 @@ from agent.prompting import is_context_frame
 from agent.provider import LLMProvider
 from bus.events_lifecycle import TurnCommitted
 from core.memory.events import ConsolidationCommitted
+from core.memory.publication import PENDING_MEMORY_TAGS
 from infra.persistence.json_store import atomic_write_text
 
 if TYPE_CHECKING:
@@ -77,17 +78,7 @@ class MemoryProfileApi(Protocol):
 
     def has_long_term_memory(self) -> bool: ...
 
-_ALLOWED_PENDING_TAGS = frozenset(
-    {
-        "identity",
-        "preference",
-        "key_info",
-        "health_long_term",
-        "requested_memory",
-        "correction",
-        "agent_context",
-    }
-)
+_ALLOWED_PENDING_TAGS = PENDING_MEMORY_TAGS
 
 
 class _ConsolidationPayloadError(ValueError):
@@ -111,7 +102,7 @@ def _format_pending_items(raw_items: object) -> str:
                 "pending_items tag and content must be strings"
             )
         tag = raw_tag.strip().lower()
-        content = raw_content.strip()
+        content = " ".join(raw_content.split())
         if tag not in _ALLOWED_PENDING_TAGS or not content:
             continue
         line = f"- [{tag}] {content}"
@@ -853,7 +844,7 @@ history_entries.emotional_weight 规则：
 允许的 tag 只有 7 个：
 - "identity"：稳定背景事实，如身份、学校/专业、长期技术方向、实习/工作经历、长期设备、长期维护项目
 - "preference"：稳定偏好、禁忌、审美、游戏口味、价值取向
-- "key_info"：用户明确允许保存的 key / token / id / 账号信息
+- "key_info"：用户明确允许保存的非敏感账号标识；不得提取 key、token、password 或其他凭据
 - "health_long_term"：长期健康状态的一阶事实，只写长期状态，不写动态指标、基线、最近波动
 - "requested_memory"：用户明确要求"长期记住"的关键内容，可比普通事实更连贯
 - "correction"：对当前 MEMORY.md 现有事实的明确纠正

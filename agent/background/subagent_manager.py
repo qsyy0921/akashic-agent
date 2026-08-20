@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import uuid
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -12,6 +13,11 @@ from typing import TYPE_CHECKING
 from agent.background.runtime import (
     AgentBackgroundJobRunner,
     AgentBackgroundJobSpec,
+)
+from agent.background.state import (
+    AsyncTaskState,
+    AsyncTaskStatus,
+    AsyncTaskTransitionError,
 )
 from agent.policies.delegation import SpawnDecision
 from agent.provider import LLMProvider
@@ -24,8 +30,10 @@ from agent.background.subagent_profiles import (
 from agent.tool_hooks.base import ToolHook
 from bus.internal_events import (
     SpawnCompletionEvent,
+    SpawnCompletionStatus,
 )
 from bus.events import SpawnCompletionItem
+from bus.contracts import EventEnvelope
 from bus.queue import MessageBus
 from core.common.strategy_trace import build_strategy_trace_envelope
 from core.net.http import HttpRequester
@@ -82,6 +90,7 @@ class SubagentManager:
         self._multimodal = multimodal
         self._running_tasks: dict[str, asyncio.Task[None]] = {}
         self._running_jobs: dict[str, RunningSubagentJob] = {}
+        self._task_states: dict[str, AsyncTaskState] = {}
         self._cancel_announced: set[str] = set()
         self._snapshot_release_tasks: set[asyncio.Task[None]] = set()
 
@@ -164,6 +173,13 @@ class SubagentManager:
         job_id = uuid.uuid4().hex[:8]
         display_label = (label or task[:30] or job_id).strip()
         task_dir = self._job_task_dir(job_id)
+        accepted_state = AsyncTaskState.accepted(
+            task_id=job_id,
+            task_kind="agent.conversation_spawn",
+            attempt=retry_count + 1,
+        )
+        self._task_states[job_id] = accepted_state
+        self._write_task_state(task_dir, accepted_state)
         # 1. 先写追踪记录，确保后台任务创建失败时仍可定位
         self._append_spawn_trace(
             job_id=job_id,
@@ -211,8 +227,19 @@ class SubagentManager:
             started_at=datetime.now(timezone.utc).isoformat(),
         )
         bg_task.add_done_callback(
-            lambda _: self._finish_background_job(job_id, snapshot_lease)
+            lambda task: self._finish_background_job(job_id, snapshot_lease, task)
         )
+        try:
+            _ = self._transition_task(
+                job_id,
+                AsyncTaskStatus.RUNNING,
+                task_dir=task_dir,
+                reason_code="scheduled",
+            )
+        except Exception:
+            _ = bg_task.cancel()
+            _ = await asyncio.gather(bg_task, return_exceptions=True)
+            raise
         logger.info(
             "[spawn] started job_id=%s label=%r profile=%s retry_count=%d origin=%s:%s reason=%s confidence=%s",
             job_id,
@@ -233,7 +260,14 @@ class SubagentManager:
         return len(self._running_tasks)
 
     def list_running_jobs(self) -> list[dict[str, object]]:
-        return [asdict(job) for job in self._running_jobs.values()]
+        jobs: list[dict[str, object]] = []
+        for job in self._running_jobs.values():
+            payload = asdict(job)
+            state = self._task_states[job.job_id]
+            payload["status"] = state.status.value
+            payload["task_state"] = state.to_dict()
+            jobs.append(payload)
+        return jobs
 
     async def cancel(self, job_id: str) -> bool:
         task = self._running_tasks.get(job_id)
@@ -241,16 +275,28 @@ class SubagentManager:
             return False
         job = self._running_jobs.get(job_id)
         if job is not None:
+            try:
+                task_state = self._transition_task(
+                    job_id,
+                    AsyncTaskStatus.CANCELLED,
+                    task_dir=Path(job.task_dir),
+                    reason_code="user_cancelled",
+                )
+            except AsyncTaskTransitionError:
+                return False
             self._cancel_announced.add(job_id)
-            await self._announce_cancelled_job(job)
-        task.cancel()
+            _ = task.cancel()
+            await self._announce_cancelled_job(job, task_state)
+        else:
+            _ = task.cancel()
         await asyncio.sleep(0)
         logger.info("[spawn] cancel requested job_id=%s", job_id)
         return True
 
     def _forget_running_job(self, job_id: str) -> None:
-        self._running_tasks.pop(job_id, None)
-        self._running_jobs.pop(job_id, None)
+        _ = self._running_tasks.pop(job_id, None)
+        _ = self._running_jobs.pop(job_id, None)
+        _ = self._task_states.pop(job_id, None)
         self._cancel_announced.discard(job_id)
 
     async def _run_subagent(
@@ -309,6 +355,16 @@ class SubagentManager:
                 error_result_summary=None,
             )
         except asyncio.CancelledError:
+            current_state = self._task_states[job_id]
+            if current_state.status.is_terminal:
+                task_state = current_state
+            else:
+                task_state = self._transition_task(
+                    job_id,
+                    AsyncTaskStatus.CANCELLED,
+                    task_dir=task_dir,
+                    reason_code="runtime_cancelled",
+                )
             if job_id not in self._cancel_announced:
                 await self._announce_result(
                     job_id=job_id,
@@ -322,6 +378,7 @@ class SubagentManager:
                     decision=decision,
                     profile=profile,
                     retry_count=retry_count,
+                    task_state=task_state,
                 )
             self._append_spawn_trace(
                 job_id=job_id,
@@ -332,10 +389,30 @@ class SubagentManager:
                     "exit_reason": "cancelled",
                     "profile": profile,
                     "retry_count": retry_count,
+                    "task_state": task_state.to_dict(),
                     "decision": _decision_payload(decision),
                 },
             )
             raise
+        current_state = self._task_states[job_id]
+        if current_state.status.is_terminal:
+            return
+        task_status = (
+            AsyncTaskStatus.SUCCEEDED
+            if result.status == "completed"
+            else AsyncTaskStatus.FAILED
+        )
+        task_state = self._transition_task(
+            job_id,
+            task_status,
+            task_dir=task_dir,
+            reason_code=result.exit_reason,
+            error_code=(
+                None
+                if task_status is AsyncTaskStatus.SUCCEEDED
+                else f"background.{result.status}"
+            ),
+        )
         # 2. 将结果转换为完成事件，送回原会话
         await self._announce_result(
             job_id=job_id,
@@ -349,6 +426,7 @@ class SubagentManager:
             decision=decision,
             profile=profile,
             retry_count=retry_count,
+            task_state=task_state,
         )
         # 3. 记录最终状态，保留任务结束原因
         self._append_spawn_trace(
@@ -365,6 +443,7 @@ class SubagentManager:
                 "finished_at": result.finished_at,
                 "profile": profile,
                 "retry_count": retry_count,
+                "task_state": task_state.to_dict(),
                 "decision": _decision_payload(decision),
             },
         )
@@ -373,7 +452,16 @@ class SubagentManager:
         self,
         job_id: str,
         snapshot_lease: RuntimeSnapshotLease | None,
+        task: asyncio.Task[None],
     ) -> None:
+        if not task.cancelled():
+            error = task.exception()
+            if error is not None:
+                logger.error(
+                    "[spawn] background task terminated with an unhandled error job_id=%s",
+                    job_id,
+                    exc_info=(type(error), error, error.__traceback__),
+                )
         self._forget_running_job(job_id)
         if snapshot_lease is not None and snapshot_lease.active:
             task = asyncio.create_task(
@@ -397,7 +485,11 @@ class SubagentManager:
                 return_exceptions=True,
             )
 
-    async def _announce_cancelled_job(self, job: RunningSubagentJob) -> None:
+    async def _announce_cancelled_job(
+        self,
+        job: RunningSubagentJob,
+        task_state: AsyncTaskState,
+    ) -> None:
         await self._announce_result(
             job_id=job.job_id,
             label=job.label,
@@ -410,6 +502,7 @@ class SubagentManager:
             decision=None,
             profile=job.profile,
             retry_count=job.retry_count,
+            task_state=task_state,
         )
 
     def _build_subagent(
@@ -443,12 +536,13 @@ class SubagentManager:
         task: str,
         origin_channel: str,
         origin_chat_id: str,
-        status: str,
+        status: SpawnCompletionStatus,
         exit_reason: str,
         result: str,
         decision: SpawnDecision | None,
         profile: str = PROFILE_RESEARCH,
         retry_count: int = 0,
+        task_state: AsyncTaskState,
     ) -> None:
         """将后台结果包装为内部事件，并送回主 Agent 消息总线。"""
         payload_result = result
@@ -460,20 +554,31 @@ class SubagentManager:
                 + f"\n...[结果已截断，原始长度 {original_len}]"
             )
         # 2. 构建带原 channel/chat_id 的结构化事件
+        event = SpawnCompletionEvent(
+            job_id=job_id,
+            label=label,
+            task=task,
+            status=status,
+            exit_reason=exit_reason,
+            result=payload_result,
+            retry_count=retry_count,
+            profile=profile,
+        )
+        envelope = EventEnvelope[SpawnCompletionEvent].create(
+            event_type="agent.background.completed",
+            source="agent.background",
+            subject_kind="agent.task",
+            subject_id=job_id,
+            payload=event,
+            correlation_id=f"{origin_channel}:{origin_chat_id}",
+        )
         item = SpawnCompletionItem(
             channel=origin_channel,
             chat_id=origin_chat_id,
-            event=SpawnCompletionEvent(
-                job_id=job_id,
-                label=label,
-                task=task,
-                status=status,
-                exit_reason=exit_reason,
-                result=payload_result,
-                retry_count=retry_count,
-                profile=profile,
-            ),
+            event=event,
             decision=decision,
+            task_state=task_state,
+            envelope=envelope,
         )
         # 3. 发布到消息总线，由主 Agent 继续原会话
         await self._bus.publish_inbound(item)
@@ -489,12 +594,40 @@ class SubagentManager:
             decision.meta.reason_code if decision is not None else "-",
         )
 
+    def _transition_task(
+        self,
+        job_id: str,
+        status: AsyncTaskStatus,
+        *,
+        task_dir: Path,
+        reason_code: str | None = None,
+        error_code: str | None = None,
+    ) -> AsyncTaskState:
+        state = self._task_states[job_id].transition(
+            status,
+            reason_code=reason_code,
+            error_code=error_code,
+        )
+        self._write_task_state(task_dir, state)
+        self._task_states[job_id] = state
+        return state
+
+    @staticmethod
+    def _write_task_state(task_dir: Path, state: AsyncTaskState) -> None:
+        target = task_dir / "task-state.json"
+        candidate = task_dir / "task-state.json.tmp"
+        _ = candidate.write_text(
+            json.dumps(state.to_dict(), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(candidate, target)
+
     def _append_spawn_trace(self, *, job_id: str, payload: dict[str, object]) -> None:
         try:
             memory_dir = self._workspace / "memory"
             memory_dir.mkdir(parents=True, exist_ok=True)
             trace_file = memory_dir / "spawn_trace.jsonl"
-            line = {
+            line: dict[str, object] = {
                 **build_strategy_trace_envelope(
                     trace_type="spawn",
                     source="agent.spawn",
@@ -506,7 +639,7 @@ class SubagentManager:
                 "job_id": job_id,
             }
             with trace_file.open("a", encoding="utf-8") as f:
-                f.write(json.dumps(line, ensure_ascii=False) + "\n")
+                _ = f.write(json.dumps(line, ensure_ascii=False) + "\n")
         except Exception as e:
             logger.warning("[spawn] write trace failed job_id=%s err=%s", job_id, e)
 

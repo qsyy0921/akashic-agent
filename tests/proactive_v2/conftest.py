@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-import random
-from datetime import datetime, timezone
+from datetime import datetime
 from types import SimpleNamespace
 from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock
@@ -17,6 +16,7 @@ from plugins.proactive_flow.tools import ToolDeps
 from agent.looping.ports import SessionServices
 from agent.turns.orchestrator import TurnOrchestrator, TurnOrchestratorDeps
 from agent.turns.outbound import OutboundDispatch
+from bus.events import DeliveryReceipt, DeliveryStatus
 
 
 # ── FakeStateStore ────────────────────────────────────────────────────────
@@ -280,8 +280,11 @@ def make_proactive_pipeline(
         presence=cast(Any, SimpleNamespace(record_proactive_sent=lambda _key: None)),
     )
     class _Outbound:
-        async def dispatch(self, outbound: OutboundDispatch) -> bool:
-            return await sender.send(outbound.content)
+        async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
+            sent = await sender.send(outbound.content)
+            return DeliveryReceipt(
+                DeliveryStatus.SUCCESS if sent else DeliveryStatus.FAILED
+            )
 
     orchestrator = TurnOrchestrator(
         TurnOrchestratorDeps(

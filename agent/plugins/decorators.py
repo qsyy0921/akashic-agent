@@ -132,6 +132,10 @@ def tool(
     risk: str = "read-write",
     always_on: bool = False,
     search_hint: str | None = None,
+    operation_id: str | None = None,
+    consumes: tuple[str, ...] = (),
+    produces: tuple[str, ...] = (),
+    requires_operations: tuple[str, ...] = (),
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def deco(func: Callable[..., Any]) -> Callable[..., Any]:
         # 校验签名：前两个参数必须是 self 和 event，否则 partial 绑定会静默错位
@@ -153,6 +157,10 @@ def tool(
             tool_risk=risk,
             tool_always_on=always_on,
             tool_search_hint=search_hint,
+            tool_operation_id=operation_id,
+            tool_consumes=consumes,
+            tool_produces=produces,
+            tool_requires_operations=requires_operations,
         )
         plugin_registry._handlers.append(md)
         return func

@@ -1,9 +1,15 @@
+import hashlib
+import json
 import logging
+import os
 import sqlite3
 import threading
+import uuid
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal, TypedDict, cast
 
-from infra.persistence.json_store import atomic_write_text
+from infra.persistence.json_store import atomic_save_json, atomic_write_text, load_json
 from utils.helpers import ensure_dir
 
 logger = logging.getLogger(__name__)
@@ -25,6 +31,26 @@ DEFAULT_SELF_MD = """# Akashic 的自我认知
 """
 
 
+def _content_digest(content: str) -> str:
+    return "sha256:" + hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def _utc_now() -> str:
+    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+
+
+_PublicationStatus = Literal["prepared", "publishing", "published", "committed"]
+
+
+class _PublicationState(TypedDict):
+    schema_version: str
+    transaction_id: str
+    status: _PublicationStatus
+    pending_sha256: str
+    memory_sha256: str | None
+    updated_at: str
+
+
 class MemoryStore:
     """Markdown 记忆文件：
     - MEMORY.md：稳定用户档案
@@ -40,6 +66,8 @@ class MemoryStore:
         self.pending_file = self.memory_dir / "PENDING.md"
         self.self_file = self.memory_dir / "SELF.md"
         self._consolidation_db = self.memory_dir / "consolidation_writes.db"
+        self._publication_state_file = self.memory_dir / "PENDING.snapshot.state.json"
+        self._publication_ledger_file = self.memory_dir / "publication-ledger.jsonl"
         self._consolidation_lock = threading.Lock()
         # 确保 PENDING.md 始终存在，避免首次运行时找不到文件
         if not self.pending_file.exists():
@@ -136,17 +164,101 @@ class MemoryStore:
         with self._consolidation_lock:
             if not self.pending_file.exists() or self.pending_file.stat().st_size == 0:
                 return ""
-            # POSIX rename 是原子操作：rename 完成后新追加写入全新的 PENDING.md
+            # 同卷 rename 后，新追加写入全新的 PENDING.md。
             _ = self.pending_file.rename(self._snapshot_path)
-            return self._strip_consolidation_markers(
-                self._snapshot_path.read_text(encoding="utf-8")
+            snapshot_text = self._snapshot_path.read_text(encoding="utf-8")
+            state: _PublicationState = {
+                "schema_version": "1",
+                "transaction_id": f"memory-publication:{uuid.uuid4().hex}",
+                "status": "prepared",
+                "pending_sha256": _content_digest(snapshot_text),
+                "memory_sha256": None,
+                "updated_at": _utc_now(),
+            }
+            try:
+                atomic_save_json(
+                    self._publication_state_file,
+                    state,
+                    domain="memory_publication",
+                )
+            except BaseException:
+                _ = self._snapshot_path.replace(self.pending_file)
+                raise
+            self.pending_file.touch()
+            return self._strip_consolidation_markers(snapshot_text)
+
+    def pending_publication_id(self) -> str | None:
+        state = self._read_publication_state()
+        if state is None:
+            return None
+        return state["transaction_id"]
+
+    def prepare_pending_publication(self, memory_content: str) -> None:
+        with self._consolidation_lock:
+            state = self._require_publication_state("prepared")
+            self._verify_snapshot_digest(state)
+            state["status"] = "publishing"
+            state["memory_sha256"] = _content_digest(memory_content)
+            state["updated_at"] = _utc_now()
+            atomic_save_json(
+                self._publication_state_file,
+                state,
+                domain="memory_publication",
             )
+
+    def confirm_pending_publication(self) -> None:
+        with self._consolidation_lock:
+            state = self._require_publication_state("publishing")
+            expected = state["memory_sha256"]
+            actual = _content_digest(self.read_long_term())
+            if actual != expected:
+                raise RuntimeError("published MEMORY.md digest does not match manifest")
+            state["status"] = "published"
+            state["updated_at"] = _utc_now()
+            atomic_save_json(
+                self._publication_state_file,
+                state,
+                domain="memory_publication",
+            )
+
+    def pending_publication_matches_memory(self) -> bool:
+        state = self._read_publication_state()
+        if state is None or state["status"] not in {"publishing", "published"}:
+            return False
+        expected = state["memory_sha256"]
+        if not self.memory_file.is_file():
+            return False
+        return expected is not None and _content_digest(self.read_long_term()) == expected
+
+    def append_publication_audit(self, payload: dict[str, object]) -> None:
+        record: dict[str, object] = {
+            "schema_version": "1",
+            "occurred_at": _utc_now(),
+            **payload,
+        }
+        line = json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+        with self._consolidation_lock:
+            with self._publication_ledger_file.open("a", encoding="utf-8") as stream:
+                _ = stream.write(line + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
 
     def commit_pending_snapshot(self) -> None:
         """Phase-2 成功：merge 已完成，删除快照。"""
         with self._consolidation_lock:
+            state = self._read_publication_state()
+            if state is not None:
+                state["status"] = "committed"
+                state["updated_at"] = _utc_now()
+                atomic_save_json(
+                    self._publication_state_file,
+                    state,
+                    domain="memory_publication",
+                )
             if self._snapshot_path.exists():
                 self._snapshot_path.unlink()
+            if self._publication_state_file.exists():
+                self._publication_state_file.unlink()
             # 保持 PENDING.md 常驻，避免“已归档后文件消失”带来的状态歧义
             if not self.pending_file.exists():
                 self.pending_file.touch()
@@ -158,6 +270,10 @@ class MemoryStore:
         """
         with self._consolidation_lock:
             if not self._snapshot_path.exists():
+                if self._publication_state_file.exists():
+                    raise RuntimeError(
+                        "memory publication manifest exists without pending snapshot"
+                    )
                 return
             snap_text = self._snapshot_path.read_text(encoding="utf-8")
             new_text = (
@@ -170,13 +286,104 @@ class MemoryStore:
             )
             atomic_write_text(self.pending_file, merged, domain="memory")
             self._snapshot_path.unlink()
+            if self._publication_state_file.exists():
+                self._publication_state_file.unlink()
         logger.info("[memory] PENDING snapshot 已回滚合并")
 
     def _recover_pending_snapshot(self) -> None:
         """启动时或 snapshot_pending 前调用，处理上次崩溃遗留的快照。"""
-        if self._snapshot_path.exists():
-            logger.warning("[memory] 检测到遗留 PENDING.snapshot.md，执行崩溃回滚")
+        snapshot_exists = self._snapshot_path.exists()
+        state = self._read_publication_state()
+        if not snapshot_exists:
+            if state is None:
+                return
+            if state["status"] == "committed":
+                self._publication_state_file.unlink()
+                return
+            raise RuntimeError("memory publication manifest exists without pending snapshot")
+        if state is None:
+            logger.warning("[memory] 检测到旧版 PENDING snapshot，执行崩溃回滚")
             self.rollback_pending_snapshot()
+            return
+        self._verify_snapshot_digest(state)
+        status = state["status"]
+        if status == "committed":
+            self._finish_recovered_publication()
+            return
+        if status in {"publishing", "published"}:
+            expected = state["memory_sha256"]
+            actual = _content_digest(self.read_long_term())
+            if expected is not None and actual == expected:
+                logger.warning(
+                    "[memory] 检测到已写入的发布事务，完成 snapshot commit"
+                )
+                self._finish_recovered_publication()
+                return
+        logger.warning("[memory] 检测到未完成的发布事务，执行崩溃回滚")
+        self.rollback_pending_snapshot()
+
+    def _finish_recovered_publication(self) -> None:
+        with self._consolidation_lock:
+            if self._snapshot_path.exists():
+                self._snapshot_path.unlink()
+            if self._publication_state_file.exists():
+                self._publication_state_file.unlink()
+            if not self.pending_file.exists():
+                self.pending_file.touch()
+
+    def _read_publication_state(self) -> _PublicationState | None:
+        raw = load_json(
+            self._publication_state_file,
+            default=None,
+            domain="memory_publication",
+        )
+        if raw is None:
+            return None
+        if not isinstance(raw, dict):
+            raise RuntimeError("memory publication manifest must be an object")
+        payload = cast(dict[str, object], raw)
+        required = {
+            "schema_version",
+            "transaction_id",
+            "status",
+            "pending_sha256",
+            "memory_sha256",
+            "updated_at",
+        }
+        if set(payload) != required or payload.get("schema_version") != "1":
+            raise RuntimeError("memory publication manifest schema is invalid")
+        status = payload.get("status")
+        if status not in {"prepared", "publishing", "published", "committed"}:
+            raise RuntimeError("memory publication manifest status is invalid")
+        for key in ("transaction_id", "pending_sha256", "updated_at"):
+            if not isinstance(payload.get(key), str) or not payload[key]:
+                raise RuntimeError(f"memory publication manifest {key} is invalid")
+        memory_sha256 = payload.get("memory_sha256")
+        if memory_sha256 is not None and not isinstance(memory_sha256, str):
+            raise RuntimeError("memory publication manifest memory_sha256 is invalid")
+        return {
+            "schema_version": "1",
+            "transaction_id": cast(str, payload["transaction_id"]),
+            "status": cast(_PublicationStatus, status),
+            "pending_sha256": cast(str, payload["pending_sha256"]),
+            "memory_sha256": memory_sha256,
+            "updated_at": cast(str, payload["updated_at"]),
+        }
+
+    def _require_publication_state(self, status: _PublicationStatus) -> _PublicationState:
+        state = self._read_publication_state()
+        if state is None or state["status"] != status:
+            raise RuntimeError(
+                f"memory publication state must be {status} before this operation"
+            )
+        return state
+
+    def _verify_snapshot_digest(self, state: _PublicationState) -> None:
+        if not self._snapshot_path.exists():
+            raise RuntimeError("memory publication snapshot is missing")
+        actual = _content_digest(self._snapshot_path.read_text(encoding="utf-8"))
+        if actual != state["pending_sha256"]:
+            raise RuntimeError("memory publication snapshot digest mismatch")
 
     def get_memory_context(self) -> str:
         long_term = self.read_long_term()

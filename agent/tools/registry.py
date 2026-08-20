@@ -87,6 +87,9 @@ class ToolMeta:
     parameter_terms: tuple[str, ...] = ()
     examples: tuple[str, ...] = ()
     output_kinds: tuple[str, ...] = ("text",)
+    consumes: tuple[str, ...] = ()
+    produces: tuple[str, ...] = ()
+    requires_operations: tuple[str, ...] = ()
 
 
 # ── ToolDocument ──────────────────────────────────────────────────────────────
@@ -113,6 +116,9 @@ class ToolDocument:
     examples: tuple[str, ...]
     output_kinds: tuple[str, ...]
     schema_digest: str
+    consumes: tuple[str, ...] = ()
+    produces: tuple[str, ...] = ()
+    requires_operations: tuple[str, ...] = ()
 
     @classmethod
     def from_tool_and_meta(
@@ -136,6 +142,9 @@ class ToolDocument:
             parameter_terms=meta.parameter_terms,
             examples=meta.examples,
             output_kinds=meta.output_kinds,
+            consumes=meta.consumes,
+            produces=meta.produces,
+            requires_operations=meta.requires_operations,
             schema_digest="sha256:" + hashlib.sha256(
                 json.dumps(
                     schema,
@@ -293,6 +302,9 @@ class ToolRegistry:
         parameter_terms: tuple[str, ...] | None = None,
         examples: tuple[str, ...] = (),
         output_kinds: tuple[str, ...] = ("text",),
+        consumes: tuple[str, ...] = (),
+        produces: tuple[str, ...] = (),
+        requires_operations: tuple[str, ...] = (),
     ) -> None:
         resolved_operation_id = operation_id or _default_operation_id(tool.name)
         resolved_summary = (summary or tool.description).strip()[:512]
@@ -307,6 +319,9 @@ class ToolRegistry:
             parameter_terms=resolved_parameter_terms,
             examples=examples,
             output_kinds=output_kinds,
+            consumes=consumes,
+            produces=produces,
+            requires_operations=requires_operations,
         )
         self._tools[tool.name] = tool
         meta = ToolMeta(
@@ -323,6 +338,9 @@ class ToolRegistry:
             parameter_terms=resolved_parameter_terms,
             examples=examples,
             output_kinds=output_kinds,
+            consumes=consumes,
+            produces=produces,
+            requires_operations=requires_operations,
         )
         self._metadata[tool.name] = meta
         doc = ToolDocument.from_tool_and_meta(
@@ -657,6 +675,9 @@ def _validate_discovery_metadata(
     parameter_terms: tuple[str, ...],
     examples: tuple[str, ...],
     output_kinds: tuple[str, ...],
+    consumes: tuple[str, ...],
+    produces: tuple[str, ...],
+    requires_operations: tuple[str, ...],
 ) -> None:
     if not _OPERATION_ID.fullmatch(operation_id):
         raise ValueError(f"invalid tool operation_id: {operation_id!r}")
@@ -687,3 +708,28 @@ def _validate_discovery_metadata(
         or any(item not in _OUTPUT_KINDS for item in output_kinds)
     ):
         raise ValueError("tool discovery output_kinds is invalid")
+    for label, values in (
+        ("consumes", consumes),
+        ("produces", produces),
+    ):
+        if (
+            not isinstance(values, tuple)
+            or len(values) > 16
+            or len(values) != len(set(values))
+            or any(
+                not isinstance(item, str)
+                or not item.strip()
+                or item != item.strip()
+                or len(item) > 80
+                for item in values
+            )
+        ):
+            raise ValueError(f"tool planning {label} is invalid")
+    if (
+        not isinstance(requires_operations, tuple)
+        or len(requires_operations) > 8
+        or len(requires_operations) != len(set(requires_operations))
+        or any(not _OPERATION_ID.fullmatch(item) for item in requires_operations)
+        or operation_id in requires_operations
+    ):
+        raise ValueError("tool planning requires_operations is invalid")

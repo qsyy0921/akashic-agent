@@ -11,11 +11,47 @@ from agent.tool_hooks.types import (
     ToolExecutionRequest,
     ToolExecutionResult,
 )
+from agent.reliability.failures import (
+    FailureClass,
+    FailureDomain,
+    FailureRecord,
+    RecoveryDecision,
+    RecoveryPolicy,
+    classify_exception,
+    failure_for_condition,
+)
 
 ToolInvoker = Callable[[str, dict[str, Any]], Awaitable[Any]]
+_RECOVERY_POLICY = RecoveryPolicy()
 
 if TYPE_CHECKING:
     from agent.tool_governance import ToolAuthorization, ToolGovernor
+
+
+def _exception_failure(
+    exc: Exception,
+    *,
+    code: str | None = None,
+) -> tuple[FailureRecord, RecoveryDecision]:
+    failure = classify_exception(
+        exc,
+        domain=FailureDomain.TOOL,
+        code=code,
+    )
+    return failure, _RECOVERY_POLICY.decide(failure)
+
+
+def _condition_failure(
+    failure_class: FailureClass,
+    *,
+    code: str,
+) -> tuple[FailureRecord, RecoveryDecision]:
+    failure = failure_for_condition(
+        domain=FailureDomain.TOOL,
+        failure_class=failure_class,
+        code=code,
+    )
+    return failure, _RECOVERY_POLICY.decide(failure)
 
 
 class HookExecutionError(RuntimeError):
@@ -84,6 +120,7 @@ class ToolExecutor:
                 traces=pre_trace,
             )
         except HookExecutionError as exc:
+            failure, recovery = _exception_failure(exc, code="tool_pre_hook_error")
             return ToolExecutionResult(
                 status="error",
                 output=f"工具执行出错: {exc}",
@@ -91,6 +128,8 @@ class ToolExecutor:
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
                 post_hook_trace=post_trace,
+                failure=failure,
+                recovery=recovery,
             )
         final_arguments = dict(current_arguments)
         authorization: ToolAuthorization | None = None
@@ -102,6 +141,10 @@ class ToolExecutor:
                     upstream_denial=denied_reason,
                 )
             except Exception as exc:
+                failure, recovery = _exception_failure(
+                    exc,
+                    code="tool_authorization_error",
+                )
                 return ToolExecutionResult(
                     status="error",
                     output=f"工具授权失败: {exc}",
@@ -109,8 +152,14 @@ class ToolExecutor:
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
                     post_hook_trace=post_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
             if not authorization.allowed:
+                failure, recovery = _condition_failure(
+                    FailureClass.PERMISSION_DENIED,
+                    code=authorization.reason_code,
+                )
                 return ToolExecutionResult(
                     status="denied",
                     output=authorization.message,
@@ -118,8 +167,14 @@ class ToolExecutor:
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
                     post_hook_trace=post_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
         if denied_reason:
+            failure, recovery = _condition_failure(
+                FailureClass.PERMISSION_DENIED,
+                code="plugin_pre_hook_denied",
+            )
             return ToolExecutionResult(
                 status="denied",
                 output=denied_reason,
@@ -127,6 +182,8 @@ class ToolExecutor:
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
                 post_hook_trace=post_trace,
+                failure=failure,
+                recovery=recovery,
             )
 
         try:
@@ -137,6 +194,10 @@ class ToolExecutor:
                 try:
                     self._governor.complete(authorization, error=exc)
                 except Exception as ledger_exc:
+                    failure, recovery = _exception_failure(
+                        ledger_exc,
+                        code="tool_ledger_completion_error",
+                    )
                     return ToolExecutionResult(
                         status="error",
                         output=f"工具结果无法写入可靠性账本: {ledger_exc}",
@@ -144,6 +205,8 @@ class ToolExecutor:
                         extra_messages=extra_messages,
                         pre_hook_trace=pre_trace,
                         post_hook_trace=post_trace,
+                        failure=failure,
+                        recovery=recovery,
                     )
             error_text = str(exc)
             try:
@@ -159,6 +222,10 @@ class ToolExecutor:
                     traces=post_trace,
                 )
             except HookExecutionError as hook_exc:
+                failure, recovery = _exception_failure(
+                    hook_exc,
+                    code="tool_post_error_hook_error",
+                )
                 return ToolExecutionResult(
                     status="error",
                     output=f"工具执行出错: {hook_exc}",
@@ -166,7 +233,10 @@ class ToolExecutor:
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
                     post_hook_trace=post_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
+            failure, recovery = _exception_failure(exc)
             return ToolExecutionResult(
                 status="error",
                 output=f"工具执行出错: {error_text}",
@@ -174,12 +244,18 @@ class ToolExecutor:
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
                 post_hook_trace=post_trace,
+                failure=failure,
+                recovery=recovery,
             )
 
         if self._governor is not None and authorization is not None:
             try:
                 self._governor.complete(authorization, result=output)
             except Exception as exc:
+                failure, recovery = _exception_failure(
+                    exc,
+                    code="tool_ledger_completion_error",
+                )
                 return ToolExecutionResult(
                     status="error",
                     output=f"工具结果无法写入可靠性账本: {exc}",
@@ -187,6 +263,8 @@ class ToolExecutor:
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
                     post_hook_trace=post_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
 
         try:
@@ -203,6 +281,10 @@ class ToolExecutor:
                 fail_open=True,
             )
         except HookExecutionError as exc:
+            failure, recovery = _exception_failure(
+                exc,
+                code="tool_post_hook_error",
+            )
             return ToolExecutionResult(
                 status="error",
                 output=f"工具执行出错: {exc}",
@@ -210,6 +292,8 @@ class ToolExecutor:
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
                 post_hook_trace=post_trace,
+                failure=failure,
+                recovery=recovery,
             )
         return ToolExecutionResult(
             status="success",
@@ -236,20 +320,29 @@ class ToolExecutor:
                 traces=pre_trace,
             )
         except HookExecutionError as exc:
+            failure, recovery = _exception_failure(exc, code="tool_pre_hook_error")
             return ToolExecutionResult(
                 status="error",
                 output=f"工具执行出错: {exc}",
                 final_arguments=dict(current_arguments),
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
+                failure=failure,
+                recovery=recovery,
             )
         if denied_reason:
+            failure, recovery = _condition_failure(
+                FailureClass.PERMISSION_DENIED,
+                code="plugin_pre_hook_denied",
+            )
             return ToolExecutionResult(
                 status="denied",
                 output=denied_reason,
                 final_arguments=dict(current_arguments),
                 extra_messages=extra_messages,
                 pre_hook_trace=pre_trace,
+                failure=failure,
+                recovery=recovery,
             )
         if self._governor is not None:
             try:
@@ -258,20 +351,32 @@ class ToolExecutor:
                     dict(current_arguments),
                 )
             except Exception as exc:
+                failure, recovery = _exception_failure(
+                    exc,
+                    code="tool_authorization_error",
+                )
                 return ToolExecutionResult(
                     status="error",
                     output=f"工具授权失败: {exc}",
                     final_arguments=dict(current_arguments),
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
             if not authorization.allowed:
+                failure, recovery = _condition_failure(
+                    FailureClass.PERMISSION_DENIED,
+                    code=authorization.reason_code,
+                )
                 return ToolExecutionResult(
                     status="denied",
                     output=authorization.message,
                     final_arguments=dict(current_arguments),
                     extra_messages=extra_messages,
                     pre_hook_trace=pre_trace,
+                    failure=failure,
+                    recovery=recovery,
                 )
         return ToolExecutionResult(
             status="success",
