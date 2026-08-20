@@ -15,9 +15,9 @@
 
 ## P0 · 私有跨仓库 Gate
 
-- 用已合并最新上游、且包含 deferred-dispatch assistant message ID 修复 `a8efcd4` 的干净 core revision `eea8289` 生成 public plan，并重跑 20-provider 正式 G2。
-- DayNight 上游 `de7b202` 的测试仍把配置写入旧 `.akashic-plugin/data`；当前选定的 owner revision `qsyy0921/daynight_gate@4fd6643` 已只修正为 `workspace/plugin-data` 并通过 3 项测试。正式 Gate 必须固定该 revision，禁止在 core 增加旧目录 fallback。
-- 正式 G2 全绿后更新主仓 private Gate revision/组合证据；外部状态只允许 `passed`、`failed` 或 `not_affected`，不受信任 PR 不接触 provider 清单、凭据或私有报告。
+- 干净 core revision `00c1355` 已在受保护契约基线 `efd7e66` 上通过公共 Gate 7/7；正式 20-provider G2 为 19/20，且没有残留容器、网络或卷。
+- 唯一失败是 DayNight 官方 revision `de7b202` 的测试仍把配置写入旧 `.akashic-plugin/data`。个人 Fork `qsyy0921/daynight_gate@4fd6643` 的单行测试修复已通过 3 项测试，但正式 Gate 的 owner trust 只接受 `akashic-plugins`，不能直接替换成个人仓库，也不能在 core 增加旧目录 fallback。
+- DayNight 官方 PR `akashic-plugins/daynight_gate#1` 已提交且无冲突；维护者合入后冻结新的官方 revision 并重跑正式 G2。全绿后更新最终组合证据。外部状态只允许 `passed`、`failed` 或 `not_affected`，不受信任 PR 不接触 provider 清单、凭据或私有报告。
 
 ## P1 · 工作流扩展
 

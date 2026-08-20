@@ -208,6 +208,7 @@ class Config:
     vl_api_key: str = ""
     vl_base_url: str = ""
     tool_search_enabled: bool = False
+    turn_status_enabled: bool = False
     intent_routing: "IntentRoutingConfig" = field(
         default_factory=_default_intent_routing_config
     )

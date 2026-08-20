@@ -71,6 +71,9 @@ system_prompt = "You are Akashic, a helpful AI assistant with access to tools. A
 max_tokens = 8192
 # 设为 0 表示不限制迭代轮数；长任务仍可用 /stop 中断。
 max_iterations = 40
+# 候选能力：每次工具循环向模型注入由核心代码生成的短状态帧。
+# 正式启用前应使用固定多工具数据集完成 base/candidate Gate。
+turn_status_enabled = false
 dev_mode = false
 
 [agent.context]

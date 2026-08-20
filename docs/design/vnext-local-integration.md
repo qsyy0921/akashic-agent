@@ -158,6 +158,9 @@ worktree_writer: E:\agent\author_akashic_vnext
 | F-044 | 第一次 Telegram 生图请求被 V3 正确路由到唯一生图 MCP，但主 Terra Responses 返回原生 `image_generation_call`，绕过了插件 hook、Core ToolPolicy、工具账本和 MCP media bridge；随后控制回复又因没有持久化 `delivery_id` 被 durable port 拒绝。原生调用可能已产生付费副作用，因此不能自动重试。 | 生产日志、`agent/model_runtime/transports/responses.py:OpenAICompatibleResponsesTransport._consume_response`、VNX-07 incident record |
 | F-045 | 生图 MCP 现在可声明“单一高置信路由首步使用命名函数”；Core 只在 active、resolved、high-margin 且恰好一个候选时应用，后续步骤恢复 `auto`，hook/policy/ledger 仍在执行路径上。提交前控制回复改由 durable standalone intent 投递。真实 V3 Gate 已按当前摘要重跑并通过，服务已单实例重启；图片 receipt 仍等待一次新授权。 | `agent/plugins/specs.py`、`agent/plugins/manager.py`、`agent/tools/registry.py`、`agent/core/passive_turn.py`、`tests/test_intent_routing_v3_integration.py`、`tests/test_runtime3_delivery.py` |
 | F-046 | 上游合并使旧 V3 报告的 router digest 正确失效；正式配置重新运行 25 个案例、27 个目标和 13 个工具后生成当前报告，全部强制指标通过且无 miss。计划任务随后发布 readiness，Dashboard/Web Chat 返回 200；下一分钟 trigger 后 supervisor 启动计数不变。 | `eval/intent_routing/v3-gate-report.json`、`tests/test_intent_routing_v3_gate.py`、`tests/test_intent_routing_v3_integration.py`、VNX-08 continuation record |
+| F-047 | 最新上游 `480348f` 上的受保护契约基线 `efd7e66` 已成为最终候选 `00c1355` 的真实祖先；候选对该基线不含受保护契约修改，公共 Change Gate 7/7 通过且 Docker 残留资源为零。 | Change Gate report `20260724-223817-3b7134d3`、VNX-08 continuation record |
+| F-048 | 新建的私有 Gate 已严格接受公开计划的生产/受保护路径分类，并继续拒绝 mixed plan。正式 G2 在 20 个官方 provider 中通过 19 个；唯一失败为 DayNight `de7b202` 测试夹具写入旧数据目录。个人 Fork 的单行修复通过 3 项测试，官方 PR `akashic-plugins/daynight_gate#1` 已提交且无冲突，正式 Gate 仍须等待该修复进入受信 owner revision。 | `qsyy0921/akashic-private-contract-gate@a905d35`、private report `20260724T144620Z-c3d962d7`、`qsyy0921/daynight_gate@4fd6643` |
+| F-049 | 经一次明确授权的 Telegram 生图请求 `VNX-TG-IMG-20260726-DRG01` 完成正式 E2E：高置信路由只选择 `mcp_gpt_image__generate_image`，工具账本为 `external-side-effect / allow / succeeded`；一个有效 PNG 进入媒体 Outbox，`attempt_count=1` 且唯一 delivery attempt 为 `sent`；Telegram Desktop 可见一张 `1537×1023` 图片。该证据关闭 Telegram 图片 receipt 缺口，未增加重试或 fallback。 | `sessions.db` 的 `reliability_tool_calls`、`reliability_outbox`、`reliability_delivery_attempts` 脱敏只读核对；Telegram Desktop receipt；VNX-07 execution record |
 
 ### 4.2 已批准提案
 
@@ -178,8 +181,7 @@ worktree_writer: E:\agent\author_akashic_vnext
 
 ### 4.3 未决问题
 
-- Bot 的 `allow_from` 与主动目标值已原样保留但不写入本文；文本消息往返已经验证。第一次生图尝试的付费副作用状态未知，下一次图片验收必须由用户重新明确授权且只能发送一次。
-- 公共 Gate 已判定 private maintainer Gate 必需；当前身份无子模块仓库访问权，需所有者授予访问或提供正确仓库地址后运行。
+- 私有 Gate 已可运行并完成正式 20-provider G2；DayNight 官方 PR `#1` 已可合并，当前外部依赖是维护者合入后在新冻结 revision 上重跑至全绿。
 - 通用 approval/ledger 已在 VNX-06C 落到核心可靠性 schema；聊天内“暂停原 turn、审批后恢复”的交互协议仍未实现，因此需要审批的 Bot 工具当前按 fail-closed 停在真实执行之前。
 
 ### 4.4 旧能力差距矩阵
@@ -397,7 +399,7 @@ VNX-03 已通过由候选配置和 `CredentialStore` 组装的真实随机 nonce
 - [x] 最新上游 baseline 与旧能力差距均有当前证据。
 - [x] `@akashic_qsyy0921_bot` 在单一 Supervisor 下接收并回复同账号消息，持久化与唯一 delivery attempt 已核对。
 - [x] 主模型明确通过 `terra-responses` 调用 `gpt-5.6-terra`，没有 Chat fallback。
-- [ ] 用户明确请求时，GPT image MCP 只生成请求数量的图片并由 Telegram 正确投递。
+- [x] 用户明确请求时，GPT image MCP 只生成请求数量的图片并由 Telegram 正确投递。
 - [x] 意图路由支持上下文、多目标和多工具，离线 Gate 与 active smoke 达标。
 - [ ] 被动、主动、记忆、插件/MCP 和投递的 P0 不变量通过当前 Gate。
 - [x] Windows 自动启动/重启不产生重复 poller，失败状态可观察。

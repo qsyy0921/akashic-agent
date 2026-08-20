@@ -129,6 +129,33 @@ system_prompt = "test"
     cfg = load_config(config_path, workspace=tmp_path)
 
     assert cfg.max_iterations == 10
+    assert cfg.turn_status_enabled is False
+
+
+def test_load_config_turn_status_is_opt_in(tmp_path: Path):
+    config_path = tmp_path / "config.toml"
+    config_path.write_text(
+        """
+[llm]
+main = "test_main"
+
+[llm.runtimes.test_main]
+provider = "openai"
+model = "test-model"
+api_key = "test-key"
+context_window = 64000
+
+[agent]
+system_prompt = "test"
+turn_status_enabled = true
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    cfg = load_config(config_path, workspace=tmp_path)
+
+    assert cfg.turn_status_enabled is True
 
 
 def test_load_config_defaults_memory_window_and_optimizer_interval(tmp_path: Path):

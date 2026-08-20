@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Literal, cast
 import agent.core.passive_support as support
 from agent.control.context import current_turn_id
 from agent.core.runtime_support import ToolDiscoveryState
+from agent.core.turn_status import TurnStatusFrame
 from agent.core.types import (
     ContextBundle,
     LLMToolCall,
@@ -1432,13 +1433,19 @@ class DefaultReasoner(Reasoner):
                 and iteration >= self._llm_config.max_iterations
             ):
                 break
-            # 3. BeforeStep 模块链：token 估算、BeforeStep 事件、提示注入。
+            # 3. 状态帧启用时，逐步提示只进入本次 provider 请求，避免写入会话轨迹。
+            step_messages = (
+                list(messages)
+                if self._llm_config.turn_status_enabled
+                else messages
+            )
+            # 3a. BeforeStep 模块链：token 估算、BeforeStep 事件、提示注入。
             step_ctx = await before_step_phase.run(BeforeStepInput(
                 session_key=tool_event_session_key,
                 channel=tool_event_channel,
                 chat_id=tool_event_chat_id,
                 iteration=iteration,
-                messages=messages,
+                messages=step_messages,
                 visible_names=visible_names,
             ))
             if step_ctx.early_stop:
@@ -1464,13 +1471,35 @@ class DefaultReasoner(Reasoner):
                     model_usages=react_usages,
                     mobile_attention=mobile_attention,
                 )
-            # 4. 调用 LLM，带上当前可见工具 schema。
-            react_input_samples.append(step_ctx.input_tokens_estimate)
+            # 4. 核心 Runtime 在插件阶段之后追加不可改写的当前状态投影。
+            if self._llm_config.turn_status_enabled:
+                status_frame = TurnStatusFrame.from_runtime(
+                    iteration=iteration,
+                    max_iterations=self._llm_config.max_iterations,
+                    visible_tool_names=visible_names,
+                    tool_chain=tool_chain,
+                    unlocked_tool_names=tools_unlocked,
+                    required_tool_name=required_name,
+                    disabled_tool_names=disabled,
+                )
+                step_messages.append(
+                    support.build_context_hint_message(
+                        "agent_status",
+                        status_frame.render(),
+                    )
+                )
+            # 4a. 调用 LLM，带上当前可见工具 schema。
+            request_tokens = (
+                support.estimate_messages_tokens(step_messages)
+                if self._llm_config.turn_status_enabled
+                else step_ctx.input_tokens_estimate
+            )
+            react_input_samples.append(request_tokens)
             logger.info(
                 "[LLM调用] 第%d轮，可见工具=%s input_tokens~=%d",
                 iteration + 1,
                 f"{len(visible_names)}个" if visible_names is not None else "全部（tool_search未开启）",
-                step_ctx.input_tokens_estimate,
+                request_tokens,
             )
             schema_names: list[str] | set[str] | None = (
                 list(visible_order) if visible_order is not None else None
@@ -1490,7 +1519,7 @@ class DefaultReasoner(Reasoner):
                     "function": {"name": required_name},
                 }
             response = await self._llm.provider.chat(
-                messages=messages,
+                messages=step_messages,
                 tools=self._tools.get_schemas(names=schema_names),
                 model=self._llm_config.model,
                 max_tokens=self._llm_config.max_tokens,
@@ -1699,6 +1728,7 @@ class DefaultReasoner(Reasoner):
                             {
                                 "call_id": tool_call.id,
                                 "name": tool_call.name,
+                                "status": "blocked",
                                 "arguments": tool_call.arguments,
                                 "result": result,
                             }
@@ -2216,6 +2246,7 @@ class DefaultReasoner(Reasoner):
             "turn_input_sum_tokens": sum(react_input_samples),
             "turn_input_peak_tokens": max(react_input_samples, default=0),
             "final_call_input_tokens": react_input_samples[-1] if react_input_samples else 0,
+            "turn_status_enabled": self._llm_config.turn_status_enabled,
         }
         if cache_seen:
             react_stats["cache_prompt_tokens"] = cache_prompt_tokens

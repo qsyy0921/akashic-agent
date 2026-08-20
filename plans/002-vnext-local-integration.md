@@ -18,8 +18,8 @@
 | VNX-04 | DONE | VNX-02, VNX-03 | 生图插件、媒体投递、失败与路径负向测试通过 |
 | VNX-05 | DONE | VNX-01, VNX-02 | 当前 digest Gate、active 启动、多工具、上下文与授权隔离通过 |
 | VNX-06 | DONE | VNX-01, VNX-05 | 可靠投递、工具治理与连续性 Gate 通过 |
-| VNX-07 | BLOCKED | VNX-03, VNX-04, VNX-06 | Telegram 文本 E2E 已通过；图片 receipt 等待一次新的明确付费重试授权 |
-| VNX-08 | BLOCKED | VNX-07 | 当前公共验证已通过；等待 private maintainer Gate 仓库访问权 |
+| VNX-07 | DONE | VNX-03, VNX-04, VNX-06 | Telegram 文本与单图 E2E 均通过；受治理 MCP、媒体 Outbox、唯一投递和客户端 receipt 已核对 |
+| VNX-08 | BLOCKED | VNX-07 | 当前公共验证已通过；仅等待受信 DayNight revision 后重跑 private maintainer Gate |
 
 ## VNX-00 · 基线与 SDD
 
@@ -366,7 +366,7 @@ rollback: require operators to migrate the pristine file out of band before rest
 ### SDD-CR-VNX-07-004 · 高置信业务工具的命名调用
 
 ```yaml
-status: implemented and locally verified; live Telegram image receipt pending fresh authorization
+status: verified by one authorized live Telegram image receipt
 trigger:
   - the live Telegram image request routed only to mcp_gpt_image__generate_image with a high-margin V3 decision
   - the main Terra response returned a native image_generation_call instead of the routed MCP function call
@@ -386,7 +386,7 @@ verification:
   - plugin declaration and MCP generation metadata propagation tests
   - existing multi-route and current-turn search-authority tests remain unchanged
   - real V3 evaluation regenerated the current source digest and passed all thresholds with no misses
-  - one separately authorized Telegram image receipt after isolated checks pass
+  - one separately authorized Telegram image receipt passed with one governed MCP call and one sent media delivery
 rollback: remove the declaration and named-choice propagation; do not replace it with native image delivery
 ```
 
@@ -868,7 +868,7 @@ next_action: execute VNX-07 single-supervisor cutover and live smoke
 
 ```yaml
 unit_id: VNX-07
-status: blocked
+status: done
 cutover:
   scheduled_task: Akashic Agent Runtime3
   checkout: E:\agent\author_akashic_vnext
@@ -929,8 +929,15 @@ live_telegram_gate:
     - Akashic Agent Runtime3 is running with one candidate launcher and one gateway process tree
     - Dashboard, Web Chat and app-server are listening on their configured ports
     - Bot identity matches @akashic_qsyy0921_bot, webhook is absent and pending updates are zero
-  claims_withheld:
-    - GPT image Telegram receipt
+  image_acceptance:
+    nonce: VNX-TG-IMG-20260726-DRG01
+    evidence:
+      - Terra reverse proxy /v1/models returned 200 and exposed gpt-5.6-terra
+      - exactly one mcp_gpt_image__generate_image ledger row reached external-side-effect / allow / succeeded
+      - one 2164321-byte PNG passed file existence, PNG signature and SHA-256 readback
+      - one media outbox reached sent with attempt_count=1 and exactly one sent delivery attempt
+      - Telegram Desktop visibly received one 1537x1023 image in the nonce conversation
+    result: passed
 changes_during_cutover:
   - plugin package manifest is synchronized before first plugin discovery/load
   - exact pristine legacy AnyAction quota sentinel migrates on first snapshot
@@ -947,9 +954,8 @@ tests_run:
   - real V3 evaluation: passed, 25 cases with no failures or misses
 fallbacks_added: []
 remaining_risks:
-  - the first live image attempt may already have triggered a paid native provider side effect
-  - a fresh image request requires separate explicit authorization and must be sent exactly once
-next_action: after fresh authorization, perform one Telegram image request and verify one governed MCP call, one media outbox and one photo receipt
+  - the first pre-fix live image attempt may already have triggered a paid native provider side effect; it remains historical unknown and was not retried
+next_action: continue VNX-08 after the trusted DayNight owner revision is available
 ```
 
 ## VNX-08 execution record
@@ -972,24 +978,25 @@ verification_completed:
   - production credential-URL scan: 0 findings; one deliberate rejection fixture under tests
   - git diff --check: passed, line-ending warnings only
 private_gate:
-  status: pending_maintainer
+  status: waiting_trusted_daynight_revision
   required_by_public_plan: true
-  pinned_revision: 83f3648424864f690ae5c3636b76d3436902cecd
-  local_submodule_objects: absent
-  access_probe: current SSH BatchMode identity still returns permission denied
-  rejected_substitute: an older unversioned local private_runtime directory is not revision evidence
+  repository: qsyy0921/akashic-private-contract-gate
+  gate_revision: a905d35
+  latest_result: 19/20 providers passed
+  failed_provider: daynight_gate@de7b202bb7919ab99e6a23e8c4579a59afde3841
+  upstream_pull_request: akashic-plugins/daynight_gate#1
 remaining_verification:
-  - one freshly authorized user-triggered Telegram image receipt
-  - private maintainer Gate or repository access supplied by the owner
-next_action: request one paid image retry authorization and private repository access, then run only the remaining receipt and Gate
+  - merge the DayNight test-only fix under the trusted owner and rerun formal G2 to 20/20
+next_action: wait for the trusted DayNight owner revision, then rerun only the remaining private Gate
 ```
 
 ## External blocker audit
 
 ```yaml
-status: resumed_and_partially_unblocked
+status: blocked_on_private_gate_only
 resumed_blocker_audit_turns: 1
 telegram:
+  status: passed
   required_evidence:
     - inbound user message for nonce VNX-E2E-20260723-2006
     - matching assistant reply and one sent delivery attempt
@@ -999,8 +1006,7 @@ telegram:
     - the first image attempt exposed a native-provider bypass before governed MCP execution
     - the bypass and control-reply reliability defects are fixed and locally verified
     - the candidate was restarted and remains single-instance healthy
-  unblock:
-    - user explicitly authorizes exactly one fresh paid image request
+    - VNX-TG-IMG-20260726-DRG01 produced one governed MCP success, one sent media outbox attempt and one visible Telegram photo receipt
 private_gate:
   required_evidence:
     - private maintainer contract Gate at the pinned submodule revision
@@ -1013,7 +1019,7 @@ private_gate:
 preserved_state:
   - candidate service remains online under Akashic Agent Runtime3
   - Git worktree, SDD, external credentials and verification reports are retained
-resume_action: run exactly one Telegram image E2E after authorization and rerun the pinned private Gate after repository access is granted
+resume_action: rerun the pinned private Gate after the trusted DayNight fix is merged
 ```
 
 ## VNX-08 continuation record · 2026-07-24
@@ -1023,16 +1029,19 @@ unit_id: VNX-08
 status: in_progress
 private_gate:
   repository: qsyy0921/akashic-private-contract-gate
-  remote_commit: ece14f1
+  remote_commit: a905d35
   local_checks:
-    - pytest: passed, 19 tests
+    - pytest: passed, 20 tests
     - Ruff and Ruff format: passed
     - Pyright: passed, 0 errors
     - compileall, diff check and high-confidence secret scan: passed
   latest_complete_aggregate:
     result: failed
-    providers_passed: 15
-    providers_failed: 5
+    report: 20260724T144620Z-c3d962d7
+    providers_passed: 19
+    providers_failed: 1
+    failed_provider: daynight_gate@de7b202bb7919ab99e6a23e8c4579a59afde3841
+    failure: semantic test fixture writes config to legacy .akashic-plugin/data
     cleanup_residuals: 0
   repaired_and_reverified_scenarios:
     - Computer Use Linux formal install, semantic contracts and native tests: passed
@@ -1068,9 +1077,11 @@ supervisor_candidate:
     - Dashboard and Web Chat roots: HTTP 200
 daynight_provider:
   upstream_revision: de7b202bb7919ab99e6a23e8c4579a59afde3841
-  owner_revision: qsyy0921/daynight_gate@4fd664315b51e47f7129836ef7f785e76fa2198f
+  candidate_revision: qsyy0921/daynight_gate@4fd664315b51e47f7129836ef7f785e76fa2198f
   fixed_behavior: test fixture writes config to workspace/plugin-data instead of legacy .akashic-plugin/data
   verification: all 3 provider tests passed
+  upstream_pull_request: akashic-plugins/daynight_gate#1, open and mergeable
+  formal_gate_eligibility: rejected until the fix is merged under the trusted akashic-plugins owner
   rejected_fix: core compatibility fallback to the legacy data directory
 upstream_sync:
   upstream_revision: 480348f27b9b10488d6d6bad192bf2f0fee29358
@@ -1101,8 +1112,13 @@ intent_v3_refresh:
     - readiness published
     - Dashboard and Web Chat roots returned HTTP 200
     - next scheduled trigger advanced while supervisor start count stayed unchanged
+public_gate:
+  base_revision: efd7e66d5d4f176c2e37ef0552b5fba97d8685da
+  candidate_revision: 00c13553a43168d2ca298911976d9abe08f65eb7
+  report: 20260724-223817-3b7134d3
+  result: passed, 7/7 scenarios
+  cleanup_residuals: 0
 remaining_verification:
-  - full 20-provider formal G2 pinned to the clean core and owner provider revisions
-  - one freshly authorized user-triggered Telegram image receipt
+  - merge the DayNight test-only fix under the trusted owner and rerun formal G2 to 20/20
 fallbacks_added: []
 ```

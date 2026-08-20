@@ -205,6 +205,13 @@ def load_config(
             agent_tools.get("search_enabled", data.get("tool_search_enabled", False)),
             field="agent.tools.search_enabled",
         ),
+        turn_status_enabled=_as_bool(
+            agent_cfg.get(
+                "turn_status_enabled",
+                data.get("turn_status_enabled", False),
+            ),
+            field="agent.turn_status_enabled",
+        ),
         intent_routing=intent_routing,
         spawn_enabled=_as_bool(
             agent_tools.get("spawn_enabled", data.get("spawn_enabled", True)),

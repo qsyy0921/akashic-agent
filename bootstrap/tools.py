@@ -729,6 +729,7 @@ def build_core_runtime(
                 max_iterations=config.max_iterations,
                 max_tokens=config.max_tokens,
                 tool_search_enabled=config.tool_search_enabled,
+                turn_status_enabled=config.turn_status_enabled,
                 multimodal=config.multimodal,
                 vl_available=config.vl_model != "",
             ),
