@@ -32,8 +32,10 @@ class ToolSearchTool(Tool):
             "- 收到'工具不存在'错误 → 必须调用，用错误中的建议关键词搜索\n"
             "- 纯对话/推理，不涉及工具能力 → 不调用\n\n"
             "查询形式：\n"
-            "- \"select:工具名\" → 精确加载已知工具，支持逗号分隔多个：\"select:A,B,C\"\n"
-            "- \"关键词\" → 模糊搜索，例如：\"定时提醒\"、\"RSS订阅管理\"、\"Fitbit健康数据\"\n\n"
+            '- "select:工具名" → 精确加载已知工具，支持逗号分隔多个："select:A,B,C"\n'
+            '- "关键词" → 模糊搜索，例如："定时提醒"、"RSS订阅管理"、"Fitbit健康数据"\n\n'
+            "风险说明：allowed_risk 只过滤搜索结果，不代表调用授权。通常应省略；"
+            "生图、发消息、上传等外部能力也需要先被发现，真正执行时仍由独立策略审批。\n\n"
             "正确流程：tool_search(query) → 从结果中选择工具 → 立即调用（不需二次搜索）"
         )
 
@@ -46,8 +48,8 @@ class ToolSearchTool(Tool):
                     "type": "string",
                     "description": (
                         "搜索查询。两种形式：\n"
-                        "1. \"select:工具名\" 精确加载（支持逗号分隔多个）\n"
-                        "2. 关键词描述功能，例如：\"定时任务\"、\"文件读取\"、\"订阅管理\""
+                        '1. "select:工具名" 精确加载（支持逗号分隔多个）\n'
+                        '2. 关键词描述功能，例如："定时任务"、"文件读取"、"订阅管理"'
                     ),
                 },
                 "top_k": {
@@ -61,7 +63,13 @@ class ToolSearchTool(Tool):
                         "type": "string",
                         "enum": ["read-only", "write", "external-side-effect"],
                     },
-                    "description": "允许的风险等级，不填则不过滤。read-only=只读，write=写操作，external-side-effect=外部副作用",
+                    "description": (
+                        "可选的搜索结果过滤器，不是工具调用授权；通常不要填写。"
+                        "不填则搜索所有风险等级，工具真正执行时仍由独立策略审批。"
+                        "若填写，必须显式包含希望发现的等级："
+                        "read-only=只读，write=写操作，"
+                        "external-side-effect=生图、发消息、上传等外部副作用。"
+                    ),
                 },
             },
             "required": ["query"],

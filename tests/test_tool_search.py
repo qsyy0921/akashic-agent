@@ -318,7 +318,9 @@ class TestRegistrySearch:
         assert "feed_manage" in self._names(reg.search("RSS订阅"))
 
     def test_健康数据(self, reg):
-        assert "mcp_fitbit__fitbit_health_snapshot" in self._names(reg.search("健康数据"))
+        assert "mcp_fitbit__fitbit_health_snapshot" in self._names(
+            reg.search("健康数据")
+        )
 
     def test_推送消息(self, reg):
         assert "message_push" in self._names(reg.search("推送消息给用户"))
@@ -481,7 +483,9 @@ class TestMcpToolSearch:
         reg = self._make_feed_registry()
         for query in ["RSS订阅", "添加订阅", "订阅管理"]:
             names = [r["name"] for r in reg.search(query)]
-            assert "mcp_feed__feed_manage" in names, f"query={query!r} 未找到 feed_manage"
+            assert "mcp_feed__feed_manage" in names, (
+                f"query={query!r} 未找到 feed_manage"
+            )
 
     def test_feed_query_chinese_discovery(self):
         """中文新闻/最新资讯查询发现路径。"""
@@ -511,9 +515,7 @@ class TestToolSearchTool:
 
     def test_no_match_returns_tip(self):
         reg = ToolRegistry()
-        reg.register(
-            ToolSearchTool(reg), always_on=True, risk="read-only"
-        )
+        reg.register(ToolSearchTool(reg), always_on=True, risk="read-only")
         tool = ToolSearchTool(reg)
         result = asyncio.run(tool.execute(query="xxxxxxxxxxxxxxx"))
         data = json.loads(result)
@@ -685,6 +687,17 @@ class TestToolSearchTool:
         assert all(r["name"] != "schedule" for r in data.get("matched", []))
         assert "tip" in data
         assert "风险等级不符" in data["tip"]
+
+    def test_allowed_risk_schema_distinguishes_discovery_from_authorization(self):
+        """模型不能把搜索风险过滤器误当成工具调用授权。"""
+        tool = ToolSearchTool(_make_registry())
+
+        description = tool.parameters["properties"]["allowed_risk"]["description"]
+
+        assert "不是工具调用授权" in description
+        assert "通常不要填写" in description
+        assert "external-side-effect=生图、发消息、上传" in description
+        assert "独立策略审批" in tool.description
 
     def test_select_excludes_already_visible(self):
         """select: 不返回已可见工具，tip 中说明可直接调用。"""
