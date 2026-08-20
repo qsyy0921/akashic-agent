@@ -768,6 +768,24 @@ class TestToolSearchTool:
         assert data["already_loaded"] == []
         assert "再次 tool_search" in data["next_action"]
 
+    def test_keyword_result_reports_matching_already_loaded_tool(self):
+        reg = _make_registry()
+        tool = ToolSearchTool(reg)
+
+        data = json.loads(
+            asyncio.run(
+                tool.execute(
+                    query="定时任务",
+                    top_k=3,
+                    excluded_names={"schedule"},
+                )
+            )
+        )
+
+        assert "schedule" not in data["unlocked"]
+        assert data["already_loaded"] == ["schedule"]
+        assert "已可直接调用" in data["next_action"]
+
     def test_select_meta_tools_are_excluded(self):
         """select:tool_search 与 search() 语义一致 → matched 为空。"""
         reg = _make_registry()

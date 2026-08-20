@@ -95,13 +95,24 @@ class ToolSearchTool(Tool):
 
         # ── 关键词搜索路径 ────────────────────────────────────────────────
         top_k = min(max(1, int(top_k)), 10)
+        catalog_results = self._registry.search(
+            query=query,
+            top_k=top_k,
+            allowed_risk=allowed_risk,
+            excluded_names=set(),
+        )
+        already_loaded = [
+            item["name"]
+            for item in catalog_results
+            if isinstance(item.get("name"), str) and item["name"] in excluded
+        ]
         results = self._registry.search(
             query=query,
             top_k=top_k,
             allowed_risk=allowed_risk,
             excluded_names=excluded,
         )
-        if not results:
+        if not results and not already_loaded:
             return json.dumps(
                 {
                     "matched": [],
@@ -121,10 +132,10 @@ class ToolSearchTool(Tool):
             {
                 "matched": results,
                 "unlocked": unlocked,
-                "already_loaded": [],
+                "already_loaded": already_loaded,
                 "next_action": (
-                    "unlocked 中的工具 schema 已加载。下一步直接调用需要的工具，"
-                    "不要再次 tool_search。"
+                    "already_loaded 中的工具已可直接调用；unlocked 中的工具 schema "
+                    "已加载。下一步直接调用需要的工具，不要再次 tool_search。"
                 ),
             },
             ensure_ascii=False,
