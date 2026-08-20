@@ -742,6 +742,44 @@ async def test_telegram_response_propagates_media_send_failure(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(("pending", "expected_restarts"), [(0, 0), (2, 1)])
+async def test_telegram_network_recovery_restarts_only_for_backlog(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    pending: int,
+    expected_restarts: int,
+) -> None:
+    mod = _import_telegram_channel(monkeypatch)
+    monkeypatch.setattr(mod, "_POLLING_RECOVERY_DELAY_S", 0.0)
+    monkeypatch.setattr(mod, "_POLLING_RECOVERY_MIN_INTERVAL_S", 0.0)
+    channel = mod.TelegramChannel(
+        "token",
+        _Bus(),
+        _SessionManager(tmp_path),
+        allow_from=["1"],
+    )
+    updater = channel._app.updater
+    original_start = updater.start_polling
+    original_stop = updater.stop
+    updater.start_polling = AsyncMock(side_effect=original_start)
+    updater.stop = AsyncMock(side_effect=original_stop)
+    channel._app.bot.get_webhook_info = AsyncMock(
+        return_value=SimpleNamespace(pending_update_count=pending)
+    )
+
+    await channel.start()
+    channel._on_polling_error(mod.NetworkError("offline"))
+    recovery_task = channel._polling_recovery_task
+    assert recovery_task is not None
+    await recovery_task
+
+    channel._app.bot.get_webhook_info.assert_awaited_once()
+    assert updater.stop.await_count == expected_restarts
+    assert updater.start_polling.await_count == 1 + expected_restarts
+    await channel.stop()
+
+
+@pytest.mark.asyncio
 async def test_telegram_live_task_index_releases_finished_session(monkeypatch: pytest.MonkeyPatch):
     mod = _import_telegram_channel(monkeypatch)
     channel = object.__new__(mod.TelegramChannel)

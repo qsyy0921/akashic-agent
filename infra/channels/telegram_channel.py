@@ -4,10 +4,10 @@ Telegram Channel
 将 Telegram Bot 接入 MessageBus，支持 allowFrom 白名单。
 """
 
-import logging
 import asyncio
 import html
 import json
+import logging
 from collections.abc import Coroutine
 from dataclasses import dataclass
 from typing import Any
@@ -64,6 +64,9 @@ _REPLY_LIVE_TAIL = 1100
 _TOOL_PREVIEW_LIMIT = 80
 _LIVE_STREAM_MIN_INTERVAL_S = 2.5
 _LIVE_STREAM_MIN_CHARS = 200
+_POLLING_RECOVERY_DELAY_S = 15.0
+_POLLING_RECOVERY_MIN_INTERVAL_S = 300.0
+_POLLING_RECOVERY_TIMEOUT_S = 20.0
 
 
 @dataclass
@@ -122,6 +125,9 @@ class TelegramChannel:
         self._events_bound = False
         self.user_map = self._identity_index.mapping
         self._polling_conflict_task: asyncio.Task[None] | None = None
+        self._polling_recovery_task: asyncio.Task[None] | None = None
+        self._last_polling_recovery_at = float("-inf")
+        self._stopping = False
         self._telegram_outbound_limiter = TelegramOutboundLimiter()
         self._active_streams: dict[str, TelegramStreamMessage] = {}
         self._live_edit_queue = TelegramLiveEditQueue(limiter=self._telegram_outbound_limiter)
@@ -172,6 +178,7 @@ class TelegramChannel:
         await asyncio.gather(*tasks, return_exceptions=True)
 
     async def start(self, ctx: ChannelContext | None = None) -> None:
+        self._stopping = False
         if ctx is not None:
             self._bus = ctx.bus
             self._event_bus = ctx.event_bus
@@ -188,11 +195,14 @@ class TelegramChannel:
         updater = self._app.updater
         if updater is None:
             raise RuntimeError("Telegram updater 未初始化")
+        await self._start_polling(updater)
+        logger.info(f"TelegramChannel 已启动  已知用户: {len(self.user_map)}")
+
+    async def _start_polling(self, updater: Any) -> None:
         await updater.start_polling(
             allowed_updates=Update.ALL_TYPES,
             error_callback=self._on_polling_error,
         )
-        logger.info(f"TelegramChannel 已启动  已知用户: {len(self.user_map)}")
 
     def _bind_runtime(self) -> None:
         if not self._outbound_bound:
@@ -206,6 +216,12 @@ class TelegramChannel:
             self._events_bound = True
 
     async def stop(self) -> None:
+        self._stopping = True
+        recovery_task = self._polling_recovery_task
+        self._polling_recovery_task = None
+        if recovery_task is not None and not recovery_task.done():
+            recovery_task.cancel()
+            await asyncio.gather(recovery_task, return_exceptions=True)
         if self._polling_conflict_task and not self._polling_conflict_task.done():
             await self._polling_conflict_task
         for session_key in tuple(self._live_tasks_by_session):
@@ -854,7 +870,73 @@ class TelegramChannel:
                     self._disable_polling_on_conflict()
                 )
             return
+        if isinstance(exc, NetworkError):
+            self._schedule_polling_recovery()
         logger.warning("[telegram] polling 异常，框架将自动重试: %s", exc)
+
+    def _schedule_polling_recovery(self) -> None:
+        if self._stopping:
+            return
+        task = self._polling_recovery_task
+        if task is not None and not task.done():
+            return
+        loop = asyncio.get_running_loop()
+        now = loop.time()
+        if now - self._last_polling_recovery_at < _POLLING_RECOVERY_MIN_INTERVAL_S:
+            return
+        self._last_polling_recovery_at = now
+        task = asyncio.create_task(self._recover_polling_if_backlogged())
+        self._polling_recovery_task = task
+
+        def _done(done_task: asyncio.Task[None]) -> None:
+            if self._polling_recovery_task is done_task:
+                self._polling_recovery_task = None
+            if done_task.cancelled():
+                return
+            error = done_task.exception()
+            if error is not None:
+                logger.warning("[telegram] polling 恢复任务失败: %s", error)
+
+        task.add_done_callback(_done)
+
+    async def _recover_polling_if_backlogged(self) -> None:
+        """仅在网络恢复且 Telegram 仍有积压时重启 polling。"""
+        await asyncio.sleep(_POLLING_RECOVERY_DELAY_S)
+        if self._stopping:
+            return
+        try:
+            info = await asyncio.wait_for(
+                self._app.bot.get_webhook_info(),
+                timeout=_POLLING_RECOVERY_TIMEOUT_S,
+            )
+        except Exception as error:
+            logger.warning("[telegram] polling 恢复探针失败，保留框架重试: %s", error)
+            return
+        pending = int(getattr(info, "pending_update_count", 0) or 0)
+        if pending <= 0:
+            return
+        updater = self._app.updater
+        if updater is None or not updater.running or self._stopping:
+            return
+        logger.warning(
+            "[telegram] 网络异常后仍有 %d 条待处理更新，执行一次限频 polling 重启",
+            pending,
+        )
+        try:
+            await asyncio.wait_for(
+                updater.stop(),
+                timeout=_POLLING_RECOVERY_TIMEOUT_S,
+            )
+            if self._stopping:
+                return
+            await asyncio.wait_for(
+                self._start_polling(updater),
+                timeout=_POLLING_RECOVERY_TIMEOUT_S,
+            )
+        except Exception as error:
+            logger.warning("[telegram] polling 限频重启失败: %s", error)
+            return
+        logger.info("[telegram] polling 已因积压恢复")
 
     async def _disable_polling_on_conflict(self) -> None:
         """Conflict 时关闭 updater 轮询，保留 bot 发送能力。"""
