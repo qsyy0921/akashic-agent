@@ -5,7 +5,14 @@ from typing import Any, Protocol
 from uuid import uuid4
 
 from agent.delivery.supervisor import DeliverySupervisor
-from bus.events import OutboundMessage
+from bus.events import (
+    AttachmentKind,
+    ChannelAttachment,
+    ChannelMessage,
+    DeliveryReceipt,
+    DeliveryStatus,
+    OutboundMessage,
+)
 from bus.queue import MessageBus
 from session.outbox_repository import OutboxRepository
 from session.reliability_records import OutboundIntentDraft
@@ -23,14 +30,14 @@ class OutboundDispatch:
 
 
 class OutboundPort(Protocol):
-    async def dispatch(self, outbound: OutboundDispatch) -> bool: ...
+    async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt: ...
 
 
 class BusOutboundPort:
     def __init__(self, bus: MessageBus) -> None:
         self._bus = bus
 
-    async def dispatch(self, outbound: OutboundDispatch) -> bool:
+    async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
         await self._bus.publish_outbound(
             OutboundMessage(
                 channel=outbound.channel,
@@ -42,7 +49,10 @@ class BusOutboundPort:
                 session_message_id=outbound.session_message_id,
             )
         )
-        return True
+        return DeliveryReceipt(
+            DeliveryStatus.SUCCESS,
+            canonical_media=tuple(outbound.media),
+        )
 
 
 class DurableOutboundPort:
@@ -54,7 +64,7 @@ class DurableOutboundPort:
         self._repository = repository
         self._supervisor = supervisor
 
-    async def dispatch(self, outbound: OutboundDispatch) -> bool:
+    async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
         delivery_id = outbound.metadata.get("delivery_id")
         if not isinstance(delivery_id, str) or not delivery_id:
             raise RuntimeError("durable outbound requires a persisted delivery_id")
@@ -70,7 +80,15 @@ class DurableOutboundPort:
         ):
             raise RuntimeError(f"durable outbound payload mismatch: {delivery_id}")
         terminal = await self._supervisor.wait_for_terminal(delivery_id)
-        return terminal.status == "sent"
+        if terminal.status == "sent":
+            return DeliveryReceipt(
+                DeliveryStatus.SUCCESS,
+                canonical_media=tuple(outbound.media),
+            )
+        return DeliveryReceipt(
+            DeliveryStatus.FAILED,
+            detail=terminal.last_error_code or terminal.status,
+        )
 
     async def submit_standalone(
         self,
@@ -80,7 +98,7 @@ class DurableOutboundPort:
         turn_id: str | None,
         reason_code: str,
         lane: str = "system",
-    ) -> bool:
+    ) -> DeliveryReceipt:
         delivery_id = uuid4().hex
         metadata = dict(outbound.metadata)
         metadata["delivery_id"] = delivery_id
@@ -102,31 +120,40 @@ class DurableOutboundPort:
             )
         )
         terminal = await self._supervisor.wait_for_terminal(delivery_id)
-        return terminal.status == "sent"
+        if terminal.status == "sent":
+            return DeliveryReceipt(
+                DeliveryStatus.SUCCESS,
+                canonical_media=tuple(outbound.media),
+            )
+        return DeliveryReceipt(
+            DeliveryStatus.FAILED,
+            detail=terminal.last_error_code or terminal.status,
+        )
 
 
 class PushToolOutboundPort:
     def __init__(self, push_tool: Any) -> None:
         self._push = push_tool
 
-    async def dispatch(self, outbound: OutboundDispatch) -> bool:
+    async def dispatch(self, outbound: OutboundDispatch) -> DeliveryReceipt:
         message = outbound.content.strip()
         channel = outbound.channel.strip()
         chat_id = outbound.chat_id.strip()
         media = [item.strip() for item in outbound.media if item.strip()]
         if (not message and not media) or not channel or not chat_id:
-            return False
-        result = await self._push.execute(
-            channel=channel,
-            chat_id=chat_id,
-            message=message,
-            image=media[0] if media else None,
-            _outbound_metadata=dict(outbound.metadata),
-        )
-        for image in media[1:]:
-            result = await self._push.execute(
+            return DeliveryReceipt(
+                DeliveryStatus.FAILED,
+                detail="出站消息缺少渠道、会话或内容",
+            )
+        return await self._push.dispatch(
+            ChannelMessage(
                 channel=channel,
                 chat_id=chat_id,
-                image=image,
+                content=message,
+                attachments=tuple(
+                    ChannelAttachment(AttachmentKind.IMAGE, item) for item in media
+                ),
+                metadata=dict(outbound.metadata),
+                session_message_id=outbound.session_message_id,
             )
-        return "已发送" in str(result)
+        )

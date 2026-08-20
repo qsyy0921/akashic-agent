@@ -1,10 +1,10 @@
 {
   "schema_version": "3",
   "generated_by": "eval/intent_routing/run_v3_eval.py",
-  "generated_at": "2026-08-19T21:38:42+08:00",
+  "generated_at": "2026-08-20T13:02:30+08:00",
   "router": {
     "version": "intent-routing-v3-llm-hybrid-1",
-    "digest": "sha256:fe291adbae3940945918ad31d8ed27a59d3929b603fef8c01be6490fce5d6e9b"
+    "digest": "sha256:0e4e01cda0ede9f9b3a1c8c13dcfaaa3b9e588a265aa203d1197f6ff9229ff86"
   },
   "models": {
     "retrieval_model_id": "qwen3-embedding:4b",
@@ -69,13 +69,13 @@
     "context_resolution_accuracy": 1.0,
     "equivalent_operation_set_correctness": 1.0,
     "required_clarification_recall": 1.0,
-    "unnecessary_clarification_rate": 0.095238,
+    "unnecessary_clarification_rate": 0.047619,
     "end_to_end_visibility_rate": 1.0,
     "intent_view_success_rate": 1.0,
-    "status_accuracy": 0.96,
-    "cold_start_latency_ms": 26967.181,
-    "local_warm_latency_p95_ms": 1196.837,
-    "external_llm_latency_p95_ms": 15698.067
+    "status_accuracy": 1.0,
+    "cold_start_latency_ms": 21688.411,
+    "local_warm_latency_p95_ms": 410.437,
+    "external_llm_latency_p95_ms": 13712.383
   },
   "thresholds": {
     "minimum": {
@@ -97,5 +97,5 @@
   },
   "passed": true,
   "failures": [],
-  "artifact_digest": "sha256:42ff624e2eb92fbf73c7f9b16440a878251442ec20a21bfbb94ccdaaa1ba4513"
+  "artifact_digest": "sha256:34cf5200c3364d36d98ad9f1e4065251a073477de3e49074b27c7333aee5d0f2"
 }

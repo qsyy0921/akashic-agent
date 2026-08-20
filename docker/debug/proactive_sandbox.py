@@ -23,6 +23,7 @@ from agent.tools.message_push import MessagePushTool
 from agent.tools.registry import ToolRegistry
 from agent.tools.web_fetch import WebFetchTool
 from bus.event_bus import EventBus
+from bus.events import ChannelMessage, DeliveryReceipt, DeliveryStatus
 from bootstrap.proactive import _build_proactive_provider
 from bootstrap.providers import build_providers
 from proactive_v2.config import ProactiveConfig
@@ -395,7 +396,6 @@ async def tick(
     configure_default_shared_http_resources(http_resources)
     tools.register(WebFetchTool(http_resources.external_default))
     installed_cache = Path.home() / ".akashic-plugin" / "cache"
-    feed_root = _installed_plugin_root(installed_cache, "feed")
     sessions = SessionManager(workspace)
     plugins = PluginManager(
         plugin_dirs=[Path("/app/plugins")],
@@ -438,7 +438,11 @@ async def tick(
     async def send_text(chat_id: str, message: str) -> None:
         sent.append({"chat_id": chat_id, "message": message})
 
-    push.register_channel("sandbox", text=send_text)
+    async def deliver(message: ChannelMessage) -> DeliveryReceipt:
+        await send_text(message.chat_id, message.content)
+        return DeliveryReceipt(DeliveryStatus.SUCCESS)
+
+    push.register_channel("sandbox", deliver=deliver)
     await plugins.load_all()
     runtime_sources = plugins.proactive_sources
     if isinstance(provider, SandboxProvider):

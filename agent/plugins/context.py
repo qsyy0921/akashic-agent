@@ -52,7 +52,12 @@ class PluginContext:
     ) -> asyncio.Task[T]:
         if self.scope is None:
             raise RuntimeError(f"插件缺少资源作用域: {self.plugin_id}")
-        if self._can_start_tasks is None or not self._can_start_tasks():
+        can_start = (
+            self.scope is not None
+            if self._can_start_tasks is None
+            else self._can_start_tasks()
+        )
+        if not can_start:
             coroutine.close()
             raise RuntimeError("prepare 阶段禁止启动后台任务")
         return self.scope.create_task(coroutine, name=name)

@@ -3312,6 +3312,7 @@ def _resolve_managed_services(
                 for key, value in spec.env.items()
             )
             or not isinstance(spec.readiness_url, str)
+            or not isinstance(spec.validation_port_env, str)
         ):
             raise RuntimeError(f"插件 managed service 声明无效: {spec!r}")
         if spec.id in services:
@@ -3345,6 +3346,7 @@ def _resolve_managed_services(
             "readiness_url": spec.readiness_url,
             "startup_timeout_seconds": spec.startup_timeout_seconds,
             "revision": source_revision,
+            "validation_port_env": spec.validation_port_env,
         }
     return services
 
@@ -3368,6 +3370,16 @@ def _resolve_mcp_servers(
             for key, value in spec.env.items()
         ):
             raise RuntimeError(f"插件 MCP env 声明无效: {spec.name}")
+        if (
+            not isinstance(spec.candidate_read_only_tools, tuple)
+            or not all(
+                isinstance(value, str) and value
+                for value in spec.candidate_read_only_tools
+            )
+            or len(set(spec.candidate_read_only_tools))
+            != len(spec.candidate_read_only_tools)
+        ):
+            raise RuntimeError(f"插件 MCP candidate 只读工具声明无效: {spec.name}")
         if spec.name in servers:
             raise RuntimeError(f"插件 MCP server 名称重复: {spec.name}")
         timeout = spec.call_timeout_seconds
@@ -3444,6 +3456,7 @@ def _resolve_mcp_servers(
             "force_tool_choice_on_high_confidence_route": (
                 spec.force_tool_choice_on_high_confidence_route
             ),
+            "candidate_read_only_tools": spec.candidate_read_only_tools,
         }
     return servers
 

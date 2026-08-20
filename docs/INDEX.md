@@ -195,6 +195,7 @@ docs/
 │   ├── memory-publication-gate.md
 │   ├── offline-evolution-candidates.md
 │   ├── persistence-state-map.md
+│   ├── provider-contract-forward-port.md
 │   ├── plugin-api-v2-integration.md
 │   ├── tool-graph-v1.md
 │   ├── trajectory-evaluation.md

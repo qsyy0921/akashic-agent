@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from agent.turns.outbound import OutboundDispatch, OutboundPort
 from agent.turns.result import TurnResult, TurnSideEffect
+from bus.events import DeliveryStatus
 from session.reliability_records import OutboundIntentDraft
 
 if TYPE_CHECKING:
@@ -73,7 +74,7 @@ class TurnOrchestrator:
                 reason_code="proactive_reply",
             ),
         )
-        sent = await self._outbound.dispatch(
+        receipt = await self._outbound.dispatch(
             OutboundDispatch(
                 channel=channel,
                 chat_id=chat_id,
@@ -83,6 +84,7 @@ class TurnOrchestrator:
                 session_message_id=record.session_message_id,
             )
         )
+        sent = receipt.status is DeliveryStatus.SUCCESS
 
         # 3. Delivery truth 决定 presence 与后置副作用，消息历史保留 delivery_id 供对账。
         if sent:
