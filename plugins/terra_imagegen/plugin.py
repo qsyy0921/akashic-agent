@@ -50,9 +50,7 @@ class TerraImageGenerationPlugin(Plugin):
                 reason="当前用户消息没有明确要求生成图片。",
             )
         batch_count = sum(
-            1
-            for item in event.tool_batch
-            if str(item.get("name") or "") == _TOOL_NAME
+            1 for item in event.tool_batch if str(item.get("name") or "") == _TOOL_NAME
         )
         if batch_count > 1:
             return HookOutcome(
@@ -87,6 +85,8 @@ def _is_explicit_image_request(text: str) -> bool:
     normalized = " ".join((text or "").casefold().split())
     if not normalized:
         return False
+    if _has_negated_image_request(normalized):
+        return False
     direct_phrases = (
         "生图",
         "生成图片",
@@ -112,8 +112,72 @@ def _is_explicit_image_request(text: str) -> bool:
         target in normalized for target in chinese_objects
     ):
         return True
-    return re.search(
-        r"\b(generate|create|draw|paint|make)\b.*"
-        r"\b(image|picture|photo|illustration|poster|avatar|wallpaper)\b",
-        normalized,
-    ) is not None
+    return (
+        re.search(
+            r"\b(generate|create|draw|paint|make)\b.*"
+            r"\b(image|picture|photo|illustration|poster|avatar|wallpaper)\b",
+            normalized,
+        )
+        is not None
+    )
+
+
+def _has_negated_image_request(text: str) -> bool:
+    clauses = re.split(r"[。！？!?;；\n]+", text)
+    chinese_negations = ("不要", "别", "禁止", "无需", "不需要", "不用", "不必", "拒绝")
+    chinese_actions = ("调用", "使用", "生成", "生图", "画", "绘制", "创建", "制作")
+    chinese_objects = (
+        "图",
+        "图片",
+        "图像",
+        "照片",
+        "海报",
+        "头像",
+        "插画",
+        "壁纸",
+        "封面",
+        "工具",
+    )
+    english_negations = (
+        "do not",
+        "don't",
+        "dont",
+        "never",
+        "without",
+        "no need",
+        "must not",
+        "should not",
+    )
+    english_actions = (
+        "call",
+        "use",
+        "invoke",
+        "generate",
+        "create",
+        "draw",
+        "paint",
+        "make",
+    )
+    english_objects = (
+        "image",
+        "picture",
+        "photo",
+        "illustration",
+        "poster",
+        "avatar",
+        "wallpaper",
+        "tool",
+    )
+    return any(
+        (
+            any(marker in clause for marker in chinese_negations)
+            and any(action in clause for action in chinese_actions)
+            and any(target in clause for target in chinese_objects)
+        )
+        or (
+            any(marker in clause for marker in english_negations)
+            and any(action in clause for action in english_actions)
+            and any(target in clause for target in english_objects)
+        )
+        for clause in clauses
+    )

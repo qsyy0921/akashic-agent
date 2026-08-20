@@ -4,7 +4,6 @@ import base64
 import sys
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
 
 import pytest
 
@@ -144,6 +143,39 @@ async def test_image_plugin_requires_explicit_passive_request_once_per_turn() ->
     assert duplicate_batch.decision == "deny"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "request_text",
+    [
+        "请仅使用 tool_search 查找图片生成工具，绝对不要调用任何图片生成工具。",
+        "不要生成图片，只检查工具是否存在。",
+        "不要生成任何图片，只做静态检查。",
+        "禁止调用生图工具。",
+        "Find the image tool, but do not call the image generation tool.",
+        "Do not invoke any image tool during this test.",
+        "Health check only; never generate image output.",
+    ],
+)
+async def test_image_plugin_denies_negated_generation_requests(
+    request_text: str,
+) -> None:
+    plugin = TerraImageGenerationPlugin()
+    event = PreToolCtx(
+        session_key="programmatic:test",
+        channel="cli",
+        chat_id="test",
+        tool_name="mcp_gpt_image__generate_image",
+        arguments={"prompt": "placeholder"},
+        source="passive",
+        turn_id="negated-turn",
+        request_text=request_text,
+    )
+
+    result = await plugin.authorize_generation(event)
+
+    assert result.decision == "deny"
+
+
 def test_image_plugin_declares_one_non_retrying_mcp_tool() -> None:
     spec = TerraImageGenerationPlugin.mcp_servers()[0]
     assert spec.name == "gpt_image"
@@ -156,11 +188,7 @@ def test_image_plugin_declares_one_non_retrying_mcp_tool() -> None:
 @pytest.mark.asyncio
 async def test_image_mcp_server_handshake_is_lazy_and_utf8(tmp_path: Path) -> None:
     server = (
-        Path(__file__).parents[1]
-        / "plugins"
-        / "terra_imagegen"
-        / "mcp"
-        / "server.py"
+        Path(__file__).parents[1] / "plugins" / "terra_imagegen" / "mcp" / "server.py"
     )
     client = McpClient(
         "gpt-image-test",
